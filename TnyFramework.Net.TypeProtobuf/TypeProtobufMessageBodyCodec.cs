@@ -1,0 +1,435 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using DotNetty.Buffers;
+using DotNetty.Common;
+using GF.Base;
+using ProtoBuf;
+using TnyFramework.Net.DotNetty.Codec;
+using TnyFramework.Net.DotNetty.Common;
+
+namespace TnyFramework.Net.TypeProtobuf
+{
+    public class TypeProtobufMessageBodyCodec : IMessageBodyCodec
+    {
+        private const int PROTOBUF_RAW_TYPE_BIT_SIZE = 5; //rawType 占据字节数
+        private const byte PROTOBUF_RAW_TYPE_BIT_MASK = 0xFF >> (8 - PROTOBUF_RAW_TYPE_BIT_SIZE); //rawType 掩码 00011111
+        private const byte PROTOBUF_MESSAGE_IS_PARAMS = 0x80; //是否是paramlist
+
+        private readonly Dictionary<Type, DataCoder> typeCoders = new Dictionary<Type, DataCoder>();
+        private readonly Dictionary<ProtobufRawType, DataCoder> rawTypeCoders = new Dictionary<ProtobufRawType, DataCoder>();
+
+        private readonly NullCoder nullCoder;
+        private readonly ComplexCoder complexCoder;
+
+
+        public TypeProtobufMessageBodyCodec()
+        {
+            nullCoder = new NullCoder();
+            complexCoder = new ComplexCoder();
+            Register(new ByteCoder());
+            Register(new ShortCoder());
+            Register(new IntCoder());
+            Register(new LongCoder());
+            Register(new FloatCoder());
+            Register(new DoubleCoder());
+            Register(new BoolCoder());
+            Register(new StringCoder());
+        }
+
+
+        public void Encode(object body, IByteBuffer buffer)
+        {
+            switch (body)
+            {
+                case null:
+                    return;
+                case MessageParamList paramList: {
+                    foreach (var param in paramList)
+                    {
+                        DoEncode(param, buffer, true);
+                    }
+                    break;
+                }
+                default:
+                    DoEncode(body, buffer, false);
+                    break;
+            }
+        }
+
+
+        private void DoEncode(object body, IByteBuffer buffer, bool paramList)
+        {
+            DataCoder coder = nullCoder;
+            if (body.IsNotNull())
+            {
+                var type = body.GetType();
+                if (typeCoders.ContainsKey(type))
+                {
+                    coder = typeCoders.Get(type);
+                } else
+                {
+                    coder = complexCoder;
+                }
+            }
+            var option = (byte)(paramList ? PROTOBUF_MESSAGE_IS_PARAMS : 0);
+            coder.Encode(body, buffer, option);
+        }
+
+
+
+        public object Decode(IByteBuffer buffer)
+        {
+            object body = null;
+            IList<object> listValue = null;
+            while (buffer.ReadableBytes > 0)
+            {
+                var option = buffer.ReadByte();
+                var paramList = (option & PROTOBUF_MESSAGE_IS_PARAMS) != 0;
+                if (paramList && listValue == null)
+                {
+                    listValue = new MessageParamList();
+                    body = listValue;
+                }
+                var value = DoDecode((byte)(option & PROTOBUF_RAW_TYPE_BIT_MASK), buffer);
+                if (listValue != null)
+                {
+                    listValue.Add(value);
+                } else
+                {
+                    body = value;
+                }
+            }
+            return body;
+        }
+
+
+        private object DoDecode(byte rawTypeValue, IByteBuffer buffer)
+        {
+            var rawType = (ProtobufRawType)rawTypeValue;
+            DataCoder coder = nullCoder;
+            if (rawType == ProtobufRawType.Null)
+                return coder.Decode(buffer);
+            coder = rawTypeCoders.ContainsKey(rawType) ? rawTypeCoders.Get(rawType) : complexCoder;
+            return coder.Decode(buffer);
+        }
+
+
+        private void Register(DataCoder coder)
+        {
+            if (!rawTypeCoders.ContainsKey(coder.RawType))
+            {
+                rawTypeCoders.Add(coder.RawType, coder);
+                foreach (var coderValueType in coder.ValueTypes)
+                {
+                    if (!typeCoders.ContainsKey(coderValueType))
+                    {
+                        typeCoders.Add(coderValueType, coder);
+                    } else
+                    {
+                        throw new ArgumentException($"已存在该coder：{coderValueType}");
+                    }
+                }
+            } else
+            {
+                throw new ArgumentException($"已存在该coder：{coder.RawType}");
+            }
+        }
+    }
+
+
+    internal abstract class DataCoder
+    {
+        private static readonly FastThreadLocal<MemoryStream> STEAM_LOCAL = new FastThreadLocal<MemoryStream>();
+
+
+        protected static MemoryStream Stream()
+        {
+            var stream = STEAM_LOCAL.Value;
+            if (stream == null)
+            {
+                stream = new MemoryStream();
+                STEAM_LOCAL.Value = stream;
+            } else
+            {
+                if (stream.Position != 0)
+                {
+                    stream.Seek(0, SeekOrigin.Begin);
+                }
+            }
+            return stream;
+        }
+
+
+        protected DataCoder(ProtobufRawType rawType, params Type[] valueTypes)
+        {
+            RawType = rawType;
+            ValueTypes = valueTypes;
+        }
+
+
+        /// <summary>
+        /// protobuf 基础类型
+        /// </summary>
+        public ProtobufRawType RawType { get; }
+
+        /// <summary>
+        /// 解释的基础类型
+        /// </summary>
+        public Type[] ValueTypes { get; }
+
+
+        /// <summary>
+        /// encode
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="buffer"></param>
+        /// <param name="option"></param>
+        public void Encode(object value, IByteBuffer buffer, byte option)
+        {
+            var temp = option | (byte)RawType;
+            buffer.WriteByte((byte)temp);
+            DoEncode(value, buffer);
+        }
+
+
+        /// <summary>
+        /// decode
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public object Decode(IByteBuffer buffer)
+        {
+            return DoDecode(buffer);
+        }
+
+
+        /// <summary>
+        /// 子类实现
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="buffer"></param>
+        protected abstract void DoEncode(object value, IByteBuffer buffer);
+
+
+        /// <summary>
+        /// 子类实现
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        protected abstract object DoDecode(IByteBuffer buffer);
+    }
+
+
+    internal class NullCoder : DataCoder
+    {
+        public NullCoder() : base(ProtobufRawType.Null)
+        {
+        }
+
+
+        protected override void DoEncode(object value, IByteBuffer buffer)
+        {
+        }
+
+
+        protected override object DoDecode(IByteBuffer buffer) => null;
+    }
+
+    internal class ByteCoder : DataCoder
+    {
+        public ByteCoder() : base(ProtobufRawType.Byte, typeof(byte))
+        {
+        }
+
+
+        protected override void DoEncode(object value, IByteBuffer buffer) => buffer.WriteByte((byte)value);
+
+        protected override object DoDecode(IByteBuffer buffer) => buffer.ReadByte();
+    }
+
+    internal class ShortCoder : DataCoder
+    {
+        public ShortCoder() : base(ProtobufRawType.Short, typeof(short))
+        {
+        }
+
+
+        protected override void DoEncode(object value, IByteBuffer buffer)
+        {
+            ByteBufferUtils.WriteVariant((int)value, buffer);
+        }
+
+
+        protected override object DoDecode(IByteBuffer buffer)
+        {
+            ByteBufferUtils.ReadVariant(buffer, out int value);
+            return (short)value;
+        }
+    }
+
+    internal class IntCoder : DataCoder
+    {
+        public IntCoder() : base(ProtobufRawType.Int, typeof(int))
+        {
+        }
+
+
+        protected override void DoEncode(object value, IByteBuffer buffer)
+        {
+            ByteBufferUtils.WriteVariant((int)value, buffer);
+        }
+
+
+        protected override object DoDecode(IByteBuffer buffer)
+        {
+            ByteBufferUtils.ReadVariant(buffer, out int value);
+            return value;
+        }
+    }
+
+    internal class LongCoder : DataCoder
+    {
+        public LongCoder() : base(ProtobufRawType.Long, typeof(long))
+        {
+        }
+
+
+        protected override void DoEncode(object value, IByteBuffer buffer)
+        {
+            ByteBufferUtils.WriteVariant((long)value, buffer);
+        }
+
+
+        protected override object DoDecode(IByteBuffer buffer)
+        {
+            ByteBufferUtils.ReadVariant(buffer, out long value);
+            return value;
+        }
+    }
+
+    internal class FloatCoder : DataCoder
+    {
+        public FloatCoder() : base(ProtobufRawType.Float, typeof(float))
+        {
+        }
+
+
+        protected override void DoEncode(object value, IByteBuffer buffer)
+        {
+            ByteBufferUtils.WriteVariant((float)value, buffer);
+        }
+
+
+        protected override object DoDecode(IByteBuffer buffer)
+        {
+            ByteBufferUtils.ReadVariant(buffer, out float value);
+            return value;
+        }
+    }
+
+    internal class DoubleCoder : DataCoder
+    {
+        public DoubleCoder() : base(ProtobufRawType.Double, typeof(double))
+        {
+        }
+
+
+        protected override void DoEncode(object value, IByteBuffer buffer)
+        {
+            ByteBufferUtils.WriteVariant((double)value, buffer);
+        }
+
+
+        protected override object DoDecode(IByteBuffer buffer)
+        {
+            ByteBufferUtils.ReadVariant(buffer, out double value);
+            return value;
+        }
+    }
+
+    internal class BoolCoder : DataCoder
+    {
+        public BoolCoder() : base(ProtobufRawType.Bool, typeof(bool))
+        {
+        }
+
+
+        protected override void DoEncode(object value, IByteBuffer buffer) => buffer.WriteByte((byte)((bool)value ? 1 : 0));
+
+        protected override object DoDecode(IByteBuffer buffer) => buffer.ReadByte() > 0;
+    }
+
+    internal class StringCoder : DataCoder
+    {
+        public StringCoder() : base(ProtobufRawType.String, typeof(string))
+        {
+        }
+
+
+        protected override void DoEncode(object value, IByteBuffer buffer)
+        {
+            var stream = Stream();
+            Serializer.Serialize(stream, value);
+            if (stream.Length <= 0)
+                return;
+            ByteBufferUtils.WriteVariant(stream.Length, buffer);
+            buffer.WriteBytes(stream.GetBuffer(), 0, (int)stream.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+        }
+
+
+        protected override object DoDecode(IByteBuffer buffer)
+        {
+            ByteBufferUtils.ReadVariant(buffer, out int bodyLength);
+            var bodyBuffer = buffer.ReadBytes(bodyLength);
+            using (var stream = new ReadOnlyByteBufferStream(bodyBuffer, true))
+            {
+                return Serializer.Deserialize<string>(stream);
+            }
+        }
+    }
+
+
+
+    internal class ComplexCoder : DataCoder
+    {
+        public ComplexCoder() : base(ProtobufRawType.Complex, typeof(object))
+        {
+        }
+
+
+        protected override void DoEncode(object value, IByteBuffer buffer)
+        {
+            var type = value.GetType();
+            if (!ObjRegister.Has(type))
+                throw new Exception($"不存在该DTO:{type}");
+            var info = ObjRegister.Get(type);
+            var stream = Stream();
+            ByteUtils.WriteFixed32(info.Id, stream);
+            Serializer.Serialize(stream, value);
+            if (stream.Length <= 0)
+                throw new Exception($"不存在该DTO:{type}");
+            ByteBufferUtils.WriteVariant(stream.Length, buffer);
+            buffer.WriteBytes(stream.GetBuffer(), 0, (int)stream.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+        }
+
+
+        protected override object DoDecode(IByteBuffer buffer)
+        {
+
+            ByteBufferUtils.ReadVariant(buffer, out int bodyLength);
+            var body = buffer.ReadBytes(bodyLength);
+            using (var stream = new ReadOnlyByteBufferStream(body, true))
+            {
+                ByteUtils.ReadFixed32(stream, out int registerId);
+                if (!ObjRegister.Has(registerId))
+                    throw new Exception($"不存在该DTO:{registerId}");
+                var dto = ObjRegister.Get(registerId).Get<object>();
+                Serializer.Deserialize(stream, dto);
+                return dto;
+            }
+        }
+    }
+}
