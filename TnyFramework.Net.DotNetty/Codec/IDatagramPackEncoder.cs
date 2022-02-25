@@ -1,6 +1,6 @@
 using DotNetty.Buffers;
 using DotNetty.Transport.Channels;
-using TnyFramework.Net.DotNetty.Message;
+using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.DotNetty.Codec
 {

@@ -1,7 +1,7 @@
 using TnyFramework.Common.Result;
 namespace TnyFramework.Net.Common
 {
-    public class NetResultCode : BaseResultCode<NetResultCode>
+    public class NetResultCode : ResultCode<NetResultCode>
     {
         /// <summary>
         ///  服务端返回响应编码响应异常(不断开连接)

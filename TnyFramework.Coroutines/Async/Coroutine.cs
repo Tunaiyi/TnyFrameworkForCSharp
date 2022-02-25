@@ -11,7 +11,7 @@ namespace TnyFramework.Coroutines.Async
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<Coroutine>();
 
-        private static readonly ThreadLocal<Coroutine> CURRENT_COROUTINE = new();
+        private static readonly ThreadLocal<Coroutine> CURRENT_COROUTINE = new ThreadLocal<Coroutine>();
 
         // 提交状态值 空闲
         private const int SUBMIT_STATUS_IDLE = 0;
@@ -52,6 +52,18 @@ namespace TnyFramework.Coroutines.Async
             var coroutine = new Coroutine();
             SynchronizationContext.SetSynchronizationContext(coroutine.Context);
             CURRENT_COROUTINE.Value = coroutine;
+        }
+
+
+        internal static void InitializeSynchronizationContext(ICoroutine coroutine)
+        {
+            var current = SynchronizationContext.Current;
+            if (current is CoroutineSynchronizationContext)
+                return;
+            if (!(coroutine is Coroutine value))
+                return;
+            SynchronizationContext.SetSynchronizationContext(value.Context);
+            CURRENT_COROUTINE.Value = value;
         }
 
 
@@ -111,9 +123,15 @@ namespace TnyFramework.Coroutines.Async
                 callback(state);
             } else
             {
-                using var handle = new ManualResetEvent(false);
-                Enqueue(new CoroutineWork(callback, context, state, handle));
-                handle.WaitOne();
+                var handle = new ManualResetEvent(false);
+                try
+                {
+                    Enqueue(new CoroutineWork(callback, context, state, handle));
+                    handle.WaitOne();
+                } finally
+                {
+                    handle.Dispose();
+                }
             }
         }
 

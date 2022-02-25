@@ -1,0 +1,15 @@
+const CS = require('csharp');
+
+const Model = CS.GF.Game.BuffModel;
+
+exports.Models = {
+    GetModel_1006000000:function(){
+        let m = new Model();
+        m._id = 1006000000;
+        m._alias = "BuffModel_1006000000";
+        m._name = "伤害增加30%buff";
+        m._type = "ABILITY_INC";
+        m._duration = 10000;
+        return m;
+    },
+};

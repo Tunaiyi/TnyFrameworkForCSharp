@@ -1,0 +1,18 @@
+const CS = require('csharp');
+
+const Common = require('PuertsSource/ItemModelCommon');
+
+const Model = CS.GF.Game.GamerModel;
+
+exports.Models = {
+    GetModel_1001000000:function(){
+        let m = new Model();
+        m._id = 1001000000;
+        m._alias = "GamerModel_1001000000";
+        m._name = "野蛮人";
+        m._avatarName = "Role_4110101";
+        m._colliderInfo = Common.NewColliderInfo(2100000001, 0, false);
+        m._growthModelId = 1007000000;
+        return m;
+    },
+};

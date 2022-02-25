@@ -1,10 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-        <TargetFramework>net5.0</TargetFramework>
-        <OutputType>Exe</OutputType>
-        <LangVersion>7.3</LangVersion>
+        <TargetFrameworks>net47;net471;net472;net48;netstandard2.0</TargetFrameworks>
+        <Configurations>Debug;Release;Debug.Local</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug.Local' ">
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
     <ItemGroup>

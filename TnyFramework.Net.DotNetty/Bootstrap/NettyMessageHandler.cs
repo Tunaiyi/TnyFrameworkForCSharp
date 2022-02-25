@@ -6,8 +6,8 @@ using TnyFramework.Common.Exception;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.DotNetty.Common;
-using TnyFramework.Net.DotNetty.Message;
-using TnyFramework.Net.DotNetty.Transport;
+using TnyFramework.Net.Message;
+using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.DotNetty.Bootstrap
 {
     public class NettyMessageHandler : ChannelDuplexHandler
@@ -44,7 +44,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 {
                     LOGGER.LogInformation("[Tunnel] 断开链接 ## 通道 {} ==> {} 断开链接", channel.RemoteAddress, channel.LocalAddress);
                 }
-                if (tunnel.Mode == TunnelMode.SERVER)
+                if (Equals(tunnel.Mode, TunnelMode.SERVER))
                 {
                     tunnel.Close();
                 } else
@@ -121,7 +121,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             if (code.Level == ResultLevel.Error)
             {
                 LOGGER.LogError(cause, "[Tunnel]  ## 通道 {} ==> {} 断开链接 # cause {}({})[{}], message:{}",
-                    channel.RemoteAddress, channel.LocalAddress, code, code.Code, code.Message, cause.Message);
+                    channel.RemoteAddress, channel.LocalAddress, code, code.Value, code.Message, cause.Message);
                 var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).GetAndSet(null);
                 if (tunnel != null)
                 {
@@ -131,7 +131,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             } else
             {
                 LOGGER.LogError(cause, "[Tunnel]  ## 通道 {} ==> {} 异常 # cause {}({})[{}], message:{}",
-                    channel.RemoteAddress, channel.LocalAddress, code, code.Code, code.Message, cause.Message);
+                    channel.RemoteAddress, channel.LocalAddress, code, code.Value, code.Message, cause.Message);
             }
         }
 

@@ -1,0 +1,112 @@
+const CS = require('csharp');
+
+const Common = require('PuertsSource/ItemModelCommon');
+
+const Model = CS.GF.Game.MonsterModel;
+
+exports.Models = {
+    GetModel_1002000000:function(){
+        let m = new Model();
+        m._id = 1002000000;
+        m._alias = "MonsterModel_1002000000";
+        m._name = "山鬼";
+        m._quality = "RED";
+        m._colliderInfo = Common.NewColliderInfo(2100000000, 0, false);
+        m._avatarName = "Monster_4000301";
+        m._growthModelId = 1007000001;
+        m._monsterType = "DEFAULT";
+        m._AddSkill(1003000013);
+        return m;
+    },
+    GetModel_1002000001:function(){
+        let m = new Model();
+        m._id = 1002000001;
+        m._alias = "MonsterModel_1002000001";
+        m._name = "闪灵";
+        m._quality = "GREEN";
+        m._colliderInfo = Common.NewColliderInfo(2100000000, 0, false);
+        m._avatarName = "Monster_4000501";
+        m._growthModelId = 1007000001;
+        m._monsterType = "DEFAULT";
+        m._AddSkill(1003000013);
+        return m;
+    },
+    GetModel_1002000002: function () {
+        let m = new Model();
+        m._id = 1002000002;
+        m._alias = "MonsterModel_1002000002";
+        m._name = "鹿角";
+        m._quality = "GREEN";
+        m._colliderInfo = Common.NewColliderInfo(2100000000, 0, false);
+        m._avatarName = "Boss_4100301";
+        m._growthModelId = 1007000003;
+        m._monsterType = "DEFAULT";
+        m._AddSkill(1003000013);
+        return m;
+    },
+    GetModel_1002000100: function () {
+        let m = new Model();
+        m._id = 1002000100;
+        m._alias = "MonsterModel_1002000100";
+        m._name = "精英山鬼";
+        m._quality = "BLUE";
+        m._colliderInfo = Common.NewColliderInfo(2100000000, 0, false);
+        m._avatarName = "Monster_4000301";
+        m._growthModelId = 1007000002;
+        m._monsterType = "ELITE";
+        m._AddSkill(1003000013);
+        return m;
+    },
+    GetModel_1002000101: function () {
+        let m = new Model();
+        m._id = 1002000101;
+        m._alias = "MonsterModel_1002000101";
+        m._name = "精英闪灵";
+        m._quality = "BLUE";
+        m._colliderInfo = Common.NewColliderInfo(2100000000, 0, false);
+        m._avatarName = "Monster_4000501";
+        m._growthModelId = 1007000002;
+        m._monsterType = "ELITE";
+        m._AddSkill(1003000013);
+        return m;
+    },
+    GetModel_1002000102: function () {
+        let m = new Model();
+        m._id = 1002000102;
+        m._alias = "MonsterModel_1002000102";
+        m._name = "精英鹿角";
+        m._quality = "BLUE";
+        m._colliderInfo = Common.NewColliderInfo(2100000000, 0, false);
+        m._avatarName = "Boss_4100301";
+        m._growthModelId = 1007000004;
+        m._monsterType = "ELITE";
+        m._AddSkill(1003000013);
+        return m;
+    },
+    GetModel_1002000202: function () {
+        let m = new Model();
+        m._id = 1002000202;
+        m._alias = "MonsterModel_1002000202";
+        m._name = "稀有鹿角";
+        m._quality = "GOLD";
+        m._colliderInfo = Common.NewColliderInfo(2100000000, 0, false);
+        m._avatarName = "Boss_4100301";
+        m._growthModelId = 1007000005;
+        m._monsterType = "ELITE";
+        m._AddSkill(1003000013);
+        return m;
+    },
+    GetModel_1002000303: function () {
+        let m = new Model();
+        m._id = 1002000303;
+        m._alias = "MonsterModel_1002000303";
+        m._name = "阿隆佐";
+        m._quality = "RED";
+        m._colliderInfo = Common.NewColliderInfo(2100000000, 0, false);
+        m._avatarName = "Boss_4600902";
+        m._growthModelId = 1007000006;
+        m._monsterType = "BOSS";
+        m._AddSkill(1003000013);
+        return m;
+    },
+};

@@ -203,16 +203,18 @@ namespace TnyFramework.Net.DotNetty.Common
             var offset = index;
             var shift = 0;
             var result = 0;
-            while (shift < 32)
+            var time = 0;
+            while (time < 10)
             {
                 var b = bytes[offset++];
                 result |= (b & 0x7F) << shift;
-                if ((b & 0x80) == 0)
+                if (shift < 32 && (b & 0x80) == 0)
                 {
                     value = zigzag ? Zag(result) : result;
                     return offset - index;
                 }
                 shift += 7;
+                time++;
             }
             throw new ArgumentException("error varint!!");
         }
@@ -234,16 +236,18 @@ namespace TnyFramework.Net.DotNetty.Common
         {
             var shift = 0;
             var result = 0;
-            while (shift < 32)
+            var time = 0;
+            while (time < 10)
             {
                 var b = buffer.ReadByte();
                 result |= (b & 0x7F) << shift;
-                if ((b & 0x80) == 0)
+                if (shift < 32 && (b & 0x80) == 0)
                 {
                     value = zigzag ? Zag(result) : result;
                     return;
                 }
                 shift += 7;
+                time++;
             }
             throw new ArgumentException("error varint!!");
         }

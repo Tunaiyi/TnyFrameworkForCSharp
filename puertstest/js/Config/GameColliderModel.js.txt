@@ -1,0 +1,66 @@
+const CS = require('csharp');
+
+const Model = CS.GF.Game.GameColliderModel;
+
+exports.Models = {
+    GetModel_2100000000:function(){
+        let m = new Model();
+        m._id = 2100000000;
+        m._alias = "GameColliderModel_2100000000";
+        m._name = "碰撞盒1x1";
+        m._type = "OBB";
+        m._obbX = 1000;
+        m._obbY = 1000;
+        return m;
+    },
+    GetModel_2100000001:function(){
+        let m = new Model();
+        m._id = 2100000001;
+        m._alias = "GameColliderModel_2100000001";
+        m._name = "碰撞盒4x4";
+        m._type = "OBB";
+        m._obbX = 4000;
+        m._obbY = 4000;
+        return m;
+    },
+    GetModel_2100000002:function(){
+        let m = new Model();
+        m._id = 2100000002;
+        m._alias = "GameColliderModel_2100000002";
+        m._name = "碰撞盒2x2";
+        m._type = "OBB";
+        m._obbX = 2000;
+        m._obbY = 2000;
+        return m;
+    },
+    GetModel_2100000003:function(){
+        let m = new Model();
+        m._id = 2100000003;
+        m._alias = "GameColliderModel_2100000003";
+        m._name = "碰撞盒5x5";
+        m._type = "OBB";
+        m._obbX = 5000;
+        m._obbY = 5000;
+        return m;
+    },
+    GetModel_2100000004: function () {
+        let m = new Model();
+        m._id = 2100000004;
+        m._alias = "GameColliderModel_2100000004";
+        m._name = "碰撞盒6x6";
+        m._type = "OBB";
+        m._obbX = 6000;
+        m._obbY = 6000;
+        return m;
+    },
+    GetModel_2100000005: function () {
+        let m = new Model();
+        m._id = 2100000005;
+        m._alias = "GameColliderModel_2100000005";
+        m._name = "碰撞盒7x7";
+        m._type = "OBB";
+        m._obbX = 7000;
+        m._obbY = 7000;
+        return m;
+    },
+};

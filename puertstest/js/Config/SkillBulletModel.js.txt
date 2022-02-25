@@ -1,0 +1,27 @@
+const CS = require('csharp');
+
+const Common = require('PuertsSource/ItemModelCommon');
+
+const Model = CS.GF.Game.SkillBulletModel;
+
+exports.Models = {
+    GetModel_1004000000:function(){
+        let m = new Model();
+        m._id = 1004000000;
+        m._alias = "SkillBulletModel_1004000000";
+        m._name = "野蛮护甲爆炸";
+        m._duration = 1000;
+        m._colliderInfo = Common.NewColliderInfo(2100000004, 0, false);
+        return m;
+    },
+    GetModel_1004000001:function(){
+        let m = new Model();
+        m._id = 1004000001;
+        m._alias = "SkillBulletModel_1004000001";
+        m._name = "怒气爆发爆炸";
+        m._duration = 2000;
+        m._colliderInfo = Common.NewColliderInfo(2100000005, 0, false);
+        m._abilityInfo._AddAbility(Common.NewAbility("DAMAGE", 324));
+        return m;
+    },
+};

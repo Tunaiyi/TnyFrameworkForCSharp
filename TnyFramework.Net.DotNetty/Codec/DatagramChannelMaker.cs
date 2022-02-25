@@ -1,7 +1,7 @@
 using DotNetty.Transport.Channels;
 namespace TnyFramework.Net.DotNetty.Codec
 {
-    public class DatagramChannelMaker : BaseChannelMaker<IChannel>
+    public class DatagramChannelMaker : ChannelMaker<IChannel>
     {
         private readonly IDatagramPackEncoder encoder;
 

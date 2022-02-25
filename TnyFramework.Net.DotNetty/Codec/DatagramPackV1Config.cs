@@ -6,7 +6,7 @@
 
 namespace TnyFramework.Net.DotNetty.Codec
 {
-    public class DataPacketV1Config
+    public class DataPacketV1Setting
     {
         /// <summary>
         /// 可验证

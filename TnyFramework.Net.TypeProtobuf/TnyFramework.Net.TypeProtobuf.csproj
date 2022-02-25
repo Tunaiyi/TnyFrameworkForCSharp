@@ -1,8 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <LangVersion>7.3</LangVersion>
-        <TargetFramework>net472</TargetFramework>
+        <TargetFrameworks>net47;net471;net472;net48;netstandard2.0</TargetFrameworks>
+        <Configurations>Debug;Release;Debug.Local</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug.Local' ">
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,8 +18,12 @@
 
     <ItemGroup>
       <PackageReference Include="DotNetty.Buffers" Version="0.7.0" />
-      <PackageReference Include="GameFramework.Base" Version="1.0.0" />
+      <PackageReference Include="GF.Base" Version="1.0.0" />
       <PackageReference Include="protobuf-net" Version="3.0.101" />
     </ItemGroup>
 
+    <Target Name="PostPackNugetDeploy" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug.Local'">
+        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source /$(MSBuildProjectDirectoryNoRoot)/../Nuget" />
+    </Target>
+    
 </Project>

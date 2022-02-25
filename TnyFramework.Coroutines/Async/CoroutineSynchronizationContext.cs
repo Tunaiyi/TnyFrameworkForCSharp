@@ -23,6 +23,15 @@ namespace TnyFramework.Coroutines.Async
         }
 
 
+        /// <summary>
+        /// 初始化 Context
+        /// </summary>
+        public static void InitializeSynchronizationContext(ICoroutine coroutine)
+        {
+            Coroutine.InitializeSynchronizationContext(coroutine);
+        }
+
+
         internal CoroutineSynchronizationContext(Coroutine coroutine)
         {
             this.coroutine = coroutine;

@@ -7,7 +7,7 @@ namespace TnyFramework.Common.Attribute
         string Name { get; }
     }
 
-    public sealed class AttrKey<T> : IAttrKey
+    public class AttrKeys
     {
         /// <summary>
         /// Key Map
@@ -33,16 +33,18 @@ namespace TnyFramework.Common.Attribute
             KEY_MAP.TryGetValue(key, out var attrKey);
             if (attrKey != null)
                 return (AttrKey<TValue>)attrKey;
-            attrKey = new AttrKey<T>(key);
+            attrKey = new AttrKey<TValue>(key);
             if (!KEY_MAP.TryAdd(key, attrKey))
             {
                 attrKey = KEY_MAP[key];
             }
             return (AttrKey<TValue>)attrKey;
         }
+    }
 
-
-        private AttrKey(string name)
+    public sealed class AttrKey<T> : IAttrKey
+    {
+        internal AttrKey(string name)
         {
             Name = name;
         }

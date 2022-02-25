@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using DotNetty.Buffers;
 using DotNetty.Common;
 using GF.Base;
+using Microsoft.Extensions.Logging;
 using ProtoBuf;
+using TnyFramework.Common.Logger;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Common;
+using MessageParamList = TnyFramework.Net.Message.MessageParamList;
 
 namespace TnyFramework.Net.TypeProtobuf
 {
@@ -21,6 +26,8 @@ namespace TnyFramework.Net.TypeProtobuf
 
         private readonly NullCoder nullCoder;
         private readonly ComplexCoder complexCoder;
+
+        public static readonly ILogger LOGGER = LogFactory.Logger<TypeProtobufMessageBodyCodec>();
 
 
         public TypeProtobufMessageBodyCodec()
@@ -81,7 +88,7 @@ namespace TnyFramework.Net.TypeProtobuf
         public object Decode(IByteBuffer buffer)
         {
             object body = null;
-            IList<object> listValue = null;
+            IList listValue = null;
             while (buffer.ReadableBytes > 0)
             {
                 var option = buffer.ReadByte();
@@ -94,7 +101,10 @@ namespace TnyFramework.Net.TypeProtobuf
                 var value = DoDecode((byte)(option & PROTOBUF_RAW_TYPE_BIT_MASK), buffer);
                 if (listValue != null)
                 {
-                    listValue.Add(value);
+                    if (value != null)
+                    {
+                        listValue.Add(value);
+                    }
                 } else
                 {
                     body = value;
@@ -143,7 +153,7 @@ namespace TnyFramework.Net.TypeProtobuf
         private static readonly FastThreadLocal<MemoryStream> STEAM_LOCAL = new FastThreadLocal<MemoryStream>();
 
 
-        protected static MemoryStream Stream()
+        protected static MemoryStream Stream(long length = -1)
         {
             var stream = STEAM_LOCAL.Value;
             if (stream == null)
@@ -156,6 +166,10 @@ namespace TnyFramework.Net.TypeProtobuf
                 {
                     stream.Seek(0, SeekOrigin.Begin);
                 }
+            }
+            if (length > 0 && stream.Length < length)
+            {
+                stream.SetLength(length);
             }
             return stream;
         }
@@ -238,14 +252,26 @@ namespace TnyFramework.Net.TypeProtobuf
 
     internal class ByteCoder : DataCoder
     {
-        public ByteCoder() : base(ProtobufRawType.Byte, typeof(byte))
+        public ByteCoder() : base(ProtobufRawType.Byte, typeof(sbyte), typeof(byte))
         {
         }
 
 
-        protected override void DoEncode(object value, IByteBuffer buffer) => buffer.WriteByte((byte)value);
+        protected override void DoEncode(object value, IByteBuffer buffer)
+        {
+            switch (value)
+            {
+                case byte byteValue:
+                    buffer.WriteByte(byteValue);
+                    break;
+                case sbyte byteValue:
+                    buffer.WriteByte(byteValue);
+                    break;
+            }
+        }
 
-        protected override object DoDecode(IByteBuffer buffer) => buffer.ReadByte();
+
+        protected override object DoDecode(IByteBuffer buffer) => (sbyte)buffer.ReadByte();
     }
 
     internal class ShortCoder : DataCoder
@@ -369,24 +395,37 @@ namespace TnyFramework.Net.TypeProtobuf
 
         protected override void DoEncode(object value, IByteBuffer buffer)
         {
-            var stream = Stream();
-            Serializer.Serialize(stream, value);
-            if (stream.Length <= 0)
-                return;
-            ByteBufferUtils.WriteVariant(stream.Length, buffer);
-            buffer.WriteBytes(stream.GetBuffer(), 0, (int)stream.Length);
-            stream.Seek(0, SeekOrigin.Begin);
+            switch (value)
+            {
+                case string strValue:
+                    var stream = Stream();
+                    var data = Encoding.UTF8.GetBytes(strValue);
+                    stream.Write(data, 0, data.Length);
+                    // Serializer.Serialize(stream, strValue);
+                    var length = stream.Position;
+                    if (length <= 0)
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        break;
+                    }
+                    ByteBufferUtils.WriteVariant(length, buffer);
+                    buffer.WriteBytes(stream.GetBuffer(), 0, (int)length);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    break;
+            }
         }
 
 
         protected override object DoDecode(IByteBuffer buffer)
         {
             ByteBufferUtils.ReadVariant(buffer, out int bodyLength);
-            var bodyBuffer = buffer.ReadBytes(bodyLength);
-            using (var stream = new ReadOnlyByteBufferStream(bodyBuffer, true))
+            if (bodyLength == 0)
             {
-                return Serializer.Deserialize<string>(stream);
+                return "";
             }
+            var stream = Stream(bodyLength);
+            buffer.ReadBytes(stream, bodyLength);
+            return Encoding.UTF8.GetString(stream.GetBuffer(), 0, bodyLength);
         }
     }
 
@@ -408,10 +447,10 @@ namespace TnyFramework.Net.TypeProtobuf
             var stream = Stream();
             ByteUtils.WriteFixed32(info.Id, stream);
             Serializer.Serialize(stream, value);
-            if (stream.Length <= 0)
+            if (stream.Position <= 0)
                 throw new Exception($"不存在该DTO:{type}");
-            ByteBufferUtils.WriteVariant(stream.Length, buffer);
-            buffer.WriteBytes(stream.GetBuffer(), 0, (int)stream.Length);
+            ByteBufferUtils.WriteVariant(stream.Position, buffer);
+            buffer.WriteBytes(stream.GetBuffer(), 0, (int)stream.Position);
             stream.Seek(0, SeekOrigin.Begin);
         }
 

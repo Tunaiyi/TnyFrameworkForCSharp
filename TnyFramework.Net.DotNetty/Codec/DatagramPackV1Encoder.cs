@@ -4,28 +4,28 @@ using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;
 using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.DotNetty.Exception;
-using TnyFramework.Net.DotNetty.Message;
+using TnyFramework.Net.Message;
 namespace TnyFramework.Net.DotNetty.Codec
 {
     public class DatagramPackV1Encoder : DatagramPackV1Codec, IDatagramPackEncoder
     {
-        private readonly DataPacketV1Config config;
+        private readonly DataPacketV1Setting setting;
 
         private readonly FastThreadLocal<MemoryAllotCounter> counterThreadLocal =
             new FastThreadLocal<MemoryAllotCounter>();
 
 
-        public DatagramPackV1Encoder(DataPacketV1Config config, IMessageCodec messageCodec) :
+        public DatagramPackV1Encoder(DataPacketV1Setting setting, IMessageCodec messageCodec) :
             base(messageCodec)
         {
-            this.config = config;
+            this.setting = setting;
         }
 
 
-        public DatagramPackV1Encoder(IMessageCodec messageCodec, DataPacketV1Config config, ICodecVerifier codecVerifier) :
+        public DatagramPackV1Encoder(IMessageCodec messageCodec, DataPacketV1Setting setting, ICodecVerifier codecVerifier) :
             base(messageCodec, codecVerifier)
         {
-            this.config = config;
+            this.setting = setting;
         }
 
 
@@ -47,7 +47,7 @@ namespace TnyFramework.Net.DotNetty.Codec
             if (packageContext == null)
             {
                 var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).Get();
-                packageContext = new DataPackageContext(tunnel.AccessId, config);
+                packageContext = new DataPackageContext(tunnel.AccessId, setting);
                 channel.GetAttribute(NettyNetAttrKeys.WRITE_PACKAGER).Set(packageContext);
             }
             WritePayload(packageContext, message, outBuffer);
@@ -64,11 +64,11 @@ namespace TnyFramework.Net.DotNetty.Codec
             {
                 // 写入 Option
                 var option = message.Type.GetOption();
-                option = CodecConstants.SetOption(option, CodecConstants.DATA_PACK_OPTION_VERIFY, config.VerifyEnable);
+                option = CodecConstants.SetOption(option, CodecConstants.DATA_PACK_OPTION_VERIFY, setting.VerifyEnable);
                 option = CodecConstants.SetOption(option, CodecConstants.DATA_PACK_OPTION_ENCRYPT,
-                    config.EncryptEnable);
+                    setting.EncryptEnable);
                 option = CodecConstants.SetOption(option, CodecConstants.DATA_PACK_OPTION_WASTE_BYTES,
-                    config.WasteBytesEnable);
+                    setting.WasteBytesEnable);
                 outBuffer.WriteByte(option);
                 //payloadLength
                 var payloadLength = 0;
@@ -76,18 +76,18 @@ namespace TnyFramework.Net.DotNetty.Codec
                 payloadLength += ByteBufferUtils.ComputeVarInt64Len(accessId);
                 var number = writePkgContext.NextNumber();
                 payloadLength += ByteBufferUtils.ComputeVarInt32Len(number);
-                if (config.WasteBytesEnable)
+                if (setting.WasteBytesEnable)
                 {
                     // TODO 生成废字节长度
                 }
                 allotSize = counter.Allot();
                 bodyBuffer = outBuffer.Allocator.Buffer(allotSize);
                 messageCodec.Encode((INetMessage)message, bodyBuffer);
-                if (config.VerifyEnable)
+                if (setting.VerifyEnable)
                 {
                     // TODO 生成校验 & 字节长度
                 }
-                if (config.EncryptEnable)
+                if (setting.EncryptEnable)
                 {
                     // TODO 加密
                 }

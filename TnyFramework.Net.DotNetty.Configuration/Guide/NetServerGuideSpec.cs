@@ -1,0 +1,100 @@
+using Microsoft.Extensions.DependencyInjection;
+using TnyFramework.Net.Base;
+using TnyFramework.Net.DotNetty.Bootstrap;
+namespace TnyFramework.Net.DotNetty.Configuration.Guide
+{
+    public interface INetServerGuideBuilder
+    {
+        INettyServerGuide BuildGuide();
+    }
+
+    public class NetServerGuideSpec<TUserId>
+        : NetGuideSpec<INettyServerGuide, TUserId, INetServerGuideUnitContext<TUserId>, NetServerGuideUnitContext<TUserId>,
+                INetServerGuideSpec<TUserId>>,
+            INetServerGuideSpec<TUserId>, INetServerGuideBuilder
+    {
+        public INettyServerGuide Guide { get; private set; }
+
+        internal IServiceCollection UnitContainer { get; }
+
+
+        public NetServerGuideSpec(string name, INetUnitContext unitContext, IServiceCollection unitContainer) :
+            base(new NetServerGuideUnitContext<TUserId>(unitContext, unitContainer))
+        {
+            WithNamePrefix(name);
+            UnitContainer = unitContainer;
+            context.SetName(name);
+            Default(c => new NettyServerGuide(
+                c.LoadServerSetting(),
+                c.LoadTunnelFactory(),
+                c.LoadNetworkContext(),
+                c.LoadChannelMaker()));
+            context.ServerSettingSpec.ServiceName(name);
+        }
+
+
+        public INettyServerGuide BuildGuide()
+        {
+            if (Guide != null)
+                return Guide;
+            return Guide = Load(context, UnitContainer);
+        }
+
+
+        protected override INetServerGuideSpec<TUserId> Self()
+        {
+            return this;
+        }
+
+
+        public INetServerGuideSpec<TUserId> Server(IServerSetting setting)
+        {
+            var serverSettings = context.ServerSettingSpec;
+            serverSettings.Unit(setting);
+            return this;
+        }
+
+
+        public INetServerGuideSpec<TUserId> Server(int port)
+        {
+            var serverSettings = context.ServerSettingSpec;
+            serverSettings.Port(port);
+            return this;
+        }
+
+
+        public INetServerGuideSpec<TUserId> Server(string host, int port)
+        {
+            var serverSettings = context.ServerSettingSpec;
+            serverSettings.Host(host).Port(port);
+            return this;
+        }
+
+
+
+        public INetServerGuideSpec<TUserId> Server(string host, int port, bool libuv)
+        {
+            var serverSettings = context.ServerSettingSpec;
+            serverSettings.Host(host).Port(port).Libuv(libuv);
+            return this;
+
+        }
+
+
+        public INetServerGuideSpec<TUserId> Server(string serveName, string host, int port)
+        {
+            var serverSettings = context.ServerSettingSpec;
+            serverSettings.ServeName(serveName).Host(host).Port(port);
+            return this;
+        }
+
+
+        public INetServerGuideSpec<TUserId> Server(string serveName, string host, int port, bool libuv)
+        {
+
+            var serverSettings = context.ServerSettingSpec;
+            serverSettings.ServeName(serveName).Host(host).Port(port).Libuv(libuv);
+            return this;
+        }
+    }
+}

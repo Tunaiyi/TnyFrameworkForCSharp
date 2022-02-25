@@ -4,7 +4,7 @@ using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
-using TnyFramework.Net.DotNetty.Message;
+using TnyFramework.Net.Message;
 namespace TnyFramework.Net.DotNetty.Codec
 {
     public class DatagramPackDecodeHandler : ByteToMessageDecoder

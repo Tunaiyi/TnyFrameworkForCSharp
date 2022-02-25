@@ -1,6 +1,6 @@
 using DotNetty.Common.Utilities;
 using TnyFramework.Net.DotNetty.Codec;
-using TnyFramework.Net.DotNetty.Transport;
+using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.DotNetty.Common
 {
     public static class NettyNetAttrKeys

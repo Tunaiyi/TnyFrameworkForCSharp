@@ -1,16 +1,19 @@
-using System;
 using DotNetty.Buffers;
 using DotNetty.Common.Utilities;
+using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Logger;
 using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.DotNetty.Exception;
-using TnyFramework.Net.DotNetty.Message;
+using TnyFramework.Net.Message;
 namespace TnyFramework.Net.DotNetty.Codec
 {
     public class NettyMessageCodec : IMessageCodec
     {
+        public static readonly ILogger LOGGER = LogFactory.Logger<NettyMessageCodec>();
+
         private readonly IMessageBodyCodec bodyCoder;
 
-        private IMessageRelayStrategy messageRelayStrategy = NeverRelayStrategy.Strategy;
+        private readonly IMessageRelayStrategy messageRelayStrategy = NeverRelayStrategy.Strategy;
 
 
         public NettyMessageCodec(IMessageBodyCodec bodyCoder)
@@ -36,6 +39,9 @@ namespace TnyFramework.Net.DotNetty.Codec
             if (!CodecConstants.IsOption(option, CodecConstants.MESSAGE_HEAD_OPTION_EXIST_BODY))
                 return factory.Create(head, null);
             ByteBufferUtils.ReadVariant(buffer, out int length);
+
+            LOGGER.LogTrace("read {} body length {}", head, length);
+
             var bodyBuff = buffer.Allocator.HeapBuffer(length);
             if (messageRelayStrategy.IsRelay(head))
             {

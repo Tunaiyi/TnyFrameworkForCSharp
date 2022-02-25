@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Event;
 using TnyFramework.Common.Invoke;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
@@ -27,8 +25,133 @@ namespace TnyFramework.Coroutines.Demo
         }
 
 
+        private class CPlayer
+        {
+            private string Name { get; }
+
+            private int Age { get; }
+
+
+            public CPlayer(string name, int age)
+            {
+                Name = name;
+                Age = age;
+            }
+
+
+            public string Say(string content)
+            {
+                return $"{Name}[{Age}] say : {content}";
+            }
+
+
+            public static string Run(string content, int value1, int value2, int value3)
+            {
+                return $"Run {content} => {value1}, {value2}, {value3}";
+            }
+        }
+
+        public interface IHandler
+        {
+            void Run();
+        }
+
+        public class ComboHandler : IHandler
+        {
+            private readonly IHandler handler1;
+            private readonly IHandler handler2;
+
+
+            public ComboHandler(IHandler handler1, IHandler handler2)
+            {
+                this.handler1 = handler1;
+                this.handler2 = handler2;
+            }
+
+
+            public void Run()
+            {
+                handler1?.Run();
+                handler2?.Run();
+            }
+        }
+
+
+        public class EventTest
+        {
+            private ComboHandler action;
+
+            private int status;
+
+            public static int value = 0;
+
+
+            public EventTest(int status)
+            {
+                this.status = status;
+            }
+
+
+            public void Run()
+            {
+                action?.Run();
+            }
+
+
+            public void Add(ComboHandler action)
+            {
+                var eventHandler = this.action;
+                while (true)
+                {
+                    var eventHandler2 = eventHandler;
+                    Console.WriteLine("eventHandler2  " + Thread.CurrentThread.ManagedThreadId + eventHandler2);
+                    // var value2 = (Action)Delegate.Combine(eventHandler2, action);
+                    var value2 = new ComboHandler(this.action, action);
+                    if (Interlocked.CompareExchange(ref value, 0, 1) == 0)
+                    {
+                        Thread.Sleep(1000);
+                    }
+                    eventHandler = Interlocked.CompareExchange(ref this.action, value2, eventHandler2);
+                    if (eventHandler == eventHandler2)
+                    {
+                        Console.WriteLine("success " + Thread.CurrentThread.ManagedThreadId + eventHandler2);
+                        break;
+                    }
+                    Console.WriteLine("failed " + Thread.CurrentThread.ManagedThreadId + eventHandler2);
+                }
+            }
+        }
+
+        public delegate void Run(string name);
+
+        public delegate void Run1(string name, int value);
+
+
         private static async Task Main(string[] args)
         {
+
+            var bus = EventBuses.Create<Run>();
+            bus.Add((name) => Console.WriteLine($"bus {name} run"));
+            bus.Add((name) => Console.WriteLine($"bus {name} stop"));
+            bus.Notify("Parent");
+
+            var childBus = bus.ForkChild();
+            childBus.Notify("Lily");
+            childBus.Add((name) => Console.WriteLine($"childBus {name} calling"));
+            childBus.Notify("Child");
+
+            var bus1 = EventBuses.Create<Run1>();
+            bus1.Notify("Tom", 19);
+
+
+            var constructor = typeof(CPlayer).GetConstructor(new[] { typeof(string), typeof(int) });
+            var cPlayerCreator = FastFuncFactory.Invoker(constructor);
+            var cPlayer = (CPlayer)cPlayerCreator.Invoke("abc", 10);
+            Console.WriteLine(cPlayer.Say("22222"));
+
+            var runMethod = typeof(CPlayer).GetMethod(nameof(CPlayer.Run));
+            var runCaller = FastFuncFactory.Invoker(runMethod);
+            Console.WriteLine(runCaller.Invoke("22222", 1, 2, 3));
 
             const int maxTime = 1000000;
             var delegateType = typeof(Func<,,>).MakeGenericType(typeof(Player), typeof(string), typeof(string));
@@ -82,13 +205,15 @@ namespace TnyFramework.Coroutines.Demo
             say = typeof(Player).GetMethod("Say");
             if (say == null)
                 return;
-            var exp = new FastInvokerFactory<Player, object, object>().Create(say);
+            // var exp = new FastFuncFactory<Player, object, object>().Create(say);
 
+            var exp = FastFuncFactory.CreateFactory(say).CreateInvoker(say);
             watch.Restart();
             times = 0;
             while (times++ < maxTime)
             {
                 // exp.DynamicInvoke(player, "abc");
+                // exp.Invoke(player, "abc");
                 exp.Invoke(player, "abc");
             }
             watch.Stop();

@@ -20,6 +20,19 @@ namespace TnyFramework.Net.Demo.DTO
 
         [ProtoMember(3)]
         public long certId;
+
+
+        public LoginDTO()
+        {
+        }
+
+
+        public LoginDTO(long certId, long userId, string message)
+        {
+            this.userId = userId;
+            this.message = message;
+            this.certId = certId;
+        }
     }
 
     public static partial class DTOOutline

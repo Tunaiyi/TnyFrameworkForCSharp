@@ -33,5 +33,12 @@ namespace TnyFramework.Coroutines.Async
             var currentIndex = Interlocked.Increment(ref index);
             return new Coroutine(executor, $"{Name}-{currentIndex}");
         }
+
+
+        public ICoroutine Create(string name)
+        {
+            var currentIndex = Interlocked.Increment(ref index);
+            return new Coroutine(executor, $"{name}-{currentIndex}");
+        }
     }
 }

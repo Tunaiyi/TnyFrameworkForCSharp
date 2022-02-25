@@ -6,29 +6,29 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.DotNetty.Exception;
-using TnyFramework.Net.DotNetty.Message;
+using TnyFramework.Net.Message;
 namespace TnyFramework.Net.DotNetty.Codec
 {
     public class DatagramPackV1Decoder : DatagramPackV1Codec, IDatagramPackDecoder
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<DatagramPackV1Decoder>();
 
-        private readonly DataPacketV1Config config;
+        private readonly DataPacketV1Setting setting;
 
         private static readonly FastThreadLocal<byte[]> MAGICS_LOCAL = new FastThreadLocal<byte[]>();
 
 
-        public DatagramPackV1Decoder(DataPacketV1Config config, IMessageCodec messageCodec) :
+        public DatagramPackV1Decoder(DataPacketV1Setting setting, IMessageCodec messageCodec) :
             base(messageCodec)
         {
-            this.config = config;
+            this.setting = setting;
         }
 
 
-        public DatagramPackV1Decoder(DataPacketV1Config config, IMessageCodec messageCodec, ICodecVerifier codecVerifier) :
+        public DatagramPackV1Decoder(DataPacketV1Setting setting, IMessageCodec messageCodec, ICodecVerifier codecVerifier) :
             base(messageCodec, codecVerifier)
         {
-            this.config = config;
+            this.setting = setting;
         }
 
 
@@ -72,11 +72,11 @@ namespace TnyFramework.Net.DotNetty.Codec
                 }
 
                 ByteBufferUtils.ReadFixed32(inBuffer, out payloadLength);
-                if (payloadLength > config.MaxPayloadLength)
+                if (payloadLength > setting.MaxPayloadLength)
                 {
                     inBuffer.SkipBytes(inBuffer.ReadableBytes);
                     throw NetCodecException.CauseDecodeError(
-                        $"decode message failed, because payloadLength {payloadLength} > maxPayloadLength {config.MaxPayloadLength}");
+                        $"decode message failed, because payloadLength {payloadLength} > maxPayloadLength {setting.MaxPayloadLength}");
                 }
                 marker.Record(option, payloadLength);
             }
@@ -109,7 +109,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                 var packageContext = channel.GetAttribute(NettyNetAttrKeys.READ_PACKAGER).Get();
                 if (packageContext == null)
                 {
-                    packageContext = new DataPackageContext(accessId, config);
+                    packageContext = new DataPackageContext(accessId, setting);
                     tunnel.SetAccessId(accessId);
                     channel.GetAttribute(NettyNetAttrKeys.READ_PACKAGER).Set(packageContext);
                 }
@@ -117,17 +117,17 @@ namespace TnyFramework.Net.DotNetty.Codec
                 // 移动到当前包序号
                 packageContext.GoToAndCheck(number);
                 var verifyEnable = CodecConstants.IsOption(option, CodecConstants.DATA_PACK_OPTION_VERIFY);
-                if (config.VerifyEnable && !verifyEnable)
+                if (setting.VerifyEnable && !verifyEnable)
                 {
                     throw NetCodecException.CauseDecodeError("packet need verify!");
                 }
                 var encryptEnable = CodecConstants.IsOption(option, CodecConstants.DATA_PACK_OPTION_ENCRYPT);
-                if (config.EncryptEnable && !encryptEnable)
+                if (setting.EncryptEnable && !encryptEnable)
                 {
                     throw NetCodecException.CauseDecodeError("packet need encrypt!");
                 }
                 var wasteBytesEnable = CodecConstants.IsOption(option, CodecConstants.DATA_PACK_OPTION_WASTE_BYTES);
-                if (config.WasteBytesEnable && !wasteBytesEnable)
+                if (setting.WasteBytesEnable && !wasteBytesEnable)
                 {
                     throw NetCodecException.CauseDecodeError("packet need waste bytes!");
                 }

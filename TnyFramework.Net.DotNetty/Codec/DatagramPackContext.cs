@@ -4,13 +4,13 @@ namespace TnyFramework.Net.DotNetty.Codec
     public class DataPackageContext
     {
         // 序号累计器
-        private readonly DataPacketV1Config config;
+        private readonly DataPacketV1Setting setting;
 
 
-        public DataPackageContext(long accessId, DataPacketV1Config config)
+        public DataPackageContext(long accessId, DataPacketV1Setting setting)
         {
             AccessId = accessId;
-            this.config = config;
+            this.setting = setting;
             PacketNumber = 0;
         }
 
@@ -44,7 +44,7 @@ namespace TnyFramework.Net.DotNetty.Codec
             {
                 throw NetCodecException.CauseDecodeError($"id {number} is handled!");
             }
-            var maxSkipNumber = config.SkipNumberStep;
+            var maxSkipNumber = setting.SkipNumberStep;
             if (number - PacketNumber > maxSkipNumber)
             {
                 throw NetCodecException.CauseDecodeError("id " + number + " is illegal!");

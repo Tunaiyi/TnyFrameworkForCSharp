@@ -1,0 +1,85 @@
+const CS = require('csharp');
+
+const Common = require('PuertsSource/ItemModelCommon');
+
+const Model = CS.GF.Game.GrowthModel;
+
+exports.Models = {
+    GetModel_1007000000:function(){
+        let m = new Model();
+        m._id = 1007000000;
+        m._alias = "GrowthModel_1007000000";
+        m._name = "野蛮人角色成长模型";
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_HP", (item)=>{return 2000;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_MP", (item)=>{return 100;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("SPEED", (item)=>{return 7;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("ATTACK", (item)=>{return 50;}));
+        return m;
+    },
+    GetModel_1007000001:function(){
+        let m = new Model();
+        m._id = 1007000001;
+        m._alias = "GrowthModel_1007000001";
+        m._name = "普通怪物通用成长模型";
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_HP", (item)=>{return 500;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_MP", (item)=>{return 50;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("SPEED", (item)=>{return 5;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("ATTACK", (item)=>{return 10;}));
+        return m;
+    },
+    GetModel_1007000002:function(){
+        let m = new Model();
+        m._id = 1007000002;
+        m._alias = "GrowthModel_1007000002";
+        m._name = "精英怪物通用成长模型";
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_HP", (item)=>{return 1000;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_MP", (item)=>{return 50;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("SPEED", (item)=>{return 5;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("ATTACK", (item)=>{return 15;}));
+        return m;
+    },
+    GetModel_1007000003:function(){
+        let m = new Model();
+        m._id = 1007000003;
+        m._alias = "GrowthModel_1007000003";
+        m._name = "鹿角成长模型";
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_HP", (item)=>{return 800;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_MP", (item)=>{return 50;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("SPEED", (item)=>{return 5;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("ATTACK", (item)=>{return 15;}));
+        return m;
+    },
+    GetModel_1007000004:function(){
+        let m = new Model();
+        m._id = 1007000004;
+        m._alias = "GrowthModel_1007000004";
+        m._name = "精英鹿角成长模型";
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_HP", (item)=>{return 1500;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_MP", (item)=>{return 50;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("SPEED", (item)=>{return 5;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("ATTACK", (item)=>{return 20;}));
+        return m;
+    },
+    GetModel_1007000005:function(){
+        let m = new Model();
+        m._id = 1007000005;
+        m._alias = "GrowthModel_1007000005";
+        m._name = "稀有鹿角成长模型";
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_HP", (item)=>{return 2000;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_MP", (item)=>{return 50;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("SPEED", (item)=>{return 5;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("ATTACK", (item)=>{return 30;}));
+        return m;
+    },
+    GetModel_1007000006:function(){
+        let m = new Model();
+        m._id = 1007000006;
+        m._alias = "GrowthModel_1007000006";
+        m._name = "BOSS阿隆佐成长模型";
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_HP", (item)=>{return 4000;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("MAX_MP", (item)=>{return 100;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("SPEED", (item)=>{return 5;}));
+        m._abilityInfo._AddAbility(Common.NewAbility("ATTACK", (item)=>{return 50;}));
+        return m;
+    },
+}

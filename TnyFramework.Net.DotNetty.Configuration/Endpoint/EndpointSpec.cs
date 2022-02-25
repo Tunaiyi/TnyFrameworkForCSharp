@@ -1,0 +1,137 @@
+using System;
+using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
+using TnyFramework.DI.Units;
+using TnyFramework.Net.Endpoint;
+namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
+{
+    public class EndpointSpec : UnitSpec<IEndpointKeeperManager, IEndpointUnitContext>, IEndpointSpec, IEndpointUnitContext
+    {
+        private readonly UnitCollectionSpec<ISessionFactory, IEndpointUnitContext> sessionFactorySpec;
+        private readonly SessionKeeperSettingSpec defaultSessionKeeperSetting;
+        private readonly SessionKeeperSettingSpecs customSessionKeeperSettingSpecs;
+        private readonly UnitCollectionSpec<ISessionKeeperFactory, IEndpointUnitContext> sessionKeeperFactorySpec;
+
+
+        private IServiceCollection UnitContainer { get; }
+
+
+        public EndpointSpec(IServiceCollection container)
+        {
+            UnitContainer = container;
+            sessionFactorySpec = UnitCollectionSpec.Units<ISessionFactory, IEndpointUnitContext>()
+                .AddDefault<SessionFactory>();
+            sessionKeeperFactorySpec = UnitCollectionSpec.Units<ISessionKeeperFactory, IEndpointUnitContext>();
+            // 默认  SessionKeeper 配置
+            defaultSessionKeeperSetting = SessionKeeperSettingSpec.New(spec => spec
+                .UnitName("DefaultSession").Default(DefaultSessionKeeperSetting));
+            // 自定义 SessionKeeper 配置
+            customSessionKeeperSettingSpecs = new SessionKeeperSettingSpecs();
+            Default(DefaultEndpointKeeperManager);
+        }
+
+
+        public IEndpointSpec DefaultSessionKeeperFactory(UnitCreator<ISessionKeeperFactory, IEndpointUnitContext> defaultSessionFactory)
+        {
+            sessionKeeperFactorySpec.AddDefault(defaultSessionFactory);
+            return this;
+        }
+
+
+        public IEndpointSpec SessionFactoryConfigure(Action<UnitCollectionSpec<ISessionFactory, IEndpointUnitContext>> action)
+        {
+            action.Invoke(sessionFactorySpec);
+            return this;
+        }
+
+
+        public IEndpointSpec SessionKeeperFactory<TUserId>()
+        {
+            sessionKeeperFactorySpec.Add(context => new SessionKeeperFactory<TUserId>(context.LoadSessionFactories()));
+            return this;
+        }
+
+
+        public IEndpointSpec SessionKeeperFactory<TUserId>(string name)
+        {
+            sessionKeeperFactorySpec.Add(name, context => new SessionKeeperFactory<TUserId>(context.LoadSessionFactories()));
+            return this;
+        }
+
+
+        public IEndpointSpec DefaultSessionConfigure(Action<ISessionKeeperSettingSpec> action)
+        {
+            action.Invoke(defaultSessionKeeperSetting);
+            return this;
+        }
+
+
+        public IEndpointSpec CustomSessionConfigure(Action<ISessionKeeperSettingSpec> action)
+        {
+            customSessionKeeperSettingSpecs.AddSpec(action);
+            return this;
+        }
+
+
+        public IEndpointSpec CustomSessionConfigure(string name, Action<ISessionKeeperSettingSpec> action)
+        {
+            customSessionKeeperSettingSpecs.AddSpec(name, action);
+            return this;
+        }
+
+
+        public IEndpointSpec SessionKeeperFactoryConfigure(Action<IUnitCollectionSpec<ISessionKeeperFactory, IEndpointUnitContext>> action)
+        {
+            action.Invoke(sessionKeeperFactorySpec);
+            return this;
+        }
+
+
+
+        public ISessionKeeperSetting LoadDefaultSessionKeeperSetting()
+        {
+            return defaultSessionKeeperSetting.Load(this, UnitContainer);
+        }
+
+
+        public IList<ISessionKeeperSetting> LoadCustomSessionKeeperSettings()
+        {
+            return customSessionKeeperSettingSpecs.Load(this, UnitContainer);
+        }
+
+
+        public IDictionary<string, ISessionKeeperFactory> LoadSessionKeeperFactories()
+        {
+            return sessionKeeperFactorySpec.LoadDictionary(this, UnitContainer);
+        }
+
+
+        public IDictionary<string, ISessionFactory> LoadSessionFactories()
+        {
+            return sessionFactorySpec.LoadDictionary(this, UnitContainer);
+        }
+
+
+        public IEndpointKeeperManager LoadEndpointKeeperManager()
+        {
+            return Load(this, UnitContainer);
+        }
+
+
+        public static ISessionKeeperSetting DefaultSessionKeeperSetting(IEndpointUnitContext context)
+        {
+            return new SessionKeeperSetting {
+                Name = "default"
+            };
+        }
+
+
+        public static IEndpointKeeperManager DefaultEndpointKeeperManager(IEndpointUnitContext context)
+        {
+            return new EndpointKeeperManager(
+                context.LoadDefaultSessionKeeperSetting(),
+                context.LoadCustomSessionKeeperSettings(),
+                context.LoadSessionKeeperFactories());
+        }
+    }
+}

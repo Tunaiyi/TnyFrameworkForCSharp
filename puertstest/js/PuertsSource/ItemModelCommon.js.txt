@@ -1,0 +1,52 @@
+///
+///ItemModel通用
+///
+
+const CS = require('csharp');
+
+const GameColliderInfo = CS.GF.Game.GameColliderInfo;
+const Ability = CS.GF.Game.Ability;
+const SkillTrickInfo = CS.GF.Game.SkillTrickInfo;
+const SkillTrickMotionInfo = CS.GF.Game.SkillTrickMotionInfo;
+const SkillTrickEffectInfo = CS.GF.Game.SkillTrickEffectInfo;
+
+exports.NewColliderInfo = (id, offset, needRotate)=>{
+    let info = new GameColliderInfo();
+    info._modelId = id;
+    info._offset = offset;
+    info._needRotate = needRotate;
+    return info;
+}
+
+exports.NewAbility = (type, value)=>{
+    let ability = new Ability();
+    ability._type = type;
+    if (typeof(value) === 'function') {
+        ability._valueFunc = value.toString();
+    } else {
+        ability._value = value;
+    }
+    return ability;
+}
+
+
+exports.NewTrickInfo = (id, interval)=>{
+    let info = new SkillTrickInfo();
+    info._id = id;
+    info._interval = interval;
+    return info;
+}
+
+exports.NewMotionInfo = (type, releasePoint)=>{
+    let info = new SkillTrickMotionInfo();
+    info._motionType = type;
+    info._releasePoint = releasePoint;
+    return info;
+}
+
+exports.NewEffectInfo = (name, releasePoint)=>{
+    let info = new SkillTrickEffectInfo();
+    info._effectName = name;
+    info._releasePoint = releasePoint;
+    return info;
+}

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net47;net471;net472;net48;netstandard2.0</TargetFrameworks>
+        <Configurations>Debug;Release;Debug.Local</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug.Local' ">
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
+      <ProjectReference Include="..\TnyFramework.DI.Attributes\TnyFramework.DI.Attributes.csproj" />
+    </ItemGroup>
+
+    <Target Name="PostPackNugetDeploy" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug.Local'">
+        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source /$(MSBuildProjectDirectoryNoRoot)/../Nuget" />
+    </Target>
+
+</Project>

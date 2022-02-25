@@ -1,0 +1,64 @@
+const CS = require('csharp');
+
+const Common = require('PuertsSource/ItemModelCommon');
+
+const Model = CS.GF.Game.SkillModel;
+
+exports.Models = {
+    GetModel_1003000000:function(){
+        let m = new Model();
+        m._id = 1003000000;
+        m._alias = "SkillModel_1003000000";
+        m._name = "野蛮人普通攻击";
+        m._type = "ACTIVE";
+        m._AddTrick(Common.NewTrickInfo(1005000000, 1500));
+        m._AddTrick(Common.NewTrickInfo(1005000001, 1500));
+        m._AddTrick(Common.NewTrickInfo(1005000002, 1500));
+        return m;
+    },
+    GetModel_1003000001:function(){
+        let m = new Model();
+        m._id = 1003000001;
+        m._alias = "SkillModel_1003000001";
+        m._name = "冲锋";
+        m._type = "ACTIVE";
+        m._AddTrick(Common.NewTrickInfo(1005000003, 0));
+        return m;
+    },
+    GetModel_1003000002:function(){
+        let m = new Model();
+        m._id = 1003000002;
+        m._alias = "SkillModel_1003000002";
+        m._name = "旋风斩";
+        m._type = "ACTIVE";
+        m._AddTrick(Common.NewTrickInfo(1005000004, 0));
+        return m;
+    },
+    GetModel_1003000003:function(){
+        let m = new Model();
+        m._id = 1003000003;
+        m._alias = "SkillModel_1003000003";
+        m._name = "野蛮护甲";
+        m._type = "ACTIVE";
+        m._AddTrick(Common.NewTrickInfo(1005000005, 0));
+        return m;
+    },
+    GetModel_1003000004:function(){
+        let m = new Model();
+        m._id = 1003000004;
+        m._alias = "SkillModel_1003000004";
+        m._name = "怒气爆发";
+        m._type = "ACTIVE";
+        m._AddTrick(Common.NewTrickInfo(1005000006, 0));
+        return m;
+    },
+    GetModel_1003000013:function(){
+        let m = new Model();
+        m._id = 1003000013;
+        m._alias = "SkillModel_1003000013";
+        m._name = "怪物普通攻击";
+        m._type = "ACTIVE";
+        m._AddTrick(Common.NewTrickInfo(1005000013, 0));
+        return m;
+    },
+};

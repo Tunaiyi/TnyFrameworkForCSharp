@@ -10,14 +10,31 @@ using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Exception;
-using TnyFramework.Net.DotNetty.Message;
 using TnyFramework.Net.DotNetty.Transport;
+using TnyFramework.Net.Transport;
 
 
 namespace TnyFramework.Net.DotNetty.Bootstrap
 {
-    public class NettyServerGuide
+    public interface INettyServerGuide : INetServer
+    {
+        /// <summary>
+        /// 打开监听
+        /// </summary>
+        Task Open();
+
+
+        /// <summary>
+        /// 关闭监听
+        /// </summary>
+        Task Close();
+
+
+    }
+
+    public class NettyServerGuide : INettyServerGuide
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NettyServerGuide>();
 
@@ -28,9 +45,9 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         private readonly NettyMessageHandler messageHandler = new NettyMessageHandler();
 
-        private readonly IMessageFactory messageFactory;
+        private readonly IIdGenerator idGenerator = new AutoIncrementIdGenerator();
 
-        private readonly IChannelMaker<IChannel> channelMaker;
+        private readonly IChannelMaker channelMaker;
 
         private volatile ConcurrentDictionary<string, IChannel> channels = new ConcurrentDictionary<string, IChannel>();
 
@@ -38,27 +55,32 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         private IEventLoopGroup workerGroup;
 
-        private readonly ServerSettings settings;
+        private readonly IServerSetting setting;
+
+        private readonly INettyTunnelFactory tunnelFactory;
+
+        private readonly INetworkContext context;
 
         private int status = STATUS_STOP;
 
-        private IOnMessage onMessage;
 
 
-        public NettyServerGuide(ServerSettings settings, IMessageFactory messageFactory, IOnMessage onMessage,
-            IChannelMaker<IChannel> channelMaker)
+        public NettyServerGuide(IServerSetting setting, INettyTunnelFactory tunnelFactory,
+            INetworkContext context, IChannelMaker channelMaker)
         {
-            this.onMessage = onMessage;
+            this.tunnelFactory = tunnelFactory;
+            this.context = context;
             this.channelMaker = channelMaker;
-            this.messageFactory = messageFactory;
-            this.settings = settings;
+            this.setting = setting;
         }
 
 
         /// <summary>
         /// 服务名
         /// </summary>
-        public string Name => settings.Name;
+        public string Name => setting.Name;
+
+        public IServerSetting Setting => setting;
 
 
         /// <summary>
@@ -71,8 +93,14 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 await Task.FromException(new NetException($"#NettyServer 状态为 {current} 错误"));
             if (Interlocked.CompareExchange(ref status, STATUS_START, current) == current)
             {
-                await Bind(settings.Host, settings.Port);
+                await Bind(setting.Host, setting.Port);
             }
+        }
+
+
+        public bool IsOpen()
+        {
+            return channels.Values.Any(channel => channel.Active);
         }
 
 
@@ -96,6 +124,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
 
 
+
         private async Task Bind(string host, int port)
         {
             var addressString = ToAddressString(host, port);
@@ -103,7 +132,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             {
                 await exist.CloseAsync();
             }
-
 
             LOGGER.LogInformation("#NettyServer [ {} ] | 正在打开监听{}:{}", Name, host, port);
             if (IPAddress.Loopback != null)
@@ -132,7 +160,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
         private ServerBootstrap Bootstrap()
         {
             var bootstrap = new ServerBootstrap();
-            if (settings.IsLibuv)
+            if (setting.Libuv)
             {
                 var dispatcher = new DispatcherEventLoopGroup();
                 bossGroup = dispatcher;
@@ -151,12 +179,20 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 .ChildOption(ChannelOption.SoKeepalive, true)
                 .ChildOption(ChannelOption.TcpNodelay, true)
                 .ChildHandler(new ActionChannelInitializer<IChannel>(channel => {
-                    channelMaker?.InitChannel(channel);
-                    channel.Pipeline.AddLast("MessageHandler", messageHandler);
-                    var tunnel = new NettyTunnel(channel, messageFactory) {
-                        OnMessage = onMessage
-                    };
-                    tunnel.Open();
+                    try
+                    {
+                        channelMaker?.InitChannel(channel);
+                        channel.Pipeline.AddLast("MessageHandler", messageHandler);
+                        var id = idGenerator.Generate();
+                        var tunnel = tunnelFactory.Create(id, channel, context);
+                        tunnel.Open();
+                    } catch (System.Exception e)
+                    {
+                        LOGGER.LogError(e, $"create {channel} channel exception");
+                        channel.CloseAsync();
+                        throw;
+                    }
+
                 }));
             return bootstrap;
         }

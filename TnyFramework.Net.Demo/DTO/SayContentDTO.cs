@@ -17,6 +17,18 @@ namespace TnyFramework.Net.Demo.DTO
 
         [ProtoMember(2)]
         public string message;
+
+
+        public SayContentDTO()
+        {
+        }
+
+
+        public SayContentDTO(long userId, string message)
+        {
+            this.userId = userId;
+            this.message = message;
+        }
     }
 
     public static partial class DTOOutline

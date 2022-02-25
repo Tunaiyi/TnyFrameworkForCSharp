@@ -1,0 +1,75 @@
+using TnyFramework.DI.Units;
+using TnyFramework.Net.Base;
+namespace TnyFramework.Net.DotNetty.Configuration.Guide
+{
+    public class ServerSettingSpec : UnitSpec<IServerSetting, object>, IServerSettingSpec
+    {
+        private ServerSetting Setting { get; } = new ServerSetting();
+
+
+        public ServerSettingSpec(string unitName = "") : base(unitName)
+        {
+            Default(_ => Setting);
+        }
+
+
+        /// <summary>
+        /// 设置服务名
+        /// </summary>
+        /// <param name="value">服务名</param>
+        /// <returns></returns>
+        public ServerSettingSpec ServiceName(string value)
+        {
+            Setting.Name = value;
+            return this;
+        }
+
+
+        /// <summary>
+        /// 设置服务发现名
+        /// </summary>
+        /// <param name="value">服务发现名</param>
+        /// <returns></returns>
+        public ServerSettingSpec ServeName(string value)
+        {
+            Setting.ServeName = value;
+            return this;
+        }
+
+
+        /// <summary>
+        /// 设置主机名(域名/IP)
+        /// </summary>
+        /// <param name="value">域名</param>
+        /// <returns></returns>
+        public ServerSettingSpec Host(string value)
+        {
+            Setting.Host = value;
+            return this;
+        }
+
+
+        /// <summary>
+        /// 设置端口
+        /// </summary>
+        /// <param name="port"></param>
+        /// <returns></returns>
+        public ServerSettingSpec Port(int port)
+        {
+            Setting.Port = port;
+            return this;
+        }
+
+
+        /// <summary>
+        /// 是否使用 Libuv
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public ServerSettingSpec Libuv(bool value)
+        {
+            Setting.Libuv = value;
+            return this;
+        }
+    }
+}

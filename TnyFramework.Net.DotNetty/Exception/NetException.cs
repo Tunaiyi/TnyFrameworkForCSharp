@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using TnyFramework.Common.Exception;
 namespace TnyFramework.Net.DotNetty.Exception
 {
