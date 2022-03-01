@@ -70,6 +70,7 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
             logger.LogInformation("{}(s{})[{}|{}] closed", appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
             foreach (var server in application.Servers)
             {
+
                 try
                 {
                     logger.LogInformation("[{}] DeregisterInstance", server.Name);
@@ -83,6 +84,7 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
             }
             logger.LogInformation("{}(s{})[{}|{}] DeregisterInstance",
                 appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
+            await application.Close();
         }
     }
 }

@@ -1,8 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>TnyFramework.Net.Cloud</RootNamespace>
         <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+        <Configurations>Debug;Release;Debug.Local</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug.Local' ">
+        <DebugSymbols>true</DebugSymbols>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,4 +22,7 @@
       <ProjectReference Include="..\TnyFramework.Net\TnyFramework.Net.csproj" />
     </ItemGroup>
 
+    <Target Name="PostPackNugetDeploy" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug.Local'">
+        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source /$(MSBuildProjectDirectoryNoRoot)/../Nuget" />
+    </Target>
 </Project>

@@ -1,7 +1,10 @@
 using System;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TnyFramework.Common.Exception;
+using TnyFramework.DI.Container;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.Rpc.Auth;
@@ -29,6 +32,12 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
         }
 
 
+        public static IHostBuilder UseNoopServerDiscovery<TUserId>(this IHostBuilder builder)
+        {
+            return builder.ConfigureServices((_, services) => { services.AddSingletonUnit<NoopServerDiscoveryService>(); });
+        }
+
+
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
             Action<INetServerGuideSpec<IRpcLinkerId>> serverGuideSpec, Action<INettyServerConfiguration> configure)
         {
@@ -50,6 +59,7 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
                             .Locale(options.Locale);
                     })
                     .Initialize();
+                services.AddHostedService<NetHostedService>();
                 configure?.Invoke(serverConfiguration);
             });
             return builder;

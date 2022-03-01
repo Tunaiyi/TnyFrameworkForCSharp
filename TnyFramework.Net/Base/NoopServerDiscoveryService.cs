@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 namespace TnyFramework.Net.Base
 {
-    public class NoopNetServerDiscoveryService : INetServerDiscoveryService
+    public class NoopServerDiscoveryService : INetServerDiscoveryService
     {
         public Task RegisterInstance(INetApplication netApplication, INetServer server)
         {

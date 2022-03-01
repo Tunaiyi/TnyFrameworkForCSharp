@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Nacos.AspNetCore.V2;
 using Nacos.V2;
 using Nacos.V2.Naming.Core;
@@ -32,11 +33,12 @@ namespace TnyFramework.Net.Cloud
         private readonly NacosAspNetOptions aspNetOptions;
 
 
-        public NacosServerDiscoveryService(INacosNamingService namingService, NacosAspNetOptions aspNetOptions,
+        public NacosServerDiscoveryService(INacosNamingService namingService,
+            IOptionsMonitor<NacosAspNetOptions> aspNetOptions,
             ILogger<NacosServerDiscoveryService> logger)
         {
             this.namingService = namingService;
-            this.aspNetOptions = aspNetOptions;
+            this.aspNetOptions = aspNetOptions.CurrentValue;
             this.logger = logger;
         }
 
@@ -75,7 +77,10 @@ namespace TnyFramework.Net.Cloud
                 var times = i + 1;
                 try
                 {
-                    await namingService.DeregisterInstance(setting.ServiceName(), aspNetOptions.GroupName, GetIp(setting), GetPort(setting));
+                    await namingService
+                        .DeregisterInstance(setting.ServiceName(), aspNetOptions.GroupName, GetIp(setting), GetPort(setting),
+                            aspNetOptions.ClusterName)
+                        .ConfigureAwait(false);
                     exception = null;
                     break;
                 } catch (Exception ex)
@@ -96,7 +101,7 @@ namespace TnyFramework.Net.Cloud
             {
                 host = setting.Host;
             }
-            if (!host.IsBlank() && (host == "0.0.0.0" || host == "*"))
+            if (!host.IsBlank() && host != "0.0.0.0" && host != "*")
                 return host;
             var name = Dns.GetHostName();
             var ipAddresses = Dns.GetHostAddresses(name);
@@ -125,9 +130,9 @@ namespace TnyFramework.Net.Cloud
         private Instance CreateInstance(INetApplication netApplication, INetServer server)
         {
             var metadata = new Dictionary<string, string> {
-                { PreservedMetadataKeys.REGISTER_SOURCE, "ASPNET_CORE" },
-                { METADATA_NET_VERSION, Environment.Version.ToString() },
-                { METADATA_HOST_OS, Environment.OSVersion.ToString() },
+                {PreservedMetadataKeys.REGISTER_SOURCE, "ASPNET_CORE"},
+                {METADATA_NET_VERSION, Environment.Version.ToString()},
+                {METADATA_HOST_OS, Environment.OSVersion.ToString()},
             };
             foreach (var (key, value) in aspNetOptions.Metadata)
             {

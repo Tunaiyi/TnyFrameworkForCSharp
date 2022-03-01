@@ -30,8 +30,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
         /// 关闭监听
         /// </summary>
         Task Close();
-
-
     }
 
     public class NettyServerGuide : INettyServerGuide
@@ -50,6 +48,8 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
         private readonly IChannelMaker channelMaker;
 
         private volatile ConcurrentDictionary<string, IChannel> channels = new ConcurrentDictionary<string, IChannel>();
+
+        private ServerBootstrap bootstrap;
 
         private IEventLoopGroup bossGroup;
 
@@ -119,6 +119,9 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 var closeTasks = closeChannels.Values.Select(channel => channel.CloseAsync()).ToList();
                 await Task.WhenAll(closeTasks);
                 Interlocked.Exchange(ref status, STATUS_CLOSE);
+                await Task.WhenAll(
+                    bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
+                    workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
             }
         }
 
@@ -144,7 +147,11 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 {
                     address = IPAddress.Parse(host);
                 }
-                var newChannel = await Bootstrap().BindAsync(new IPEndPoint(address, port));
+                if (bootstrap == null)
+                {
+                    bootstrap = Bootstrap();
+                }
+                var newChannel = await bootstrap.BindAsync(new IPEndPoint(address, port));
                 if (newChannel != null)
                 {
                     channels.TryAdd(addressString, newChannel);

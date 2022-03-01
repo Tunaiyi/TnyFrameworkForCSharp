@@ -111,27 +111,28 @@ namespace puertstest
             // await initCoroutine.Run(() => {
             Console.WriteLine($"initCoroutine === ManagedThreadId : {Thread.CurrentThread.ManagedThreadId}-{Thread.CurrentThread.Name}");
             Console.WriteLine(Directory.GetCurrentDirectory());
-            itemService.Init();
+            itemService.Init(true);
             ItemModels.Ins.Provider = itemService;
             Console.WriteLine($"initCoroutine === ManagedThreadId : {Thread.CurrentThread.ManagedThreadId}-{Thread.CurrentThread.Name}");
             // });
             await Task.Yield();
 
+            const long roomId = 94649259453920008L;
+            const int playerId = 111968;
             // await coroutine.Exec(async () => {
             Console.WriteLine($"redis == ManagedThreadId : {Thread.CurrentThread.ManagedThreadId}-{Thread.CurrentThread.Name}");
             var redis = await ConnectionMultiplexer.ConnectAsync("127.0.0.1:6379", options => { options.Password = "tNbrH3NSErGd"; });
             var database = redis.GetDatabase(5);
-            var values = database.SortedSetRangeByRank(new RedisKey("R2:WS:frames:{166706853491835068}"));
+            var values = database.SortedSetRangeByRank(new RedisKey($"R2:WS:frames:{{{roomId}}}"));
 
             var snaps = new NetLockStepSnaps();
-            const int playerId = 84331;
-            var gamerIds = new List<long> { playerId };
+            var gamerIds = new List<long> {playerId};
             Console.WriteLine($"create snap == ManagedThreadId : {Thread.CurrentThread.ManagedThreadId}-{Thread.CurrentThread.Name}");
 
-            snaps.JoinRoom(166706853491835068L, 0, 0);
+            snaps.JoinRoom(roomId, 0, 0);
             foreach (var redisValue in values)
             {
-                var bytes = (byte[])redisValue.Box();
+                var bytes = (byte[]) redisValue.Box();
                 using (var stream = new MemoryStream(bytes))
                 {
                     var frameData = new RelayFrameData();
@@ -162,7 +163,7 @@ namespace puertstest
             Console.WriteLine($"run 2 == ManagedThreadId : {Thread.CurrentThread.ManagedThreadId}-{Thread.CurrentThread.Name}");
 
             var worlds = Worlds.Ins;
-            var data = new WorldOriginalDTO(166706853491835068L, WorldType.DEFAULT_1, playerId, gamerIds);
+            var data = new WorldOriginalDTO(roomId, WorldType.DEFAULT_1, playerId, gamerIds);
             worlds.CreateWorld(data);
 
             totalStopwatch.Restart();

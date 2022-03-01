@@ -1,7 +1,9 @@
 using System;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TnyFramework.Common.Exception;
+using TnyFramework.DI.Container;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 namespace TnyFramework.Net.DotNetty.AspNetCore
@@ -51,6 +53,7 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
                         serverGuideSpec?.Invoke(spec);
                     })
                     .Initialize();
+                services.AddHostedService<NetHostedService>();
                 configure?.Invoke(serverConfiguration);
             });
             return builder;
