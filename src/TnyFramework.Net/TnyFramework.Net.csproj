@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net47;net471;net472;net48;netstandard2.0</TargetFrameworks>
+        <Configurations>Debug;Release</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
+        <ProjectReference Include="..\TnyFramework.Coroutines\TnyFramework.Coroutines.csproj" />
+        <ProjectReference Include="..\TnyFramework.DI\TnyFramework.DI.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="DotNetty.Buffers" Version="0.7.0" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <NugetDebugOutputDirectory>\$(MSBuildProjectDirectoryNoRoot)\..\..\Nuget\Debug</NugetDebugOutputDirectory>
+        <NugetReleaseOutputDirectory>\$(MSBuildProjectDirectoryNoRoot)\..\..\Nuget\Release</NugetReleaseOutputDirectory>
+    </PropertyGroup>
+
+    <Target Name="LoaclInstallReleasePackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">
+        <MakeDir Directories="$(NugetReleaseOutputDirectory)" />
+        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetReleaseOutputDirectory)" />
+    </Target>
+
+    <Target Name="LoaclInstallDebugPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug'">
+        <MakeDir Directories="$(NugetDebugOutputDirectory)" />
+        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetDebugOutputDirectory)" />
+    </Target>
+</Project>
