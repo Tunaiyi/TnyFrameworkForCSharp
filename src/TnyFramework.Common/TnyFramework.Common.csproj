@@ -13,8 +13,8 @@
     </ItemGroup>
 
     <PropertyGroup>
-        <NugetDebugOutputDirectory>\$(MSBuildProjectDirectoryNoRoot)\..\..\Nuget\Debug</NugetDebugOutputDirectory>
-        <NugetReleaseOutputDirectory>\$(MSBuildProjectDirectoryNoRoot)\..\..\Nuget\Release</NugetReleaseOutputDirectory>
+        <NugetDebugOutputDirectory>$(MSBuildProjectDirectory)\..\..\Nuget\Debug</NugetDebugOutputDirectory>
+        <NugetReleaseOutputDirectory>$(MSBuildProjectDirectory)\..\..\Nuget\Release</NugetReleaseOutputDirectory>
     </PropertyGroup>
 
     <Target Name="LoaclInstallReleasePackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">

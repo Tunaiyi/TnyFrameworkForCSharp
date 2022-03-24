@@ -1,3 +1,5 @@
+#region
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -8,8 +10,12 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Transport;
+
+#endregion
+
 namespace TnyFramework.Net.Endpoint
 {
+
     public class TaskResponseSourceMonitor
     {
         private const long PERIOD = 100;
@@ -21,11 +27,25 @@ namespace TnyFramework.Net.Endpoint
         private static readonly ConcurrentDictionary<object, TaskResponseSourceMonitor> MONITORS_MAP =
             new ConcurrentDictionary<object, TaskResponseSourceMonitor>();
 
-        private static volatile bool _RUNNING = false;
+        private static volatile bool _RUNNING = true;
 
         private volatile bool close = false;
 
         private volatile ConcurrentDictionary<long, TaskResponseSource> responseSources;
+
+
+        static TaskResponseSourceMonitor()
+        {
+            COROUTINE.Exec(async () => {
+                while (_RUNNING)
+                {
+                    ClearTimeoutFuture();
+                    await Task.Delay(TimeSpan.FromMilliseconds(PERIOD));
+                }
+            });
+            Process.GetCurrentProcess().Exited += (e, args) => _RUNNING = false;
+        }
+
 
         private ConcurrentDictionary<long, TaskResponseSource> ResponseSources {
             get {
@@ -66,19 +86,6 @@ namespace TnyFramework.Net.Endpoint
             {
                 monitor.Close();
             }
-        }
-
-
-        static TaskResponseSourceMonitor()
-        {
-            COROUTINE.Exec(async () => {
-                while (_RUNNING)
-                {
-                    ClearTimeoutFuture();
-                    await Task.Delay(TimeSpan.FromMilliseconds(PERIOD));
-                }
-            });
-            Process.GetCurrentProcess().Exited += (e, args) => _RUNNING = false;
         }
 
 
@@ -197,4 +204,5 @@ namespace TnyFramework.Net.Endpoint
             }
         }
     }
+
 }

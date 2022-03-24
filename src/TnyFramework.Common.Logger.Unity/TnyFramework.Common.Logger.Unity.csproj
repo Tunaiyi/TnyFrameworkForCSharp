@@ -19,8 +19,8 @@
     </ItemGroup>
 
     <PropertyGroup>
-        <NugetDebugOutputDirectory>\$(MSBuildProjectDirectoryNoRoot)\..\..\Nuget\Debug</NugetDebugOutputDirectory>
-        <NugetReleaseOutputDirectory>\$(MSBuildProjectDirectoryNoRoot)\..\..\Nuget\Release</NugetReleaseOutputDirectory>
+        <NugetDebugOutputDirectory>$(MSBuildProjectDirectory)\..\..\Nuget\Debug</NugetDebugOutputDirectory>
+        <NugetReleaseOutputDirectory>$(MSBuildProjectDirectory)\..\..\Nuget\Release</NugetReleaseOutputDirectory>
     </PropertyGroup>
 
     <Target Name="LoaclInstallReleasePackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">
@@ -32,4 +32,5 @@
         <MakeDir Directories="$(NugetDebugOutputDirectory)"/>
         <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetDebugOutputDirectory)" />
     </Target>
+    
 </Project>
