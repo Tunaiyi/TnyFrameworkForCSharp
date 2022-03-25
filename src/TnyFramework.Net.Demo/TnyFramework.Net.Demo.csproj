@@ -4,7 +4,7 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <OutputType>Exe</OutputType>
         <TargetFramework>netcoreapp3.1</TargetFramework>
-        <Configurations>Debug;Release</Configurations>
+        <Configurations>Debug;Release;Publish</Configurations>
         <Platforms>AnyCPU</Platforms>
     </PropertyGroup>
 

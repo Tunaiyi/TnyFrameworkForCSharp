@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
-        <Configurations>Debug;Release</Configurations>
+        <Configurations>Debug;Release;Publish</Configurations>
         <Platforms>AnyCPU</Platforms>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -17,18 +17,4 @@
       <ProjectReference Include="..\TnyFramework.Net.DotNetty.Configuration\TnyFramework.Net.DotNetty.Configuration.csproj" />
     </ItemGroup>
 
-    <PropertyGroup>
-        <NugetDebugOutputDirectory>$(MSBuildProjectDirectory)\..\..\Nuget\Debug</NugetDebugOutputDirectory>
-        <NugetReleaseOutputDirectory>$(MSBuildProjectDirectory)\..\..\Nuget\Release</NugetReleaseOutputDirectory>
-    </PropertyGroup>
-
-    <Target Name="LoaclInstallReleasePackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release'">
-        <MakeDir Directories="$(NugetReleaseOutputDirectory)"/>
-        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetReleaseOutputDirectory)" />
-    </Target>
-
-    <Target Name="LoaclInstallDebugPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug'">
-        <MakeDir Directories="$(NugetDebugOutputDirectory)"/>
-        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetDebugOutputDirectory)" />
-    </Target>
 </Project>

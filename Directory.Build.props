@@ -1,5 +1,34 @@
 <Project>
     <PropertyGroup>
-        <PackageVersion>1.0.0</PackageVersion>
+        <PackageVersion>5.1.0-x</PackageVersion>
     </PropertyGroup>
+
+    <PropertyGroup>
+        <NugetRemoteUrl>https://m2.tunaiyi.com/repository/nuget-hosted/</NugetRemoteUrl>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition=" '$(Configuration)' == 'Publish' ">
+        <Optimize>true</Optimize>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <NugetDebugOutputDirectory>$(MSBuildProjectDirectory)\..\..\Nuget\Debug</NugetDebugOutputDirectory>
+        <NugetReleaseOutputDirectory>$(MSBuildProjectDirectory)\..\..\Nuget\Release</NugetReleaseOutputDirectory>
+    </PropertyGroup>
+
+    <Target Name="LoaclInstallReleasePackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release' And '$(OutputType)' == 'Library'">
+        <MakeDir Directories="$(NugetReleaseOutputDirectory)" />
+        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetReleaseOutputDirectory)" />
+    </Target>
+
+    <Target Name="LoaclInstallDebugPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug' And '$(OutputType)' == 'Library'">
+        <MakeDir Directories="$(NugetDebugOutputDirectory)" />
+        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetDebugOutputDirectory)" />
+    </Target>
+
+    <Target Name="LoaclInstallPublishPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">
+        <Message Text="Push To $(NugetRemoteUrl)"/>
+        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetRemoteUrl)" />
+    </Target>
+    
 </Project>
