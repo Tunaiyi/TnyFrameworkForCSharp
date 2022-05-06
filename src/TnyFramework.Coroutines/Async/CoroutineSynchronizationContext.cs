@@ -120,7 +120,7 @@ namespace TnyFramework.Coroutines.Async
             } catch (System.Exception e)
             {
                 var thread = Thread.CurrentThread;
-                LOGGER.LogError(e, "ThreadName {} - {} Run exception", thread.Name, thread.ManagedThreadId);
+                LOGGER.LogError(e, "ThreadName {TName} - {TId} Run exception", thread.Name, thread.ManagedThreadId);
             } finally
             {
                 awaitHandler?.Set();

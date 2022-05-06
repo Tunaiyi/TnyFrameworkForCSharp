@@ -49,7 +49,7 @@ namespace TnyFramework.Net.Transport
             var transporter = Transporter;
             if (transporter != null && transporter.IsActive())
                 return true;
-            logger.LogWarning("open failed. channel {} is not active", transporter);
+            logger.LogWarning("open failed. channel {Transporter} is not active", transporter);
             return false;
         }
     }

@@ -93,13 +93,13 @@ namespace TnyFramework.Net.Endpoint
             if (existSession == null)
             {
                 // 旧 session 失效
-                SessionKeeper.LOGGER.LogWarning("旧session {} 已经丢失", newTunnel.GetUserId());
+                SessionKeeper.LOGGER.LogWarning("旧session {User} 已经丢失", newTunnel.GetUserId());
                 throw new ValidatorFailException(NetResultCode.SESSION_LOSS_ERROR);
             }
             if (existSession.IsClosed())
             {
                 // 旧 session 已经关闭(失效)
-                SessionKeeper.LOGGER.LogWarning("旧session {} 已经关闭", existSession);
+                SessionKeeper.LOGGER.LogWarning("旧session {Session} 已经关闭", existSession);
                 throw new ValidatorFailException(NetResultCode.SESSION_LOSS_ERROR);
             }
 
@@ -121,7 +121,7 @@ namespace TnyFramework.Net.Endpoint
                 // 判断新授权是否比原有授权时间早, 如果是则无法登录
                 if (!certificate.IsSameCertificate(oldCert) && certificate.IsOlderThan(oldCert))
                 {
-                    SessionKeeper.LOGGER.LogWarning("认证已过 {}", certificate);
+                    SessionKeeper.LOGGER.LogWarning("认证已过 {Cer}", certificate);
                     throw new ValidatorFailException(NetResultCode.INVALID_CERTIFICATE_ERROR);
                 }
             }
@@ -172,11 +172,11 @@ namespace TnyFramework.Net.Endpoint
                     ISession closeSession = null;
                     if (session.IsClosed())
                     {
-                        logger.LogInformation("移除已关闭的 OfflineSession userId : {}", session.GetUserId());
+                        logger.LogInformation("移除已关闭的 OfflineSession userId : {User}", session.GetUserId());
                         closeSession = session;
                     } else if (session.IsOnline() && session.OfflineTime + setting.OfflineCloseDelay < now)
                     {
-                        logger.LogInformation("移除下线超时的 OfflineSession userId : {}", session.GetUserId());
+                        logger.LogInformation("移除下线超时的 OfflineSession userId : {User}", session.GetUserId());
                         session.Close();
                         if (session.IsClosed())
                         {
@@ -189,7 +189,7 @@ namespace TnyFramework.Net.Endpoint
                     offlineSessionQueue.TryRemove(closeSession, out _);
                 } catch (Exception e)
                 {
-                    logger.LogError(e, "clear {} invalided session exception", session.GetUserId());
+                    logger.LogError(e, "clear {User} invalided session exception", session.GetUserId());
                 }
             }
             // TODO LRU 算法移除多余的 session

@@ -140,10 +140,10 @@ namespace TnyFramework.Net.DotNetty.Codec
                 // 读取废字节中的 bodyBytes
                 bodyBuffer = inBuffer.Allocator.HeapBuffer(bodyLength);
 
-                LOGGER.LogDebug("in payloadIndex start {}", inBuffer.ReaderIndex);
+                LOGGER.LogDebug("in payloadIndex start {Index}", inBuffer.ReaderIndex);
                 inBuffer.ReadBytes(bodyBuffer, bodyLength);
 
-                LOGGER.LogDebug("in payloadIndex end {}", inBuffer.ReaderIndex);
+                LOGGER.LogDebug("in payloadIndex end {Index}", inBuffer.ReaderIndex);
                 // 加密
                 if (encryptEnable)
                 {

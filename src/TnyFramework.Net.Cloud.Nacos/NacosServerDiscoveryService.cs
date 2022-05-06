@@ -53,13 +53,13 @@ namespace TnyFramework.Net.Cloud.Nacos
                 var times = i + 1;
                 try
                 {
-                    logger.LogInformation("register instance to nacos server, 【{}】| times = {}", instance, times);
+                    logger.LogInformation("register instance to nacos server, 【{Ins}】| times = {Times}", instance, times);
                     await namingService.RegisterInstance(instance.ServiceName, aspNetOptions.GroupName, instance);
                     exception = null;
                     break;
                 } catch (Exception ex)
                 {
-                    logger.LogError(ex, "register instance 【{}】 error | times = {}", instance, times);
+                    logger.LogError(ex, "register instance 【{Ins}】 error | times = {Times}", instance, times);
                     exception = ex;
                 }
             }
@@ -86,7 +86,7 @@ namespace TnyFramework.Net.Cloud.Nacos
                     break;
                 } catch (Exception ex)
                 {
-                    logger.LogError(ex, "register instance 【{}】 error | times = {}", setting.ServiceName(), times);
+                    logger.LogError(ex, "register instance 【{Ins}】 error | times = {Times}", setting.ServiceName(), times);
                     exception = ex;
                 }
             }

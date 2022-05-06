@@ -234,7 +234,7 @@ namespace puertstest.World.Game
                     source.SetResult(model);
                 } catch (Exception e)
                 {
-                    LOGGER.LogError(e, "InitPuerts exe {} exception", script);
+                    LOGGER.LogError(e, "InitPuerts exe {Script} exception", script);
                     source.SetException(e);
                 }
             });

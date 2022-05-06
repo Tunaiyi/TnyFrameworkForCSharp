@@ -15,7 +15,7 @@ namespace TnyFramework.Coroutines.Async
         private static readonly ILogger LOGGER = LogFactory.Logger<DedicatedThreadPoolCoroutineExecutor>();
 
         private static readonly Action<System.Exception> DEFAULT_EXCEPTION_HANDLER = exception => {
-            LOGGER.LogWarning(exception, "CoroutineExecutor[{}] execute exception", Thread.CurrentThread.Name);
+            LOGGER.LogWarning(exception, "CoroutineExecutor[{TheadName}] execute exception", Thread.CurrentThread.Name);
         };
 
         private readonly DedicatedThreadPool threadPool;

@@ -49,11 +49,11 @@ namespace TnyFramework.Net.Demo
                     certId = 2000011
                 };
                 dto.message = $"{dto.userId} - {dto.certId} 登录成功 at {DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
-                LOGGER.LogInformation("will send Current thread {}", Thread.CurrentThread.ManagedThreadId);
-                var send = tunnel.Send(MessageContexts.Respond(DefaultResultCode.SUCCESS, message)
+                LOGGER.LogInformation("will send Current thread {ThreadId}", Thread.CurrentThread.ManagedThreadId);
+                var send = tunnel.Send(MessageContexts.Respond(ResultCode.SUCCESS, message)
                     .WithBody(dto));
                 await send.Written();
-                LOGGER.LogInformation("sent : Current thread {}", Thread.CurrentThread.ManagedThreadId);
+                LOGGER.LogInformation("sent : Current thread {ThreadId}", Thread.CurrentThread.ManagedThreadId);
             }
         }
 

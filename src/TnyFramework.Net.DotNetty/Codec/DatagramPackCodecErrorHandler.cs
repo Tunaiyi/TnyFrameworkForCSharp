@@ -48,7 +48,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                     channel.CloseAsync();
                 }
             }
-            logger.LogError(exception, "# Tunnel ({}) [{}] {}异常 {}", tunnel, channel, action, close ? ", 服务器主动关闭连接" : "");
+            logger.LogError(exception, "# Tunnel ({Tunnel}) [{Channel}] {Action}异常 {Msg}", tunnel, channel, action, close ? ", 服务器主动关闭连接" : "");
         }
     }
 }

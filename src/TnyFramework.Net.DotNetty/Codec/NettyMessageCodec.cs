@@ -40,7 +40,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                 return factory.Create(head, null);
             ByteBufferUtils.ReadVariant(buffer, out int length);
 
-            LOGGER.LogTrace("read {} body length {}", head, length);
+            LOGGER.LogTrace("read {Head} body length {Length}", head, length);
 
             var bodyBuff = buffer.Allocator.HeapBuffer(length);
             if (messageRelayStrategy.IsRelay(head))

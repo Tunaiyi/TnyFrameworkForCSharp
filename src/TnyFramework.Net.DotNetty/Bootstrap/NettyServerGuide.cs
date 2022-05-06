@@ -136,7 +136,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 await exist.CloseAsync();
             }
 
-            LOGGER.LogInformation("#NettyServer [ {} ] | 正在打开监听{}:{}", Name, host, port);
+            LOGGER.LogInformation("#NettyServer [ {Name} ] | 正在打开监听{Host}:{Port}", Name, host, port);
             if (IPAddress.Loopback != null)
             {
                 IPAddress address;
@@ -155,10 +155,10 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 if (newChannel != null)
                 {
                     channels.TryAdd(addressString, newChannel);
-                    LOGGER.LogInformation("#NettyServer [ {} ] | {}:{} 端口已监听", Name, host, port);
+                    LOGGER.LogInformation("#NettyServer [ {Name} ] | {Host}:{Port} 端口已监听", Name, host, port);
                 } else
                 {
-                    LOGGER.LogInformation("#NettyServer [ {} ] | {}:{} 端口监听失败", Name, host, port);
+                    LOGGER.LogInformation("#NettyServer [ {Name} ] | {Host}:{Port} 端口监听失败", Name, host, port);
                 }
             }
         }

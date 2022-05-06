@@ -1,3 +1,5 @@
+#region
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,8 +12,12 @@ using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Attributes;
 using TnyFramework.Net.Transport;
+
+#endregion
+
 namespace TnyFramework.Net.Dispatcher
 {
+
     public class ParamDescription
     {
         public AttributeHolder AttributeHolder { get; }
@@ -119,6 +125,11 @@ namespace TnyFramework.Net.Dispatcher
                                 throw new IllegalArgumentException(
                                     $"{typeof(MsgCodeAttribute)} 类型参数只能是 {typeof(IResultCode)} {typeof(int)} 无法为 {Type}");
                             }
+                        } else
+                        {
+                            Index = index;
+                            Mode = ParamMode.IndexParam;
+                            index++;
                         }
                     }
                 }
@@ -220,4 +231,5 @@ namespace TnyFramework.Net.Dispatcher
             return value;
         }
     }
+
 }

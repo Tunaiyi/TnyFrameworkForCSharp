@@ -282,13 +282,13 @@ namespace TnyFramework.Coroutines.Async
                 var remain = millisecondsTimeout - stopwatch.ElapsedMilliseconds;
                 if (remain <= 0)
                 {
-                    LOGGER.LogInformation("{} shutdown timeout !!! Pending {}", this, trackedCount);
+                    LOGGER.LogInformation("{Coroutine} shutdown timeout !!! Pending {Count}", this, trackedCount);
                     Interlocked.Exchange(ref status, (int) CoroutineStatus.Shutdown);
                     return false;
                 }
                 await Task.Delay((int) Math.Min(remain, 20L));
             }
-            LOGGER.LogInformation("{} shutdown success.  Pending {}", this, trackedCount);
+            LOGGER.LogInformation("{Coroutine} shutdown success.  Pending {Count}", this, trackedCount);
             Interlocked.Exchange(ref status, (int) CoroutineStatus.Shutdown);
             return true;
         }

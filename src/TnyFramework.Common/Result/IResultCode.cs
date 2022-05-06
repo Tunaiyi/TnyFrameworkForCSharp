@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using TnyFramework.Common.Enum;
+
 namespace TnyFramework.Common.Result
 {
+
     public interface IResultCode : IEnum
     {
         /// <summary>
@@ -44,11 +46,12 @@ namespace TnyFramework.Common.Result
 
 
 
-        protected static IResultCode Of(int id, string message, ResultLevel level = ResultLevel.General, Action<ResultCode> builder = null)
+        private static IResultCode Of(int id, string message, ResultLevel level = ResultLevel.General, Action<ResultCode> builder = null)
         {
             return E(id, it => {
                 it.Message = message;
                 it.Level = level;
+                builder?.Invoke(it);
             });
         }
 
@@ -85,8 +88,10 @@ namespace TnyFramework.Common.Result
     {
         protected static IResultCode Of(int id, string message, ResultLevel level = ResultLevel.General, Action<T> builder = null)
         {
-            var item = new T();
-            return E(id, item, it => { builder?.Invoke((T)it); });
+            return E(id, new T {
+                    Message = message,
+                    Level = level
+                }, it => { builder?.Invoke((T) it); });
         }
 
 
@@ -95,5 +100,23 @@ namespace TnyFramework.Common.Result
             CheckAndUpdateNames(typeof(T));
             return ENUMS;
         }
+        
+        public new static ResultCode ForId(int id)
+        {
+            CheckAndUpdateNames(typeof(T));
+            if (!ID_ENUM_MAP.TryGetValue(id, out var obj))
+                throw new ArgumentException("枚举ID不存在 -> " + id.ToString());
+            return obj;
+        }
+
+
+        public new static ResultCode ForName(string name)
+        {
+            CheckAndUpdateNames(typeof(T));
+            if (!NAME_ENUM_MAP.TryGetValue(name, out var obj))
+                throw new ArgumentException("枚举名称不存在 -> " + name);
+            return obj;
+        }
     }
+
 }

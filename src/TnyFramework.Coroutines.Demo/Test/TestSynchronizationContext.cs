@@ -50,7 +50,7 @@ namespace TnyFramework.Coroutines.Demo.Test
 
         public override SynchronizationContext CreateCopy()
         {
-            LOGGER.LogInformation("CreateCopy {}", Thread.CurrentThread.ManagedThreadId);
+            LOGGER.LogInformation("CreateCopy {TheadId}", Thread.CurrentThread.ManagedThreadId);
             return new TestSynchronizationContext(this.m_AsyncWorkQueue);
         }
 
@@ -58,20 +58,20 @@ namespace TnyFramework.Coroutines.Demo.Test
         public override void OperationStarted()
         {
             Interlocked.Increment(ref m_TrackedCount);
-            LOGGER.LogInformation("OperationStarted {}", Thread.CurrentThread.ManagedThreadId);
+            LOGGER.LogInformation("OperationStarted {ThreadId}", Thread.CurrentThread.ManagedThreadId);
         }
 
 
         public override void OperationCompleted()
         {
             Interlocked.Decrement(ref m_TrackedCount);
-            LOGGER.LogInformation("OperationCompleted {}", Thread.CurrentThread.ManagedThreadId);
+            LOGGER.LogInformation("OperationCompleted {ThreadId}", Thread.CurrentThread.ManagedThreadId);
         }
 
 
         public override void Post(SendOrPostCallback callback, object state)
         {
-            LOGGER.LogInformation("Post >> {} = {}", state, Thread.CurrentThread.ManagedThreadId);
+            LOGGER.LogInformation("Post >> {State} = {ThreadId}", state, Thread.CurrentThread.ManagedThreadId);
             lock (m_AsyncWorkQueue)
             {
                 m_AsyncWorkQueue.Add(new WorkRequest(callback, state));
@@ -81,7 +81,7 @@ namespace TnyFramework.Coroutines.Demo.Test
 
         public override void Send(SendOrPostCallback d, object state)
         {
-            LOGGER.LogInformation("Send {}", Thread.CurrentThread.ManagedThreadId);
+            LOGGER.LogInformation("Send {ThreadId}", Thread.CurrentThread.ManagedThreadId);
         }
 
 
@@ -120,7 +120,7 @@ namespace TnyFramework.Coroutines.Demo.Test
             // When you invoke work, remove it from the list to stop it being triggered again (case 1213602)
             while (m_CurrentFrameWork.Count > 0)
             {
-                LOGGER.LogInformation(message: "====== m_AsyncWorkQueue {}", m_CurrentFrameWork.Count);
+                LOGGER.LogInformation(message: "====== m_AsyncWorkQueue {Count}", m_CurrentFrameWork.Count);
                 var work = m_CurrentFrameWork[0];
                 m_CurrentFrameWork.RemoveAt(0);
                 work.Invoke();

@@ -41,7 +41,7 @@ namespace TnyFramework.DI.Extensions
                     var componentAttribute = type.GetCustomAttribute<ComponentAttribute>() ?? type.GetCustomAttribute<ServiceAttribute>();
                     if (componentAttribute != null)
                     {
-                        LOGGER.LogInformation("Add Component : {}", type);
+                        LOGGER.LogInformation("Add Component : {Type}", type);
                         var name = componentAttribute.Named() ? "" : componentAttribute.Name;
                         switch (componentAttribute.Mode)
                         {

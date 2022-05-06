@@ -123,7 +123,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
         public NettyServerConfiguration AddController<TController>() where TController : class, IController
         {
             UnitContainer.AddSingletonUnit<TController>();
-            LOGGER.LogInformation("AddController : {}", typeof(TController));
+            LOGGER.LogInformation("AddController : {Controller}", typeof(TController));
             return this;
         }
 
@@ -131,7 +131,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
         public NettyServerConfiguration AddController(IController controller)
         {
             UnitContainer.AddSingletonUnit(controller);
-            LOGGER.LogInformation("AddController : {}", controller.GetType());
+            LOGGER.LogInformation("AddController : {Controller}", controller.GetType());
             return this;
         }
 
@@ -146,7 +146,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
             where TController : IController
         {
             UnitContainer.AddSingletonUnit(factory);
-            LOGGER.LogInformation("AddController : {}", typeof(TController));
+            LOGGER.LogInformation("AddController : {Controller}", typeof(TController));
             return this;
         }
 
@@ -171,14 +171,14 @@ namespace TnyFramework.Net.DotNetty.Configuration
                     if (iControllerType.IsAssignableFrom(type))
                     {
                         UnitContainer.AddSingletonUnit(type);
-                        LOGGER.LogInformation("AddController : {}", type);
+                        LOGGER.LogInformation("AddController : {Controller}", type);
                         continue;
                     }
                     var rpcController = type.GetCustomAttribute(typeof(RpcControllerAttribute));
                     if (rpcController != null)
                     {
                         UnitContainer.AddSingletonUnit(type);
-                        LOGGER.LogInformation("AddController : {}", type);
+                        LOGGER.LogInformation("AddController : {Controller}", type);
                     }
                 }
             }

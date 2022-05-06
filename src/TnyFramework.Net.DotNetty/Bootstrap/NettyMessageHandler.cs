@@ -24,10 +24,10 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 var channel = context.Channel;
                 if (channel.Active)
                 {
-                    LOGGER.LogInformation("[Tunnel] 连接成功 ## 通道 {} ==> {}", channel.RemoteAddress, channel.LocalAddress);
+                    LOGGER.LogInformation("[Tunnel] 连接成功 ## 通道 {Remote} ==> {Local}", channel.RemoteAddress, channel.LocalAddress);
                 } else
                 {
-                    LOGGER.LogInformation("[Tunnel] 连接失败 ## 通道 {} ==> {}", channel.RemoteAddress, channel.LocalAddress);
+                    LOGGER.LogInformation("[Tunnel] 连接失败 ## 通道 {Remote} ==> {Local}", channel.RemoteAddress, channel.LocalAddress);
                 }
             }
             base.ChannelActive(context);
@@ -42,7 +42,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             {
                 if (LOGGER.IsEnabled(LogLevel.Information))
                 {
-                    LOGGER.LogInformation("[Tunnel] 断开链接 ## 通道 {} ==> {} 断开链接", channel.RemoteAddress, channel.LocalAddress);
+                    LOGGER.LogInformation("[Tunnel] 断开链接 ## 通道 {Remote} ==> {Local} 断开链接", channel.RemoteAddress, channel.LocalAddress);
                 }
                 if (Equals(tunnel.Mode, TunnelMode.SERVER))
                 {
@@ -62,7 +62,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             switch (data)
             {
                 case null:
-                    LOGGER.LogInformation("[Tunnel] {} ## 通道 {} ==> {} 断开链接", "消息为null", channel.RemoteAddress, channel.LocalAddress);
+                    LOGGER.LogInformation("[Tunnel] {Msg} ## 通道 {Remote} ==> {Local} 断开链接", "消息为null", channel.RemoteAddress, channel.LocalAddress);
                     channel.DisconnectAsync();
                     return;
                 case INetMessage message:
@@ -87,30 +87,30 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 switch (cause)
                 {
                     case ClosedChannelException _:
-                        LOGGER.LogError("[Tunnel] # {} # 客户端连接已断开 # {}", cause.GetType(), cause.Message);
+                        LOGGER.LogError("[Tunnel] # {Cause} # 客户端连接已断开 # {Msg}", cause.GetType(), cause.Message);
                         break;
                     case WriteTimeoutException _:
-                        LOGGER.LogError("[Tunnel]  ## 通道 {} ==> {} 断开链接 # cause {} 写出数据超时, message: {}",
+                        LOGGER.LogError("[Tunnel]  ## 通道 {Remote} ==> {Local} 断开链接 # cause {Cause} 写出数据超时, message: {Msg}",
                             channel.RemoteAddress, channel.LocalAddress, typeof(WriteTimeoutException), cause.Message);
                         break;
                     case ReadTimeoutException _:
-                        LOGGER.LogError("[Tunnel]  ## 通道 {} ==> {} 断开链接 # cause {} 读取数据超时, message: {}",
+                        LOGGER.LogError("[Tunnel]  ## 通道 {Remote} ==> {Local} 断开链接 # cause {Cause} 读取数据超时, message: {Msg}",
                             channel.RemoteAddress, channel.LocalAddress, typeof(ReadTimeoutException), cause.Message);
                         break;
                     case IOException _:
-                        LOGGER.LogError("[Tunnel] # {} # {}", cause.GetType(), cause.Message);
+                        LOGGER.LogError("[Tunnel] # cause {Cause} # {Msg}", cause.GetType(), cause.Message);
                         break;
                     case ResultCodeException ex:
                         HandleResultCodeException(channel, ex.Code, cause);
                         break;
                     default: {
-                        LOGGER.LogError(cause, "[Tunnel] ## 通道 {} ==> {} 异常", channel.RemoteAddress, channel.LocalAddress);
+                        LOGGER.LogError(cause, "[Tunnel] ## 通道 {Remote} ==> {Local} 异常", channel.RemoteAddress, channel.LocalAddress);
                         break;
                     }
                 }
             } else
             {
-                LOGGER.LogError(cause, "[Tunnel] ## 通道 {} ==> {} 异常", channel.RemoteAddress, channel.LocalAddress);
+                LOGGER.LogError(cause, "[Tunnel] ## 通道 {Remote} ==> {Local} 异常", channel.RemoteAddress, channel.LocalAddress);
             }
             base.ExceptionCaught(context, cause);
         }
@@ -120,7 +120,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
         {
             if (code.Level == ResultLevel.Error)
             {
-                LOGGER.LogError(cause, "[Tunnel]  ## 通道 {} ==> {} 断开链接 # cause {}({})[{}], message:{}",
+                LOGGER.LogError(cause, "[Tunnel]  ## 通道 {Remote} ==> {Local} 断开链接 # cause {Code}({CodeValue})[{CodeMsg}], message:{Msg}",
                     channel.RemoteAddress, channel.LocalAddress, code, code.Value, code.Message, cause.Message);
                 var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).GetAndSet(null);
                 if (tunnel != null)
@@ -130,7 +130,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 }
             } else
             {
-                LOGGER.LogError(cause, "[Tunnel]  ## 通道 {} ==> {} 异常 # cause {}({})[{}], message:{}",
+                LOGGER.LogError(cause, "[Tunnel]  ## 通道 {Remote} ==> {Local} 异常 # cause {Code}({CodeValue})[{CodeMsg}], message:{Msg}",
                     channel.RemoteAddress, channel.LocalAddress, code, code.Value, code.Message, cause.Message);
             }
         }

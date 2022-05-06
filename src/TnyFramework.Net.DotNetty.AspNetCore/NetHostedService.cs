@@ -32,10 +32,10 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
-            var appContext = application.AppContext;
-            logger.LogInformation("{}(s{})[{}|{}] starting", appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
+            var context = application.AppContext;
+            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] starting", context.Name, context.ServerId, context.AppType, context.ScopeType);
             await application.Start();
-            logger.LogInformation("{}(s{})[{}|{}] started", appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
+            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] started", context.Name, context.ServerId, context.AppType, context.ScopeType);
             IList<Task> tasks = new List<Task>();
             foreach (var server in application.Servers)
             {
@@ -44,45 +44,45 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
                     {
                         try
                         {
-                            logger.LogInformation("[{}] RegisterInstance", server.Name);
+                            logger.LogInformation("[{Ins}] RegisterInstance", server.Name);
                             await serverDiscoveryService.RegisterInstance(application, server);
-                            logger.LogInformation("[{}] RegisterInstance success", server.Name);
+                            logger.LogInformation("[{Ins}] RegisterInstance success", server.Name);
                             break;
                         } catch (System.Exception e)
                         {
-                            logger.LogError(e, "{} RegisterInstance exception", server.Name);
+                            logger.LogError(e, "{Ins} RegisterInstance exception", server.Name);
                             await Task.Delay(3000, cancellationToken);
                         }
                     }
                 }));
             }
             await Task.WhenAll(tasks.ToArray());
-            logger.LogInformation("{}(s{})[{}|{}] RegisterInstance []",
-                appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
+            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] RegisterInstance []",
+                context.Name, context.ServerId, context.AppType, context.ScopeType);
         }
 
 
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             var appContext = application.AppContext;
-            logger.LogInformation("{}(s{})[{}|{}] closing", appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
+            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] closing", appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
             await application.Close();
-            logger.LogInformation("{}(s{})[{}|{}] closed", appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
+            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] closed", appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
             foreach (var server in application.Servers)
             {
 
                 try
                 {
-                    logger.LogInformation("[{}] DeregisterInstance", server.Name);
+                    logger.LogInformation("[{Ins}] DeregisterInstance", server.Name);
                     await serverDiscoveryService.DeregisterInstance(server);
-                    logger.LogInformation("[{}] DeregisterInstance success", server.Name);
+                    logger.LogInformation("[{Ins}] DeregisterInstance success", server.Name);
                 } catch (System.Exception e)
                 {
-                    logger.LogError(e, "{} DeregisterInstance exception", server.Name);
+                    logger.LogError(e, "{Ins} DeregisterInstance exception", server.Name);
                 }
 
             }
-            logger.LogInformation("{}(s{})[{}|{}] DeregisterInstance",
+            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] DeregisterInstance",
                 appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
             await application.Close();
         }

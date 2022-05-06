@@ -1,11 +1,16 @@
+#region
+
 using System;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using static System.Threading.Volatile;
 
+#endregion
+
 
 namespace TnyFramework.Common.Logger
 {
+
     public static class LogFactory
     {
         private static ILoggerFactory _DEFAULT_FACTORY;
@@ -16,7 +21,7 @@ namespace TnyFramework.Common.Logger
                 if (current != null)
                     return current;
                 current = CreateNoopFactory();
-                var old = Interlocked.CompareExchange(ref _DEFAULT_FACTORY, current, (ILoggerFactory)null);
+                var old = Interlocked.CompareExchange(ref _DEFAULT_FACTORY, current, (ILoggerFactory) null);
                 return old ?? current;
             }
             set => Write(ref _DEFAULT_FACTORY, value);
@@ -52,4 +57,5 @@ namespace TnyFramework.Common.Logger
         /// <returns>logger instance</returns>
         public static ILogger Logger(string name) => DefaultFactory.CreateLogger(name);
     }
+
 }

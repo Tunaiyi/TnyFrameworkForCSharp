@@ -36,7 +36,7 @@ namespace TnyFramework.Net.Plugin
         {
             if (LOGGER.IsEnabled(LogLevel.Debug))
             {
-                LOGGER.LogDebug("调用 {}.{} | 触发插件 {}", controller.ControllerType, controller.Name, plugin.GetType());
+                LOGGER.LogDebug("调用 {Type}.{Handle} | 触发插件 {Plugin}", controller.ControllerType, controller.Name, plugin.GetType());
             }
             plugin.Execute(tunnel, message, context, attributes);
         }

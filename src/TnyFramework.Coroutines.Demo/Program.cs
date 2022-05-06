@@ -249,32 +249,32 @@ namespace TnyFramework.Coroutines.Demo
             var factory = new DefaultCoroutineFactory("Actor");
             var coroutine1 = factory.Create();
             var coroutine2 = factory.Create();
-            // LOGGER.LogInformation("[Run : {} at Thread-{}] [GOGO] 0", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
+            // LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [GOGO] 0", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
             // await coroutine1.Exec(() => DelayTest(3));
-            // LOGGER.LogInformation("[Run : {} at Thread-{}] [GOGO] 1", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
+            // LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [GOGO] 1", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
             // await coroutine2.Exec(TestCount);
-            // LOGGER.LogInformation("[Run : {} at Thread-{}] [GOGO] 2", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
+            // LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [GOGO] 2", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
             // await coroutine1.Exec(SendOrPostCallback);
-            // LOGGER.LogInformation("[Run : {} at Thread-{}] [GOGO] 3", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
+            // LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [GOGO] 3", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
             await coroutine1.Run(() => Console.WriteLine("222"));
             await coroutine1.Exec(() => DelayTest(1));
             await coroutine2.Exec(async () => {
-                LOGGER.LogInformation("[Run : {} at Thread-{}] [C2 CALL C1 DelayTest] Start", Coroutine.Current,
+                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [C2 CALL C1 DelayTest] Start", Coroutine.Current,
                     Thread.CurrentThread.ManagedThreadId);
                 try
                 {
                     await coroutine1.Exec(() => DelayTest(4));
                 } catch (System.Exception e)
                 {
-                    LOGGER.LogError(e, "[Run : {} at Thread-{}] [C2 CALL C1 DelayTest] Exception", Coroutine.Current,
+                    LOGGER.LogError(e, "[Run : {CoroName} at Thread-{ThreadId}] [C2 CALL C1 DelayTest] Exception", Coroutine.Current,
                         Thread.CurrentThread.ManagedThreadId);
                 }
-                LOGGER.LogInformation("[Run : {} at Thread-{}] [C2 CALL C1 DelayTest] Done", Coroutine.Current,
+                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [C2 CALL C1 DelayTest] Done", Coroutine.Current,
                     Thread.CurrentThread.ManagedThreadId);
             });
             await Task.Delay(100);
             await coroutine1.Shutdown(5000);
-            LOGGER.LogInformation("[Run : {} at Thread-{}] [GOGO] 4", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
+            LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [GOGO] 4", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
             Console.ReadKey();
         }
 
@@ -284,14 +284,14 @@ namespace TnyFramework.Coroutines.Demo
             var source = new TaskCompletionSource<int>();
             await Task.Run(() => {
                 Thread.Sleep((int) 2000L);
-                LOGGER.LogInformation("[Run : {} at Thread-{}] [SendOrPostCallback] TaskCompletionSource SetResult", Coroutine.Current,
+                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [SendOrPostCallback] TaskCompletionSource SetResult", Coroutine.Current,
                     Thread.CurrentThread.ManagedThreadId);
                 source.SetResult(1);
             });
-            LOGGER.LogInformation("[Run : {} at Thread-{}] [SendOrPostCallback] Start", Coroutine.Current,
+            LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [SendOrPostCallback] Start", Coroutine.Current,
                 Thread.CurrentThread.ManagedThreadId);
             await source.Task;
-            LOGGER.LogInformation("[Run : {} at Thread-{}] [SendOrPostCallback] Done!!!", Coroutine.Current,
+            LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [SendOrPostCallback] Done!!!", Coroutine.Current,
                 Thread.CurrentThread.ManagedThreadId);
         }
 
@@ -302,11 +302,11 @@ namespace TnyFramework.Coroutines.Demo
             while (times++ < time)
             {
                 var delay = TimeSpan.FromSeconds(3);
-                LOGGER.LogInformation("[Run : {} at Thread-{}] [DelayTest] {} 次 {} 开始", Coroutine.Current,
+                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [DelayTest] {Times} 次 {Delay} 开始", Coroutine.Current,
                     Thread.CurrentThread.ManagedThreadId,
                     times, delay);
                 await Task.Delay(delay);
-                LOGGER.LogInformation("[Run : {} at Thread-{}] [DelayTest] {} 次 {} 结束", Coroutine.Current,
+                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [DelayTest] {Times} 次 {Delay} 结束", Coroutine.Current,
                     Thread.CurrentThread.ManagedThreadId,
                     times, delay);
             }
@@ -318,13 +318,13 @@ namespace TnyFramework.Coroutines.Demo
             var index = 0;
             while (index < 3)
             {
-                LOGGER.LogInformation("[Run : {} at Thread-{}] [TestCount] INDEX = {}",
+                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [TestCount] INDEX = {Index}",
                     Coroutine.Current, Thread.CurrentThread.ManagedThreadId, index);
                 index++;
-                LOGGER.LogInformation("[Run : {} at Thread-{}] [TestCount] Yield before",
+                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [TestCount] Yield before",
                     Coroutine.Current, Thread.CurrentThread.ManagedThreadId, index);
                 await Task.Yield();
-                LOGGER.LogInformation("[Run : {} at Thread-{}] [TestCount] Yielded",
+                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [TestCount] Yielded",
                     Coroutine.Current, Thread.CurrentThread.ManagedThreadId, index);
             }
         }

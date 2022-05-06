@@ -120,7 +120,7 @@ namespace TnyFramework.Net.Dispatcher
         private IRpcResult GetResultOnException(Exception e)
         {
 
-            LOGGER.LogError(e, "Controller [{}] exception", Name);
+            LOGGER.LogError(e, "Controller [{Name}] exception", Name);
             switch (e)
             {
                 case CommandException ce:

@@ -40,7 +40,7 @@ namespace TnyFramework.Net.Dispatcher
             if (controller == null)
             {
                 var head = Message.Head;
-                LOGGER.LogWarning("Controller {}[{}] 没有存在对应Controller ", head.Mode, head.ProtocolId);
+                LOGGER.LogWarning("Controller {Mode}[{Protocol}] 没有存在对应Controller ", head.Mode, head.ProtocolId);
                 CommandContext.Intercept(NetResultCode.SERVER_NO_SUCH_PROTOCOL);
                 return;
             }
@@ -51,7 +51,7 @@ namespace TnyFramework.Net.Dispatcher
             // 检测当前 app 类型是否可以调用
             if (!controller.IsActiveByAppType(AppType))
             {
-                LOGGER.LogWarning("Controller [{}] App类型 {} 无法此协议", Name, AppType);
+                LOGGER.LogWarning("Controller [{Name}] App类型 {AppType} 无法此协议", Name, AppType);
                 CommandContext.Intercept(NetResultCode.SERVER_NO_SUCH_PROTOCOL);
                 return;
             }
@@ -59,31 +59,31 @@ namespace TnyFramework.Net.Dispatcher
             // 检测当前 环境作用域 是否可以调用
             if (!controller.IsActiveByScope(ScopeType))
             {
-                LOGGER.LogWarning("Controller [{}] Scope类型 {} 无法此协议", Name, ScopeType);
+                LOGGER.LogWarning("Controller [{Name}] Scope类型 {ScopeType} 无法此协议", Name, ScopeType);
                 CommandContext.Intercept(NetResultCode.SERVER_NO_SUCH_PROTOCOL);
                 await Task.CompletedTask;
             }
 
             // 判断是否需要登录检测
-            LOGGER.LogDebug("Controller [{}] 检测已登陆认证", Name);
+            LOGGER.LogDebug("Controller [{Name}] 检测已登陆认证", Name);
             if (controller.IsAuth() && !Tunnel.IsAuthenticated())
             {
-                LOGGER.LogError("Controller [{}] 用户未登陆", Name);
+                LOGGER.LogError("Controller [{Name}] 用户未登陆", Name);
                 CommandContext.Intercept(NetResultCode.NO_LOGIN);
                 return;
             }
 
             // 判断身份是否符合
-            LOGGER.LogDebug("Controller [{}] 检测用户组调用权限", Name);
+            LOGGER.LogDebug("Controller [{Name}] 检测用户组调用权限", Name);
             if (!controller.IsUserGroup(Tunnel.UserType))
             {
-                LOGGER.LogError("Controller [{}] , 用户组 [{}] 无法调用此协议", Name, Tunnel.UserType);
+                LOGGER.LogError("Controller [{Name}] , 用户组 [{User}] 无法调用此协议", Name, Tunnel.UserType);
                 CommandContext.Intercept(NetResultCode.NO_PERMISSIONS);
                 return;
             }
 
             // 执行调用前插件
-            LOGGER.LogDebug("Controller [{}] 执行BeforePlugins", Name);
+            LOGGER.LogDebug("Controller [{Name}] 执行BeforePlugins", Name);
             controller.BeforeInvoke(Tunnel, Message, CommandContext);
             if (CommandContext.Done)
             {
@@ -92,7 +92,7 @@ namespace TnyFramework.Net.Dispatcher
 
 
             // 执行调用
-            LOGGER.LogDebug("Controller [{}] 执行业务", Name);
+            LOGGER.LogDebug("Controller [{Name}] 执行业务", Name);
             var result = controller.Invoke(Tunnel, Message);
             if (result is Task task) // 如果是 Task
             {
@@ -112,14 +112,14 @@ namespace TnyFramework.Net.Dispatcher
             }
 
             // 执行调用后插件
-            LOGGER.LogDebug("Controller [{}] 执行AfterPlugins", Name);
+            LOGGER.LogDebug("Controller [{Name}] 执行AfterPlugins", Name);
             controller.AfterInvoke(Tunnel, Message, CommandContext);
             // var returnType = controller.ReturnType;
             // if (returnType == typeof(void))
             // {
             //     CommandContext.Complete(null);
             // }
-            LOGGER.LogDebug("Controller [{}] 处理Message完成!", Name);
+            LOGGER.LogDebug("Controller [{Name}] 处理Message完成!", Name);
         }
 
 
@@ -163,7 +163,7 @@ namespace TnyFramework.Net.Dispatcher
 
         private void Authenticate(IAuthenticateValidator validator, ICertificateFactory certificateFactory)
         {
-            LOGGER.LogDebug("Controller [{}] 开始进行登陆认证", Name);
+            LOGGER.LogDebug("Controller [{Name}] 开始进行登陆认证", Name);
             var certificate = validator.Validate(Tunnel, Message, certificateFactory);
             // 是否需要做登录校验,判断是否已经登录
             if (certificate != null && certificate.IsAuthenticated())

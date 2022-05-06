@@ -32,7 +32,7 @@ namespace TnyFramework.Net.Dispatcher
                 plugin.InvokePlugin(tunnel, message, context);
             } catch (Exception e)
             {
-                LOGGER.LogError(e, "invoke plugin {} exception", plugin.GetType());
+                LOGGER.LogError(e, "invoke plugin {Plugin} exception", plugin.GetType());
             }
             if (next == null || context.Done)
             {
