@@ -1,5 +1,3 @@
-#region
-
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -11,8 +9,6 @@ using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
 
-#endregion
-
 namespace TnyFramework.Net.DotNetty.Configuration
 {
 
@@ -20,9 +16,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
     {
         NettyServerConfiguration Server<TUserId>(string name, Action<INetServerGuideSpec<TUserId>> action);
 
-        NettyServerConfiguration AppContext(long serverId, string name);
+        NettyServerConfiguration AppContext(int serverId, string name);
 
-        NettyServerConfiguration AppContext(long serverId, string name, string appType, string scope);
+        NettyServerConfiguration AppContext(int serverId, string name, string appType, string scope);
 
         NettyServerConfiguration AppContextConfigure(Action<INetAppContextSpec> action);
 

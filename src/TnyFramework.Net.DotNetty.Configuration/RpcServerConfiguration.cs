@@ -31,7 +31,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
                 .AddAuthenticateValidators(spec => spec.Creator(DefaultRpcPasswordValidator))
                 .AddAuthenticateValidators(spec => spec.Creator(DefaultRpcTokenValidator))
                 .EndpointConfigure(spec => spec
-                    .SessionKeeperFactory<IRpcLinkerId>(RPC_SESSION_KEEPER_NAME)
+                    .SessionKeeperFactory<RpcAccessIdentify>(RPC_SESSION_KEEPER_NAME)
                     .DefaultSessionConfigure(keeper => keeper.KeeperFactory(RPC_SESSION_KEEPER_NAME))
                 );
             IdGeneratorSpec = UnitSpec.Unit<IIdGenerator, IRpcUnitContext>()
@@ -39,9 +39,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
 
-        public RpcServerConfiguration RpcServer(ServerSetting setting, Action<INetServerGuideSpec<IRpcLinkerId>> action = null)
+        public RpcServerConfiguration RpcServer(ServerSetting setting, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
         {
-            Server<IRpcLinkerId>(setting.Name, spec => {
+            Server<RpcAccessIdentify>(setting.Name, spec => {
                 spec.Server(setting);
                 action?.Invoke(spec);
             });
@@ -50,9 +50,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
 
-        public RpcServerConfiguration RpcServer(string name, int port, Action<INetServerGuideSpec<IRpcLinkerId>> action = null)
+        public RpcServerConfiguration RpcServer(string name, int port, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
         {
-            Server<IRpcLinkerId>(name, spec => {
+            Server<RpcAccessIdentify>(name, spec => {
                 spec.Server(port);
                 action?.Invoke(spec);
             });
@@ -61,9 +61,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
 
-        public RpcServerConfiguration RpcServer(string name, string host, int port, Action<INetServerGuideSpec<IRpcLinkerId>> action = null)
+        public RpcServerConfiguration RpcServer(string name, string host, int port, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
         {
-            Server<IRpcLinkerId>(name, spec => {
+            Server<RpcAccessIdentify>(name, spec => {
                 spec.Server(host, port);
                 action?.Invoke(spec);
             });
@@ -73,9 +73,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
 
         public RpcServerConfiguration RpcServer(string name, string host, int port, bool libuv,
-            Action<INetServerGuideSpec<IRpcLinkerId>> action = null)
+            Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
         {
-            Server<IRpcLinkerId>(name, spec => {
+            Server<RpcAccessIdentify>(name, spec => {
                 spec.Server(host, port, libuv);
                 action?.Invoke(spec);
             });
@@ -85,9 +85,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
 
         public RpcServerConfiguration RpcServer(string name, string serveName, string host, int port,
-            Action<INetServerGuideSpec<IRpcLinkerId>> action = null)
+            Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
         {
-            Server<IRpcLinkerId>(name, spec => {
+            Server<RpcAccessIdentify>(name, spec => {
                 spec.Server(serveName, host, port);
                 action?.Invoke(spec);
             });
@@ -97,9 +97,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
 
         public RpcServerConfiguration RpcServer(string name, string serveName, string host, int port, bool libuv,
-            Action<INetServerGuideSpec<IRpcLinkerId>> action = null)
+            Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
         {
-            Server<IRpcLinkerId>(name, spec => {
+            Server<RpcAccessIdentify>(name, spec => {
                 spec.Server(serveName, host, port, libuv);
                 action?.Invoke(spec);
             });

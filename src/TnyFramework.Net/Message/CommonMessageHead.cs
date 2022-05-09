@@ -1,12 +1,33 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using Microsoft.IdentityModel.Tokens;
+
 namespace TnyFramework.Net.Message
 {
+
     public class CommonMessageHead : AbstractNetMessageHead
     {
         private long id;
 
+        public override long Id => id;
 
-        public CommonMessageHead(long id, MessageMode mode, int line, int protocolId, int code, long toMessage, long time) : base(mode)
+        public override long ToMessage { get; }
+
+        public override int ProtocolId { get; }
+
+        public override int Line { get; }
+
+        public override int Code { get; }
+
+        public override long Time { get; }
+
+        private IDictionary<string, MessageHeader> Headers { get; }
+
+
+        public CommonMessageHead(long id, MessageMode mode, int line, int protocolId, int code, long toMessage, long time,
+            IDictionary<string, MessageHeader> headers) : base(mode)
         {
             this.id = id;
             ToMessage = toMessage;
@@ -14,6 +35,7 @@ namespace TnyFramework.Net.Message
             Line = line;
             Code = code;
             Time = time;
+            Headers = headers == null ? ImmutableDictionary<string, MessageHeader>.Empty : headers.ToImmutableDictionary();
         }
 
 
@@ -24,14 +46,9 @@ namespace TnyFramework.Net.Message
             Code = subject.GetCode();
             ToMessage = subject.ToMessage;
             Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+            var headers = subject.Headers;
+            Headers = headers == null ? ImmutableDictionary<string, MessageHeader>.Empty : headers.ToImmutableDictionary();
         }
-
-
-        public override long ToMessage { get; }
-
-        public override int ProtocolId { get; }
-
-        public override int Line { get; }
 
 
         public override bool IsOwn(IProtocol protocol)
@@ -40,11 +57,57 @@ namespace TnyFramework.Net.Message
         }
 
 
-        public override long Id => id;
+        public override T GetHeader<T>(string key)
+        {
+            var value = GetHeader(key);
+            if (value is T header)
+                return header;
+            return null;
+        }
 
-        public override int Code { get; }
 
-        public override long Time { get; }
+        public override MessageHeader GetHeader(string key)
+        {
+            return !Headers.TryGetValue(key, out var header) ? null : header;
+        }
+
+
+        public override IList<T> GetHeaders<T>()
+        {
+            return Headers.Values.OfType<T>().ToList();
+        }
+
+
+        public override T GetHeader<T>(MessageHeaderKey<T> key)
+        {
+            return GetHeader<T>(key.Key);
+        }
+
+
+        public override bool IsHasHeaders => !Headers.IsNullOrEmpty();
+
+        public override IList<MessageHeader> GetAllHeaders() => Headers.Values.ToImmutableList();
+
+        public override IDictionary<string, MessageHeader> GetAllHeadersMap() => Headers.ToImmutableDictionary();
+
+
+        public override bool ExistHeader(string key)
+        {
+            return Headers.ContainsKey(key);
+        }
+
+
+        public override bool ExistHeader<T>(string key)
+        {
+            return GetHeader<T>(key) != null;
+        }
+
+
+        public override bool ExistHeader(MessageHeaderKey key)
+        {
+            return ExistHeader(key.Key);
+        }
+
 
         public override void AllotMessageId(long idValue) => id = idValue;
 
@@ -66,7 +129,7 @@ namespace TnyFramework.Net.Message
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((CommonMessageHead)obj);
+            return obj.GetType() == GetType() && Equals((CommonMessageHead) obj);
         }
 
 
@@ -74,7 +137,7 @@ namespace TnyFramework.Net.Message
         {
             unchecked
             {
-                var hashCode = id.GetHashCode();
+                var hashCode = Id.GetHashCode();
                 hashCode = (hashCode * 397) ^ ToMessage.GetHashCode();
                 hashCode = (hashCode * 397) ^ ProtocolId;
                 hashCode = (hashCode * 397) ^ Line;
@@ -84,4 +147,5 @@ namespace TnyFramework.Net.Message
             }
         }
     }
+
 }

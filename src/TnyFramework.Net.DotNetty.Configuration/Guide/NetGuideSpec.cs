@@ -6,19 +6,21 @@ using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
-    public abstract class NetGuideSpec<TUnit, TUserId, TContext, UContext, TSpec>
+
+    public abstract class NetGuideSpec<TUnit, TUserId, TContext, TUContext, TSpec>
         : UnitSpec<TUnit, TContext>, INetGuideSpec<TUnit, TUserId, TContext, TSpec>
         where TUnit : INetServer
         where TContext : INetGuideUnitContext<TUserId>
-        where UContext : NetGuideUnitContext<TUserId>
+        where TUContext : NetGuideUnitContext<TUserId>
         where TSpec : INetGuideSpec<TUnit, TUserId, TContext, TSpec>
     {
-        protected readonly UContext context;
+        protected readonly TUContext context;
 
 
-        protected NetGuideSpec(UContext context)
+        protected NetGuideSpec(TUContext context)
         {
             this.context = context;
         }
@@ -64,6 +66,13 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         }
 
 
+        public TSpec MessageHeaderCodecConfigure(Action<UnitSpec<IMessageHeaderCodec, INetGuideUnitContext<TUserId>>> action)
+        {
+            action.Invoke(context.MessageHeaderCodecSpec);
+            return Self();
+        }
+
+
         public TSpec MessageCodecConfigure(Action<UnitSpec<IMessageCodec, INetGuideUnitContext<TUserId>>> action)
         {
             action.Invoke(context.MessageCodecSpec);
@@ -77,4 +86,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return Self();
         }
     }
+
 }

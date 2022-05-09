@@ -1,34 +1,32 @@
 using System;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Rpc;
+
 namespace TnyFramework.Net.Command
 {
+
     public class Certificate
     {
-        public const string DEFAULT_USER_TYPE = "user";
-        public const string ANONYMITY_USER_TYPE = "#anonymity";
+        private const long ANONYMITY_MESSAGER_ID = -1L;
 
 
-        public static Certificate<T> CreateAuthenticated<T>(long id, T userId, string userType = DEFAULT_USER_TYPE)
+        public static Certificate<T> CreateAuthenticated<T>(long id, T userId, long messagerId, IMessagerType messagerType)
         {
-            return CreateAuthenticated(id, userId, userType, DateTimeOffset.Now.ToUnixTimeMilliseconds());
+            return CreateAuthenticated(id, userId, messagerId, messagerType, DateTimeOffset.Now.ToUnixTimeMilliseconds());
         }
 
 
-        public static Certificate<T> CreateAuthenticated<T>(long id, T userId, long authenticateAt)
+        public static Certificate<T> CreateAuthenticated<T>(long id, T userId, long messagerId, IMessagerType messagerType,
+            long authenticateAt, bool renew = false)
         {
-            return CreateAuthenticated(id, userId, DEFAULT_USER_TYPE, authenticateAt);
-        }
-
-
-        public static Certificate<T> CreateAuthenticated<T>(long id, T userId, string userType, long authenticateAt, bool renew = false)
-        {
-            return new Certificate<T>(id, userType, userId, renew ? CertificateStatus.Renew : CertificateStatus.Authenticated, authenticateAt);
+            return new Certificate<T>(id, userId, messagerId, messagerType, renew ? CertificateStatus.Renew : CertificateStatus.Authenticated,
+                authenticateAt);
         }
 
 
         public static Certificate<T> CreateUnauthenticated<T>(T anonymityUserId = default)
         {
-            return new Certificate<T>(-1, ANONYMITY_USER_TYPE, anonymityUserId, CertificateStatus.Unauthenticated, 0);
+            return new Certificate<T>(-1, anonymityUserId, ANONYMITY_MESSAGER_ID, NetMessagerType.ANONYMITY, CertificateStatus.Unauthenticated, 0);
         }
     }
 
@@ -42,7 +40,12 @@ namespace TnyFramework.Net.Command
 
         public long Id { get; }
 
-        public string UserType { get; }
+        public long MessagerId { get; }
+
+        public IMessagerType MessagerType { get; }
+
+        public string UserGroup => MessagerType.Group;
+
         public long AuthenticateAt { get; }
 
         public CertificateStatus Status { get; }
@@ -50,11 +53,13 @@ namespace TnyFramework.Net.Command
         public TUserId UserId { get; }
 
 
-        public Certificate(long id, string userType, TUserId userId, CertificateStatus status, long authenticateAt)
+        public Certificate(long id, TUserId userId, long messagerId, IMessagerType messagerType, CertificateStatus status, long authenticateAt)
         {
             this.status = status;
             Id = id;
-            UserType = userType;
+            UserId = userId;
+            MessagerId = messagerId;
+            MessagerType = messagerType;
             AuthenticateAt = authenticateAt;
             Status = status;
             UserId = userId;
@@ -65,4 +70,5 @@ namespace TnyFramework.Net.Command
 
         public object GetUserId() => UserId;
     }
+
 }

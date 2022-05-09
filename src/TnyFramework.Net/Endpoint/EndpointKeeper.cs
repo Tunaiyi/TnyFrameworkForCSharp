@@ -1,17 +1,21 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using TnyFramework.Common.Event;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Endpoint.Event;
-using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Endpoint
 {
+
     public static class EndpointKeeper
     {
         internal static IEventBus<EndpointKeeperAddEndpoint> AddEndpointEventBus { get; } = EventBuses.Create<EndpointKeeperAddEndpoint>();
+
         internal static IEventBus<EndpointKeeperRemoveEndpoint> RemoveEndpointEventBus { get; } = EventBuses.Create<EndpointKeeperRemoveEndpoint>();
 
         /// <summary>
@@ -38,14 +42,17 @@ namespace TnyFramework.Net.Endpoint
 
         public IEventBox<EndpointKeeperRemoveEndpoint> RemoveEndpointEvent => removeEndpointEvent;
 
-        public string UserType { get; }
+
+        public IMessagerType MessagerType { get; }
+
+        public string UserGroup => MessagerType.Group;
 
         public int Size => endpointMap.Count;
 
 
-        public EndpointKeeper(string userType)
+        public EndpointKeeper(IMessagerType messagerType)
         {
-            UserType = userType;
+            MessagerType = messagerType;
             addEndpointEvent = EndpointKeeper.AddEndpointEventBus.ForkChild();
             removeEndpointEvent = EndpointKeeper.RemoveEndpointEventBus.ForkChild();
         }
@@ -59,7 +66,7 @@ namespace TnyFramework.Net.Endpoint
         IEndpoint IEndpointKeeper.GetEndpoint(object userId)
         {
             if (userId != null)
-                return GetEndpoint((TUserId)userId);
+                return GetEndpoint((TUserId) userId);
             return null;
         }
 
@@ -102,7 +109,7 @@ namespace TnyFramework.Net.Endpoint
 
         public void Send2AllOnline(MessageContext context)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
 
@@ -119,7 +126,7 @@ namespace TnyFramework.Net.Endpoint
 
         public IEndpoint Close(object userId)
         {
-            return Close((TUserId)userId);
+            return Close((TUserId) userId);
         }
 
 
@@ -137,7 +144,7 @@ namespace TnyFramework.Net.Endpoint
 
         public IEndpoint Offline(object userId)
         {
-            return Offline((TUserId)userId);
+            return Offline((TUserId) userId);
         }
 
 
@@ -177,7 +184,7 @@ namespace TnyFramework.Net.Endpoint
 
         public bool IsOnline(object userId)
         {
-            return IsOnline((TUserId)userId);
+            return IsOnline((TUserId) userId);
         }
 
 
@@ -200,7 +207,7 @@ namespace TnyFramework.Net.Endpoint
 
         protected TEndpoint ReplaceEndpoint(object uid, IEndpoint newOne)
         {
-            var endpoint = (TEndpoint)newOne;
+            var endpoint = (TEndpoint) newOne;
             var current = default(TEndpoint);
             endpointMap.AddOrUpdate(uid, endpoint, (o, exist) => {
                 if (ReferenceEquals(endpoint, exist))
@@ -236,35 +243,36 @@ namespace TnyFramework.Net.Endpoint
 
         public void NotifyEndpointOnline(IEndpoint endpoint)
         {
-            if (!Equals(endpoint.UserType, UserType))
+            if (!Equals(endpoint.MessagerType, MessagerType))
             {
                 return;
             }
-            OnEndpointOnline((TEndpoint)endpoint);
+            OnEndpointOnline((TEndpoint) endpoint);
         }
 
 
         public void NotifyEndpointOffline(IEndpoint endpoint)
         {
-            if (!Equals(endpoint.UserType, UserType))
+            if (!Equals(endpoint.MessagerType, MessagerType))
             {
                 return;
             }
-            OnEndpointOffline((TEndpoint)endpoint);
+            OnEndpointOffline((TEndpoint) endpoint);
         }
 
 
         public void NotifyEndpointClose(IEndpoint endpoint)
         {
-            if (!Equals(endpoint.UserType, UserType))
+            if (!Equals(endpoint.MessagerType, MessagerType))
             {
                 return;
             }
-            var closeOne = (TEndpoint)endpoint;
+            var closeOne = (TEndpoint) endpoint;
             if (RemoveEndpoint(closeOne.UserId, closeOne))
             {
                 OnEndpointClose(closeOne);
             }
         }
     }
+
 }

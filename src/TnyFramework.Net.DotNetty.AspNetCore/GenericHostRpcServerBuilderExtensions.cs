@@ -7,6 +7,7 @@ using TnyFramework.DI.Container;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
+using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Rpc.Auth;
 namespace TnyFramework.Net.DotNetty.AspNetCore
 {
@@ -26,7 +27,7 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
 
 
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
-            Action<INetServerGuideSpec<IRpcLinkerId>> guideConfigure)
+            Action<INetServerGuideSpec<RpcAccessIdentify>> guideConfigure)
         {
             return builder.ConfigureRpcHost(guideConfigure, null);
         }
@@ -39,7 +40,7 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
 
 
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
-            Action<INetServerGuideSpec<IRpcLinkerId>> serverGuideSpec, Action<INettyServerConfiguration> configure)
+            Action<INetServerGuideSpec<RpcAccessIdentify>> serverGuideSpec, Action<INettyServerConfiguration> configure)
         {
             builder.ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;

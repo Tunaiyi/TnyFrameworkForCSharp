@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Common", "src\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Net.Demo", "src\TnyFramework.Net.Demo\TnyFramework.Net.Demo.csproj", "{F1E684E8-2949-431D-9A14-49EE7809D412}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Net.TypeProtobuf", "src\TnyFramework.Net.TypeProtobuf\TnyFramework.Net.TypeProtobuf.csproj", "{F5190D59-C35E-4D62-BF5C-FE8558C8AE65}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Net.ProtobufNet", "src\TnyFramework.Net.ProtobufNet\TnyFramework.Net.ProtobufNet.csproj", "{F5190D59-C35E-4D62-BF5C-FE8558C8AE65}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Coroutines", "src\TnyFramework.Coroutines\TnyFramework.Coroutines.csproj", "{59F2EBE0-11B2-43C5-857D-72813518E403}"
 EndProject
@@ -36,6 +36,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Net.DotNetty.AspNetCore", "src\TnyFramework.Net.DotNetty.AspNetCore\TnyFramework.Net.DotNetty.AspNetCore.csproj", "{BD8195B5-DF8E-4D62-9928-6C228467205E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Net.Cloud.Nacos", "src\TnyFramework.Net.Cloud.Nacos\TnyFramework.Net.Cloud.Nacos.csproj", "{A268FD8D-AAB2-48F4-8064-4DF96376FC44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Codec", "src\TnyFramework.Codec\TnyFramework.Codec.csproj", "{A3E4C966-876E-4ECD-88F3-487B605CA612}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Codec.ProtobufNet", "src\TnyFramework.Codec.ProtobufNet\TnyFramework.Codec.ProtobufNet.csproj", "{24CA5E28-C184-4631-BA37-2B575A3A4C91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Codec.Newtonsoft", "src\TnyFramework.Codec.Newtonsoft\TnyFramework.Codec.Newtonsoft.csproj", "{76B590E7-7D38-43C8-8099-A5586B02979D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,6 +146,24 @@ Global
 		{A268FD8D-AAB2-48F4-8064-4DF96376FC44}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A268FD8D-AAB2-48F4-8064-4DF96376FC44}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
 		{A268FD8D-AAB2-48F4-8064-4DF96376FC44}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{A3E4C966-876E-4ECD-88F3-487B605CA612}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3E4C966-876E-4ECD-88F3-487B605CA612}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3E4C966-876E-4ECD-88F3-487B605CA612}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3E4C966-876E-4ECD-88F3-487B605CA612}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3E4C966-876E-4ECD-88F3-487B605CA612}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{A3E4C966-876E-4ECD-88F3-487B605CA612}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{24CA5E28-C184-4631-BA37-2B575A3A4C91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24CA5E28-C184-4631-BA37-2B575A3A4C91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24CA5E28-C184-4631-BA37-2B575A3A4C91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24CA5E28-C184-4631-BA37-2B575A3A4C91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24CA5E28-C184-4631-BA37-2B575A3A4C91}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{24CA5E28-C184-4631-BA37-2B575A3A4C91}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{76B590E7-7D38-43C8-8099-A5586B02979D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76B590E7-7D38-43C8-8099-A5586B02979D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76B590E7-7D38-43C8-8099-A5586B02979D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76B590E7-7D38-43C8-8099-A5586B02979D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76B590E7-7D38-43C8-8099-A5586B02979D}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{76B590E7-7D38-43C8-8099-A5586B02979D}.Publish|Any CPU.Build.0 = Publish|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -164,5 +188,8 @@ Global
 		{9E41DFD4-3757-4596-A0C8-EC7C27501177} = {A626F27B-46F7-4579-8700-342439C930F0}
 		{BD8195B5-DF8E-4D62-9928-6C228467205E} = {A626F27B-46F7-4579-8700-342439C930F0}
 		{A268FD8D-AAB2-48F4-8064-4DF96376FC44} = {A626F27B-46F7-4579-8700-342439C930F0}
+		{A3E4C966-876E-4ECD-88F3-487B605CA612} = {A626F27B-46F7-4579-8700-342439C930F0}
+		{24CA5E28-C184-4631-BA37-2B575A3A4C91} = {A626F27B-46F7-4579-8700-342439C930F0}
+		{76B590E7-7D38-43C8-8099-A5586B02979D} = {A626F27B-46F7-4579-8700-342439C930F0}
 	EndGlobalSection
 EndGlobal

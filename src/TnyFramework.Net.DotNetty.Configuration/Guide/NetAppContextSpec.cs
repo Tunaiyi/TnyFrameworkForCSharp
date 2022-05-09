@@ -13,7 +13,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         }
 
 
-        public NetAppContextSpec ServerId(long value)
+        public NetAppContextSpec ServerId(int value)
         {
             context.ServerId = value;
             return this;

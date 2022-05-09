@@ -1,5 +1,3 @@
-#region
-
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,8 +7,6 @@ using TnyFramework.Common.Assemblies;
 using TnyFramework.Common.Logger;
 using TnyFramework.DI.Attributes;
 using TnyFramework.DI.Container;
-
-#endregion
 
 namespace TnyFramework.DI.Extensions
 {

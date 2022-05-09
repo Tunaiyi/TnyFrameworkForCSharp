@@ -1,5 +1,3 @@
-#region
-
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,8 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Nacos.V2;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
-#endregion
 
 namespace TnyFramework.Net.Cloud.Nacos
 {
@@ -104,7 +100,7 @@ namespace TnyFramework.Net.Cloud.Nacos
 
         private void VisitPrimitive(JValue data)
         {
-            string currentPath = this.currentPath;
+            var currentPath = this.currentPath;
             if (this.data.ContainsKey(currentPath))
                 throw new FormatException("A duplicate key '" + currentPath + "' was found.");
             this.data[currentPath] = data.ToString(CultureInfo.InvariantCulture);

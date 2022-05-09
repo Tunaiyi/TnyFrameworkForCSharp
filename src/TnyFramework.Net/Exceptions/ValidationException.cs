@@ -3,6 +3,7 @@ using System.Runtime.Serialization;
 using TnyFramework.Common.Exception;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Common;
+
 namespace TnyFramework.Net.Exceptions
 {
     public class ValidationException : ResultCodeException

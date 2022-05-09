@@ -1,13 +1,21 @@
 using TnyFramework.Common.Attribute;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
-using TnyFramework.Net.Rpc;
+
 namespace TnyFramework.Net.Transport
 {
+
     public abstract class Communicator<TUserId> : AttributesContext, ICommunicator<TUserId>
     {
         public abstract ICertificate<TUserId> Certificate { get; }
 
         public TUserId UserId => Certificate.UserId;
+
+        public long MessagerId => Certificate.MessagerId;
+        
+        public string UserGroup => Certificate.UserGroup;
+
+        public IMessagerType MessagerType => Certificate.MessagerType;
 
 
         public object GetUserId()
@@ -15,8 +23,6 @@ namespace TnyFramework.Net.Transport
             return UserId;
         }
 
-
-        public string UserType => Certificate.UserType;
 
 
         public ICertificate GetCertificate()
@@ -30,4 +36,5 @@ namespace TnyFramework.Net.Transport
             return Certificate.IsAuthenticated();
         }
     }
+
 }

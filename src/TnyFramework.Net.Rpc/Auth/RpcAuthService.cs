@@ -2,8 +2,10 @@ using Newtonsoft.Json;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Common;
+
 namespace TnyFramework.Net.Rpc.Auth
 {
+
     public class RpcAuthService : IRpcAuthService
     {
         private readonly INetAppContext netAppContext;
@@ -18,25 +20,27 @@ namespace TnyFramework.Net.Rpc.Auth
         }
 
 
-        public IDoneResult<IRpcLinkerId> Authenticate(string service, long serverId, long instance, string password)
+        public IDoneResult<RpcAccessIdentify> Authenticate(long id, string password)
         {
-            return rpcUserPasswordManager.Auth(service, serverId, instance, password)
-                ? DoneResults.Success(new RpcLinkerId(service, serverId, instance))
-                : DoneResults.Failure<RpcLinkerId>(NetResultCode.VALIDATOR_FAIL_ERROR);
+            var identify = RpcAccessIdentify.Parse(id);
+            return rpcUserPasswordManager.Auth(identify, password)
+                ? DoneResults.Success(identify)
+                : DoneResults.Failure<RpcAccessIdentify>(NetResultCode.VALIDATOR_FAIL_ERROR);
         }
 
 
-        public string CreateToken(string serviceName, IRpcLinkerId id)
+        public string CreateToken(RpcServiceType serviceType, RpcAccessIdentify user)
         {
-            var token = new RpcToken(serviceName, netAppContext.ServerId, id.Id, id);
+            var token = new RpcAccessToken(serviceType, netAppContext.ServerId, user);
             return JsonConvert.SerializeObject(token);
         }
 
 
         public IDoneResult<IRpcToken> VerifyToken(string token)
         {
-            var rpcToken = JsonConvert.DeserializeObject<RpcToken>(token);
+            var rpcToken = JsonConvert.DeserializeObject<RpcAccessToken>(token);
             return DoneResults.Success(rpcToken);
         }
     }
+
 }

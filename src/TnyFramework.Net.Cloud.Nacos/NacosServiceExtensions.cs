@@ -1,5 +1,3 @@
-#region
-
 using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,8 +7,6 @@ using Nacos.AspNetCore.V2;
 using Nacos.Microsoft.Extensions.Configuration;
 using Nacos.V2.DependencyInjection;
 using TnyFramework.DI.Container;
-
-#endregion
 
 namespace TnyFramework.Net.Cloud.Nacos
 {

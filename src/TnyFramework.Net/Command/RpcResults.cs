@@ -1,6 +1,8 @@
 using TnyFramework.Common.Result;
+
 namespace TnyFramework.Net.Command
 {
+
     //TODO Protocol 设置
     public class DefaultRpcResult<TBody> : IRpcResult<TBody>
     {
@@ -94,4 +96,5 @@ namespace TnyFramework.Net.Command
             return new DefaultRpcResult<TBody>(code, body);
         }
     }
+
 }

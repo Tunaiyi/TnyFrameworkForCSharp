@@ -15,7 +15,7 @@
         <ProjectReference Include="..\TnyFramework.Net.DotNetty.Configuration\TnyFramework.Net.DotNetty.Configuration.csproj" />
         <ProjectReference Include="..\TnyFramework.Net.DotNetty\TnyFramework.Net.DotNetty.csproj" />
         <ProjectReference Include="..\TnyFramework.Net.Rpc\TnyFramework.Net.Rpc.csproj" />
-        <ProjectReference Include="..\TnyFramework.Net.TypeProtobuf\TnyFramework.Net.TypeProtobuf.csproj" />
+        <ProjectReference Include="..\TnyFramework.Net.ProtobufNet\TnyFramework.Net.ProtobufNet.csproj" />
     </ItemGroup>
 
     <ItemGroup>

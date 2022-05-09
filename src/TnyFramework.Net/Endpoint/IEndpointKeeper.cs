@@ -1,18 +1,24 @@
 using System.Collections.Generic;
 using TnyFramework.Common.Event;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Endpoint.Event;
-using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Endpoint
 {
+
     public interface IEndpointKeeper
     {
         /// <summary>
         /// 获取用户类型
         /// </summary>
-        string UserType { get; }
+        IMessagerType MessagerType { get; }
 
+        /// <summary>
+        /// 获取用户组
+        /// </summary>
+        string UserGroup { get; }
 
         /// <summary>
         /// 所有endpoint数量
@@ -173,4 +179,5 @@ namespace TnyFramework.Net.Endpoint
         /// <returns>在线返回 true 否则返回 false</returns>
         bool IsOnline(TUserId userId);
     }
+
 }

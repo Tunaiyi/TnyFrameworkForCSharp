@@ -1,6 +1,8 @@
 using TnyFramework.Common.Result;
+
 namespace TnyFramework.Net.Command
 {
+
     public interface IRpcResult
     {
         object Body { get; }
@@ -18,6 +20,5 @@ namespace TnyFramework.Net.Command
     {
         new TBody Body { get; }
     }
-    
-    
+
 }

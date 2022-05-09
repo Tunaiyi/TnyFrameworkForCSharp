@@ -5,7 +5,7 @@ namespace TnyFramework.Net.Base
     {
         public string Name { get; set; }
 
-        public long ServerId { get; set; }
+        public int ServerId { get; set; }
 
         public string AppType { get; set; } = "default";
 

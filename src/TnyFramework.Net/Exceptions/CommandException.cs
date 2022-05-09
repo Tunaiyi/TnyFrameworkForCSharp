@@ -1,6 +1,7 @@
 using System.Runtime.Serialization;
 using TnyFramework.Common.Exception;
 using TnyFramework.Common.Result;
+
 namespace TnyFramework.Net.Exceptions
 {
     public class CommandException : ResultCodeException

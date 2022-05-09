@@ -1,11 +1,7 @@
-#region
-
 using System;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using static System.Threading.Volatile;
-
-#endregion
 
 
 namespace TnyFramework.Common.Logger

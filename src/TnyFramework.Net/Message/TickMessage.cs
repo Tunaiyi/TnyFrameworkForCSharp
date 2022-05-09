@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Message
 {
+
     public class TickMessage : AbstractNetMessage
     {
         public static TickMessage Ping()
@@ -18,4 +19,5 @@ namespace TnyFramework.Net.Message
         {
         }
     }
+
 }

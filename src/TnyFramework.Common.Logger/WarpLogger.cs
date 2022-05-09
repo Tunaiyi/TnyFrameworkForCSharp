@@ -1,9 +1,5 @@
-#region
-
 using System;
 using Microsoft.Extensions.Logging;
-
-#endregion
 
 namespace TnyFramework.Common.Logger
 {

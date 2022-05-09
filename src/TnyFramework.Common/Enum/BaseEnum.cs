@@ -6,23 +6,37 @@ using System.Reflection;
 namespace TnyFramework.Common.Enum
 {
 
+    public abstract class BaseEnum
+    {
+        protected static readonly ConcurrentDictionary<Type, bool> TYPE_INIT_MAP = new ConcurrentDictionary<Type, bool>();
+    }
+
     /// <summary>
     /// 枚举基类，所有枚举都必须继承此类
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class BaseEnum<T> : IEnum where T : BaseEnum<T>, new()
+    public abstract class BaseEnum<T> : BaseEnum, IEnum where T : BaseEnum<T>, new()
     {
-        private static readonly ConcurrentDictionary<Type, bool> TYPE_INIT_MAP = new ConcurrentDictionary<Type, bool>();
-        protected static readonly Dictionary<int, T> ID_ENUM_MAP = new Dictionary<int, T>();
-        protected static readonly Dictionary<string, T> NAME_ENUM_MAP = new Dictionary<string, T>();
-        protected static readonly List<T> ENUMS = new List<T>();
+        private static readonly Dictionary<int, T> ID_ENUM_MAP = new Dictionary<int, T>();
+        private static readonly Dictionary<string, T> NAME_ENUM_MAP = new Dictionary<string, T>();
+        private static readonly List<T> ENUMS = new List<T>();
 
         private string name;
+        private int id = int.MinValue;
 
         /// <summary>
         /// 枚举ID
         /// </summary>
-        public int Id { get; private set; }
+        public int Id {
+            get => id;
+            private set {
+                if (id == int.MinValue)
+                {
+                    id = value;
+                }
+            }
+        }
+
 
         /// <summary>
         /// 枚举名称
@@ -35,7 +49,7 @@ namespace TnyFramework.Common.Enum
         }
 
 
-        protected static T E(int id, T item, Action<T> builder = null)
+        protected static TS E<TS>(int id, TS item, Action<TS> builder = null) where TS : T
         {
             item.Id = id;
             builder?.Invoke(item);
@@ -122,23 +136,35 @@ namespace TnyFramework.Common.Enum
         /// 获得所有枚举项
         /// </summary>
         /// <returns></returns>
+        public static void LoadAll() => CheckAndUpdateNames();
+
+
+        /// <summary>
+        /// 获得所有枚举项
+        /// </summary>
+        /// <returns></returns>
         public static IReadOnlyCollection<T> GetValues<TEnum>()
         {
-            CheckAndUpdateNames(typeof(TEnum));
+            LoadAll(typeof(TEnum));
             return ENUMS;
         }
 
 
         private static void CheckAndUpdateNames()
         {
-            CheckAndUpdateNames(typeof(T));
+            LoadAll(typeof(T));
+        }
+
+
+        protected virtual void OnCheck()
+        {
         }
 
 
         /// <summary>
         /// 检查并更行名称
         /// </summary>
-        protected static void CheckAndUpdateNames(Type type)
+        protected static void LoadAll(Type type)
         {
             if (TYPE_INIT_MAP.ContainsKey(type))
             {
@@ -176,6 +202,7 @@ namespace TnyFramework.Common.Enum
                             throw new ArgumentException($"{type} 枚举 {eItem.name} 与 {exist.name} 具有相同的 Name {eItem.name}");
                         }
                         NAME_ENUM_MAP.Add(eItem.name, eItem);
+                        eItem.OnCheck();
                     }
                 } finally
                 {

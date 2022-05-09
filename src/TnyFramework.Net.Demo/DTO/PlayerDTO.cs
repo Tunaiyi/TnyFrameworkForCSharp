@@ -6,10 +6,16 @@
 
 using System;
 using ProtoBuf;
-using TnyFramework.Net.TypeProtobuf;
+using TnyFramework.Codec;
+using TnyFramework.Codec.Attributes;
+using TnyFramework.Codec.ProtobufNet.Attributes;
+using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
+using TnyFramework.Net.ProtobufNet;
 
 namespace TnyFramework.Net.Demo.DTO
 {
+    [Codable(MimeTypes.PROTOBUF_TYPE)]
+    [TypeProtobuf(1000_03_00)]
     [ProtoContract]
     public class PlayerDTO
     {
@@ -25,6 +31,8 @@ namespace TnyFramework.Net.Demo.DTO
 
     public static partial class DTOOutline
     {
-        public static Action RegisterPlayerDTO = () => { TypeProtobufObjectFactory.Factory.Register<PlayerDTO>(1000_03_00); };
+        public static Action RegisterPlayerDTO = () => {
+            TypeProtobufSchemeFactory.Factory.Load<PlayerDTO>();
+        };
     }
 }

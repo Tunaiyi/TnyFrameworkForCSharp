@@ -1,20 +1,22 @@
+using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
+
 namespace TnyFramework.Net.Command
 {
-    public interface ICertificate
+
+    public interface ICertificate : IMessager
     {
         long Id { get; }
 
         object GetUserId();
 
-        string UserType { get; }
+        string UserGroup { get; }
 
         long AuthenticateAt { get; }
 
         CertificateStatus Status { get; }
 
         bool IsAuthenticated();
-
     }
 
     public interface ICertificate<out TUserId> : ICertificate
@@ -70,7 +72,7 @@ namespace TnyFramework.Net.Command
             {
                 return true;
             }
-            return Equals(one.GetUserId(), other.GetUserId()) && Equals(one.UserType, other.UserType);
+            return Equals(one.GetUserId(), other.GetUserId()) && Equals(one.UserGroup, other.UserGroup);
         }
 
 
@@ -81,7 +83,8 @@ namespace TnyFramework.Net.Command
             {
                 return true;
             }
-            return one.Id == other.Id && Equals(one.GetUserId(), other.GetUserId()) && Equals(one.UserType, other.UserType);
+            return one.Id == other.Id && Equals(one.GetUserId(), other.GetUserId()) && Equals(one.UserGroup, other.UserGroup);
         }
     }
+
 }

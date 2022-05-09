@@ -1,8 +1,10 @@
 using TnyFramework.Net.Command;
-using TnyFramework.Net.Rpc;
+using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.Transport
 {
-    public interface ICommunicator
+
+    public interface ICommunicator : IMessager
     {
         /// <summary>
         /// 获取用户 id
@@ -14,7 +16,7 @@ namespace TnyFramework.Net.Transport
         /// 用户类型
         /// </summary>
         /// <returns></returns>
-        string UserType { get; }
+        string UserGroup { get; }
 
 
         /// <summary>
@@ -42,4 +44,5 @@ namespace TnyFramework.Net.Transport
         /// </summary>
         ICertificate<TUserId> Certificate { get; }
     }
+
 }

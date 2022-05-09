@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.Transport
 {
+
     public abstract class MessageContext : ISendReceipt, IMessageContent
     {
         /// <summary>
@@ -30,7 +34,7 @@ namespace TnyFramework.Net.Transport
         /// 因为异常而取消
         /// </summary>
         /// <param name="cause">取消的的异常</param>
-        public abstract void Cancel(System.Exception cause);
+        public abstract void Cancel(Exception cause);
 
 
         public bool IsOwn(IProtocol protocol)
@@ -54,19 +58,26 @@ namespace TnyFramework.Net.Transport
         public abstract bool IsWriteAwaitable();
 
         public abstract int ProtocolId { get; }
+
         public abstract int Line { get; }
 
-
-
         public abstract long ToMessage { get; }
-        public abstract MessageType Type { get; }
-        public abstract MessageMode Mode { get; }
 
+        public abstract MessageType Type { get; }
+
+        public abstract MessageMode Mode { get; }
 
         public abstract bool ExistBody { get; }
 
         public abstract object Body { get; protected set; }
 
+        public abstract IDictionary<string, MessageHeader> Headers { get; }
+
+        public abstract MessageContext WithHeader(MessageHeader header);
+
+        public abstract MessageContext WithHeaders(IEnumerable<MessageHeader> headers);
+
         public abstract T BodyAs<T>();
     }
+
 }

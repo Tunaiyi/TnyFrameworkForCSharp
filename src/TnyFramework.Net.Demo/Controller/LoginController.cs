@@ -1,4 +1,5 @@
 using System;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Demo.DTO;
 using TnyFramework.Net.Dispatcher;
@@ -8,11 +9,11 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Demo.Controller
 {
     [RpcController]
-    [AuthenticationRequired(Certificate.DEFAULT_USER_TYPE)]
+    [AuthenticationRequired(MessagerType.DEFAULT_USER_TYPE)]
     public class LoginController : IController
     {
         [RpcRequest(CtrlerIds.LOGIN_4_LOGIN)]
-        [AuthenticationRequired(typeof(DemoAuthenticateValidator), Certificate.DEFAULT_USER_TYPE)]
+        [AuthenticationRequired(typeof(DemoAuthenticateValidator), MessagerType.DEFAULT_USER_TYPE)]
         public LoginDTO Login(ITunnel<long> tunnel, IEndpoint<long> endpoint, [MsgParam] long sessionId, [MsgParam] long userId)
         {
             var certificate = endpoint.Certificate;

@@ -1,5 +1,8 @@
+using System.Collections.Generic;
+
 namespace TnyFramework.Net.Message
 {
+
     /// <summary>
     /// 消息头
     /// </summary>
@@ -19,7 +22,86 @@ namespace TnyFramework.Net.Message
         /// 请求时间
         /// </summary>
         long Time { get; }
-        
-        
+
+
+        /// <summary>
+        /// 获取转发 header
+        /// </summary>
+        /// <param name="key">查找 key</param>
+        /// <typeparam name="T">Header 类</typeparam>
+        /// <returns>Header</returns>
+        T GetHeader<T>(string key) where T : MessageHeader<T>;
+
+
+        /// <summary>
+        /// 获取转发 header
+        /// </summary>
+        /// <param name="key">查找 key</param>
+        /// <returns>Header</returns>
+        MessageHeader GetHeader(string key);
+
+
+        /// <summary>
+        /// 获取转发 header
+        /// </summary>
+        /// <typeparam name="T">Header 类</typeparam>
+        /// <returns>Header列表</returns>
+        IList<T> GetHeaders<T>() where T : MessageHeader<T>;
+
+
+        /// <summary>
+        /// 获取转发 header
+        /// </summary>
+        /// <param name="key">查找 key</param>
+        /// <typeparam name="T">Header 类</typeparam>
+        /// <returns>Header</returns>
+        T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>;
+
+
+        /// <summary>
+        /// 是否有 Header 存在
+        /// </summary>
+        bool IsHasHeaders { get; }
+
+
+        /// <summary>
+        /// 获取全部 Header
+        /// </summary>
+        /// <returns>Header 列表</returns>
+        IList<MessageHeader> GetAllHeaders();
+
+
+        /// <summary>
+        /// 获取全部 Header
+        /// </summary>
+        /// <returns>全部 Header</returns>
+        IDictionary<string, MessageHeader> GetAllHeadersMap();
+
+
+        /// <summary>
+        /// 是否存在指定 key 的 Header
+        /// </summary>
+        /// <param name="key">键值</param>
+        /// <returns>存在返回 true, 否则返回 false</returns>
+        bool ExistHeader(string key);
+
+
+        /// <summary>
+        /// 是否存在指定 key 的 Header
+        /// </summary>
+        /// <param name="key">键值</param>
+        /// <typeparam name="T">是否是指定类</typeparam>
+        /// <returns>存在返回 true, 否则返回 false</returns>
+        bool ExistHeader<T>(string key) where T : MessageHeader<T>;
+
+
+        /// <summary>
+        /// 是否存在指定 key 的 Header
+        /// </summary>
+        /// <param name="key">键值</param>
+        /// <typeparam name="T">是否是指定类</typeparam>
+        /// <returns>存在返回 true, 否则返回 false</returns>
+        bool ExistHeader(MessageHeaderKey key);
     }
+
 }

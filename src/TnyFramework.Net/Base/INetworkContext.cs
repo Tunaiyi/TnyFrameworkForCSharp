@@ -1,9 +1,12 @@
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Rpc;
+
 namespace TnyFramework.Net.Base
 {
-    public interface INetworkContext : IEndpointContext
+
+    public interface INetworkContext : IEndpointContext, IRpcContext
     {
         /// <summary>
         /// 认证工厂
@@ -27,4 +30,5 @@ namespace TnyFramework.Net.Base
         /// </summary>
         IServerBootstrapSetting Setting { get; }
     }
+
 }

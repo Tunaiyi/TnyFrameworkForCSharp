@@ -30,7 +30,7 @@ namespace TnyFramework.Net.Base
         /// 全局唯一 id
         /// 确保所有的服务器类型的 id 都不重复
         /// </summary>
-        long ServerId { get; }
+        int ServerId { get; }
 
 
         /// <summary>

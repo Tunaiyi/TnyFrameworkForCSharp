@@ -2,8 +2,10 @@ using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Transport;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public class NetServerGuideUnitContext<TUserId> : NetGuideUnitContext<TUserId>, INetServerGuideUnitContext<TUserId>
     {
         public ServerSettingSpec ServerSettingSpec { get; }
@@ -34,7 +36,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         }
 
 
-
         public override INetworkContext LoadNetworkContext()
         {
             return NetworkContextSpec.Load(this, UnitContainer);
@@ -52,4 +53,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
                 context.LoadCertificateFactory());
         }
     }
+
 }

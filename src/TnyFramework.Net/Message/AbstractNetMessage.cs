@@ -1,12 +1,16 @@
 using System;
+using System.Collections.Generic;
 using TnyFramework.Common.Attribute;
+
 namespace TnyFramework.Net.Message
 {
+
     public abstract class AbstractNetMessage : INetMessage
     {
         private readonly INetMessageHead head;
 
         private readonly AttributesContext attributes = new AttributesContext();
+
 
         protected AbstractNetMessage(INetMessageHead head)
         {
@@ -17,15 +21,9 @@ namespace TnyFramework.Net.Message
         protected AbstractNetMessage(INetMessageHead head, object body)
         {
             this.head = head;
-            this.Body = body;
+            Body = body;
         }
 
-
-        public long ToMessage => head.ToMessage;
-
-        public MessageType Type => head.Type;
-
-        public MessageMode Mode => head.Mode;
 
         public long Id => head.Id;
 
@@ -37,28 +35,47 @@ namespace TnyFramework.Net.Message
 
         public long Time => head.Time;
 
+        public long ToMessage => head.ToMessage;
 
-        public bool IsOwn(IProtocol protocol)
-        {
-            return head.IsOwn(protocol);
-        }
+        public MessageType Type => head.Type;
 
-
-        public void AllotMessageId(long id)
-        {
-            head.AllotMessageId(id);
-        }
-
+        public MessageMode Mode => head.Mode;
 
         public IMessageHead Head => head;
 
-        public IAttributes Attribute => attributes.Attributes;
+        public object Body { get; }
 
-        public int GetCode() => Code;
+        public IDictionary<string, MessageHeader> Headers => Head.GetAllHeadersMap();
+
+        public IAttributes Attribute => attributes.Attributes;
 
         public bool ExistBody => Body != null;
 
-        public object Body { get; }
+        public T GetHeader<T>(string key) where T : MessageHeader<T> => head.GetHeader<T>(key);
+
+        public MessageHeader GetHeader(string key) => head.GetHeader(key);
+
+        public IList<T> GetHeaders<T>() where T : MessageHeader<T> => head.GetHeaders<T>();
+
+        public T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.GetHeader(key);
+
+        public bool IsHasHeaders => head.IsHasHeaders;
+
+        public IList<MessageHeader> GetAllHeaders() => head.GetAllHeaders();
+
+        public IDictionary<string, MessageHeader> GetAllHeadersMap() => head.GetAllHeadersMap();
+
+        public bool ExistHeader(string key) => head.ExistHeader(key);
+
+        public bool ExistHeader<T>(string key) where T : MessageHeader<T> => head.ExistHeader<T>(key);
+
+        public bool ExistHeader(MessageHeaderKey key) => head.ExistHeader(key);
+
+        public bool IsOwn(IProtocol protocol) => head.IsOwn(protocol);
+
+        public void AllotMessageId(long id) => head.AllotMessageId(id);
+
+        public int GetCode() => Code;
 
 
         public T BodyAs<T>()
@@ -69,9 +86,10 @@ namespace TnyFramework.Net.Message
                 return default;
             if (type.IsInstanceOfType(Body))
             {
-                return (T)body;
+                return (T) body;
             }
             throw new InvalidCastException($"{body.GetType()} can not convert to {type}");
         }
     }
+
 }

@@ -1,5 +1,3 @@
-#region
-
 using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,8 +5,6 @@ using Microsoft.Extensions.Hosting;
 using TnyFramework.Common.Exception;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
-
-#endregion
 
 namespace TnyFramework.Net.DotNetty.AspNetCore
 {

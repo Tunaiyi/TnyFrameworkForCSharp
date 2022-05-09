@@ -3,11 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Demo.DTO;
 using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Rpc.Attributes;
 using TnyFramework.Net.Rpc.Auth;
 using TnyFramework.Net.Transport;
@@ -17,7 +19,7 @@ namespace TnyFramework.Net.Demo.Controller
     // @AuthenticationRequired({Certificates.DEFAULT_USER_TYPE, "game-client"})
     // @BeforePlugin(SpringBootParamFilterPlugin.class)
     [RpcController]
-    [AuthenticationRequired(Certificate.DEFAULT_USER_TYPE, "game-client")]
+    [AuthenticationRequired(MessagerType.DEFAULT_USER_TYPE, "game-client")]
     public class ServerSpeakController : IController
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<ServerSpeakController>();
@@ -34,7 +36,7 @@ namespace TnyFramework.Net.Demo.Controller
 
 
         [RpcRequest(CtrlerIds.SPEAK_4_SAY_FOR_RPC)]
-        public SayContentDTO SayForBody([UserId] RpcLinkerId id, [MsgParam] string message)
+        public SayContentDTO SayForBody([UserId] RpcAccessIdentify id, [MsgParam] string message)
         {
             return new SayContentDTO(id.Id, "respond " + message);
         }

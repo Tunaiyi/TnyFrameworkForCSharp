@@ -75,9 +75,9 @@ namespace TnyFramework.Net.Dispatcher
 
             // 判断身份是否符合
             LOGGER.LogDebug("Controller [{Name}] 检测用户组调用权限", Name);
-            if (!controller.IsUserGroup(Tunnel.UserType))
+            if (!controller.IsUserGroup(Tunnel.UserGroup))
             {
-                LOGGER.LogError("Controller [{Name}] , 用户组 [{User}] 无法调用此协议", Name, Tunnel.UserType);
+                LOGGER.LogError("Controller [{Name}] , 用户组 [{User}] 无法调用此协议", Name, Tunnel.UserGroup);
                 CommandContext.Intercept(NetResultCode.NO_PERMISSIONS);
                 return;
             }

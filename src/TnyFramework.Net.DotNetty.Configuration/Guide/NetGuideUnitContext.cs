@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
@@ -7,9 +8,11 @@ using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Configuration.Channel;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.TypeProtobuf;
+using TnyFramework.Net.ProtobufNet;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public abstract class NetGuideUnitContext<TUserId> : INetGuideUnitContext<TUserId>
     {
         internal IServiceCollection UnitContainer { get; }
@@ -23,6 +26,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         public UnitSpec<IMessageFactory, INetGuideUnitContext<TUserId>> MessageFactorySpec { get; }
 
         public UnitSpec<IMessageBodyCodec, INetGuideUnitContext<TUserId>> MessageBodyCodecSpec { get; }
+
+        public UnitSpec<IMessageHeaderCodec, INetGuideUnitContext<TUserId>> MessageHeaderCodecSpec { get; }
 
         public UnitSpec<IMessageCodec, INetGuideUnitContext<TUserId>> MessageCodecSpec { get; }
 
@@ -51,6 +56,10 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             MessageBodyCodecSpec = UnitSpec.Unit<IMessageBodyCodec, INetGuideUnitContext<TUserId>>()
                 .Default<TypeProtobufMessageBodyCodec>();
 
+            // MessageBodyCodec
+            MessageHeaderCodecSpec = UnitSpec.Unit<IMessageHeaderCodec, INetGuideUnitContext<TUserId>>()
+                .Default<MessageHeaderCodec>();
+
             // MessageCodec
             MessageCodecSpec = UnitSpec.Unit<IMessageCodec, INetGuideUnitContext<TUserId>>()
                 .Default(DefaultMessageCodec);
@@ -71,6 +80,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             TunnelFactorySpec.WithNamePrefix(name);
             MessageFactorySpec.WithNamePrefix(name);
             MessageBodyCodecSpec.WithNamePrefix(name);
+            MessageHeaderCodecSpec.WithNamePrefix(name);
             MessageCodecSpec.WithNamePrefix(name);
             CertificateFactorySpec.WithNamePrefix(name);
             ChannelMakerSpec.SetName(name);
@@ -113,6 +123,12 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         }
 
 
+        public IMessageHeaderCodec LoadMessageHeaderCodec()
+        {
+            return MessageHeaderCodecSpec.Load(this, UnitContainer);
+        }
+
+
         public ICertificateFactory<TUserId> LoadCertificateFactory()
         {
             return CertificateFactorySpec.Load(this, UnitContainer);
@@ -121,7 +137,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         private static IMessageCodec DefaultMessageCodec(INetGuideUnitContext<TUserId> context)
         {
-            return new NettyMessageCodec(context.LoadMessageBodyCodec());
+            return new NettyMessageCodec(context.LoadMessageBodyCodec(), context.LoadMessageHeaderCodec());
         }
     }
+
 }

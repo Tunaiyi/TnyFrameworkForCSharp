@@ -1,5 +1,3 @@
-#region
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,8 +10,6 @@ using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Attributes;
 using TnyFramework.Net.Transport;
-
-#endregion
 
 namespace TnyFramework.Net.Dispatcher
 {

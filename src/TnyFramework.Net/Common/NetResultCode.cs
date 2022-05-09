@@ -1,4 +1,5 @@
 using TnyFramework.Common.Result;
+
 namespace TnyFramework.Net.Common
 {
     public class NetResultCode : ResultCode<NetResultCode>

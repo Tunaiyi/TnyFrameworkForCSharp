@@ -1,7 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using TnyFramework.Common.Result;
+
 namespace TnyFramework.Net.Message
 {
+
     public class TickMessageHead : AbstractNetMessageHead
     {
         public static TickMessageHead Ping()
@@ -42,9 +46,30 @@ namespace TnyFramework.Net.Message
 
         public override long Time { get; }
 
+        public override T GetHeader<T>(string key) => null;
+
+        public override MessageHeader GetHeader(string key) => null;
+
+        public override IList<T> GetHeaders<T>() => ImmutableList<T>.Empty;
+
+        public override T GetHeader<T>(MessageHeaderKey<T> key) => null;
+
+        public override bool IsHasHeaders => false;
+
+        public override IList<MessageHeader> GetAllHeaders() => ImmutableList<MessageHeader>.Empty;
+
+        public override IDictionary<string, MessageHeader> GetAllHeadersMap() => ImmutableDictionary<string, MessageHeader>.Empty;
+
+        public override bool ExistHeader(string key) => false;
+
+        public override bool ExistHeader<T>(string key) => false;
+
+        public override bool ExistHeader(MessageHeaderKey key) => false;
+
 
         public override void AllotMessageId(long id)
         {
         }
     }
+
 }

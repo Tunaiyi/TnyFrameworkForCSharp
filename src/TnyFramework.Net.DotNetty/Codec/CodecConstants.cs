@@ -5,8 +5,10 @@
 //
 
 using System.Linq;
+
 namespace TnyFramework.Net.DotNetty.Codec
 {
+
     internal static class CodecConstants
     {
         //时间 + MAGICS + data package
@@ -14,7 +16,7 @@ namespace TnyFramework.Net.DotNetty.Codec
         //payload = message head option + message
 
         //magics
-        public static readonly byte[] MAGICS = { (byte)'t', (byte)'n', (byte)'y', (byte)'.' }; //魔法字节，用于识别
+        public static readonly byte[] MAGICS = {(byte) 't', (byte) 'n', (byte) 'y', (byte) '.'}; //魔法字节，用于识别
         public static readonly int MAGICS_SIZE = MAGICS.Length; //魔法字节长度
 
         //package option
@@ -22,7 +24,7 @@ namespace TnyFramework.Net.DotNetty.Codec
         public const byte DATA_PACK_OPTION_MSG_TYPE_SIZE = 2; // message type 字节数
 
         public const byte
-            DATA_PACK_OPTION_MSG_TYPE_MASK = (byte)~(-1 << DATA_PACK_OPTION_MSG_TYPE_SIZE); // message type 掩码
+            DATA_PACK_OPTION_MSG_TYPE_MASK = (byte) ~(-1 << DATA_PACK_OPTION_MSG_TYPE_SIZE); // message type 掩码
 
         public const byte DATA_PACK_OPTION_MESSAGE = 0; // message
         public const byte DATA_PACK_OPTION_PING = 1 << 0; // ping
@@ -51,6 +53,8 @@ namespace TnyFramework.Net.DotNetty.Codec
         public const byte MESSAGE_HEAD_OPTION_EXIST_BODY_BIT_SIZE = 1; //是否有body 占据位数
         public const byte MESSAGE_HEAD_OPTION_EXIST_BODY_SHIFT = 2; // body 偏移值
         public const byte MESSAGE_HEAD_OPTION_EXIST_BODY = 1 << MESSAGE_HEAD_OPTION_EXIST_BODY_SHIFT; // 是否有body
+        public const byte MESSAGE_HEAD_OPTION_EXIST_HEADERS_VALUE_EXIST = 1 << 6; // 是否请求数据
+
 
         //line 消息线路
         public const byte MESSAGE_HEAD_OPTION_LINE_MASK = 0xFF >> 4 << 2; // line 掩码 00011100
@@ -87,7 +91,7 @@ namespace TnyFramework.Net.DotNetty.Codec
         {
             if (effect)
             {
-                return (byte)(option | mark);
+                return (byte) (option | mark);
             }
             return option;
         }
@@ -104,7 +108,8 @@ namespace TnyFramework.Net.DotNetty.Codec
         {
             return (option & mark) == value;
         }
-        
+
+
         /// <summary>
         /// 判断该option是否是mark
         /// </summary>
@@ -116,4 +121,5 @@ namespace TnyFramework.Net.DotNetty.Codec
             return (option & mark) == mark;
         }
     }
+
 }

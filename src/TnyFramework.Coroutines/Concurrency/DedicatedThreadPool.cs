@@ -307,8 +307,6 @@ namespace TnyFramework.Coroutines.Concurrency
         }
 
 
-        #region Pool worker implementation
-
         private class PoolWorker
         {
             private readonly DedicatedThreadPool pool;
@@ -357,10 +355,6 @@ namespace TnyFramework.Coroutines.Concurrency
                 }
             }
         }
-
-        #endregion
-
-        #region WorkQueue implementation
 
         private class ThreadPoolWorkQueue
         {
@@ -417,7 +411,7 @@ namespace TnyFramework.Coroutines.Concurrency
 
             public void CompleteAdding()
             {
-                int previousCompleted = Interlocked.Exchange(ref _isAddingCompleted, CompletedState);
+                var previousCompleted = Interlocked.Exchange(ref _isAddingCompleted, CompletedState);
 
                 if (previousCompleted == CompletedState)
                     return;
@@ -428,10 +422,10 @@ namespace TnyFramework.Coroutines.Concurrency
 
                 while (true)
                 {
-                    int count = Volatile.Read(ref _outstandingRequests);
-                    int countToRelease = UnfairSemaphore.MaxWorker - count;
+                    var count = Volatile.Read(ref _outstandingRequests);
+                    var countToRelease = UnfairSemaphore.MaxWorker - count;
 
-                    int prev = Interlocked.CompareExchange(ref _outstandingRequests, UnfairSemaphore.MaxWorker, count);
+                    var prev = Interlocked.CompareExchange(ref _outstandingRequests, UnfairSemaphore.MaxWorker, count);
 
                     if (prev == count)
                     {
@@ -457,10 +451,10 @@ namespace TnyFramework.Coroutines.Concurrency
                 // This trick is borrowed from the .Net ThreadPool
                 // https://github.com/dotnet/coreclr/blob/bc146608854d1db9cdbcc0b08029a87754e12b49/src/mscorlib/src/System/Threading/ThreadPool.cs#L568
 
-                int count = Volatile.Read(ref _outstandingRequests);
+                var count = Volatile.Read(ref _outstandingRequests);
                 while (count < ProcessorCount)
                 {
-                    int prev = Interlocked.CompareExchange(ref _outstandingRequests, count + 1, count);
+                    var prev = Interlocked.CompareExchange(ref _outstandingRequests, count + 1, count);
                     if (prev == count)
                     {
                         _semaphore.Release();
@@ -473,10 +467,10 @@ namespace TnyFramework.Coroutines.Concurrency
 
             private void MarkThreadRequestSatisfied()
             {
-                int count = Volatile.Read(ref _outstandingRequests);
+                var count = Volatile.Read(ref _outstandingRequests);
                 while (count > 0)
                 {
-                    int prev = Interlocked.CompareExchange(ref _outstandingRequests, count - 1, count);
+                    var prev = Interlocked.CompareExchange(ref _outstandingRequests, count - 1, count);
                     if (prev == count)
                     {
                         break;
@@ -485,10 +479,6 @@ namespace TnyFramework.Coroutines.Concurrency
                 }
             }
         }
-
-        #endregion
-
-        #region UnfairSemaphore implementation
 
         // This class has been translated from:
         // https://github.com/dotnet/coreclr/blob/97433b9d153843492008652ff6b7c3bf4d9ff31c/src/vm/win32threadpool.h#L124
@@ -561,8 +551,8 @@ namespace TnyFramework.Coroutines.Concurrency
             {
                 while (true)
                 {
-                    SemaphoreState currentCounts = GetCurrentState();
-                    SemaphoreState newCounts = currentCounts;
+                    var currentCounts = GetCurrentState();
+                    var newCounts = currentCounts;
 
                     // First, just try to grab some count.
                     if (currentCounts.CountForSpinners > 0)
@@ -582,12 +572,12 @@ namespace TnyFramework.Coroutines.Concurrency
                 //
                 // Now we're a spinner.  
                 //
-                int numSpins = 0;
+                var numSpins = 0;
                 const int spinLimitPerProcessor = 50;
                 while (true)
                 {
-                    SemaphoreState currentCounts = GetCurrentState();
-                    SemaphoreState newCounts = currentCounts;
+                    var currentCounts = GetCurrentState();
+                    var newCounts = currentCounts;
 
                     if (currentCounts.CountForSpinners > 0)
                     {
@@ -597,8 +587,8 @@ namespace TnyFramework.Coroutines.Concurrency
                             return true;
                     } else
                     {
-                        double spinnersPerProcessor = (double)currentCounts.Spinners / Environment.ProcessorCount;
-                        int spinLimit = (int)((spinLimitPerProcessor / spinnersPerProcessor) + 0.5);
+                        var spinnersPerProcessor = (double)currentCounts.Spinners / Environment.ProcessorCount;
+                        var spinLimit = (int)((spinLimitPerProcessor / spinnersPerProcessor) + 0.5);
                         if (numSpins >= spinLimit)
                         {
                             --newCounts.Spinners;
@@ -625,12 +615,12 @@ namespace TnyFramework.Coroutines.Concurrency
                 //
                 // Now we're a waiter
                 //
-                bool waitSucceeded = m_semaphore.WaitOne(timeout);
+                var waitSucceeded = m_semaphore.WaitOne(timeout);
 
                 while (true)
                 {
-                    SemaphoreState currentCounts = GetCurrentState();
-                    SemaphoreState newCounts = currentCounts;
+                    var currentCounts = GetCurrentState();
+                    var newCounts = currentCounts;
 
                     --newCounts.Waiters;
 
@@ -653,21 +643,21 @@ namespace TnyFramework.Coroutines.Concurrency
             {
                 while (true)
                 {
-                    SemaphoreState currentState = GetCurrentState();
-                    SemaphoreState newState = currentState;
+                    var currentState = GetCurrentState();
+                    var newState = currentState;
 
-                    short remainingCount = count;
+                    var remainingCount = count;
 
                     // First, prefer to release existing spinners,
                     // because a) they're hot, and b) we don't need a kernel
                     // transition to release them.
-                    short spinnersToRelease = Math.Max((short)0,
+                    var spinnersToRelease = Math.Max((short)0,
                         Math.Min(remainingCount, (short)(currentState.Spinners - currentState.CountForSpinners)));
                     newState.CountForSpinners += spinnersToRelease;
                     remainingCount -= spinnersToRelease;
 
                     // Next, prefer to release existing waiters
-                    short waitersToRelease = Math.Max((short)0,
+                    var waitersToRelease = Math.Max((short)0,
                         Math.Min(remainingCount, (short)(currentState.Waiters - currentState.CountForWaiters)));
                     newState.CountForWaiters += waitersToRelease;
                     remainingCount -= waitersToRelease;
@@ -715,12 +705,10 @@ namespace TnyFramework.Coroutines.Concurrency
                 // Volatile.Read of a long can get a partial read in x86 but the invalid
                 // state will be detected in TryUpdateState with the CompareExchange.
 
-                SemaphoreState state = new SemaphoreState();
+                var state = new SemaphoreState();
                 state.RawData = Volatile.Read(ref m_state.RawData);
                 return state;
             }
         }
-
-        #endregion
     }
 }

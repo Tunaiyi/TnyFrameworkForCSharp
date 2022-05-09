@@ -11,8 +11,6 @@ namespace TnyFramework.Net.DotNetty.Common
 {
     public static partial class ByteBufferUtils
     {
-        #region Fixed32
-
         /// <summary>
         /// 从字节数组中读取32位固定长度
         /// </summary>
@@ -87,9 +85,6 @@ namespace TnyFramework.Net.DotNetty.Common
             value = Int2Float(intValue);
         }
 
-        #endregion
-
-        #region Fixed64
 
         /// <summary>
         /// 从字节数组中读取64位固定长度
@@ -186,9 +181,6 @@ namespace TnyFramework.Net.DotNetty.Common
             value = Long2Double(longValue);
         }
 
-        #endregion
-
-        #region VarInt32
 
         /// <summary>
         /// 从字节数组中读取动态长度
@@ -434,9 +426,6 @@ namespace TnyFramework.Net.DotNetty.Common
             value = Int2Float(intValue);
         }
 
-        #endregion
-
-        #region VarInt64
 
         /// <summary>
         /// 从字节数组中读取动态长度
@@ -661,7 +650,5 @@ namespace TnyFramework.Net.DotNetty.Common
             }
             buffer.ReadBytes(value, len);
         }
-
-        #endregion
     }
 }

@@ -1,6 +1,4 @@
-﻿#region
-
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,8 +7,6 @@ using TnyFramework.Common.Event;
 using TnyFramework.Common.Invoke;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
-
-#endregion
 
 namespace TnyFramework.Coroutines.Demo
 {

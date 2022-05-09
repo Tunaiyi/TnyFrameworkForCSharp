@@ -5,8 +5,6 @@ namespace TnyFramework.Net.DotNetty.Common
 {
     public static partial class ByteBufferUtils
     {
-        #region Fixed32
-
         /// <summary>
         /// 写32位固定长度到字节数组
         /// </summary>
@@ -87,9 +85,6 @@ namespace TnyFramework.Net.DotNetty.Common
             WriteFixed32(Float2Int(value), buffer);
         }
 
-        #endregion
-
-        #region Fixed64
 
         /// <summary>
         /// 写64位固定长度到字节数组
@@ -183,9 +178,6 @@ namespace TnyFramework.Net.DotNetty.Common
             WriteFixed64(Double2Long(value), buffer);
         }
 
-        #endregion
-
-        #region Variant
 
         /// <summary>
         /// 写动态长度到字节数组
@@ -415,7 +407,5 @@ namespace TnyFramework.Net.DotNetty.Common
         {
             WriteBytes(source.Array, source.Offset, source.Count, buffer);
         }
-
-        #endregion
     }
 }

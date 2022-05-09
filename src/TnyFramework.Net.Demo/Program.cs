@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using TnyFramework.Codec;
+using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 using TnyFramework.Common.Logger;
-using TnyFramework.Common.Logger.Console;
 using TnyFramework.Common.Result;
 using TnyFramework.DI.Container;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Demo.Controller;
 using TnyFramework.Net.Demo.DTO;
-using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Rpc.Auth;
+using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
 using static TnyFramework.Net.Demo.DTO.DTOOutline;
 
 namespace TnyFramework.Net.Demo
 {
+
     internal class Program
     {
         static Program()
@@ -43,7 +44,7 @@ namespace TnyFramework.Net.Demo
                 var paramList = message.BodyAs<IList>();
                 if (paramList == null)
                     return;
-                var uid = (long)paramList[1];
+                var uid = (long) paramList[1];
                 var dto = new LoginDTO {
                     userId = uid,
                     certId = 2000011
@@ -146,12 +147,20 @@ namespace TnyFramework.Net.Demo
             }
         }
 
+        public class TestRpcServiceType : RpcServiceType<TestRpcServiceType>
+        {
+            public static readonly TestRpcServiceType TEST_CLIENT = Of(100, "TestClient");
+            public static readonly TestRpcServiceType TEST_SERVICE = Of(200, "TestService");
+        }
+
+
+
 
 
 
         private static async Task Main(string[] args)
         {
-
+            NetMessagerType.GetValues();
             var test = new ServiceCollection();
             test.AddSingletonUnit<OtherClass>("OtherClass")
                 .AddSingletonUnit<MyClass>("MyClass")
@@ -184,12 +193,12 @@ namespace TnyFramework.Net.Demo
             var longF = p.GetService<ICertificateFactory<long>>();
             var fs = p.GetServices(typeof(ICertificateFactory));
             // var onMessage = p.GetService<TestOnMessage>();
-            var user = new RpcLinkerId("TestClient", 300000, 1);
-            var token = new RpcToken("TestService", 200000, 1, user);
+            var user = new RpcAccessIdentify(TestRpcServiceType.TEST_CLIENT, 300, 1);
+            var token = new RpcAccessToken(TestRpcServiceType.TEST_SERVICE, 200, user);
 
             var json = JsonConvert.SerializeObject(token);
             Console.WriteLine(json);
-            var newToken = JsonConvert.DeserializeObject<RpcToken>(json);
+            var newToken = JsonConvert.DeserializeObject<RpcAccessToken>(json);
             Console.WriteLine(newToken);
 
             RegisterDTOs();
@@ -211,7 +220,7 @@ namespace TnyFramework.Net.Demo
                 .EndpointConfigure(endpointSpec => endpointSpec
                     .SessionKeeperFactory<long>("defaultSessionKeeperFactory")
                     .CustomSessionConfigure(settingSpec => settingSpec
-                        .UserType(Certificate.DEFAULT_USER_TYPE)
+                        .UserType(MessagerType.DEFAULT_USER_TYPE)
                         .KeeperFactory("defaultSessionKeeperFactory")))
                 .AddController<LoginController>()
                 .AddController<ServerSpeakController>()
@@ -228,4 +237,5 @@ namespace TnyFramework.Net.Demo
             // await guide.Close();
         }
     }
+
 }

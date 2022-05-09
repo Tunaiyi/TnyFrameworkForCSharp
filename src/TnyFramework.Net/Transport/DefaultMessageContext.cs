@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using TnyFramework.Common.Result;
@@ -5,8 +8,11 @@ using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Transport
 {
+
     public class DefaultMessageContext : RequestContext, IMessageWritableContext
     {
+        private readonly IDictionary<string, MessageHeader> headers = new Dictionary<string, MessageHeader>();
+
         public override IResultCode ResultCode { get; }
 
         public override int ProtocolId { get; }
@@ -20,6 +26,30 @@ namespace TnyFramework.Net.Transport
         public override MessageType Type => Mode.GetMessageType();
 
         public override object Body { get; protected set; }
+
+        public override IDictionary<string, MessageHeader> Headers => headers.ToImmutableDictionary();
+
+
+        public override MessageContext WithHeader(MessageHeader header)
+        {
+            if (header == null)
+                return this;
+            headers.Add(header.Key, header);
+            return this;
+        }
+
+
+        public override MessageContext WithHeaders(IEnumerable<MessageHeader> headers)
+        {
+            foreach (var header in headers)
+            {
+                if (header == null)
+                    continue;
+                this.headers.Add(header.Key, header);
+            }
+            return this;
+        }
+
 
         public TaskResponseSource ResponseSource { get; private set; }
 
@@ -44,7 +74,7 @@ namespace TnyFramework.Net.Transport
         {
             if (Body == null)
                 return default;
-            return (T)Body;
+            return (T) Body;
         }
 
 
@@ -68,7 +98,7 @@ namespace TnyFramework.Net.Transport
         }
 
 
-        public override void Cancel(System.Exception cause)
+        public override void Cancel(Exception cause)
         {
             ResponseSource?.SetException(cause);
             if (WrittenTask == null)
@@ -117,4 +147,5 @@ namespace TnyFramework.Net.Transport
             }
         }
     }
+
 }

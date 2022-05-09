@@ -39,7 +39,7 @@ namespace TnyFramework.Net.Endpoint
 
         public override string ToString()
         {
-            return $"Session[UserType:{UserType}, UserId:${UserId}, Tunnel:{CurrentTunnel}]";
+            return $"Session[UserType:{UserGroup}, UserId:${UserId}, Tunnel:{CurrentTunnel}]";
         }
     }
 }

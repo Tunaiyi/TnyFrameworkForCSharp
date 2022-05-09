@@ -1,9 +1,11 @@
 using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
-using IMessage = TnyFramework.Net.Message.IMessage;
+
 namespace TnyFramework.Net.Command.Tasks
 {
+
     public class MessageCommandTask : ICommandTask
     {
         private readonly IMessage message;
@@ -23,6 +25,13 @@ namespace TnyFramework.Net.Command.Tasks
 
         public ICommand Command {
             get {
+                if (message.ExistHeader(MessageHeaderConstants.RPC_FORWARD_HEADER))
+                {
+                    if (tunnel is INetTunnel<RpcAccessIdentify> netTunnel)
+                    {
+                        return new MessageForwardCommand(netTunnel, message);
+                    }
+                }
                 switch (message.Mode)
                 {
                     case MessageMode.Push:
@@ -37,4 +46,5 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
     }
+
 }

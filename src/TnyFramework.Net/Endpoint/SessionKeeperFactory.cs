@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using TnyFramework.Net.Base;
+
 namespace TnyFramework.Net.Endpoint
 {
     public class SessionKeeperFactory<TUserId> : ISessionKeeperFactory
@@ -13,15 +15,15 @@ namespace TnyFramework.Net.Endpoint
         }
 
 
-        public IEndpointKeeper CreateKeeper(string userType, IEndpointKeeperSetting setting)
+        public IEndpointKeeper CreateKeeper(IMessagerType messagerType, IEndpointKeeperSetting setting)
         {
-            return CreateKeeper(userType, (ISessionKeeperSetting)setting);
+            return CreateKeeper(messagerType, (ISessionKeeperSetting)setting);
         }
 
 
-        public ISessionKeeper CreateKeeper(string userType, ISessionKeeperSetting setting)
+        public ISessionKeeper CreateKeeper(IMessagerType messagerType, ISessionKeeperSetting setting)
         {
-            return factories.TryGetValue(setting.SessionFactory, out var factory) ? new SessionKeeper<TUserId>(userType, factory, setting) : null;
+            return factories.TryGetValue(setting.SessionFactory, out var factory) ? new SessionKeeper<TUserId>(messagerType, factory, setting) : null;
         }
     }
 }

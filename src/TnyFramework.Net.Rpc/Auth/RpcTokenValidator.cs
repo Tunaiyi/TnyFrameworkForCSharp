@@ -3,9 +3,11 @@ using TnyFramework.Net.Command;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Rpc.Auth
 {
-    public class RpcTokenValidator : AuthenticateValidator<RpcLinkerId>
+
+    public class RpcTokenValidator : AuthenticateValidator<RpcAccessIdentify>
     {
         private readonly IIdGenerator idCreator;
 
@@ -19,7 +21,8 @@ namespace TnyFramework.Net.Rpc.Auth
         }
 
 
-        public override ICertificate<RpcLinkerId> Validate(ITunnel<RpcLinkerId> tunnel, IMessage message, ICertificateFactory<RpcLinkerId> factory)
+        public override ICertificate<RpcAccessIdentify> Validate(ITunnel<RpcAccessIdentify> tunnel, IMessage message,
+            ICertificateFactory<RpcAccessIdentify> factory)
         {
             var token = message.BodyAs<string>();
             try
@@ -28,8 +31,8 @@ namespace TnyFramework.Net.Rpc.Auth
                 if (result.IsSuccess())
                 {
                     var rpcToken = result.Value;
-                    return factory.Authenticate(idCreator.Generate(), new RpcLinkerId(rpcToken.Service, rpcToken.ServerId, rpcToken.Id),
-                        rpcToken.Service, DateTimeOffset.Now.ToUnixTimeMilliseconds());
+                    return factory.Authenticate(idCreator.Generate(), RpcAccessIdentify.Parse(rpcToken.Id), rpcToken.Id,
+                        rpcToken.ServiceType, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                 }
                 var resultCode = result.Code;
                 throw new ValidationException(resultCode, $"Rpc登录认证失败. {{resultCode}} : {result.Message}");
@@ -39,4 +42,5 @@ namespace TnyFramework.Net.Rpc.Auth
             }
         }
     }
+
 }

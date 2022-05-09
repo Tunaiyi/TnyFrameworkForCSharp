@@ -5,8 +5,10 @@ using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Configuration.Channel;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public interface INetGuideUnitContext
     {
         IChannelMaker LoadChannelMaker();
@@ -19,6 +21,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         IMessageBodyCodec LoadMessageBodyCodec();
 
+        IMessageHeaderCodec LoadMessageHeaderCodec();
+
         INetworkContext LoadNetworkContext();
 
         IDataPacketV1ChannelMakerUnitContext ChannelMakerUnitContext { get; }
@@ -30,4 +34,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
     {
         ICertificateFactory<TUserId> LoadCertificateFactory();
     }
+
 }

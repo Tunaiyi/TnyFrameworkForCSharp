@@ -116,7 +116,7 @@ namespace TnyFramework.Net.Transport
 
         public override string ToString()
         {
-            return $"{Mode}[{UserType}({UserId}) {Transporter}]";
+            return $"{Mode}[{UserGroup}({UserId}) {Transporter}]";
         }
     }
 }

@@ -4,17 +4,18 @@
 //  创建标识：lrg 2021/7/29
 //
 
-#region
-
 using System;
 using ProtoBuf;
-using TnyFramework.Net.TypeProtobuf;
-
-#endregion
+using TnyFramework.Codec;
+using TnyFramework.Codec.Attributes;
+using TnyFramework.Codec.ProtobufNet.Attributes;
+using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 
 namespace TnyFramework.Net.Demo.DTO
 {
 
+    [Codable(MimeTypes.PROTOBUF_TYPE)]
+    [TypeProtobuf(1000_01_01)]
     [ProtoContract]
     public class SayContentDTO
     {
@@ -39,7 +40,7 @@ namespace TnyFramework.Net.Demo.DTO
 
     public static partial class DTOOutline
     {
-        public static Action RegisterSayContentDTO = () => { TypeProtobufObjectFactory.Factory.Register<SayContentDTO>(1000_01_01); };
+        public static Action RegisterSayContentDTO = () => { TypeProtobufSchemeFactory.Factory.Load<SayContentDTO>(); };
     }
 
 }

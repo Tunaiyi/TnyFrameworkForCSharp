@@ -1,5 +1,3 @@
-#region
-
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -12,8 +10,6 @@ using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
-
-#endregion
 
 namespace TnyFramework.Net.Dispatcher
 {
@@ -98,22 +94,48 @@ namespace TnyFramework.Net.Dispatcher
                     break;
             }
             MessageContext messageContext = null;
+            var messageForwardHeader = Message.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+            var messageIdHeader = Message.GetHeader(MessageHeaderConstants.RPC_ORIGINAL_MESSAGE_ID);
             switch (Message.Mode)
             {
                 case MessageMode.Push:
                     if (body != null)
                     {
-                        messageContext = MessageContexts.Push(Message.Head, code, body);
+                        messageContext = MessageContexts.Push(Message.Head, code, body)
+                            .WithHeader(CreateBackForwardHeader(messageForwardHeader));
                     }
                     break;
                 case MessageMode.Request:
-                    messageContext = MessageContexts.Respond(Message, code, body, Message.Id);
+                    var toMessage = messageIdHeader?.MessageId ?? Message.Id;
+                    messageContext = MessageContexts.Respond(Message, code, body, toMessage)
+                        .WithHeader(CreateBackForwardHeader(messageForwardHeader));
                     break;
+                case MessageMode.Response:
+                case MessageMode.Ping:
+                case MessageMode.Pong:
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             if (messageContext != null)
             {
                 TunnelAide.ResponseMessage(Tunnel, messageContext);
             }
+        }
+
+
+        private RpcForwardHeader CreateBackForwardHeader(RpcForwardHeader messageForwardHeader)
+        {
+            if (messageForwardHeader != null)
+            {
+                return new RpcForwardHeader {
+                    From = messageForwardHeader.To,
+                    Sender = messageForwardHeader.Receiver,
+                    To = messageForwardHeader.From,
+                    Receiver = messageForwardHeader.Sender,
+                    Forwarders = messageForwardHeader.Forwarders
+                };
+            }
+            return null;
         }
 
 

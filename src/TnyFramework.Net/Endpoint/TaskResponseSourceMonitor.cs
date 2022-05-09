@@ -1,5 +1,3 @@
-#region
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,8 +8,6 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Transport;
-
-#endregion
 
 namespace TnyFramework.Net.Endpoint
 {

@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Exceptions;
-using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Endpoint
 {
@@ -19,7 +19,6 @@ namespace TnyFramework.Net.Endpoint
 
     public class SessionKeeper<TUserId> : EndpointKeeper<TUserId, ISession<TUserId>>, ISessionKeeper<TUserId>
     {
-        public static readonly ILogger LOGGER = LogFactory.Logger<SessionKeeper>();
 
         /* 离线session */
         private readonly ConcurrentDictionary<ISession, bool> offlineSessionQueue = new ConcurrentDictionary<ISession, bool>();
@@ -32,10 +31,11 @@ namespace TnyFramework.Net.Endpoint
 
         private ICoroutine coroutine;
 
-        private int start = 0;
+        private int start;
 
+        private ILogger Logger => SessionKeeper.LOGGER;
 
-        public SessionKeeper(string userType, ISessionFactory factory, ISessionKeeperSetting setting) : base(userType)
+        public SessionKeeper(IMessagerType messagerType, ISessionFactory factory, ISessionKeeperSetting setting) : base(messagerType)
         {
             this.factory = factory;
             this.setting = setting;
@@ -61,7 +61,7 @@ namespace TnyFramework.Net.Endpoint
                     await Task.Delay(TimeSpan.FromMilliseconds(setting.ClearSessionInterval));
                 } catch (Exception e)
                 {
-                    LOGGER.LogError(e, "");
+                    Logger.LogError(e, "");
                 }
             });
         }
@@ -73,10 +73,10 @@ namespace TnyFramework.Net.Endpoint
             {
                 throw new ValidatorFailException(NetResultCode.VALIDATOR_FAIL_ERROR, $"cert {certificate} is unauthentic");
             }
-            if (!Equals(UserType, certificate.UserType))
+            if (!Equals(MessagerType, certificate.MessagerType))
             {
                 throw new ValidatorFailException(NetResultCode.VALIDATOR_FAIL_ERROR,
-                    $"cert {certificate} userType is {certificate.UserType}, not {UserType}");
+                    $"cert {certificate} userType is {certificate.UserGroup}, not {MessagerType}");
             }
             var uid = certificate.GetUserId();
             var index = Math.Abs(uid.GetHashCode()) % locks.Length;
@@ -93,13 +93,13 @@ namespace TnyFramework.Net.Endpoint
             if (existSession == null)
             {
                 // 旧 session 失效
-                SessionKeeper.LOGGER.LogWarning("旧session {User} 已经丢失", newTunnel.GetUserId());
+                Logger.LogWarning("旧session {User} 已经丢失", newTunnel.GetUserId());
                 throw new ValidatorFailException(NetResultCode.SESSION_LOSS_ERROR);
             }
             if (existSession.IsClosed())
             {
                 // 旧 session 已经关闭(失效)
-                SessionKeeper.LOGGER.LogWarning("旧session {Session} 已经关闭", existSession);
+                Logger.LogWarning("旧session {Session} 已经关闭", existSession);
                 throw new ValidatorFailException(NetResultCode.SESSION_LOSS_ERROR);
             }
 
@@ -121,7 +121,7 @@ namespace TnyFramework.Net.Endpoint
                 // 判断新授权是否比原有授权时间早, 如果是则无法登录
                 if (!certificate.IsSameCertificate(oldCert) && certificate.IsOlderThan(oldCert))
                 {
-                    SessionKeeper.LOGGER.LogWarning("认证已过 {Cer}", certificate);
+                    Logger.LogWarning("认证已过 {Cer}", certificate);
                     throw new ValidatorFailException(NetResultCode.INVALID_CERTIFICATE_ERROR);
                 }
             }

@@ -1,13 +1,15 @@
-using TnyFramework.Net.Rpc;
+using TnyFramework.Net.Base;
+
 namespace TnyFramework.Net.Command
 {
+
     public interface ICertificateFactory
     {
         ICertificate Anonymous();
 
-        ICertificate GeneralAuthenticate(long id, object userId, string userType, long authenticateAt);
+        ICertificate GeneralAuthenticate(long id, object userId, long messagerId, IMessagerType messagerType, long authenticateAt);
 
-        ICertificate RenewAuthenticate(long id, object userId, string userType, long authenticateAt);
+        ICertificate RenewAuthenticate(long id, object userId, long messagerId, IMessagerType messagerType, long authenticateAt);
     }
 
 
@@ -15,8 +17,9 @@ namespace TnyFramework.Net.Command
     {
         new ICertificate<TUserId> Anonymous();
 
-        ICertificate<TUserId> Authenticate(long id, TUserId userId, string userType, long authenticateAt);
+        ICertificate<TUserId> Authenticate(long id, TUserId userId, long messagerId, IMessagerType messagerType, long authenticateAt);
 
-        ICertificate<TUserId> RenewAuthenticate(long id, TUserId userId, string userType, long authenticateAt);
+        ICertificate<TUserId> RenewAuthenticate(long id, TUserId userId, long messagerId, IMessagerType messagerType, long authenticateAt);
     }
+
 }

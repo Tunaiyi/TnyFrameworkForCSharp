@@ -1,5 +1,3 @@
-#region
-
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -19,8 +17,6 @@ using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Rpc.Attributes;
 using TnyFramework.Net.Rpc.Auth;
-
-#endregion
 
 namespace TnyFramework.Net.DotNetty.Configuration
 {
@@ -76,7 +72,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
 
-        public NettyServerConfiguration AppContext(long serverId, string name)
+        public NettyServerConfiguration AppContext(int serverId, string name)
         {
             NetUnitContext.AppContextSpec
                 .ServerId(serverId)
@@ -85,7 +81,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
 
-        public NettyServerConfiguration AppContext(long serverId, string name, string appType, string scope)
+        public NettyServerConfiguration AppContext(int serverId, string name, string appType, string scope)
         {
             NetUnitContext.AppContextSpec
                 .ServerId(serverId)

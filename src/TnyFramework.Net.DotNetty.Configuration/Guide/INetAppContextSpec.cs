@@ -2,7 +2,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
     public interface INetAppContextSpec
     {
-        NetAppContextSpec ServerId(long value);
+        NetAppContextSpec ServerId(int value);
 
         NetAppContextSpec AppName(string value);
 

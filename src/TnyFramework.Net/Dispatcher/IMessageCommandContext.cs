@@ -1,5 +1,7 @@
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Command;
+
+
 namespace TnyFramework.Net.Dispatcher
 {
     public interface IMessageCommandContext
