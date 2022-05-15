@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Demo.Controller
 {
+
     public static class CtrlerIds
     {
         public const int LOGIN = 100;
@@ -24,4 +25,5 @@ namespace TnyFramework.Net.Demo.Controller
         public const int GAME_LOGIN = 1000;
         public const int GAME_LOGIN_4_LOGIN = 1000_01;
     }
+
 }

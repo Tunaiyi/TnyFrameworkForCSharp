@@ -10,7 +10,6 @@ namespace TnyFramework.Net.Rpc
         int ServerId { get; }
 
         long Id { get; }
-
     }
 
 }

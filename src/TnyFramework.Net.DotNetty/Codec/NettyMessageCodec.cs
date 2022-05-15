@@ -21,13 +21,11 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         private readonly IMessageRelayStrategy messageRelayStrategy = NeverRelayStrategy.Strategy;
 
-
         public NettyMessageCodec(IMessageBodyCodec bodyCoder, IMessageHeaderCodec headersCodec)
         {
             this.headersCodec = headersCodec;
             this.bodyCoder = bodyCoder;
         }
-
 
         public INetMessage Decode(IByteBuffer buffer, IMessageFactory factory)
         {
@@ -52,7 +50,6 @@ namespace TnyFramework.Net.DotNetty.Codec
             var body = ReadBody(buffer, messageRelayStrategy.IsRelay(head));
             return factory.Create(head, body);
         }
-
 
         public void Encode(INetMessage message, IByteBuffer buffer)
         {
@@ -91,7 +88,6 @@ namespace TnyFramework.Net.DotNetty.Codec
             WriteObject(buffer, body, this.bodyCoder);
         }
 
-
         private IDictionary<string, MessageHeader> ReadHeaders(IByteBuffer buffer)
         {
             var headerMap = new Dictionary<string, MessageHeader>();
@@ -100,16 +96,10 @@ namespace TnyFramework.Net.DotNetty.Codec
             {
                 try
                 {
-                    ByteBufferUtils.ReadVariant(buffer, out int length);
-                    var headerBuff = buffer.Allocator.HeapBuffer(length);
-                    buffer.ReadBytes(headerBuff, length);
-                    while (headerBuff.IsReadable())
+                    var header = headersCodec.Decode(buffer);
+                    if (header != null)
                     {
-                        var header = headersCodec.Decode(headerBuff);
-                        if (header != null)
-                        {
-                            headerMap.Add(header.Key, header);
-                        }
+                        headerMap[header.Key] = header;
                     }
                 } catch (System.Exception e)
                 {
@@ -118,7 +108,6 @@ namespace TnyFramework.Net.DotNetty.Codec
             }
             return headerMap;
         }
-
 
         private object ReadBody(IByteBuffer buffer, bool relay)
         {
@@ -143,24 +132,20 @@ namespace TnyFramework.Net.DotNetty.Codec
             return body;
         }
 
-
-        private void WriteHeaders(IByteBuffer buffer, IEnumerable<MessageHeader> headers)
+        private void WriteHeaders(IByteBuffer buffer, IList<MessageHeader> headers)
         {
-            var headerBuffer = buffer.Allocator.HeapBuffer();
-            try
+            ByteBufferUtils.WriteVariant(headers.Count, buffer);
+            foreach (var header in headers)
             {
-                foreach (var header in headers)
+                try
                 {
-                    headersCodec.Encode(header, headerBuffer);
+                    headersCodec.Encode(header, buffer);
+                } catch (System.Exception e)
+                {
+                    LOGGER.LogError(e, $"encode header {header} exception");
                 }
-                ByteBufferUtils.WriteVariant(headerBuffer.ReadableBytes, buffer);
-                buffer.WriteBytes(headerBuffer);
-            } finally
-            {
-                headerBuffer.Release();
             }
         }
-
 
         private static void WriteObject(IByteBuffer buffer, object body, IMessageBodyCodec coder)
         {
@@ -208,7 +193,6 @@ namespace TnyFramework.Net.DotNetty.Codec
                 releaseBody?.Release();
             }
         }
-
 
         private static void Write(IByteBuffer buffer, byte[] data)
         {

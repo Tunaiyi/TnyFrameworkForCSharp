@@ -2,18 +2,18 @@ using System;
 using Microsoft.Extensions.Logging;
 using UnityEngine;
 using ILogger = Microsoft.Extensions.Logging.ILogger;
+
 namespace TnyFramework.Common.Logger.Unity
 {
+
     public class UnityLogger : ILogger
     {
         private string categoryName;
-
 
         public UnityLogger(string categoryName)
         {
             this.categoryName = categoryName;
         }
-
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
@@ -21,14 +21,13 @@ namespace TnyFramework.Common.Logger.Unity
                 return;
             if (formatter == null)
                 throw new ArgumentNullException(nameof(formatter));
-            var message = (object)formatter(state, exception) ?? state;
+            var message = (object) formatter(state, exception) ?? state;
             message = FormatMessage(logLevel, message);
             if (message != null)
                 Debug.unityLogger.Log(ToLogType(logLevel), message);
             if (exception != null)
                 Debug.unityLogger.LogException(exception);
         }
-
 
         private object FormatMessage(LogLevel level, object msg)
         {
@@ -51,7 +50,6 @@ namespace TnyFramework.Common.Logger.Unity
                     return msg;
             }
         }
-
 
         public bool IsEnabled(LogLevel logLevel)
         {
@@ -96,12 +94,10 @@ namespace TnyFramework.Common.Logger.Unity
             // }
         }
 
-
         public IDisposable BeginScope<TState>(TState state)
         {
             throw new NotImplementedException();
         }
-
 
         private static LogType ToLogType(LogLevel logLevel)
         {
@@ -127,4 +123,5 @@ namespace TnyFramework.Common.Logger.Unity
 
         }
     }
+
 }

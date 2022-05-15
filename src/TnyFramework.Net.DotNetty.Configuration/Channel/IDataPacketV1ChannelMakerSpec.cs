@@ -2,8 +2,10 @@ using System;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Channel
 {
+
     public interface IDataPacketV1ChannelMakerSpec
     {
         DataPacketV1ChannelMakerSpec CloseOnEncodeError(bool value);
@@ -14,15 +16,15 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
 
         DataPacketV1ChannelMakerSpec PackDecodeSetting(Action<IDataPacketV1SettingSpec> action);
 
-        DataPacketV1ChannelMakerSpec PackEncoder(UnitCreator<IDatagramPackEncoder, INetGuideUnitContext> factory);
+        DataPacketV1ChannelMakerSpec PackEncoder(UnitCreator<INetPacketEncoder, INetGuideUnitContext> factory);
 
-        DataPacketV1ChannelMakerSpec PackEncoder(Action<IUnitSpec<IDatagramPackEncoder, INetGuideUnitContext>> action);
+        DataPacketV1ChannelMakerSpec PackEncoder(Action<IUnitSpec<INetPacketEncoder, INetGuideUnitContext>> action);
 
-        DataPacketV1ChannelMakerSpec PackDecoder(IDatagramPackDecoder decoder);
+        DataPacketV1ChannelMakerSpec PackDecoder(INetPacketDecoder decoder);
 
-        DataPacketV1ChannelMakerSpec PackDecoder(UnitCreator<IDatagramPackDecoder, INetGuideUnitContext> factory);
+        DataPacketV1ChannelMakerSpec PackDecoder(UnitCreator<INetPacketDecoder, INetGuideUnitContext> factory);
 
-        DataPacketV1ChannelMakerSpec PackDecoder(Action<IUnitSpec<IDatagramPackDecoder, INetGuideUnitContext>> action);
+        DataPacketV1ChannelMakerSpec PackDecoder(Action<IUnitSpec<INetPacketDecoder, INetGuideUnitContext>> action);
 
         DataPacketV1ChannelMakerSpec CodecVerifier(ICodecVerifier verifier);
 
@@ -38,4 +40,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
 
         DataPacketV1ChannelMakerSpec ChannelPipelineChains(Action<IUnitCollectionSpec<IChannelPipelineChain, INetGuideUnitContext>> action);
     }
+
 }

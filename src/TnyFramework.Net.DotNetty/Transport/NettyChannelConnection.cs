@@ -3,8 +3,10 @@ using System.Threading;
 using DotNetty.Transport.Channels;
 using TnyFramework.Common.Attribute;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.DotNetty.Transport
 {
+
     public class NettyChannelConnection : AttributesContext, IConnection
     {
         protected readonly IChannel channel;
@@ -14,17 +16,14 @@ namespace TnyFramework.Net.DotNetty.Transport
 
         private volatile int status = STATUS_OPEN;
 
-
         protected NettyChannelConnection(IChannel channel)
         {
             this.channel = channel;
         }
 
-
         public EndPoint RemoteAddress => channel.RemoteAddress;
 
         public EndPoint LocalAddress => channel.LocalAddress;
-
 
         public bool IsActive()
         {
@@ -32,12 +31,10 @@ namespace TnyFramework.Net.DotNetty.Transport
             return current != null && current.Active;
         }
 
-
         public bool IsClosed()
         {
             return status == STATUS_CLOSE;
         }
-
 
         public bool Close()
         {
@@ -51,15 +48,14 @@ namespace TnyFramework.Net.DotNetty.Transport
             return true;
         }
 
-
         protected virtual void DoClose()
         {
         }
-
 
         public override string ToString()
         {
             return $"{channel}";
         }
     }
+
 }

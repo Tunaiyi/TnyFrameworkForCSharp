@@ -15,16 +15,15 @@ using TnyFramework.Net.DotNetty.Exception;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Transport;
 
-
 namespace TnyFramework.Net.DotNetty.Bootstrap
 {
+
     public interface INettyServerGuide : INetServer
     {
         /// <summary>
         /// 打开监听
         /// </summary>
         Task Open();
-
 
         /// <summary>
         /// 关闭监听
@@ -63,8 +62,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         private int status = STATUS_STOP;
 
-
-
         public NettyServerGuide(IServerSetting setting, INettyTunnelFactory tunnelFactory,
             INetworkContext context, IChannelMaker channelMaker)
         {
@@ -74,14 +71,12 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             this.setting = setting;
         }
 
-
         /// <summary>
         /// 服务名
         /// </summary>
         public string Name => setting.Name;
 
         public IServerSetting Setting => setting;
-
 
         /// <summary>
         /// 打开监听
@@ -97,12 +92,10 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             }
         }
 
-
         public bool IsOpen()
         {
             return channels.Values.Any(channel => channel.Active);
         }
-
 
         /// <summary>
         /// 关闭监听
@@ -124,9 +117,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                     workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
             }
         }
-
-
-
 
         private async Task Bind(string host, int port)
         {
@@ -162,7 +152,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 }
             }
         }
-
 
         private ServerBootstrap Bootstrap()
         {
@@ -204,7 +193,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             return bootstrap;
         }
 
-
         private static string ToAddressString(string host, int port)
         {
             if (string.IsNullOrEmpty(host))
@@ -217,4 +205,5 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         }
     }
+
 }

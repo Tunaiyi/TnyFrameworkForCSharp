@@ -12,24 +12,20 @@ namespace TnyFramework.Net.Transport
         public TUserId UserId => Certificate.UserId;
 
         public long MessagerId => Certificate.MessagerId;
-        
+
         public string UserGroup => Certificate.UserGroup;
 
         public IMessagerType MessagerType => Certificate.MessagerType;
-
 
         public object GetUserId()
         {
             return UserId;
         }
 
-
-
         public ICertificate GetCertificate()
         {
             return Certificate;
         }
-
 
         public bool IsAuthenticated()
         {

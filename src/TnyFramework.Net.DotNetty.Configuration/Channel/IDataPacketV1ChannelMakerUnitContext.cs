@@ -1,15 +1,17 @@
 using System.Collections.Generic;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Channel
 {
+
     public interface IDataPacketV1ChannelMakerUnitContext
     {
         IList<IChannelPipelineChain> LoadPipelineChains(INetGuideUnitContext context);
 
-        IDatagramPackDecoder LoadPackDecoder(INetGuideUnitContext context);
+        INetPacketDecoder LoadPackDecoder(INetGuideUnitContext context);
 
-        IDatagramPackEncoder LoadPackEncoder(INetGuideUnitContext context);
+        INetPacketEncoder LoadPackEncoder(INetGuideUnitContext context);
 
         ICodecVerifier LoadCodecVerifier(INetGuideUnitContext context);
 
@@ -23,4 +25,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
 
         DataPacketV1Setting LoadDecodeConfig();
     }
+
 }

@@ -12,7 +12,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         /// <param name="buffer">写入字节</param>
         void Encode(object body, IByteBuffer buffer);
 
-
         /// <summary>
         /// 解码
         /// </summary>
@@ -20,7 +19,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         /// <returns>解析的消息体</returns>
         object Decode(IByteBuffer buffer);
     }
-
 
     public interface INetContentCodec<T> : INetContentCodec
     {
@@ -30,7 +28,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         /// <param name="body">消息体</param>
         /// <param name="buffer">写入字节</param>
         void Encode(T body, IByteBuffer buffer);
-
 
         /// <summary>
         /// 解码

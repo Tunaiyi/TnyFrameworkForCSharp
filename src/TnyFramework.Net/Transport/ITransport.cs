@@ -1,8 +1,10 @@
 using System.Threading.Tasks;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.Transport
 {
+
     public interface ITransport
     {
         /// <summary>
@@ -12,7 +14,6 @@ namespace TnyFramework.Net.Transport
         /// <returns>发送promise</returns>
         Task Write(IMessage message);
 
-
         /// <summary>
         /// 写出消息
         /// </summary>
@@ -20,7 +21,6 @@ namespace TnyFramework.Net.Transport
         /// <param name="messageContext">消息上下文</param>
         /// <returns></returns>
         Task Write(MessageAllocator allocator, MessageContext messageContext);
-
 
         /// <summary>
         /// 写出消息
@@ -30,4 +30,5 @@ namespace TnyFramework.Net.Transport
         /// <returns></returns>
         Task Write(IMessageAllocator allocator, MessageContext messageContext);
     }
+
 }

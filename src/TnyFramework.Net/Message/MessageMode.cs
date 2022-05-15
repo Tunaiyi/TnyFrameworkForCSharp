@@ -1,12 +1,8 @@
-﻿//
-//  文件名称：MessageMode.cs
-//  简   述：信息模式
-//  创建标识：lrg 2021/7/21
-//
+﻿using System;
 
-using System;
 namespace TnyFramework.Net.Message
 {
+
     [Flags]
     public enum MessageMode
     {
@@ -40,7 +36,7 @@ namespace TnyFramework.Net.Message
     {
         public static byte GetOption(this MessageMode value)
         {
-            return (byte)value;
+            return (byte) value;
         }
 
         public static MessageType GetMessageType(this MessageMode self)

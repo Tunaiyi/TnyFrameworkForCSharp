@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Endpoint.Event
 {
+
     /// <summary>
     /// 添加终端
     /// </summary>
@@ -9,4 +10,5 @@ namespace TnyFramework.Net.Endpoint.Event
     /// 移除终端
     /// </summary>
     public delegate void EndpointKeeperRemoveEndpoint(IEndpointKeeper keeper, IEndpoint endpoint);
+
 }

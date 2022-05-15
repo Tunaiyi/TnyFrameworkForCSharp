@@ -1,6 +1,8 @@
 using TnyFramework.Common.Result;
+
 namespace TnyFramework.Net.Transport
 {
+
     public static class TunnelAide
     {
         public static ISendReceipt ResponseMessage(INetTunnel tunnel, MessageContext context)
@@ -14,4 +16,5 @@ namespace TnyFramework.Net.Transport
             return receipt;
         }
     }
+
 }

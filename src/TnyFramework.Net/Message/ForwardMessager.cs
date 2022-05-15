@@ -22,13 +22,12 @@ namespace TnyFramework.Net.Message
             }
         }
 
+        [ProtoIgnore]
         public IMessagerType MessagerType { get; private set; }
-
 
         public ForwardMessager()
         {
         }
-
 
         public ForwardMessager(IMessager messager)
         {

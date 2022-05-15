@@ -19,22 +19,18 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
     {
         protected readonly TUContext context;
 
-
         protected NetGuideSpec(TUContext context)
         {
             this.context = context;
         }
 
-
         protected abstract TSpec Self();
-
 
         public TSpec TunnelConfigure(Action<IUnitSpec<INettyTunnelFactory, INetGuideUnitContext<TUserId>>> action)
         {
             action.Invoke(context.TunnelFactorySpec);
             return Self();
         }
-
 
         public TSpec AnonymousId(TUserId anonymousUserId)
         {
@@ -43,7 +39,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return Self();
         }
 
-
         public TSpec CertificateConfigure(
             Action<IUnitSpec<ICertificateFactory<TUserId>, INetGuideUnitContext<TUserId>>> action)
         {
@@ -51,13 +46,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return Self();
         }
 
-
         public TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, INetGuideUnitContext<TUserId>>> action)
         {
             action.Invoke(context.MessageFactorySpec);
             return Self();
         }
-
 
         public TSpec MessageBodyCodecConfigure(Action<UnitSpec<IMessageBodyCodec, INetGuideUnitContext<TUserId>>> action)
         {
@@ -65,20 +58,17 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return Self();
         }
 
-
         public TSpec MessageHeaderCodecConfigure(Action<UnitSpec<IMessageHeaderCodec, INetGuideUnitContext<TUserId>>> action)
         {
             action.Invoke(context.MessageHeaderCodecSpec);
             return Self();
         }
 
-
         public TSpec MessageCodecConfigure(Action<UnitSpec<IMessageCodec, INetGuideUnitContext<TUserId>>> action)
         {
             action.Invoke(context.MessageCodecSpec);
             return Self();
         }
-
 
         public TSpec ChannelMakerConfigure(Action<UnitSpec<IChannelMaker, INetGuideUnitContext>> action)
         {

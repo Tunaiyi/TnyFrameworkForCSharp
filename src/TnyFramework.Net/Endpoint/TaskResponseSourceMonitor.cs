@@ -29,7 +29,6 @@ namespace TnyFramework.Net.Endpoint
 
         private volatile ConcurrentDictionary<long, TaskResponseSource> responseSources;
 
-
         static TaskResponseSourceMonitor()
         {
             COROUTINE.Exec(async () => {
@@ -41,7 +40,6 @@ namespace TnyFramework.Net.Endpoint
             });
             Process.GetCurrentProcess().Exited += (e, args) => _RUNNING = false;
         }
-
 
         private ConcurrentDictionary<long, TaskResponseSource> ResponseSources {
             get {
@@ -64,7 +62,6 @@ namespace TnyFramework.Net.Endpoint
 
         public int Size => responseSources?.Count ?? 0;
 
-
         public static TaskResponseSourceMonitor LoadMonitor(object userId)
         {
             if (MONITORS_MAP.TryGetValue(userId, out var monitor))
@@ -74,7 +71,6 @@ namespace TnyFramework.Net.Endpoint
             return MONITORS_MAP.TryAdd(userId, monitor = new TaskResponseSourceMonitor()) ? monitor : MONITORS_MAP[userId];
         }
 
-
         public static void RemoveMonitor(object userId)
         {
 
@@ -83,7 +79,6 @@ namespace TnyFramework.Net.Endpoint
                 monitor.Close();
             }
         }
-
 
         private static void ClearTimeoutFuture()
         {
@@ -98,7 +93,6 @@ namespace TnyFramework.Net.Endpoint
                 }
             }
         }
-
 
         private void ClearTimeout()
         {
@@ -123,7 +117,6 @@ namespace TnyFramework.Net.Endpoint
                 }
             }
         }
-
 
         public void Close()
         {
@@ -158,7 +151,6 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         public TaskResponseSource Get(long messageId)
         {
             var sources = responseSources;
@@ -169,7 +161,6 @@ namespace TnyFramework.Net.Endpoint
             return sources.TryGetValue(messageId, out var source) ? source : null;
         }
 
-
         public TaskResponseSource Poll(long messageId)
         {
             var sources = responseSources;
@@ -179,7 +170,6 @@ namespace TnyFramework.Net.Endpoint
             }
             return sources.TryRemove(messageId, out var source) ? source : null;
         }
-
 
         public void Put(long messageId, TaskResponseSource source)
         {

@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TnyFramework.DI.Extensions;
+
 namespace TnyFramework.DI.Container
 {
+
     public static class ServiceCollectionTransientUnitWithExtensions
     {
         public static IServiceCollection AddTransientUnit(this IServiceCollection services, Type instanceType, params Type[] serviceTypes)
         {
             return services.AddTransientUnit(string.Empty, instanceType, serviceTypes);
         }
-
 
         public static IServiceCollection AddTransientUnit(this IServiceCollection services, string name, Type instanceType,
             params Type[] serviceTypes)
@@ -20,13 +21,11 @@ namespace TnyFramework.DI.Container
             return services.RegisterTransientUnitWith(name, serviceInstance, instanceType, serviceTypes);
         }
 
-
         public static IServiceCollection AddTransientUnit(this IServiceCollection services, Type serviceType,
             Func<IServiceProvider, object> instanceFactory, params Type[] serviceTypes)
         {
             return services.AddTransientUnit(string.Empty, serviceType, instanceFactory, serviceTypes);
         }
-
 
         public static IServiceCollection AddTransientUnit(this IServiceCollection services, string name, Type serviceType,
             Func<IServiceProvider, object> instanceFactory, params Type[] serviceTypes)
@@ -36,13 +35,11 @@ namespace TnyFramework.DI.Container
             return services;
         }
 
-
         public static IServiceCollection AddTransientUnit(this IServiceCollection services, Type serviceType, Type instanceType,
             params Type[] serviceTypes)
         {
             return services.AddTransientUnit(string.Empty, serviceType, instanceType, serviceTypes);
         }
-
 
         public static IServiceCollection AddTransientUnit(this IServiceCollection services, string name, Type serviceType, Type instanceType,
             params Type[] serviceTypes)
@@ -52,13 +49,11 @@ namespace TnyFramework.DI.Container
             return services;
         }
 
-
         public static IServiceCollection AddTransientUnit<TInstance>(this IServiceCollection services, params Type[] serviceTypes)
             where TInstance : class
         {
             return services.AddTransientUnit<TInstance>(string.Empty, serviceTypes);
         }
-
 
         public static IServiceCollection AddTransientUnit<TInstance>(this IServiceCollection services, string name, params Type[] serviceTypes)
             where TInstance : class
@@ -69,14 +64,12 @@ namespace TnyFramework.DI.Container
             return services;
         }
 
-
         public static IServiceCollection AddTransientUnit<TService>(this IServiceCollection services,
             Func<IServiceProvider, TService> instanceFactory, params Type[] serviceTypes)
             where TService : class
         {
             return services.AddTransientUnit(string.Empty, instanceFactory, serviceTypes);
         }
-
 
         public static IServiceCollection AddTransientUnit<TService>(this IServiceCollection services, string name,
             Func<IServiceProvider, TService> instanceFactory, params Type[] serviceTypes)
@@ -87,7 +80,6 @@ namespace TnyFramework.DI.Container
             return services.RegisterTransientUnitWith(name, serviceInstance, serviceType, serviceTypes);
         }
 
-
         private static IServiceCollection RegisterTransientUnitWith(this IServiceCollection services, string name,
             IServiceInstance instance, Type instanceType, params Type[] serviceTypes)
         {
@@ -96,13 +88,11 @@ namespace TnyFramework.DI.Container
             return services;
         }
 
-
         private static IServiceCollection TryTransientUnits(this IServiceCollection services)
         {
             services.TryAdd(ServiceDescriptor.Transient(typeof(IUnitCollection<>), typeof(UnitCollection<>)));
             return services;
         }
-
 
         private static IServiceCollection AddTransientUnitWith(this IServiceCollection services, string name,
             IServiceInstance instance, Type type)
@@ -112,7 +102,6 @@ namespace TnyFramework.DI.Container
             services.AddTransient(Unit.UnitType(type), _ => Unit.Create(type, instance, name));
             return services;
         }
-
 
         private static IServiceCollection AddTransientUnitsWith(this IServiceCollection services, string name,
             IServiceInstance instance, IEnumerable<Type> types)
@@ -126,4 +115,5 @@ namespace TnyFramework.DI.Container
             return services;
         }
     }
+
 }

@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Message
 {
+
     /// <summary>
     /// 消息工厂
     /// </summary>
@@ -13,7 +14,6 @@ namespace TnyFramework.Net.Message
         /// <returns>创建的消息</returns>
         INetMessage Create(long id, IMessageContent subject);
 
-
         /// <summary>
         /// 创建 message
         /// </summary>
@@ -22,4 +22,5 @@ namespace TnyFramework.Net.Message
         /// <returns>创建消息</returns>
         INetMessage Create(INetMessageHead head, object body);
     }
+
 }

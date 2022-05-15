@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Endpoint
 {
+
     public enum EndpointStatus
     {
         ///
@@ -22,4 +23,5 @@ namespace TnyFramework.Net.Endpoint
         ///
         Close = 3,
     }
+
 }

@@ -26,7 +26,6 @@ namespace TnyFramework.Net.Rpc
 
         public string Group => Service;
 
-
         protected override void OnCheck()
         {
             if (SERVICE_MAP.TryAdd(Service, this))
@@ -38,18 +37,15 @@ namespace TnyFramework.Net.Rpc
             }
         }
 
-
         public new static RpcServiceType ForId(int id)
         {
             return BaseEnum<RpcServiceType>.ForId(id);
         }
 
-
         public new static RpcServiceType ForName(string name)
         {
             return BaseEnum<RpcServiceType>.ForName(name);
         }
-
 
         public static RpcServiceType ForService(string service)
         {
@@ -68,9 +64,7 @@ namespace TnyFramework.Net.Rpc
             }, builder);
         }
 
-
         public new static void LoadAll() => LoadAll(typeof(T));
-
 
         public new static IReadOnlyCollection<RpcServiceType> GetValues()
         {

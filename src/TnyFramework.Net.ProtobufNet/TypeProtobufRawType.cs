@@ -1,13 +1,8 @@
-//
-//  文件名称：ProtobufRawType.cs
-//  简   述：protobuf数据类型
-//  创建标识：lrg 2021/7/21
-//
-
 using System;
 
 namespace TnyFramework.Net.ProtobufNet
 {
+
     [Flags]
     internal enum ProtobufRawType
     {
@@ -61,4 +56,5 @@ namespace TnyFramework.Net.ProtobufNet
         /// </summary>
         Complex = 9,
     }
+
 }

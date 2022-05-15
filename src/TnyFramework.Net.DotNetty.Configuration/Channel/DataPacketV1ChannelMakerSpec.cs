@@ -5,8 +5,10 @@ using TnyFramework.DI.Units;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Channel
 {
+
     public class DataPacketV1ChannelMakerSpec : UnitSpec<IChannelMaker, INetGuideUnitContext>, IDataPacketV1ChannelMakerSpec,
         IDataPacketV1ChannelMakerUnitContext
     {
@@ -21,14 +23,13 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
 
         private readonly UnitSpec<ICodecCrypto, INetGuideUnitContext> codecCrypto;
 
-        private readonly UnitSpec<IDatagramPackEncoder, INetGuideUnitContext> packEncoder;
+        private readonly UnitSpec<INetPacketEncoder, INetGuideUnitContext> packEncoder;
 
-        private readonly UnitSpec<IDatagramPackDecoder, INetGuideUnitContext> packDecoder;
+        private readonly UnitSpec<INetPacketDecoder, INetGuideUnitContext> packDecoder;
 
         private readonly DataPacketV1EncodeSettingSpec encodeSettingSpec;
 
         private readonly DataPacketV1DecodeSettingSpec decodeSettingSpec;
-
 
         public DataPacketV1ChannelMakerSpec(IServiceCollection container, string unitName = "") : base(unitName)
         {
@@ -36,13 +37,12 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
             channelPipelineChains = UnitCollectionSpec.Units<IChannelPipelineChain, INetGuideUnitContext>();
             codecVerifier = Unit<ICodecVerifier, INetGuideUnitContext>().Default<NoopCodecVerifier>();
             codecCrypto = Unit<ICodecCrypto, INetGuideUnitContext>().Default<NoopCodecCrypto>();
-            packEncoder = Unit<IDatagramPackEncoder, INetGuideUnitContext>().Default(CreatePackEncoder);
-            packDecoder = Unit<IDatagramPackDecoder, INetGuideUnitContext>().Default(CreatePackDecoder);
+            packEncoder = Unit<INetPacketEncoder, INetGuideUnitContext>().Default(CreatePackEncoder);
+            packDecoder = Unit<INetPacketDecoder, INetGuideUnitContext>().Default(CreatePackDecoder);
             encodeSettingSpec = new DataPacketV1EncodeSettingSpec();
             decodeSettingSpec = new DataPacketV1DecodeSettingSpec();
             Default(CreateChannelMaker);
         }
-
 
         public void SetName(string name)
         {
@@ -55,7 +55,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
             encodeSettingSpec.WithNamePrefix(name);
             decodeSettingSpec.WithNamePrefix(name);
         }
-
 
         private static IChannelMaker CreateChannelMaker(INetGuideUnitContext context)
         {
@@ -71,26 +70,23 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
             return maker;
         }
 
-
-        private static DatagramPackV1Encoder CreatePackEncoder(INetGuideUnitContext context)
+        private static NetPacketV1Encoder CreatePackEncoder(INetGuideUnitContext context)
         {
             var makerSpec = context.ChannelMakerUnitContext;
-            return new DatagramPackV1Encoder(makerSpec.LoadEncodeConfig(), context.LoadMessageCodec()) {
+            return new NetPacketV1Encoder(makerSpec.LoadEncodeConfig(), context.LoadMessageCodec()) {
                 CodecCrypto = makerSpec.LoadCodecCrypto(context),
                 CodecVerifier = makerSpec.LoadCodecVerifier(context)
             };
         }
 
-
-        private static DatagramPackV1Decoder CreatePackDecoder(INetGuideUnitContext context)
+        private static NetPacketV1Decoder CreatePackDecoder(INetGuideUnitContext context)
         {
             var makerSpec = context.ChannelMakerUnitContext;
-            return new DatagramPackV1Decoder(makerSpec.LoadDecodeConfig(), context.LoadMessageCodec()) {
+            return new NetPacketV1Decoder(makerSpec.LoadDecodeConfig(), context.LoadMessageCodec()) {
                 CodecCrypto = makerSpec.LoadCodecCrypto(context),
                 CodecVerifier = makerSpec.LoadCodecVerifier(context)
             };
         }
-
 
         public DataPacketV1ChannelMakerSpec CloseOnEncodeError(bool value)
         {
@@ -98,13 +94,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
             return this;
         }
 
-
         public DataPacketV1ChannelMakerSpec CloseOnDecodeError(bool value)
         {
             closeOnDecodeError = value;
             return this;
         }
-
 
         public DataPacketV1ChannelMakerSpec PackEncodeSetting(Action<IDataPacketV1SettingSpec> action)
         {
@@ -112,48 +106,41 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
             return this;
         }
 
-
         public DataPacketV1ChannelMakerSpec PackDecodeSetting(Action<IDataPacketV1SettingSpec> action)
         {
             action.Invoke(decodeSettingSpec);
             return this;
         }
 
-
-        public DataPacketV1ChannelMakerSpec PackEncoder(UnitCreator<IDatagramPackEncoder, INetGuideUnitContext> factory)
+        public DataPacketV1ChannelMakerSpec PackEncoder(UnitCreator<INetPacketEncoder, INetGuideUnitContext> factory)
         {
             packEncoder.Creator(factory);
             return this;
         }
 
-
-        public DataPacketV1ChannelMakerSpec PackEncoder(Action<IUnitSpec<IDatagramPackEncoder, INetGuideUnitContext>> action)
+        public DataPacketV1ChannelMakerSpec PackEncoder(Action<IUnitSpec<INetPacketEncoder, INetGuideUnitContext>> action)
         {
             action.Invoke(packEncoder);
             return this;
         }
 
-
-        public DataPacketV1ChannelMakerSpec PackDecoder(IDatagramPackDecoder decoder)
+        public DataPacketV1ChannelMakerSpec PackDecoder(INetPacketDecoder decoder)
         {
             packDecoder.Unit(decoder);
             return this;
         }
 
-
-        public DataPacketV1ChannelMakerSpec PackDecoder(UnitCreator<IDatagramPackDecoder, INetGuideUnitContext> factory)
+        public DataPacketV1ChannelMakerSpec PackDecoder(UnitCreator<INetPacketDecoder, INetGuideUnitContext> factory)
         {
             packDecoder.Creator(factory);
             return this;
         }
 
-
-        public DataPacketV1ChannelMakerSpec PackDecoder(Action<IUnitSpec<IDatagramPackDecoder, INetGuideUnitContext>> action)
+        public DataPacketV1ChannelMakerSpec PackDecoder(Action<IUnitSpec<INetPacketDecoder, INetGuideUnitContext>> action)
         {
             action.Invoke(packDecoder);
             return this;
         }
-
 
         public DataPacketV1ChannelMakerSpec CodecVerifier(ICodecVerifier verifier)
         {
@@ -161,13 +148,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
             return this;
         }
 
-
         public DataPacketV1ChannelMakerSpec CodecVerifier(UnitCreator<ICodecVerifier, INetGuideUnitContext> factory)
         {
             codecVerifier.Creator(factory);
             return this;
         }
-
 
         public DataPacketV1ChannelMakerSpec CodecVerifier(Action<IUnitSpec<ICodecVerifier, INetGuideUnitContext>> action)
         {
@@ -175,13 +160,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
             return this;
         }
 
-
         public DataPacketV1ChannelMakerSpec CodecCrypto(ICodecCrypto crypto)
         {
             codecCrypto.Unit(crypto);
             return this;
         }
-
 
         public DataPacketV1ChannelMakerSpec CodecCrypto(UnitCreator<ICodecCrypto, INetGuideUnitContext> factory)
         {
@@ -189,13 +172,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
             return this;
         }
 
-
         public DataPacketV1ChannelMakerSpec CodecCrypto(Action<IUnitSpec<ICodecCrypto, INetGuideUnitContext>> action)
         {
             action.Invoke(codecCrypto);
             return this;
         }
-
 
         public DataPacketV1ChannelMakerSpec ChannelPipelineChains(Action<IUnitCollectionSpec<IChannelPipelineChain, INetGuideUnitContext>> action)
         {
@@ -203,44 +184,38 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
             return this;
         }
 
-
         public IList<IChannelPipelineChain> LoadPipelineChains(INetGuideUnitContext context)
         {
             return channelPipelineChains.Load(context, UnitContainer);
         }
 
-
-        public IDatagramPackDecoder LoadPackDecoder(INetGuideUnitContext context)
+        public INetPacketDecoder LoadPackDecoder(INetGuideUnitContext context)
         {
             return packDecoder.Load(context, UnitContainer);
         }
 
-
-        public IDatagramPackEncoder LoadPackEncoder(INetGuideUnitContext context)
+        public INetPacketEncoder LoadPackEncoder(INetGuideUnitContext context)
         {
             return packEncoder.Load(context, UnitContainer);
         }
-
 
         public ICodecVerifier LoadCodecVerifier(INetGuideUnitContext context)
         {
             return codecVerifier.Load(context, UnitContainer);
         }
 
-
         public ICodecCrypto LoadCodecCrypto(INetGuideUnitContext context)
         {
             return codecCrypto.Load(context, UnitContainer);
         }
 
-
         public DataPacketV1Setting LoadEncodeConfig() => encodeSettingSpec.Setting;
 
         public DataPacketV1Setting LoadDecodeConfig() => decodeSettingSpec.Setting;
-
 
         public bool LoadCloseOnEncodeError() => closeOnEncodeError;
 
         public bool LoadCloseOnDecodeError() => closeOnDecodeError;
     }
+
 }

@@ -1,9 +1,3 @@
-//
-//  文件名称：NetCoderConstants.cs
-//  简   述：netCoder常量
-//  创建标识：lrg 2021/7/21
-//
-
 using System.Linq;
 
 namespace TnyFramework.Net.DotNetty.Codec
@@ -55,7 +49,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         public const byte MESSAGE_HEAD_OPTION_EXIST_BODY = 1 << MESSAGE_HEAD_OPTION_EXIST_BODY_SHIFT; // 是否有body
         public const byte MESSAGE_HEAD_OPTION_EXIST_HEADERS_VALUE_EXIST = 1 << 6; // 是否请求数据
 
-
         //line 消息线路
         public const byte MESSAGE_HEAD_OPTION_LINE_MASK = 0xFF >> 4 << 2; // line 掩码 00011100
         public const byte MESSAGE_HEAD_OPTION_LINE_BIT_SIZE = 3; // line 占据位数
@@ -68,7 +61,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         public const byte
             MESSAGE_HEAD_OPTION_LINE_MAX_VALUE = ~(-1 << MESSAGE_HEAD_OPTION_LINE_BIT_SIZE); // line 最大 00000111
 
-
         /// <summary>
         /// 是否是文件头
         /// </summary>
@@ -78,7 +70,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         {
             return !magics.Where((t, index) => MAGICS[index] != t).Any();
         }
-
 
         /// <summary>
         /// 设置option
@@ -96,7 +87,6 @@ namespace TnyFramework.Net.DotNetty.Codec
             return option;
         }
 
-
         /// <summary>
         /// 判断该option是否是mark
         /// </summary>
@@ -108,7 +98,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         {
             return (option & mark) == value;
         }
-
 
         /// <summary>
         /// 判断该option是否是mark

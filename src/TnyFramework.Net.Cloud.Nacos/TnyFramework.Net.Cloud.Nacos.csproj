@@ -9,13 +9,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="nacos-sdk-csharp" Version="1.3.2" />
-      <PackageReference Include="nacos-sdk-csharp.AspNetCore" Version="1.3.2" />
-      <PackageReference Include="nacos-sdk-csharp.Extensions.Configuration" Version="1.3.2" />
+        <PackageReference Include="nacos-sdk-csharp" Version="1.3.2"/>
+        <PackageReference Include="nacos-sdk-csharp.AspNetCore" Version="1.3.2"/>
+        <PackageReference Include="nacos-sdk-csharp.Extensions.Configuration" Version="1.3.2"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TnyFramework.Net\TnyFramework.Net.csproj" />
+        <ProjectReference Include="..\TnyFramework.Net\TnyFramework.Net.csproj"/>
     </ItemGroup>
 
 </Project>

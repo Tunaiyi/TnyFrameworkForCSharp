@@ -13,7 +13,6 @@ namespace TnyFramework.Codec.Newtonsoft.Json
             return Encoding.UTF8.GetBytes(json);
         }
 
-
         public override void Encode(T value, Stream output)
         {
             var json = JsonConvert.SerializeObject(value);
@@ -21,13 +20,11 @@ namespace TnyFramework.Codec.Newtonsoft.Json
             output.Write(data, 0, data.Length);
         }
 
-
         public override T Decode(byte[] bytes)
         {
             var json = Encoding.UTF8.GetString(bytes);
             return JsonConvert.DeserializeObject<T>(json);
         }
-
 
         public override T Decode(Stream input)
         {
@@ -36,12 +33,10 @@ namespace TnyFramework.Codec.Newtonsoft.Json
             return JsonConvert.DeserializeObject<T>(json);
         }
 
-
         public override string Format(T value)
         {
             return JsonConvert.SerializeObject(value);
         }
-
 
         public override T Parse(string data)
         {

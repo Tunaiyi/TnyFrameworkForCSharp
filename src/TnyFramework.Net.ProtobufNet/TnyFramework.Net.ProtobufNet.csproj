@@ -9,12 +9,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TnyFramework.Codec.ProtobufNet\TnyFramework.Codec.ProtobufNet.csproj" />
-      <ProjectReference Include="..\TnyFramework.Net.DotNetty\TnyFramework.Net.DotNetty.csproj" />
+        <ProjectReference Include="..\TnyFramework.Codec.ProtobufNet\TnyFramework.Codec.ProtobufNet.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Net.DotNetty\TnyFramework.Net.DotNetty.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="DotNetty.Buffers" Version="0.7.0" />
+        <PackageReference Include="DotNetty.Buffers" Version="0.7.0"/>
     </ItemGroup>
 
 

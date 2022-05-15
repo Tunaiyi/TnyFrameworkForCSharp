@@ -1,6 +1,8 @@
 using System.Threading.Tasks;
+
 namespace TnyFramework.Coroutines.Async
 {
+
     /// <summary>
     /// 协程 Action 委托
     /// </summary>
@@ -11,4 +13,5 @@ namespace TnyFramework.Coroutines.Async
     /// </summary>
     /// <typeparam name="T">返回类型</typeparam>
     public delegate Task<T> CoroutineFunc<T>();
+
 }

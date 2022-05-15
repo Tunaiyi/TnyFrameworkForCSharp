@@ -1,6 +1,8 @@
 using System.Threading;
+
 namespace TnyFramework.Net.Message
 {
+
     public abstract class BaseMessageBody<T> : IOctetMessageBody<T>
     {
         private const int UNRELEASED = 0;
@@ -10,20 +12,17 @@ namespace TnyFramework.Net.Message
 
         private T body;
 
-
         public BaseMessageBody(T body, bool relay)
         {
             this.body = body;
             Relay = relay;
         }
 
-
         public bool Relay { get; }
 
         public T Body => body;
 
         object IOctetMessageBody.Body => body;
-
 
         public void Release()
         {
@@ -39,7 +38,7 @@ namespace TnyFramework.Net.Message
             DoRelease(buffer);
         }
 
-
         protected abstract void DoRelease(T body);
     }
+
 }

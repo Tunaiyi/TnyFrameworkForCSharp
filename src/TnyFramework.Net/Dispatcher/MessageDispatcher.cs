@@ -1,15 +1,17 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using TnyFramework.Common.Exception;
-using TnyFramework.Net.Message;
-using TnyFramework.Net.Transport;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Endpoint;
+using TnyFramework.Net.Message;
+using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Dispatcher
 {
+
     public class MessageDispatcher : IMessageDispatcher
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<MessageDispatcher>();
@@ -30,18 +32,15 @@ namespace TnyFramework.Net.Dispatcher
         /// </summary>
         private readonly IEndpointKeeperManager endpointKeeperManager;
 
-
         public IEventBox<CommandExecute> CommandExecuteEvent => context.CommandExecuteEvent;
 
         public IEventBox<CommandDone> CommandDoneEvent => context.CommandDoneEvent;
-
 
         public MessageDispatcher(MessageDispatcherContext context, IEndpointKeeperManager endpointKeeperManager)
         {
             this.context = context;
             this.endpointKeeperManager = endpointKeeperManager;
         }
-
 
         public ICommand Dispatch(INetTunnel tunnel, IMessage message)
         {
@@ -57,7 +56,6 @@ namespace TnyFramework.Net.Dispatcher
             return RunnableCommand.Action(() => tunnel.Send(MessageContexts.Respond(NetResultCode.SERVER_NO_SUCH_PROTOCOL, message)));
         }
 
-
         /// <summary>
         /// 是否可以分发
         /// </summary>
@@ -68,7 +66,6 @@ namespace TnyFramework.Net.Dispatcher
             return SelectController(head.ProtocolId, head.Mode) != null;
         }
 
-
         private MethodControllerHolder SelectController(int protocol, MessageMode mode)
         {
             // 获取方法持有器
@@ -76,7 +73,6 @@ namespace TnyFramework.Net.Dispatcher
                 return null;
             return controllerMap.TryGetValue(mode, out var controller) ? controller : null;
         }
-
 
         /// <summary>
         /// 添加控制器对象列表 
@@ -89,8 +85,6 @@ namespace TnyFramework.Net.Dispatcher
                 AddController(executor);
             }
         }
-
-
 
         /// <summary>
         /// 添加控制器对象
@@ -108,17 +102,15 @@ namespace TnyFramework.Net.Dispatcher
                         holderMap = new Dictionary<MessageMode, MethodControllerHolder>();
                         methodHolder.Add(controller.Protocol, holderMap);
                     }
-                    foreach (var mode in controller.MessageModes)
+                    if (holderMap.TryGetValue(controller.MessageMode, out var old))
                     {
-
-                        if (holderMap.TryGetValue(mode, out var old))
-                        {
-                            throw new IllegalArgumentException($"{old} 与 {controller} 对MessageMode {mode} 处理发生冲突");
-                        }
-                        holderMap.Add(mode, controller);
+                        throw new IllegalArgumentException($"{old} 与 {controller} 对MessageMode {controller.MessageMode} 处理发生冲突");
                     }
+                    holderMap.Add(controller.MessageMode, controller);
+
                 }
             }
         }
     }
+
 }

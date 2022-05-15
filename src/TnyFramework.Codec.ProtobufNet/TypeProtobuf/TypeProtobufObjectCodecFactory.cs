@@ -12,12 +12,10 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         {
         }
 
-
         protected override IObjectCodec<T> Create<T>()
         {
             return new TypeProtobufObjectCodec<T>(TypeProtobufSchemeFactory.Factory);
         }
-
 
         protected override IObjectCodec Create(Type type)
         {

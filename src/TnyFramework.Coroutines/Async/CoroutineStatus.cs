@@ -1,6 +1,8 @@
 using System;
+
 namespace TnyFramework.Coroutines.Async
 {
+
     [Flags]
     public enum CoroutineStatus
     {
@@ -10,4 +12,5 @@ namespace TnyFramework.Coroutines.Async
 
         Shutting = 2,
     }
+
 }

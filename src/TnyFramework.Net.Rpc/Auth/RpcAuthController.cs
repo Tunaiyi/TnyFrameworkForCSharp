@@ -1,7 +1,7 @@
+using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Dispatcher;
-using TnyFramework.Net.Rpc.Attributes;
 
 namespace TnyFramework.Net.Rpc.Auth
 {
@@ -11,12 +11,10 @@ namespace TnyFramework.Net.Rpc.Auth
     {
         private readonly IRpcAuthService rpcAuthService;
 
-
         public RpcAuthController(IRpcAuthService rpcAuthService)
         {
             this.rpcAuthService = rpcAuthService;
         }
-
 
         [RpcRequest(RpcProtocol.RPC_AUTH_4_AUTHENTICATE)]
         [AuthenticationRequired(typeof(RpcPasswordValidator))]
@@ -26,7 +24,6 @@ namespace TnyFramework.Net.Rpc.Auth
             var token = rpcAuthService.CreateToken(serviceType, id);
             return RpcResults.Success(token);
         }
-
 
         [RpcResponse(RpcProtocol.RPC_AUTH_4_AUTHENTICATE)]
         [AuthenticationRequired(typeof(RpcTokenValidator))]

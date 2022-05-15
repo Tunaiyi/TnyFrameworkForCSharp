@@ -8,7 +8,6 @@ namespace TnyFramework.Common.Logger
     {
         public static readonly NoopLogger INSTANCE = new NoopLogger();
 
-
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             if (!IsEnabled(logLevel))
@@ -23,18 +22,15 @@ namespace TnyFramework.Common.Logger
                 Console.WriteLine(exception);
         }
 
-
         public bool IsEnabled(LogLevel logLevel)
         {
             return logLevel != LogLevel.None;
         }
 
-
         private object FormatMessage(LogLevel level, object msg)
         {
             return msg;
         }
-
 
         public IDisposable BeginScope<TState>(TState state)
         {

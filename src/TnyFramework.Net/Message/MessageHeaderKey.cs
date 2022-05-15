@@ -9,19 +9,16 @@ namespace TnyFramework.Net.Message
 
         public Type HeaderType { get; }
 
-
         protected MessageHeaderKey(string key, Type headerType)
         {
             Key = key;
             HeaderType = headerType;
         }
 
-
         private bool Equals(MessageHeaderKey other)
         {
             return Key == other.Key && HeaderType == other.HeaderType;
         }
-
 
         public override bool Equals(object obj)
         {
@@ -29,7 +26,6 @@ namespace TnyFramework.Net.Message
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == this.GetType() && Equals((MessageHeaderKey) obj);
         }
-
 
         public override int GetHashCode()
         {
@@ -50,7 +46,6 @@ namespace TnyFramework.Net.Message
         {
             return new MessageHeaderKey<TH>(key);
         }
-
 
         private MessageHeaderKey(string key) : base(key, typeof(TH))
         {

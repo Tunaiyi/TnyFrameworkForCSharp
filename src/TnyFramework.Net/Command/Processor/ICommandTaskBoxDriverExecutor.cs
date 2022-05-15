@@ -1,6 +1,8 @@
 using TnyFramework.Net.Command.Tasks;
+
 namespace TnyFramework.Net.Command.Processor
 {
+
     public interface ICommandTaskBoxDriverExecutor
     {
         void Execute(CommandTaskBoxDriver driver);
@@ -11,4 +13,5 @@ namespace TnyFramework.Net.Command.Processor
     {
         void Execute(TDriver driver);
     }
+
 }

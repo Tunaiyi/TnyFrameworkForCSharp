@@ -1,5 +1,5 @@
 using Newtonsoft.Json;
-using TnyFramework.Common.Exception;
+using TnyFramework.Common.Exceptions;
 
 namespace TnyFramework.Net.Rpc
 {
@@ -43,36 +43,30 @@ namespace TnyFramework.Net.Rpc
 
         public int Index => ParseIndex(id);
 
-
         public static RpcAccessIdentify Parse(long id)
         {
             return new RpcAccessIdentify(id);
         }
-
 
         public static long FormatId(RpcServiceType serviceType, int serverId, int index)
         {
             return ((long) serviceType.Id << RPC_SERVICE_TYPE_MASK_SIZE) | ((long) serverId << RPC_SERVER_ID_INDEX_SHIFT_SIZE) | (uint) index;
         }
 
-
         private static int ParseIndex(long id)
         {
             return (int) (id & RPC_MAX_INDEX_MASK);
         }
-
 
         public static int ParseServerId(long id)
         {
             return (int) ((id & RPC_SERVER_ID_INDEX_MASK) >> RPC_SERVER_ID_INDEX_SHIFT_SIZE);
         }
 
-
         private static RpcServiceType ParseServiceType(long id)
         {
             return RpcServiceType.ForId((int) ((id & RPC_SERVICE_TYPE_MASK) >> RPC_SERVICE_TYPE_MASK_SIZE));
         }
-
 
         private void CheckIndex(int index)
         {
@@ -82,17 +76,14 @@ namespace TnyFramework.Net.Rpc
             }
         }
 
-
         public RpcAccessIdentify()
         {
         }
-
 
         public RpcAccessIdentify(long id)
         {
             Id = id;
         }
-
 
         public RpcAccessIdentify(RpcServiceType serviceType, int serverId, int index)
         {
@@ -102,17 +93,11 @@ namespace TnyFramework.Net.Rpc
             Id = FormatId(serviceType, serverId, index);
         }
 
-
         public int CompareTo(IRpcServicer other)
         {
             if (ReferenceEquals(this, other)) return 0;
-            if (ReferenceEquals(null, other)) return 1;
-            var serviceComparison = ServiceType.Id.CompareTo(other.ServiceType.Id);
-            if (serviceComparison != 0) return serviceComparison;
-            var serverIdComparison = ServerId.CompareTo(other.ServerId);
-            return serverIdComparison != 0 ? serverIdComparison : Id.CompareTo(other.Id);
+            return ReferenceEquals(null, other) ? 1 : Id.CompareTo(other.Id);
         }
-
 
         public override string ToString()
         {

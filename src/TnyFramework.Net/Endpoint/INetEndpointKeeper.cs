@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Endpoint
 {
+
     public interface INetEndpointKeeper : IEndpointKeeper
     {
         void NotifyEndpointOnline(IEndpoint endpoint);
@@ -8,4 +9,5 @@ namespace TnyFramework.Net.Endpoint
 
         void NotifyEndpointClose(IEndpoint endpoint);
     }
+
 }

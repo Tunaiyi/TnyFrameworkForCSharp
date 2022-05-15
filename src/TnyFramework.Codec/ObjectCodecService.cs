@@ -19,7 +19,6 @@ namespace TnyFramework.Codec
 
         private ConcurrentDictionary<Type, ObjectCodecHolder> objectCodecHolderMap = new ConcurrentDictionary<Type, ObjectCodecHolder>();
 
-
         public ObjectCodecService(IEnumerable<ObjectCodecFactory> codecFactories)
         {
             var factoryMap = new Dictionary<IMimeType, ObjectCodecFactory>();
@@ -33,12 +32,10 @@ namespace TnyFramework.Codec
             codecFactoryMap = factoryMap.ToImmutableDictionary();
         }
 
-
         public bool IsSupported(IMimeType type)
         {
             return codecFactoryMap.ContainsKey(type);
         }
-
 
         public IObjectCodec<T> Codec<T>()
         {
@@ -46,13 +43,11 @@ namespace TnyFramework.Codec
             return CastCodec<T>(Codec(objectType));
         }
 
-
         public IObjectCodec Codec(Type objectType)
         {
             var holder = GetHolder(objectType);
             return holder.DefaultCodec;
         }
-
 
         public IObjectCodec<T> Codec<T>(IMimeType mimeType)
         {
@@ -60,19 +55,16 @@ namespace TnyFramework.Codec
             return CastCodec<T>(Codec(objectType, mimeType));
         }
 
-
         public IObjectCodec Codec(Type objectType, IMimeType mimeType)
         {
             var holder = GetHolder(objectType);
             return holder.LoadObjectCodec(mimeType, CreateObjectCodec);
         }
 
-
         private ObjectCodecHolder GetHolder(Type objectType)
         {
             return objectCodecHolderMap.GetOrAdd(objectType, type => new ObjectCodecHolder(type, CreateObjectCodec));
         }
-
 
         private static IObjectCodec<T> CastCodec<T>(IObjectCodec target)
         {
@@ -80,7 +72,6 @@ namespace TnyFramework.Codec
                 return codec;
             throw new InvalidCastException($"{target} cast {typeof(T)} exception");
         }
-
 
         private IObjectCodec CreateObjectCodec(IMimeType format, Type type)
         {
@@ -91,7 +82,6 @@ namespace TnyFramework.Codec
             }
             throw new NullReferenceException($"Type {type} get {format} ObjectCodecFactory is null");
         }
-
 
         public byte[] EncodeToBytes(object value)
         {
@@ -105,7 +95,6 @@ namespace TnyFramework.Codec
             }
         }
 
-
         public byte[] EncodeToBytes(object value, IMimeType mineType)
         {
             var holder = GetHolder(value.GetType());
@@ -118,7 +107,6 @@ namespace TnyFramework.Codec
                 throw new ObjectCodecException($"encode {value.GetType()} to default format {mineType} exception", e);
             }
         }
-
 
         public T DecodeByBytes<T>(byte[] data)
         {
@@ -141,7 +129,6 @@ namespace TnyFramework.Codec
             }
         }
 
-
         public T DecodeByBytes<T>(byte[] data, IMimeType mimeType)
         {
             var holder = GetHolder(typeof(T));
@@ -163,7 +150,6 @@ namespace TnyFramework.Codec
             }
         }
 
-
         private class ObjectCodecHolder
         {
             private Type Type { get; }
@@ -174,7 +160,6 @@ namespace TnyFramework.Codec
 
             private readonly IDictionary<IMimeType, IObjectCodec> objectCodes = new Dictionary<IMimeType, IObjectCodec>();
 
-
             public ObjectCodecHolder(Type type, Func<IMimeType, Type, IObjectCodec> factory)
             {
                 Type = type;
@@ -184,13 +169,10 @@ namespace TnyFramework.Codec
                 AddCodec(DefaultFormat, DefaultCodec);
             }
 
-
-
             public IObjectCodec LoadObjectCodec(IMimeType mimeType, Func<IMimeType, Type, IObjectCodec> factory)
             {
                 return objectCodes.TryGetValue(mimeType, out var codec) ? codec : Load(mimeType, factory);
             }
-
 
             private IObjectCodec Load(IMimeType mimeType, Func<IMimeType, Type, IObjectCodec> factory)
             {
@@ -205,7 +187,6 @@ namespace TnyFramework.Codec
                     return codec;
                 }
             }
-
 
             private void AddCodec(IMimeType mimeType, IObjectCodec codec)
             {

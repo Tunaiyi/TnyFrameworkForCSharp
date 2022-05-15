@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Transport
 {
+
     public interface ISender
     {
         /// <summary>
@@ -9,4 +10,5 @@ namespace TnyFramework.Net.Transport
         /// <returns>返回发送回执</returns>
         ISendReceipt Send(MessageContext messageContext);
     }
+
 }

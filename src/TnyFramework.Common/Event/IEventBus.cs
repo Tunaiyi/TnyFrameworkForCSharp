@@ -1,6 +1,8 @@
 using System;
+
 namespace TnyFramework.Common.Event
 {
+
     public interface IEventBus
     {
     }
@@ -12,4 +14,5 @@ namespace TnyFramework.Common.Event
 
         IEventBus<THandler> ForkChild();
     }
+
 }

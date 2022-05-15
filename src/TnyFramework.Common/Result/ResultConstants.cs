@@ -1,5 +1,6 @@
 namespace TnyFramework.Common.Result
 {
+
     public static class ResultConstants
     {
         /// <summary>
@@ -12,4 +13,5 @@ namespace TnyFramework.Common.Result
         /// </summary>
         public const int FAILURE_CODE = 101;
     }
+
 }

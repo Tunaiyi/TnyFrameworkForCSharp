@@ -23,7 +23,6 @@ namespace TnyFramework.Net.Cloud.Nacos
             });
         }
 
-
         public static IHostBuilder UseNacosConfiguration(this IHostBuilder builder, string section = "nacos",
             Action<NacosV2ConfigurationSource> action = null, Action<ILoggingBuilder> logAction = null)
         {
@@ -44,7 +43,6 @@ namespace TnyFramework.Net.Cloud.Nacos
                 }
             });
         }
-
 
         public static IHostBuilder UseNacos(this IHostBuilder builder, string section = "nacos",
             Action<NacosV2ConfigurationSource> action = null, Action<ILoggingBuilder> logAction = null)

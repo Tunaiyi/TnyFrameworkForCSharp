@@ -1,7 +1,9 @@
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.Rpc.Auth;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Rpc
 {
+
     public interface IRpcUnitContext
     {
         IRpcAuthService LoadRpcAuthService();
@@ -10,4 +12,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Rpc
 
         NetUnitContext NetUnitContext { get; }
     }
+
 }

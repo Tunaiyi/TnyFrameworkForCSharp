@@ -4,8 +4,10 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using TnyFramework.DI.Attributes;
+
 namespace TnyFramework.DI.Extensions
 {
+
     public static class ServiceCollectionUtils
     {
         public static IList<Type> FindRegisterTypes(Type checkType, bool force = true)
@@ -32,4 +34,5 @@ namespace TnyFramework.DI.Extensions
             return registeredTypes.Distinct().ToImmutableList();
         }
     }
+
 }

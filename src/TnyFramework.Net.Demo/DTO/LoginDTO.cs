@@ -1,10 +1,4 @@
-﻿//
-//  文件名称：RelayFramePackDTO.cs
-//  简   述：
-//  创建标识：lrg 2021/7/29
-//
-
-using System;
+﻿using System;
 using ProtoBuf;
 using TnyFramework.Codec;
 using TnyFramework.Codec.Attributes;
@@ -28,11 +22,9 @@ namespace TnyFramework.Net.Demo.DTO
         [ProtoMember(3)]
         public long certId;
 
-
         public LoginDTO()
         {
         }
-
 
         public LoginDTO(long certId, long userId, string message)
         {

@@ -1,6 +1,8 @@
 using System;
+
 namespace TnyFramework.DI.Units
 {
+
     public interface IUnitCollectionSpec<in TUnit, out TContext>
     {
         int Size { get; }
@@ -21,4 +23,5 @@ namespace TnyFramework.DI.Units
 
         IUnitCollectionSpec<TUnit, TContext> Clear();
     }
+
 }

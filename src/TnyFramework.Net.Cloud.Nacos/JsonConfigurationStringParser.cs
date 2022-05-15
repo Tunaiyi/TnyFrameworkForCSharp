@@ -22,14 +22,11 @@ namespace TnyFramework.Net.Cloud.Nacos
         private string currentPath;
         private JsonTextReader reader;
 
-
         private JsonConfigurationStringParser()
         {
         }
 
-
         public IDictionary<string, string> Parse(string input) => new JsonConfigurationStringParser().ParseString(input);
-
 
         private IDictionary<string, string> ParseString(string input)
         {
@@ -45,7 +42,6 @@ namespace TnyFramework.Net.Cloud.Nacos
             return data;
         }
 
-
         private void VisitJObject(JObject jObject)
         {
             foreach (var property in jObject.Properties())
@@ -56,9 +52,7 @@ namespace TnyFramework.Net.Cloud.Nacos
             }
         }
 
-
         private void VisitProperty(JProperty property) => VisitToken(property.Value);
-
 
         private void VisitToken(JToken token)
         {
@@ -86,7 +80,6 @@ namespace TnyFramework.Net.Cloud.Nacos
             }
         }
 
-
         private void VisitArray(JArray array)
         {
             for (var index = 0; index < array.Count; ++index)
@@ -97,7 +90,6 @@ namespace TnyFramework.Net.Cloud.Nacos
             }
         }
 
-
         private void VisitPrimitive(JValue data)
         {
             var currentPath = this.currentPath;
@@ -106,13 +98,11 @@ namespace TnyFramework.Net.Cloud.Nacos
             this.data[currentPath] = data.ToString(CultureInfo.InvariantCulture);
         }
 
-
         private void EnterContext(string context)
         {
             this.context.Push(context);
             currentPath = ConfigurationPath.Combine(this.context.Reverse());
         }
-
 
         private void ExitContext()
         {

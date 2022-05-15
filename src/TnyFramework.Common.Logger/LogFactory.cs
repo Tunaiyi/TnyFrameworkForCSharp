@@ -3,7 +3,6 @@ using System.Threading;
 using Microsoft.Extensions.Logging;
 using static System.Threading.Volatile;
 
-
 namespace TnyFramework.Common.Logger
 {
 
@@ -23,12 +22,10 @@ namespace TnyFramework.Common.Logger
             set => Write(ref _DEFAULT_FACTORY, value);
         }
 
-
         private static ILoggerFactory CreateNoopFactory()
         {
             return LoggerFactory.Create(builder => { builder.AddProvider(new NoopLoggerProvider()); });
         }
-
 
         /// <summary>
         ///     Creates a new logger instance with the name of the specified type.
@@ -37,14 +34,12 @@ namespace TnyFramework.Common.Logger
         /// <returns>logger instance</returns>
         public static ILogger Logger<T>() => Logger(typeof(T));
 
-
         /// <summary>
         ///     Creates a new logger instance with the name of the specified type.
         /// </summary>
         /// <param name="type">type where logger is used</param>
         /// <returns>logger instance</returns>
         public static ILogger Logger(Type type) => Logger(type.FullName);
-
 
         /// <summary>
         ///     Creates a new logger instance with the specified name.

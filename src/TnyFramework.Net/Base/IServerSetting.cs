@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+
 namespace TnyFramework.Net.Base
 {
+
     public interface IServerSetting : IServerBootstrapSetting
     {
         /// <summary>
@@ -18,10 +20,10 @@ namespace TnyFramework.Net.Base
         /// </summary>
         bool Libuv { get; set; }
 
-
         /// <summary>
         /// 信息
         /// </summary>
         IDictionary<string, string> Metadata { get; }
     }
+
 }

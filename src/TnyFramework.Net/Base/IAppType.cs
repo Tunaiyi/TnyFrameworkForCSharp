@@ -23,7 +23,6 @@ namespace TnyFramework.Net.Base
         /// </summary>
         public string AppName { get; protected set; }
 
-
         protected override void OnCheck()
         {
             if (APP_NAME_MAP.TryAdd(AppName, this))
@@ -35,18 +34,15 @@ namespace TnyFramework.Net.Base
             }
         }
 
-
         public new static AppType ForId(int id)
         {
             return BaseEnum<AppType>.ForId(id);
         }
 
-
         public new static AppType ForName(string name)
         {
             return BaseEnum<AppType>.ForName(name);
         }
-
 
         public static AppType ForAppName(string appName)
         {
@@ -64,7 +60,7 @@ namespace TnyFramework.Net.Base
                 AppName = appName
             }, builder);
         }
-        
+
         public new static void LoadAll() => LoadAll(typeof(T));
 
         public new static IReadOnlyCollection<AppType> GetValues()

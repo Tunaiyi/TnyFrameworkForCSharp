@@ -10,7 +10,6 @@ namespace TnyFramework.Codec.ProtobufNet.Attributes
             Id = id;
         }
 
-
         public int Id { get; }
     }
 

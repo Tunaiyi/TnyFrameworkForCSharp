@@ -30,13 +30,11 @@ namespace TnyFramework.Net.Message
 
         public override string Key => MessageHeaderConstants.RPC_FORWARD_HEADER_KEY;
 
-
         public RpcForwardHeader SetFrom(IRpcServicer fromService)
         {
             From = ToForwardRpcServicer(fromService);
             return this;
         }
-
 
         public RpcForwardHeader SetSender(IMessager sender)
         {
@@ -44,20 +42,23 @@ namespace TnyFramework.Net.Message
             return this;
         }
 
-
         public RpcForwardHeader SetTo(IRpcServicer toServicer)
         {
             To = ToForwardRpcServicer(toServicer);
             return this;
         }
 
+        public RpcForwardHeader SetTo(IRpcServiceType serviceType)
+        {
+            To = ToForwardRpcServicer(new ForwardRpcServicer(serviceType));
+            return this;
+        }
 
         public RpcForwardHeader SetReceiver(IMessager receiver)
         {
             Receiver = ToForwardMessager(receiver);
             return this;
         }
-
 
         private static ForwardRpcServicer ToForwardRpcServicer(IRpcServicer rpcServicer)
         {
@@ -71,7 +72,6 @@ namespace TnyFramework.Net.Message
                     return new ForwardRpcServicer(rpcServicer);
             }
         }
-
 
         private static ForwardMessager ToForwardMessager(IMessager messager)
         {

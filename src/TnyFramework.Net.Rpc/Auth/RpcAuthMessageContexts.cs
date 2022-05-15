@@ -1,4 +1,4 @@
-using TnyFramework.Common.Exception;
+using TnyFramework.Common.Exceptions;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
@@ -11,12 +11,10 @@ namespace TnyFramework.Net.Rpc.Auth
 
         public const int RPC_AUTH_PASSWORD_INDEX = 1;
 
-
         public static RequestContext AuthRequest(long id, string password)
         {
             return MessageContexts.Request(Protocols.Protocol(RpcProtocol.RPC_AUTH_4_AUTHENTICATE), id, password);
         }
-
 
         public static long GetIdParam(MessageParamList paramList)
         {
@@ -26,7 +24,6 @@ namespace TnyFramework.Net.Rpc.Auth
             }
             throw new IllegalArgumentException($"index {RPC_AUTH_INSTANCE_INDEX} service id param is null");
         }
-
 
         public static string GetPasswordParam(MessageParamList paramList)
         {

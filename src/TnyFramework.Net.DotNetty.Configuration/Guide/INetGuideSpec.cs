@@ -6,8 +6,10 @@ using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public interface INetGuideSpec<in TUnit, TUserId, out TContext, out TSpec> : IUnitSpec<TUnit, TContext>
         where TSpec : INetGuideSpec<TUnit, TUserId, TContext, TSpec>
         where TUnit : INetServer
@@ -27,4 +29,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         TSpec ChannelMakerConfigure(Action<UnitSpec<IChannelMaker, INetGuideUnitContext>> action);
     }
+
 }

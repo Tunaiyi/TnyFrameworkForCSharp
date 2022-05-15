@@ -1,8 +1,10 @@
 using DotNetty.Transport.Channels;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.DotNetty.Transport
 {
+
     /// <summary>
     /// Netty Tunnel 工厂
     /// </summary>
@@ -10,4 +12,5 @@ namespace TnyFramework.Net.DotNetty.Transport
     {
         INetTunnel Create(long id, IChannel channel, INetworkContext context);
     }
+
 }

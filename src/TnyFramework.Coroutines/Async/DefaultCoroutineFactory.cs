@@ -1,6 +1,8 @@
 using System.Threading;
+
 namespace TnyFramework.Coroutines.Async
 {
+
     /// <summary>
     /// 默认协程工厂
     /// </summary>
@@ -11,7 +13,6 @@ namespace TnyFramework.Coroutines.Async
         private readonly ICoroutineExecutor executor;
 
         public static ICoroutineFactory Default { get; } = new DefaultCoroutineFactory("DefaultCoroutineFactory");
-
 
         /// <summary>
         /// 工厂名(作为协程名前缀)
@@ -24,9 +25,7 @@ namespace TnyFramework.Coroutines.Async
             this.executor = executor ?? ThreadPoolCoroutineExecutor.Default;
         }
 
-
         private string Name { get; }
-
 
         public ICoroutine Create()
         {
@@ -34,11 +33,11 @@ namespace TnyFramework.Coroutines.Async
             return new Coroutine(executor, $"{Name}-{currentIndex}");
         }
 
-
         public ICoroutine Create(string name)
         {
             var currentIndex = Interlocked.Increment(ref index);
             return new Coroutine(executor, $"{name}-{currentIndex}");
         }
     }
+
 }

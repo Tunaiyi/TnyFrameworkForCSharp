@@ -1,8 +1,3 @@
-/*
- * Copyright 2015-2016 Roger Alsing, Aaron Stannard, Jeff Cyr
- * Helios.DedicatedThreadPool - https://github.com/helios-io/DedicatedThreadPool
- */
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace TnyFramework.Coroutines.Concurrency
 {
+
     /// <summary>
     /// The type of threads to use - either foreground or background threads.
     /// </summary>
@@ -33,24 +29,22 @@ namespace TnyFramework.Coroutines.Concurrency
         /// </summary>
         public const ThreadType DefaultThreadType = ThreadType.Background;
 
-
         public DedicatedThreadPoolSettings(int numThreads,
             string name = null,
             TimeSpan? deadlockTimeout = null,
             ApartmentState apartmentState = ApartmentState.Unknown,
-            Action<System.Exception> exceptionHandler = null,
+            Action<Exception> exceptionHandler = null,
             int threadMaxStackSize = 0)
             : this(numThreads, DefaultThreadType, name, deadlockTimeout, apartmentState, exceptionHandler, threadMaxStackSize)
         {
         }
-
 
         public DedicatedThreadPoolSettings(int numThreads,
             ThreadType threadType,
             string name = null,
             TimeSpan? deadlockTimeout = null,
             ApartmentState apartmentState = ApartmentState.Unknown,
-            Action<System.Exception> exceptionHandler = null,
+            Action<Exception> exceptionHandler = null,
             int threadMaxStackSize = 0)
         {
             Name = name ?? ("DedicatedThreadPool-" + Guid.NewGuid());
@@ -67,7 +61,6 @@ namespace TnyFramework.Coroutines.Concurrency
             if (numThreads <= 0)
                 throw new ArgumentOutOfRangeException("numThreads", string.Format("numThreads must be at least 1. Was {0}", numThreads));
         }
-
 
         /// <summary>
         /// The total number of threads to run in this thread pool.
@@ -94,7 +87,7 @@ namespace TnyFramework.Coroutines.Concurrency
 
         public string Name { get; private set; }
 
-        public Action<System.Exception> ExceptionHandler { get; private set; }
+        public Action<Exception> ExceptionHandler { get; private set; }
 
         /// <summary>
         /// Gets the thread stack size, 0 represents the default stack size.
@@ -120,12 +113,10 @@ namespace TnyFramework.Coroutines.Concurrency
 
         private readonly DedicatedThreadPool _pool;
 
-
         public DedicatedThreadPoolTaskScheduler(DedicatedThreadPool pool)
         {
             _pool = pool;
         }
-
 
         protected override void QueueTask(Task task)
         {
@@ -136,7 +127,6 @@ namespace TnyFramework.Coroutines.Concurrency
 
             EnsureWorkerRequested();
         }
-
 
         protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
         {
@@ -152,12 +142,10 @@ namespace TnyFramework.Coroutines.Concurrency
             return TryExecuteTask(task);
         }
 
-
         protected override bool TryDequeue(Task task)
         {
             lock (_tasks) return _tasks.Remove(task);
         }
-
 
         /// <summary>
         /// Level of concurrency is directly equal to the number of threads
@@ -166,7 +154,6 @@ namespace TnyFramework.Coroutines.Concurrency
         public override int MaximumConcurrencyLevel {
             get { return _pool.Settings.NumThreads; }
         }
-
 
         protected override IEnumerable<Task> GetScheduledTasks()
         {
@@ -184,7 +171,6 @@ namespace TnyFramework.Coroutines.Concurrency
             }
         }
 
-
         private void EnsureWorkerRequested()
         {
             var count = _parallelWorkers;
@@ -200,7 +186,6 @@ namespace TnyFramework.Coroutines.Concurrency
             }
         }
 
-
         private void ReleaseWorker()
         {
             var count = _parallelWorkers;
@@ -214,7 +199,6 @@ namespace TnyFramework.Coroutines.Concurrency
                 count = prev;
             }
         }
-
 
         private void RequestWorker()
         {
@@ -254,8 +238,6 @@ namespace TnyFramework.Coroutines.Concurrency
         }
     }
 
-
-
     /// <summary>
     /// An instanced, dedicated thread pool.
     /// </summary>
@@ -273,12 +255,10 @@ namespace TnyFramework.Coroutines.Concurrency
             // try to keep {settings.NumThreads} active threads.
         }
 
-
         public DedicatedThreadPoolSettings Settings { get; private set; }
 
         private readonly ThreadPoolWorkQueue _workQueue;
         private readonly PoolWorker[] _workers;
-
 
         public bool QueueUserWorkItem(Action work)
         {
@@ -288,24 +268,20 @@ namespace TnyFramework.Coroutines.Concurrency
             return _workQueue.TryAdd(work);
         }
 
-
         public void Dispose()
         {
             _workQueue.CompleteAdding();
         }
-
 
         public void WaitForThreadsExit()
         {
             WaitForThreadsExit(Timeout.InfiniteTimeSpan);
         }
 
-
         public void WaitForThreadsExit(TimeSpan timeout)
         {
             Task.WaitAll(_workers.Select(worker => worker.ThreadExit).ToArray(), timeout);
         }
-
 
         private class PoolWorker
         {
@@ -314,7 +290,6 @@ namespace TnyFramework.Coroutines.Concurrency
             private readonly TaskCompletionSource<object> threadExit;
 
             public Task ThreadExit => threadExit.Task;
-
 
             public PoolWorker(DedicatedThreadPool pool, int workerId)
             {
@@ -334,7 +309,6 @@ namespace TnyFramework.Coroutines.Concurrency
                 thread.Start();
             }
 
-
             private void RunThread()
             {
                 try
@@ -344,7 +318,7 @@ namespace TnyFramework.Coroutines.Concurrency
                         try
                         {
                             action();
-                        } catch (System.Exception ex)
+                        } catch (Exception ex)
                         {
                             pool.Settings.ExceptionHandler(ex);
                         }
@@ -370,7 +344,6 @@ namespace TnyFramework.Coroutines.Concurrency
                 get { return Volatile.Read(ref _isAddingCompleted) == CompletedState; }
             }
 
-
             public bool TryAdd(Action work)
             {
                 // If TryAdd returns true, it's garanteed the work item will be executed.
@@ -384,7 +357,6 @@ namespace TnyFramework.Coroutines.Concurrency
 
                 return true;
             }
-
 
             public IEnumerable<Action> GetConsumingEnumerable()
             {
@@ -408,7 +380,6 @@ namespace TnyFramework.Coroutines.Concurrency
                 }
             }
 
-
             public void CompleteAdding()
             {
                 var previousCompleted = Interlocked.Exchange(ref _isAddingCompleted, CompletedState);
@@ -429,12 +400,11 @@ namespace TnyFramework.Coroutines.Concurrency
 
                     if (prev == count)
                     {
-                        _semaphore.Release((short)countToRelease);
+                        _semaphore.Release((short) countToRelease);
                         break;
                     }
                 }
             }
-
 
             private void EnsureThreadRequested()
             {
@@ -463,7 +433,6 @@ namespace TnyFramework.Coroutines.Concurrency
                     count = prev;
                 }
             }
-
 
             private void MarkThreadRequestSatisfied()
             {
@@ -534,18 +503,15 @@ namespace TnyFramework.Coroutines.Concurrency
             private readonly CacheLinePadding m_padding2;
 #pragma warning restore 169
 
-
             public UnfairSemaphore()
             {
                 m_semaphore = new Semaphore(0, short.MaxValue);
             }
 
-
             public bool Wait()
             {
                 return Wait(Timeout.InfiniteTimeSpan);
             }
-
 
             public bool Wait(TimeSpan timeout)
             {
@@ -587,8 +553,8 @@ namespace TnyFramework.Coroutines.Concurrency
                             return true;
                     } else
                     {
-                        var spinnersPerProcessor = (double)currentCounts.Spinners / Environment.ProcessorCount;
-                        var spinLimit = (int)((spinLimitPerProcessor / spinnersPerProcessor) + 0.5);
+                        var spinnersPerProcessor = (double) currentCounts.Spinners / Environment.ProcessorCount;
+                        var spinLimit = (int) ((spinLimitPerProcessor / spinnersPerProcessor) + 0.5);
                         if (numSpins >= spinLimit)
                         {
                             --newCounts.Spinners;
@@ -632,12 +598,10 @@ namespace TnyFramework.Coroutines.Concurrency
                 }
             }
 
-
             public void Release()
             {
                 Release(1);
             }
-
 
             public void Release(short count)
             {
@@ -651,14 +615,14 @@ namespace TnyFramework.Coroutines.Concurrency
                     // First, prefer to release existing spinners,
                     // because a) they're hot, and b) we don't need a kernel
                     // transition to release them.
-                    var spinnersToRelease = Math.Max((short)0,
-                        Math.Min(remainingCount, (short)(currentState.Spinners - currentState.CountForSpinners)));
+                    var spinnersToRelease = Math.Max((short) 0,
+                        Math.Min(remainingCount, (short) (currentState.Spinners - currentState.CountForSpinners)));
                     newState.CountForSpinners += spinnersToRelease;
                     remainingCount -= spinnersToRelease;
 
                     // Next, prefer to release existing waiters
-                    var waitersToRelease = Math.Max((short)0,
-                        Math.Min(remainingCount, (short)(currentState.Waiters - currentState.CountForWaiters)));
+                    var waitersToRelease = Math.Max((short) 0,
+                        Math.Min(remainingCount, (short) (currentState.Waiters - currentState.CountForWaiters)));
                     newState.CountForWaiters += waitersToRelease;
                     remainingCount -= waitersToRelease;
 
@@ -676,7 +640,6 @@ namespace TnyFramework.Coroutines.Concurrency
                     }
                 }
             }
-
 
             private bool TryUpdateState(SemaphoreState newState, SemaphoreState currentState)
             {
@@ -699,7 +662,6 @@ namespace TnyFramework.Coroutines.Concurrency
                 return false;
             }
 
-
             private SemaphoreState GetCurrentState()
             {
                 // Volatile.Read of a long can get a partial read in x86 but the invalid
@@ -711,4 +673,5 @@ namespace TnyFramework.Coroutines.Concurrency
             }
         }
     }
+
 }

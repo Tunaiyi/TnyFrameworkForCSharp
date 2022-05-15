@@ -2,8 +2,10 @@ using System.Threading.Tasks;
 using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Command.Tasks
 {
+
     public class RespondCommandTask : ICommandTask, ICommand
     {
         private readonly IMessage message;
@@ -12,16 +14,13 @@ namespace TnyFramework.Net.Command.Tasks
 
         public string Name => "RespondCommandTask";
 
-
         public RespondCommandTask(IMessage message, TaskResponseSource source)
         {
             this.message = message;
             this.source = source;
         }
 
-
         public ICommand Command => this;
-
 
         public Task Execute()
         {
@@ -29,7 +28,7 @@ namespace TnyFramework.Net.Command.Tasks
             return Task.CompletedTask;
         }
 
-
         public bool IsDone() => source.Task.IsCompleted;
     }
+
 }

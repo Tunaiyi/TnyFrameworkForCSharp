@@ -11,7 +11,6 @@ namespace TnyFramework.Net.Base
         /// </summary>
         public static readonly NetMessagerType ANONYMITY = Of(0, ANONYMITY_USER_TYPE);
 
-
         /// <summary>
         /// 默认用户
         /// </summary>

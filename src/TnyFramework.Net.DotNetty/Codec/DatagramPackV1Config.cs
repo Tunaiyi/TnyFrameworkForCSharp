@@ -1,11 +1,6 @@
-//
-//  文件名称：DataPacketV1Config.cs
-//  简   述：配置
-//  创建标识：lrg 2021/7/21
-//
-
 namespace TnyFramework.Net.DotNetty.Codec
 {
+
     public class DataPacketV1Setting
     {
         /// <summary>
@@ -33,4 +28,5 @@ namespace TnyFramework.Net.DotNetty.Codec
         /// </summary>
         public long SkipNumberStep { get; set; } = 30;
     }
+
 }

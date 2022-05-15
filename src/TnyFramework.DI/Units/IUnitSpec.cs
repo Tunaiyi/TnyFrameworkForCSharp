@@ -1,5 +1,6 @@
 namespace TnyFramework.DI.Units
 {
+
     public interface IUnitSpec<in TUnit, out TContext>
     {
         IUnitSpec<TUnit, TContext> Unit(TUnit value);
@@ -8,4 +9,5 @@ namespace TnyFramework.DI.Units
 
         IUnitSpec<TUnit, TContext> Creator(UnitCreator<TUnit, TContext> value);
     }
+
 }

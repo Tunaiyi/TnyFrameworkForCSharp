@@ -8,7 +8,6 @@ namespace TnyFramework.Net.Message
             return Protocols.Protocol(id);
         }
 
-
         public static IProtocol Protocol(this int id, int line)
         {
             return Protocols.Protocol(id, line);

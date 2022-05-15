@@ -9,15 +9,21 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Grpc.Core" Version="2.34.1" />
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2" />
-        <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
+        <PackageReference Include="Grpc.Core" Version="2.34.1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.2"/>
+        <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj" />
-        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
-        <ProjectReference Include="..\TnyFramework.DI.Attributes\TnyFramework.DI.Attributes.csproj" />
+        <AssemblyAttribute Include="TnyFramework.Common.Scanner.Attributes.AssemblyTypeSelectorAttributes">
+            <_Parameter1>TnyFramework.DI.Extensions.ComponentTypeSelector</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj"/>
+        <ProjectReference Include="..\TnyFramework.DI.Attributes\TnyFramework.DI.Attributes.csproj"/>
     </ItemGroup>
 
 

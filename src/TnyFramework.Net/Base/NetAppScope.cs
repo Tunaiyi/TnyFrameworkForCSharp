@@ -8,12 +8,10 @@ namespace TnyFramework.Net.Base
         /// </summary>
         public static readonly IAppScope ONLINE = Of(1, "online");
 
-
         /// <summary>
         /// 开发
         /// </summary>
         public static readonly IAppScope DEVELOP = Of(2, "develop");
-
 
         /// <summary>
         /// 测试

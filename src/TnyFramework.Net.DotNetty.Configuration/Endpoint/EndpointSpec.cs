@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Endpoint;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
 {
+
     public class EndpointSpec : UnitSpec<IEndpointKeeperManager, IEndpointUnitContext>, IEndpointSpec, IEndpointUnitContext
     {
         private readonly UnitCollectionSpec<ISessionFactory, IEndpointUnitContext> sessionFactorySpec;
@@ -12,9 +14,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
         private readonly SessionKeeperSettingSpecs customSessionKeeperSettingSpecs;
         private readonly UnitCollectionSpec<ISessionKeeperFactory, IEndpointUnitContext> sessionKeeperFactorySpec;
 
-
         private IServiceCollection UnitContainer { get; }
-
 
         public EndpointSpec(IServiceCollection container)
         {
@@ -30,13 +30,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             Default(DefaultEndpointKeeperManager);
         }
 
-
         public IEndpointSpec DefaultSessionKeeperFactory(UnitCreator<ISessionKeeperFactory, IEndpointUnitContext> defaultSessionFactory)
         {
             sessionKeeperFactorySpec.AddDefault(defaultSessionFactory);
             return this;
         }
-
 
         public IEndpointSpec SessionFactoryConfigure(Action<UnitCollectionSpec<ISessionFactory, IEndpointUnitContext>> action)
         {
@@ -44,13 +42,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             return this;
         }
 
-
         public IEndpointSpec SessionKeeperFactory<TUserId>()
         {
             sessionKeeperFactorySpec.Add(context => new SessionKeeperFactory<TUserId>(context.LoadSessionFactories()));
             return this;
         }
-
 
         public IEndpointSpec SessionKeeperFactory<TUserId>(string name)
         {
@@ -58,13 +54,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             return this;
         }
 
-
         public IEndpointSpec DefaultSessionConfigure(Action<ISessionKeeperSettingSpec> action)
         {
             action.Invoke(defaultSessionKeeperSetting);
             return this;
         }
-
 
         public IEndpointSpec CustomSessionConfigure(Action<ISessionKeeperSettingSpec> action)
         {
@@ -72,13 +66,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             return this;
         }
 
-
         public IEndpointSpec CustomSessionConfigure(string name, Action<ISessionKeeperSettingSpec> action)
         {
             customSessionKeeperSettingSpecs.AddSpec(name, action);
             return this;
         }
-
 
         public IEndpointSpec SessionKeeperFactoryConfigure(Action<IUnitCollectionSpec<ISessionKeeperFactory, IEndpointUnitContext>> action)
         {
@@ -86,37 +78,30 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             return this;
         }
 
-
-
         public ISessionKeeperSetting LoadDefaultSessionKeeperSetting()
         {
             return defaultSessionKeeperSetting.Load(this, UnitContainer);
         }
-
 
         public IList<ISessionKeeperSetting> LoadCustomSessionKeeperSettings()
         {
             return customSessionKeeperSettingSpecs.Load(this, UnitContainer);
         }
 
-
         public IDictionary<string, ISessionKeeperFactory> LoadSessionKeeperFactories()
         {
             return sessionKeeperFactorySpec.LoadDictionary(this, UnitContainer);
         }
-
 
         public IDictionary<string, ISessionFactory> LoadSessionFactories()
         {
             return sessionFactorySpec.LoadDictionary(this, UnitContainer);
         }
 
-
         public IEndpointKeeperManager LoadEndpointKeeperManager()
         {
             return Load(this, UnitContainer);
         }
-
 
         public static ISessionKeeperSetting DefaultSessionKeeperSetting(IEndpointUnitContext context)
         {
@@ -124,7 +109,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
                 Name = "default"
             };
         }
-
 
         public static IEndpointKeeperManager DefaultEndpointKeeperManager(IEndpointUnitContext context)
         {
@@ -134,4 +118,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
                 context.LoadSessionKeeperFactories());
         }
     }
+
 }

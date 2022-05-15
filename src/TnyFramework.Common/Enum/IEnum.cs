@@ -1,5 +1,6 @@
 ﻿namespace TnyFramework.Common.Enum
 {
+
     /// <summary>
     /// 枚举
     /// </summary>

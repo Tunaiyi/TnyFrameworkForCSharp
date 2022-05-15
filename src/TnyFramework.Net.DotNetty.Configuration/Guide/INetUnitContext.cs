@@ -5,10 +5,14 @@ using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public interface INetUnitContext
     {
+        void Load();
+
         MessageDispatcherContext LoadMessageDispatcherContext();
 
         IMessageDispatcher LoadMessageDispatcher();
@@ -19,8 +23,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         INetAppContext LoadAppContext();
 
+        IRpcRemoteServiceManager LoadRpcRemoteServiceManager();
+
         IList<ICommandPlugin> LoadCommandPlugins();
 
         IList<IAuthenticateValidator> LoadAuthenticateValidators();
     }
+
 }

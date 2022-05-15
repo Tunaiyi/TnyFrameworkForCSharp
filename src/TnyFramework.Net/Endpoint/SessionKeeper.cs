@@ -10,8 +10,10 @@ using TnyFramework.Net.Command;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Endpoint
 {
+
     public class SessionKeeper
     {
         internal static readonly ILogger LOGGER = LogFactory.Logger<SessionKeeper>();
@@ -19,7 +21,6 @@ namespace TnyFramework.Net.Endpoint
 
     public class SessionKeeper<TUserId> : EndpointKeeper<TUserId, ISession<TUserId>>, ISessionKeeper<TUserId>
     {
-
         /* 离线session */
         private readonly ConcurrentDictionary<ISession, bool> offlineSessionQueue = new ConcurrentDictionary<ISession, bool>();
 
@@ -46,7 +47,6 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         public override void Start()
         {
             if (Interlocked.CompareExchange(ref start, 1, 0) != 0)
@@ -65,7 +65,6 @@ namespace TnyFramework.Net.Endpoint
                 }
             });
         }
-
 
         public override IEndpoint Online(ICertificate certificate, INetTunnel tunnel)
         {
@@ -86,7 +85,6 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         private IEndpoint DoAcceptTunnel(ICertificate certificate, INetTunnel newTunnel)
         {
             var existSession = FindEndpoint(certificate.GetUserId());
@@ -103,12 +101,11 @@ namespace TnyFramework.Net.Endpoint
                 throw new ValidatorFailException(NetResultCode.SESSION_LOSS_ERROR);
             }
 
-            var current = (INetSession<TUserId>)existSession;
+            var current = (INetSession<TUserId>) existSession;
             // existSession.offline(); // 将旧 session 的 Tunnel T 下线
             current.Online(certificate, newTunnel);
             return existSession;
         }
-
 
         private IEndpoint NewSession(ICertificate certificate, INetTunnel newTunnel)
         {
@@ -139,18 +136,15 @@ namespace TnyFramework.Net.Endpoint
             return session;
         }
 
-
         protected override void OnEndpointClose(ISession<TUserId> endpoint)
         {
             offlineSessionQueue.TryRemove(endpoint, out _);
         }
 
-
         protected override void OnEndpointOnline(ISession<TUserId> endpoint)
         {
             offlineSessionQueue.TryRemove(endpoint, out _);
         }
-
 
         protected override void OnEndpointOffline(ISession<TUserId> endpoint)
         {
@@ -159,7 +153,6 @@ namespace TnyFramework.Net.Endpoint
                 offlineSessionQueue.TryAdd(endpoint, true);
             }
         }
-
 
         private void ClearInvalidedSession()
         {
@@ -216,4 +209,5 @@ namespace TnyFramework.Net.Endpoint
             // }
         }
     }
+
 }

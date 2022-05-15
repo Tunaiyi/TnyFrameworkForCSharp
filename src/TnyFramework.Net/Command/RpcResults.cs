@@ -4,14 +4,13 @@ namespace TnyFramework.Net.Command
 {
 
     //TODO Protocol 设置
-    public class DefaultRpcResult<TBody> : IRpcResult<TBody>
+    internal class DefaultRpcResult<TBody> : IRpcResult<TBody>
     {
         public TBody Body { get; }
 
         public IResultCode ResultCode { get; }
 
         public string Description { get; }
-
 
         public DefaultRpcResult(IResultCode resultCode, TBody body)
         {
@@ -20,29 +19,22 @@ namespace TnyFramework.Net.Command
             Description = resultCode.Message;
         }
 
-
         public DefaultRpcResult(IResultCode resultCode)
         {
             ResultCode = resultCode;
             Description = resultCode.Message;
         }
 
-
         object IRpcResult.Body => Body;
 
-
         public bool IsSuccess() => ResultCode.IsSuccess();
-
-
 
         public bool IsFailure() => ResultCode.IsFailure();
     }
 
-
-    public class RpcResults
+    public static class RpcResults
     {
-        private static readonly IRpcResult SUCCESS = new DefaultRpcResult<object>(DefaultResultCode.SUCCESS, null);
-
+        private static readonly IRpcResult SUCCESS = new DefaultRpcResult<object>(ResultCode.SUCCESS, null);
 
         /// <summary>
         /// 创建成功响应结果
@@ -53,7 +45,6 @@ namespace TnyFramework.Net.Command
             return SUCCESS;
         }
 
-
         /// <summary>
         /// 创建成功响应结果
         /// </summary>
@@ -62,9 +53,8 @@ namespace TnyFramework.Net.Command
         /// <returns>返回响应结果</returns>
         public static IRpcResult<TBody> Success<TBody>(TBody body)
         {
-            return new DefaultRpcResult<TBody>(DefaultResultCode.SUCCESS, body);
+            return new DefaultRpcResult<TBody>(ResultCode.SUCCESS, body);
         }
-
 
         /// <summary>
         /// 请求结果
@@ -75,7 +65,6 @@ namespace TnyFramework.Net.Command
             return new DefaultRpcResult<object>(code);
         }
 
-
         /// <summary>
         /// 请求结果
         /// </summary>
@@ -85,8 +74,6 @@ namespace TnyFramework.Net.Command
             return new DefaultRpcResult<TBody>(code);
         }
 
-
-
         /// <summary>
         /// 请求结果
         /// </summary>
@@ -95,6 +82,7 @@ namespace TnyFramework.Net.Command
         {
             return new DefaultRpcResult<TBody>(code, body);
         }
+        
     }
 
 }

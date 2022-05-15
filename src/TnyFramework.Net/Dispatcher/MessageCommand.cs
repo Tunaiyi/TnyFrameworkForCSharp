@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using TnyFramework.Common.Exception;
+using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Command;
@@ -32,10 +32,11 @@ namespace TnyFramework.Net.Dispatcher
 
         protected IMessage Message { get; }
 
+        protected RpcForwardHeader Forward { get; }
+
         protected string AppType => DispatcherContext.AppType;
 
         protected string ScopeType => DispatcherContext.ScopeType;
-
 
         protected MessageCommand(MessageCommandContext context, INetTunnel tunnel, IMessage message, MessageDispatcherContext dispatcherContext,
             IEndpointKeeperManager endpointKeeperManager)
@@ -45,9 +46,8 @@ namespace TnyFramework.Net.Dispatcher
             Message = message;
             DispatcherContext = dispatcherContext;
             EndpointKeeperManager = endpointKeeperManager;
-
+            Forward = message.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
         }
-
 
         public async Task Execute()
         {
@@ -66,12 +66,10 @@ namespace TnyFramework.Net.Dispatcher
             }
         }
 
-
         public bool IsDone()
         {
             return Done;
         }
-
 
         private void HandleResult()
         {
@@ -122,7 +120,6 @@ namespace TnyFramework.Net.Dispatcher
             }
         }
 
-
         private RpcForwardHeader CreateBackForwardHeader(RpcForwardHeader messageForwardHeader)
         {
             if (messageForwardHeader != null)
@@ -137,7 +134,6 @@ namespace TnyFramework.Net.Dispatcher
             }
             return null;
         }
-
 
         private IRpcResult GetResultOnException(Exception e)
         {
@@ -154,15 +150,12 @@ namespace TnyFramework.Net.Dispatcher
             }
         }
 
-
         protected abstract Task Invoke();
-
 
         private void FireDone(Exception cause)
         {
             DispatcherContext.FireDone(this, cause);
         }
-
 
         private void FireExecute()
         {

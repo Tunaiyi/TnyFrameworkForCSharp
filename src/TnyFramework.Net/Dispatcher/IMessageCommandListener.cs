@@ -1,12 +1,13 @@
 using System;
+
 namespace TnyFramework.Net.Dispatcher
 {
+
     /// <summary>
     /// 开始执行
     /// </summary>
     /// <param name="command">command </param>
     public delegate void CommandExecute(MessageCommand command);
-
 
     /// <summary>
     /// 执行Command任务完成
@@ -31,4 +32,5 @@ namespace TnyFramework.Net.Dispatcher
     //     /// <param name="cause">异常</param>
     //     void OnDone(MessageCommand command, Exception cause);
     // }
+
 }

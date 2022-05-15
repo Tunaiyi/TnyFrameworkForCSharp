@@ -20,7 +20,6 @@ namespace TnyFramework.Codec
 
         public string MetaType { get; protected set; }
 
-
         protected override void OnCheck()
         {
             if (META_TYPE_MAP.TryAdd(MetaType, this))
@@ -32,18 +31,15 @@ namespace TnyFramework.Codec
             }
         }
 
-
         public new static MimeType ForId(int id)
         {
             return BaseEnum<MimeType>.ForId(id);
         }
 
-
         public new static MimeType ForName(string name)
         {
             return BaseEnum<MimeType>.ForName(name);
         }
-
 
         public static MimeType ForMetaType(string appName)
         {
@@ -63,7 +59,7 @@ namespace TnyFramework.Codec
         }
 
         public new static void LoadAll() => LoadAll(typeof(T));
-        
+
         public new static IReadOnlyCollection<MimeType> GetValues()
         {
             LoadAll(typeof(T));

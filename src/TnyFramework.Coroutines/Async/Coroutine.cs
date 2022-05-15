@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
-using TnyFramework.Coroutines.Exception;
+using TnyFramework.Coroutines.Exceptions;
 
 namespace TnyFramework.Coroutines.Async
 {
@@ -42,9 +42,7 @@ namespace TnyFramework.Coroutines.Async
         // 关闭任务
         private volatile Task<bool> shuttingTask = null;
 
-
         public static Coroutine Current => CURRENT_COROUTINE.Value;
-
 
         internal static void InitializeSynchronizationContext()
         {
@@ -55,7 +53,6 @@ namespace TnyFramework.Coroutines.Async
             SynchronizationContext.SetSynchronizationContext(coroutine.Context);
             CURRENT_COROUTINE.Value = coroutine;
         }
-
 
         internal static void InitializeSynchronizationContext(ICoroutine coroutine)
         {
@@ -68,11 +65,9 @@ namespace TnyFramework.Coroutines.Async
             CURRENT_COROUTINE.Value = value;
         }
 
-
         public Coroutine() : this(ThreadPoolCoroutineExecutor.Default)
         {
         }
-
 
         /// <summary>
         /// 协程构建器
@@ -88,7 +83,6 @@ namespace TnyFramework.Coroutines.Async
             this.executor = executor;
         }
 
-
         public int Id { get; }
 
         public string Name { get; }
@@ -99,24 +93,20 @@ namespace TnyFramework.Coroutines.Async
 
         private bool PendingTasks => Queue.WorkCount != 0 || trackedCount != 0;
 
-
         internal void Track()
         {
             Interlocked.Increment(ref trackedCount);
         }
-
 
         internal void Tracked()
         {
             Interlocked.Decrement(ref trackedCount);
         }
 
-
         public void Post(CoroutineSynchronizationContext context, SendOrPostCallback callback, object state)
         {
             Enqueue(new CoroutineWork(callback, context, state));
         }
-
 
         public void Send(CoroutineSynchronizationContext context, SendOrPostCallback callback, object state)
         {
@@ -137,13 +127,11 @@ namespace TnyFramework.Coroutines.Async
             }
         }
 
-
         private void Enqueue(CoroutineWork request)
         {
             Queue.Enqueue(request);
             TrySummit();
         }
-
 
         private void TrySummit()
         {
@@ -153,7 +141,6 @@ namespace TnyFramework.Coroutines.Async
                 executor.Summit(ExecuteTasks);
             }
         }
-
 
         public Task<bool> Shutdown(long millisecondsTimeout)
         {
@@ -173,18 +160,15 @@ namespace TnyFramework.Coroutines.Async
             }
         }
 
-
         public Task Delay(int millisecondsDelay)
         {
             return Task.Delay(millisecondsDelay);
         }
 
-
         public Task Delay(TimeSpan delay)
         {
             return Task.Delay(delay);
         }
-
 
         public Task Repeat(int times, Action action)
         {
@@ -197,7 +181,6 @@ namespace TnyFramework.Coroutines.Async
             });
         }
 
-
         public Task Repeat(int times, CoroutineAction action)
         {
             return Exec(async () => {
@@ -207,7 +190,6 @@ namespace TnyFramework.Coroutines.Async
                 }
             });
         }
-
 
         public Task ExecUntil(CoroutineFunc<bool> func)
         {
@@ -219,7 +201,6 @@ namespace TnyFramework.Coroutines.Async
                 }
             });
         }
-
 
         public Task RunUntil(Func<bool> func)
         {
@@ -237,7 +218,6 @@ namespace TnyFramework.Coroutines.Async
             });
         }
 
-
         public Task<T> ExecUntil<T>(CoroutineFunc<CoroutineState<T>> func)
         {
             return Exec(async () => {
@@ -251,7 +231,6 @@ namespace TnyFramework.Coroutines.Async
                 }
             });
         }
-
 
         public Task<T> RunUntil<T>(Func<CoroutineState<T>> func)
         {
@@ -267,7 +246,6 @@ namespace TnyFramework.Coroutines.Async
                 }
             });
         }
-
 
         private async Task<bool> DoShutdown(long millisecondsTimeout)
         {
@@ -288,7 +266,6 @@ namespace TnyFramework.Coroutines.Async
             Interlocked.Exchange(ref status, (int) CoroutineStatus.Shutdown);
             return true;
         }
-
 
         // Exec will execute tasks off the task list
         private void ExecuteTasks()
@@ -323,27 +300,22 @@ namespace TnyFramework.Coroutines.Async
             }
         }
 
-
         public CoroutineStatus Status => (CoroutineStatus) status;
-
 
         public bool IsStart()
         {
             return Status == CoroutineStatus.Start;
         }
 
-
         public bool IsStop()
         {
             return Status != CoroutineStatus.Start;
         }
 
-
         public bool IsShutdown()
         {
             return Status == CoroutineStatus.Shutdown;
         }
-
 
         public Task Run(Action action)
         {
@@ -353,13 +325,11 @@ namespace TnyFramework.Coroutines.Async
             return task.SourceTask;
         }
 
-
         public async Task Exec(CoroutineAction action)
         {
             CheckStartStatus();
             await DoRun(action);
         }
-
 
         public Task<T> Run<T>(Func<T> function)
         {
@@ -369,19 +339,16 @@ namespace TnyFramework.Coroutines.Async
             return task.SourceTask;
         }
 
-
         public async Task<T> Exec<T>(CoroutineFunc<T> function)
         {
             CheckStartStatus();
             return await DoExec(function);
         }
 
-
         public override string ToString()
         {
             return $"Coroutine[{Name}]-cid[{Id}]";
         }
-
 
         private void CheckStartStatus()
         {
@@ -391,8 +358,6 @@ namespace TnyFramework.Coroutines.Async
             }
         }
 
-
-
         private Task DoRun(CoroutineAction action)
         {
             var task = new CoroutineActionTask(action);
@@ -400,14 +365,12 @@ namespace TnyFramework.Coroutines.Async
             return task.SourceTask;
         }
 
-
         private Task<T> DoExec<T>(CoroutineFunc<T> function)
         {
             var task = new CoroutineFuncTask<T>(function);
             Context.Post(Invoke, task);
             return task.SourceTask;
         }
-
 
         private static async void Invoke(object value)
         {

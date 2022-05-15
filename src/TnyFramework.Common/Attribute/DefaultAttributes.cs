@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+
 namespace TnyFramework.Common.Attribute
 {
+
     public class DefaultAttributes : IAttributes
     {
         // 属性 map
         private readonly Dictionary<IAttrKey, object> attributeMap = new Dictionary<IAttrKey, object>();
-
 
         public T Get<T>(AttrKey<T> key)
         {
@@ -15,10 +16,9 @@ namespace TnyFramework.Common.Attribute
             {
                 if (!attributeMap.TryGetValue(key, out var value))
                     return default;
-                return (T)value;
+                return (T) value;
             }
         }
-
 
         public T Get<T>(AttrKey<T> key, T defaultValue)
         {
@@ -27,10 +27,9 @@ namespace TnyFramework.Common.Attribute
             {
                 if (!attributeMap.TryGetValue(key, out var value))
                     return defaultValue;
-                return (T)value;
+                return (T) value;
             }
         }
-
 
         public bool TryAdd<T>(AttrKey<T> key, T value)
         {
@@ -44,7 +43,6 @@ namespace TnyFramework.Common.Attribute
                 return true;
             }
         }
-
 
         public bool TryAdd<T>(AttrKey<T> key, Func<T> supplier)
         {
@@ -61,7 +59,6 @@ namespace TnyFramework.Common.Attribute
             }
         }
 
-
         public T Remove<T>(AttrKey<T> key)
         {
             CheckNotNull(key, "Remove Attributes key is null");
@@ -70,10 +67,9 @@ namespace TnyFramework.Common.Attribute
                 if (!attributeMap.TryGetValue(key, out var exist))
                     return default;
                 attributeMap.Remove(key);
-                return (T)exist;
+                return (T) exist;
             }
         }
-
 
         public void Set<T>(AttrKey<T> key, T value)
         {
@@ -81,16 +77,14 @@ namespace TnyFramework.Common.Attribute
             CheckNotNull(value, "Set Attributes supplier is null");
             lock (this)
             {
-                attributeMap.Add(key, value);
+                attributeMap[key] = value;
             }
         }
-
 
         public void Set<T>(AttrPair<T> pair)
         {
             Set(pair.Key, pair.Value);
         }
-
 
         public void SetAll(ICollection<IAttrPair> pairs)
         {
@@ -98,11 +92,10 @@ namespace TnyFramework.Common.Attribute
             {
                 lock (this)
                 {
-                    attributeMap.Add(pair.Key, pair.Value);
+                    attributeMap[pair.Key] = pair.Value;
                 }
             }
         }
-
 
         public void SetAll(params IAttrPair[] pairs)
         {
@@ -110,11 +103,10 @@ namespace TnyFramework.Common.Attribute
             {
                 lock (this)
                 {
-                    attributeMap.Add(pair.Key, pair.Value);
+                    attributeMap[pair.Key] = pair.Value;
                 }
             }
         }
-
 
         public void RemoveAll(ICollection<IAttrKey> keys)
         {
@@ -130,7 +122,6 @@ namespace TnyFramework.Common.Attribute
             }
         }
 
-
         public IDictionary<IAttrKey, object> AttributeMap()
         {
             lock (this)
@@ -139,7 +130,6 @@ namespace TnyFramework.Common.Attribute
             }
         }
 
-
         public void Clear()
         {
             lock (this)
@@ -147,7 +137,6 @@ namespace TnyFramework.Common.Attribute
                 attributeMap.Clear();
             }
         }
-
 
         public bool Empty {
             get {
@@ -158,7 +147,6 @@ namespace TnyFramework.Common.Attribute
             }
         }
 
-
         private static void CheckNotNull(object value, string massage)
         {
             if (value == null)
@@ -167,4 +155,5 @@ namespace TnyFramework.Common.Attribute
             }
         }
     }
+
 }

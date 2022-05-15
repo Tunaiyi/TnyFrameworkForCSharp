@@ -1,6 +1,8 @@
 ﻿using DotNetty.Transport.Channels;
+
 namespace TnyFramework.Net.DotNetty.Bootstrap
 {
+
     public interface IChannelMaker
     {
         void InitChannel(IChannel channel);
@@ -17,10 +19,10 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
     {
         public abstract void InitChannel(TC channel);
 
-
         public void InitChannel(IChannel channel)
         {
-            InitChannel((TC)channel);
+            InitChannel((TC) channel);
         }
     }
+
 }

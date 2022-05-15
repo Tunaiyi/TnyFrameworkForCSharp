@@ -2,20 +2,21 @@ using System.IO;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
-using TnyFramework.Common.Exception;
+using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.DotNetty.Bootstrap
 {
+
     public class NettyMessageHandler : ChannelDuplexHandler
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NettyMessageHandler>();
 
         public override bool IsSharable => true;
-
 
         public override void ChannelActive(IChannelHandlerContext context)
         {
@@ -32,7 +33,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             }
             base.ChannelActive(context);
         }
-
 
         public override void ChannelInactive(IChannelHandlerContext context)
         {
@@ -55,7 +55,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             base.ChannelInactive(context);
         }
 
-
         public override void ChannelRead(IChannelHandlerContext context, object data)
         {
             var channel = context.Channel;
@@ -77,7 +76,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                     break;
             }
         }
-
 
         public override void ExceptionCaught(IChannelHandlerContext context, System.Exception cause)
         {
@@ -115,7 +113,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             base.ExceptionCaught(context, cause);
         }
 
-
         private void HandleResultCodeException(IChannel channel, IResultCode code, System.Exception cause)
         {
             if (code.Level == ResultLevel.Error)
@@ -135,11 +132,11 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             }
         }
 
-
         public override void UserEventTriggered(IChannelHandlerContext context, object evt)
         {
             //TODO 空闲超时处理 IdleStateEvent
             base.UserEventTriggered(context, evt);
         }
     }
+
 }

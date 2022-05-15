@@ -11,7 +11,6 @@ namespace TnyFramework.Codec.Attributes
         /// </summary>
         public string MimeType { get; }
 
-
         public CodableAttribute(string mimeType)
         {
             MimeType = mimeType;

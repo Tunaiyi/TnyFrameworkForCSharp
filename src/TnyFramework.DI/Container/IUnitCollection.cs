@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+
 namespace TnyFramework.DI.Container
 {
+
     public interface IUnitCollection
     {
     }
@@ -9,4 +11,5 @@ namespace TnyFramework.DI.Container
     {
         IDictionary<string, TUnit> UnitMap { get; }
     }
+
 }

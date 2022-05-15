@@ -2,6 +2,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Logger;
 
 namespace TnyFramework.Common.Enum
 {
@@ -17,6 +19,7 @@ namespace TnyFramework.Common.Enum
     /// <typeparam name="T"></typeparam>
     public abstract class BaseEnum<T> : BaseEnum, IEnum where T : BaseEnum<T>, new()
     {
+        private static readonly ILogger LOGGER = LogFactory.Logger<T>();
         private static readonly Dictionary<int, T> ID_ENUM_MAP = new Dictionary<int, T>();
         private static readonly Dictionary<string, T> NAME_ENUM_MAP = new Dictionary<string, T>();
         private static readonly List<T> ENUMS = new List<T>();
@@ -37,7 +40,6 @@ namespace TnyFramework.Common.Enum
             }
         }
 
-
         /// <summary>
         /// 枚举名称
         /// </summary>
@@ -47,7 +49,6 @@ namespace TnyFramework.Common.Enum
                 return name;
             }
         }
-
 
         protected static TS E<TS>(int id, TS item, Action<TS> builder = null) where TS : T
         {
@@ -66,7 +67,6 @@ namespace TnyFramework.Common.Enum
             }
             return item;
         }
-
 
         protected static T E(int id, Action<T> builder = null)
         {
@@ -88,7 +88,6 @@ namespace TnyFramework.Common.Enum
             return item;
         }
 
-
         /// <summary>
         /// 通过ID获得枚举
         /// </summary>
@@ -103,7 +102,6 @@ namespace TnyFramework.Common.Enum
             }
             return result;
         }
-
 
         /// <summary>
         /// 通过名称获得枚举
@@ -120,7 +118,6 @@ namespace TnyFramework.Common.Enum
             return result;
         }
 
-
         /// <summary>
         /// 获得所有枚举项
         /// </summary>
@@ -131,13 +128,11 @@ namespace TnyFramework.Common.Enum
             return ENUMS;
         }
 
-
         /// <summary>
         /// 获得所有枚举项
         /// </summary>
         /// <returns></returns>
         public static void LoadAll() => CheckAndUpdateNames();
-
 
         /// <summary>
         /// 获得所有枚举项
@@ -149,17 +144,14 @@ namespace TnyFramework.Common.Enum
             return ENUMS;
         }
 
-
         private static void CheckAndUpdateNames()
         {
             LoadAll(typeof(T));
         }
 
-
         protected virtual void OnCheck()
         {
         }
-
 
         /// <summary>
         /// 检查并更行名称
@@ -177,6 +169,7 @@ namespace TnyFramework.Common.Enum
                 {
                     return;
                 }
+                var count = 0;
                 var fields = type.GetFields(BindingFlags.Static | BindingFlags.Public);
                 TYPE_INIT_MAP[type] = true;
                 var result = true;
@@ -202,15 +195,16 @@ namespace TnyFramework.Common.Enum
                             throw new ArgumentException($"{type} 枚举 {eItem.name} 与 {exist.name} 具有相同的 Name {eItem.name}");
                         }
                         NAME_ENUM_MAP.Add(eItem.name, eItem);
+                        count++;
                         eItem.OnCheck();
                     }
                 } finally
                 {
                     TYPE_INIT_MAP[type] = result;
+                    LOGGER.LogDebug("Enum {Enum} LoadAll {} items", type, count);
                 }
             }
         }
-
 
         /// <summary>
         /// 
@@ -224,7 +218,6 @@ namespace TnyFramework.Common.Enum
             return baseEnum.Id == Id;
         }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -233,7 +226,6 @@ namespace TnyFramework.Common.Enum
         {
             return Id.GetHashCode();
         }
-
 
         /// <summary>
         /// 等价于Name

@@ -10,11 +10,12 @@ using Nacos.V2;
 using Nacos.V2.Naming.Core;
 using Nacos.V2.Naming.Dtos;
 using Newtonsoft.Json;
-using TnyFramework.Common.Extension;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Base;
 
 namespace TnyFramework.Net.Cloud.Nacos
 {
+
     public class NacosServerDiscoveryService : INetServerDiscoveryService
     {
         private const string METADATA_NET_VERSION = "DOTNET_VERSION";
@@ -28,11 +29,9 @@ namespace TnyFramework.Net.Cloud.Nacos
         private const string NET_SCOPE_TYPE = "net-scopeType";
         private const string NET_METADATA = "net-metadata";
 
-
         private readonly ILogger logger;
         private readonly INacosNamingService namingService;
         private readonly NacosAspNetOptions aspNetOptions;
-
 
         public NacosServerDiscoveryService(INacosNamingService namingService,
             IOptionsMonitor<NacosAspNetOptions> aspNetOptions,
@@ -42,7 +41,6 @@ namespace TnyFramework.Net.Cloud.Nacos
             this.aspNetOptions = aspNetOptions.CurrentValue;
             this.logger = logger;
         }
-
 
         public async Task RegisterInstance(INetApplication netApplication, INetServer server)
         {
@@ -66,7 +64,6 @@ namespace TnyFramework.Net.Cloud.Nacos
             if (exception != null)
                 throw exception;
         }
-
 
         public async Task DeregisterInstance(INetServer server)
         {
@@ -94,7 +91,6 @@ namespace TnyFramework.Net.Cloud.Nacos
                 throw exception;
         }
 
-
         private static string GetIp(IServerSetting setting)
         {
             var host = setting.ServeHost;
@@ -116,7 +112,6 @@ namespace TnyFramework.Net.Cloud.Nacos
             return host;
         }
 
-
         private static int GetPort(IServerSetting setting)
         {
             var port = setting.ServePort;
@@ -126,7 +121,6 @@ namespace TnyFramework.Net.Cloud.Nacos
             }
             return port;
         }
-
 
         private Instance CreateInstance(INetApplication netApplication, INetServer server)
         {
@@ -168,4 +162,5 @@ namespace TnyFramework.Net.Cloud.Nacos
             return instance;
         }
     }
+
 }

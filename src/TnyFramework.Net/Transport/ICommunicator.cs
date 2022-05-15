@@ -11,19 +11,16 @@ namespace TnyFramework.Net.Transport
         /// </summary>
         object GetUserId();
 
-
         /// <summary>
         /// 用户类型
         /// </summary>
         /// <returns></returns>
         string UserGroup { get; }
 
-
         /// <summary>
         /// 认证
         /// </summary>
         ICertificate GetCertificate();
-
 
         /// <summary>
         /// 是否登陆认证

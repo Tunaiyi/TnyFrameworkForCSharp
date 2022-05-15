@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Container;
+
 namespace TnyFramework.DI.Extensions
 {
+
     public static class ServiceCollectionBindTransientExtensions
     {
         public static IServiceCollection BindTransient(this IServiceCollection services, Type instanceType)
@@ -12,7 +14,6 @@ namespace TnyFramework.DI.Extensions
             return services;
         }
 
-
         public static IServiceCollection BindTransient(this IServiceCollection services, Type serviceType,
             Func<IServiceProvider, object> instanceFactory)
         {
@@ -20,13 +21,11 @@ namespace TnyFramework.DI.Extensions
             return services;
         }
 
-
         public static IServiceCollection BindTransient(this IServiceCollection services, Type serviceType, Type instanceType)
         {
             services.RegisterByType(serviceType, instanceType);
             return services;
         }
-
 
         public static IServiceCollection BindTransient<TService>(this IServiceCollection services)
             where TService : class
@@ -36,7 +35,6 @@ namespace TnyFramework.DI.Extensions
             return services;
         }
 
-
         public static IServiceCollection BindTransient<TService>(this IServiceCollection services, Func<IServiceProvider, TService> instanceFactory)
             where TService : class
         {
@@ -44,7 +42,6 @@ namespace TnyFramework.DI.Extensions
             services.RegisterByFactory(serviceType, instanceFactory);
             return services;
         }
-
 
         public static IServiceCollection BindTransient<TService, TImplementation>(this IServiceCollection services)
             where TService : class
@@ -56,7 +53,6 @@ namespace TnyFramework.DI.Extensions
             return services;
         }
 
-
         public static IServiceCollection BindTransient<TService, TImplementation>(this IServiceCollection services,
             Func<IServiceProvider, TImplementation> instanceFactory) where TService : class where TImplementation : class, TService
         {
@@ -65,12 +61,10 @@ namespace TnyFramework.DI.Extensions
             return services;
         }
 
-
         internal static IServiceInstance ToTransientServiceInstance(this IServiceCollection services, Type instanceType)
         {
             return new TransientServiceInstance(new TypeServiceFactory(instanceType));
         }
-
 
         internal static IServiceInstance ToTransientServiceInstance<TInstance>(this IServiceCollection services,
             Func<IServiceProvider, TInstance> instanceFactory)
@@ -78,13 +72,11 @@ namespace TnyFramework.DI.Extensions
             return new TransientServiceInstance(new FuncServiceFactory<TInstance>(instanceFactory));
         }
 
-
         private static void RegisterByFactory<TInstance>(this IServiceCollection services, Type checkType,
             Func<IServiceProvider, TInstance> factory, bool force = true)
         {
             services.RegisterServiceInstance(checkType, services.ToTransientServiceInstance(factory), force);
         }
-
 
         private static void RegisterByType(this IServiceCollection services, Type checkType, Type instanceType = null, bool force = true)
         {
@@ -95,19 +87,16 @@ namespace TnyFramework.DI.Extensions
             services.RegisterServiceInstance(checkType, services.ToTransientServiceInstance(instanceType), force);
         }
 
-
         private static void RegisterServiceInstance(this IServiceCollection services, Type checkType, IServiceInstance instance, bool force = true)
         {
             var types = ServiceCollectionUtils.FindRegisterTypes(checkType, force);
             services.AddTransientServiceInstances(instance, types);
         }
 
-
         internal static void AddTransientServiceInstance(this IServiceCollection services, IServiceInstance instance, Type type)
         {
             services.AddTransient(type, instance.Get);
         }
-
 
         internal static void AddTransientServiceInstances(this IServiceCollection services, IServiceInstance instance, IEnumerable<Type> serviceTypes)
         {
@@ -117,4 +106,5 @@ namespace TnyFramework.DI.Extensions
             }
         }
     }
+
 }

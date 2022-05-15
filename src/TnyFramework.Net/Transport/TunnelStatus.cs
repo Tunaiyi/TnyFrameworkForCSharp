@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Transport
 {
+
     public enum TunnelStatus
     {
         /// <summary>
@@ -27,7 +28,8 @@ namespace TnyFramework.Net.Transport
     {
         public static int Value(this TunnelStatus status)
         {
-            return (int)status;
+            return (int) status;
         }
     }
+
 }

@@ -10,11 +10,11 @@ using TnyFramework.Net.Common;
 using TnyFramework.Net.Endpoint.Event;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
-using MessageMode = TnyFramework.Net.Message.MessageMode;
+
 namespace TnyFramework.Net.Endpoint
 {
+
     public static class NetEndpoint
     {
         internal static readonly IEventBus<EndpointOnline> ONLINE_EVENT_BUS = EventBuses.Create<EndpointOnline>();
@@ -36,7 +36,6 @@ namespace TnyFramework.Net.Endpoint
         /// </summary>
         public static IEventBox<EndpointClose> CloseEventBox => CLOSE_EVENT_BUS;
     }
-
 
     public abstract class NetEndpoint<TUserId> : Communicator<TUserId>, INetEndpoint<TUserId>
     {
@@ -64,7 +63,6 @@ namespace TnyFramework.Net.Endpoint
 
         public IEventBox<EndpointClose> CloseEvent => closeEvent;
 
-
         public NetEndpoint(ICertificate<TUserId> certificate, IEndpointContext context)
         {
             Id = TransporterIdFactory.NewEndpointId();
@@ -77,9 +75,7 @@ namespace TnyFramework.Net.Endpoint
             closeEvent = NetEndpoint.CLOSE_EVENT_BUS.ForkChild();
         }
 
-
         public long Id { get; }
-
 
         public CommandTaskBox CommandTaskBox { get; }
 
@@ -92,6 +88,7 @@ namespace TnyFramework.Net.Endpoint
         public long OfflineTime { get; private set; }
 
         public override ICertificate<TUserId> Certificate => certificate;
+
         protected INetTunnel<TUserId> CurrentTunnel => tunnel;
 
         private TaskResponseSourceMonitor ResponseSourceMonitor {
@@ -107,13 +104,11 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         private void PutSource(long messageId, TaskResponseSource source)
         {
             var monitor = ResponseSourceMonitor;
             monitor?.Put(messageId, source);
         }
-
 
         private TaskResponseSource PollSource(IMessageSchema message)
         {
@@ -125,20 +120,17 @@ namespace TnyFramework.Net.Endpoint
             return message.Mode == MessageMode.Response ? monitor.Poll(message.ToMessage) : null;
         }
 
-
         public EndpointStatus Status {
-            get => (EndpointStatus)status;
+            get => (EndpointStatus) status;
 
-            private set => status = (int)value;
+            private set => status = (int) value;
         }
 
         public MessageHandleFilter SendFilter { get; set; }
 
         public MessageHandleFilter ReceiveFilter { get; set; }
 
-
         public bool Receive(IMessage message) => Receive(null, message);
-
 
         public bool Receive(INetTunnel receiver, IMessage message)
         {
@@ -163,22 +155,18 @@ namespace TnyFramework.Net.Endpoint
             return CommandTaskBox.AddTask(new MessageCommandTask(message, receiver, Context.MessageDispatcher));
         }
 
-
         protected void SetTunnel(INetTunnel value)
         {
             if (value is INetTunnel<TUserId> newOne)
                 tunnel = newOne;
         }
 
-
         public void TakeOver(CommandTaskBox commandTaskBox)
         {
             CommandTaskBox.TakeOver(commandTaskBox);
         }
 
-
         public ISendReceipt Send(MessageContext messageContext) => Send(null, messageContext);
-
 
         public ISendReceipt Send(INetTunnel sender, MessageContext messageContext)
         {
@@ -224,12 +212,10 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         private long AllocateMessageId()
         {
             return Interlocked.Increment(ref idCreator);
         }
-
 
         public INetMessage BuildMessage(IMessageFactory messageFactory, MessageContext context)
         {
@@ -242,15 +228,12 @@ namespace TnyFramework.Net.Endpoint
             return message;
         }
 
-
-
         private void SetOnline()
         {
             OfflineTime = 0;
             Status = EndpointStatus.Online;
             onlineEvent?.Notify(this);
         }
-
 
         protected void SetOffline()
         {
@@ -259,7 +242,6 @@ namespace TnyFramework.Net.Endpoint
             offlineEvent?.Notify(this);
         }
 
-
         private void SetClose()
         {
             Status = EndpointStatus.Close;
@@ -267,12 +249,10 @@ namespace TnyFramework.Net.Endpoint
             closeEvent?.Notify(this);
         }
 
-
         private void DestroySourceMonitor()
         {
             TaskResponseSourceMonitor.RemoveMonitor(this);
         }
-
 
         public bool IsActive()
         {
@@ -280,14 +260,11 @@ namespace TnyFramework.Net.Endpoint
             return current != null && current.IsActive();
         }
 
-
         public bool IsOnline() => Status == EndpointStatus.Online;
-
 
         public bool IsOffline() => Status == EndpointStatus.Offline;
 
         public bool IsClosed() => Status == EndpointStatus.Close;
-
 
         public void Offline()
         {
@@ -301,7 +278,6 @@ namespace TnyFramework.Net.Endpoint
                 SetOffline();
             }
         }
-
 
         private void OfflineIf(INetTunnel check)
         {
@@ -320,7 +296,6 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         public void Heartbeat()
         {
             var current = CurrentTunnel;
@@ -329,7 +304,6 @@ namespace TnyFramework.Net.Endpoint
                 current.Ping();
             }
         }
-
 
         public bool Close()
         {
@@ -351,16 +325,13 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         protected virtual void PostClose()
         {
         }
 
-
         protected virtual void PrepareClose()
         {
         }
-
 
         private void CheckOnlineCertificate(ICertificate newCertificate)
         {
@@ -380,8 +351,6 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
-
         public void Online(ICertificate newCertificate, INetTunnel onlineOne)
         {
             if (onlineOne == null)
@@ -390,18 +359,17 @@ namespace TnyFramework.Net.Endpoint
             lock (this)
             {
                 CheckOnlineCertificate(newCertificate);
-                certificate = (ICertificate<TUserId>)newCertificate;
+                certificate = (ICertificate<TUserId>) newCertificate;
                 AcceptTunnel(onlineOne);
             }
         }
-
 
         private void AcceptTunnel(INetTunnel newTunnel)
         {
             if (newTunnel.Bind(this))
             {
                 var oldTunnel = CurrentTunnel;
-                tunnel = (INetTunnel<TUserId>)newTunnel;
+                tunnel = (INetTunnel<TUserId>) newTunnel;
                 OfflineTime = 0;
                 if (oldTunnel != null && newTunnel != oldTunnel)
                 {
@@ -415,9 +383,9 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         public virtual void OnUnactivated(INetTunnel one)
         {
         }
     }
+
 }

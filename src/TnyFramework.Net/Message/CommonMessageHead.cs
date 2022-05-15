@@ -25,7 +25,6 @@ namespace TnyFramework.Net.Message
 
         private IDictionary<string, MessageHeader> Headers { get; }
 
-
         public CommonMessageHead(long id, MessageMode mode, int line, int protocolId, int code, long toMessage, long time,
             IDictionary<string, MessageHeader> headers) : base(mode)
         {
@@ -38,7 +37,6 @@ namespace TnyFramework.Net.Message
             Headers = headers == null ? ImmutableDictionary<string, MessageHeader>.Empty : headers.ToImmutableDictionary();
         }
 
-
         public CommonMessageHead(long id, IMessageContent subject) : base(subject.Mode)
         {
             this.id = id;
@@ -50,12 +48,10 @@ namespace TnyFramework.Net.Message
             Headers = headers == null ? ImmutableDictionary<string, MessageHeader>.Empty : headers.ToImmutableDictionary();
         }
 
-
         public override bool IsOwn(IProtocol protocol)
         {
             return ProtocolId == protocol.ProtocolId;
         }
-
 
         public override T GetHeader<T>(string key)
         {
@@ -65,24 +61,31 @@ namespace TnyFramework.Net.Message
             return null;
         }
 
+        public override MessageHeader GetHeader(string key, Type type)
+        {
+            var value = GetHeader(key);
+            return type.IsInstanceOfType(value) ? value : null;
+        }
 
         public override MessageHeader GetHeader(string key)
         {
             return !Headers.TryGetValue(key, out var header) ? null : header;
         }
 
-
         public override IList<T> GetHeaders<T>()
         {
             return Headers.Values.OfType<T>().ToList();
         }
 
+        public override IList<MessageHeader> GetHeaders(Type type)
+        {
+            return Headers.Values.Where(type.IsInstanceOfType).ToList();
+        }
 
         public override T GetHeader<T>(MessageHeaderKey<T> key)
         {
             return GetHeader<T>(key.Key);
         }
-
 
         public override bool IsHasHeaders => !Headers.IsNullOrEmpty();
 
@@ -90,27 +93,22 @@ namespace TnyFramework.Net.Message
 
         public override IDictionary<string, MessageHeader> GetAllHeadersMap() => Headers.ToImmutableDictionary();
 
-
         public override bool ExistHeader(string key)
         {
             return Headers.ContainsKey(key);
         }
-
 
         public override bool ExistHeader<T>(string key)
         {
             return GetHeader<T>(key) != null;
         }
 
-
         public override bool ExistHeader(MessageHeaderKey key)
         {
             return ExistHeader(key.Key);
         }
 
-
         public override void AllotMessageId(long idValue) => id = idValue;
-
 
         private bool Equals(CommonMessageHead other)
         {
@@ -118,12 +116,10 @@ namespace TnyFramework.Net.Message
                    Time == other.Time;
         }
 
-
         public override string ToString()
         {
             return $"[{nameof(Id)}: {Id}, {nameof(Mode)}: {Mode}, {nameof(ProtocolId)}: {ProtocolId}]";
         }
-
 
         public override bool Equals(object obj)
         {
@@ -131,7 +127,6 @@ namespace TnyFramework.Net.Message
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == GetType() && Equals((CommonMessageHead) obj);
         }
-
 
         public override int GetHashCode()
         {

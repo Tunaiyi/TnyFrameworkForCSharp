@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
+
 namespace TnyFramework.DI.Extensions
 {
+
     public static class ServiceCollectionBindScopedWithExtensions
     {
         public static IServiceCollection BindScopedWith(this IServiceCollection services, Type instanceType, params Type[] serviceTypes)
@@ -11,14 +13,12 @@ namespace TnyFramework.DI.Extensions
             return services;
         }
 
-
         public static IServiceCollection BindScopedWith(this IServiceCollection services, Type instanceType,
             Func<IServiceProvider, object> instanceFactory, params Type[] serviceTypes)
         {
             services.RegisterByFactoryWith(instanceFactory, instanceType, serviceTypes);
             return services;
         }
-
 
         public static IServiceCollection BindScopedWith<TService>(this IServiceCollection services,
             params Type[] serviceTypes)
@@ -29,7 +29,6 @@ namespace TnyFramework.DI.Extensions
             return services;
         }
 
-
         public static IServiceCollection BindScopedWith<TService>(this IServiceCollection services,
             Func<IServiceProvider, TService> instanceFactory, params Type[] serviceTypes)
             where TService : class
@@ -38,7 +37,6 @@ namespace TnyFramework.DI.Extensions
             services.RegisterByFactoryWith(instanceFactory, instanceType, serviceTypes);
             return services;
         }
-
 
         public static IServiceCollection BindScopedWith<TService, TImplement>(this IServiceCollection services,
             params Type[] serviceTypes)
@@ -50,7 +48,6 @@ namespace TnyFramework.DI.Extensions
             return services;
         }
 
-
         public static IServiceCollection BindScopedWith<TService, TImplement>(this IServiceCollection services,
             Func<IServiceProvider, TImplement> instanceFactory, params Type[] serviceTypes)
             where TService : class
@@ -59,7 +56,6 @@ namespace TnyFramework.DI.Extensions
             services.RegisterByFactoryWith(instanceFactory, insServiceType, serviceTypes);
             return services;
         }
-
 
         private static void RegisterByTypeWith(this IServiceCollection services, Type instanceType,
             Type insServiceType, IEnumerable<Type> serviceTypes)
@@ -72,7 +68,6 @@ namespace TnyFramework.DI.Extensions
             services.AddScopedServiceInstances(serviceInstance, serviceTypes);
         }
 
-
         private static void RegisterByFactoryWith<TInstance>(this IServiceCollection services, Func<IServiceProvider, TInstance> instanceFactory,
             Type insServiceType, IEnumerable<Type> serviceTypes)
         {
@@ -84,4 +79,5 @@ namespace TnyFramework.DI.Extensions
             services.AddScopedServiceInstances(serviceInstance, serviceTypes);
         }
     }
+
 }

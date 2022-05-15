@@ -5,9 +5,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
+
 namespace TnyFramework.Common.Event
 {
-    
+
     internal class EventBus<THandler> : IEventBus<THandler>
         where THandler : Delegate
     {
@@ -27,8 +28,8 @@ namespace TnyFramework.Common.Event
         public THandler Handler => eventHandler;
 
         public IEventBox<THandler> Parent => parent;
-        public THandler ParentNotify => parent?.Notify;
 
+        public THandler ParentNotify => parent?.Notify;
 
         static EventBus()
         {
@@ -45,7 +46,6 @@ namespace TnyFramework.Common.Event
             PARENT_NOTIFY_PROPERTY = busType.GetRuntimeProperty(nameof(ParentNotify));
             NOTIFIER_FACTORY = CreateNotifierFactory();
         }
-
 
         private static Func<EventBus<THandler>, THandler> CreateNotifierFactory()
         {
@@ -77,9 +77,8 @@ namespace TnyFramework.Common.Event
             Expression checkParentNullExpr = Expression.NotEqual(parentExpr, constNullHandlerExpr);
             Expression checkAndInvokeParentExpr = Expression.IfThen(checkParentNullExpr, invokeParentExpr);
 
-
             var notifierLambdaExpr = Expression.Lambda<THandler>(
-                Expression.Block(new[] { handlerExpr, parentExpr },
+                Expression.Block(new[] {handlerExpr, parentExpr},
                     assignHandlerExpr,
                     checkAndInvokeHandlerExpr,
                     assignParentExpr,
@@ -89,12 +88,10 @@ namespace TnyFramework.Common.Event
             return Expression.Lambda<Func<EventBus<THandler>, THandler>>(notifierLambdaExpr, busParameterExpr).Compile();
         }
 
-
         public EventBus()
         {
             Notify = NOTIFIER_FACTORY.Invoke(this);
         }
-
 
         public EventBus(EventBus<THandler> parent)
         {
@@ -102,12 +99,10 @@ namespace TnyFramework.Common.Event
             Notify = NOTIFIER_FACTORY.Invoke(this);
         }
 
-
         public IEventBus<THandler> ForkChild()
         {
             return new EventBus<THandler>(this);
         }
-
 
         public void Add(THandler handler)
         {
@@ -115,7 +110,7 @@ namespace TnyFramework.Common.Event
             while (true)
             {
                 var check = current;
-                var combined = (THandler)Delegate.Combine(current, handler);
+                var combined = (THandler) Delegate.Combine(current, handler);
                 current = Interlocked.CompareExchange(ref eventHandler, combined, check);
                 if (current == check)
                 {
@@ -123,7 +118,6 @@ namespace TnyFramework.Common.Event
                 }
             }
         }
-
 
         public void Add(IEnumerable<THandler> handler)
         {
@@ -133,7 +127,6 @@ namespace TnyFramework.Common.Event
             }
         }
 
-
         public void Add(params THandler[] handler)
         {
             foreach (var tHandler in handler)
@@ -142,14 +135,13 @@ namespace TnyFramework.Common.Event
             }
         }
 
-
         public void Remove(THandler handler)
         {
             var current = eventHandler;
             while (true)
             {
                 var check = current;
-                var removed = (THandler)Delegate.Remove(check, handler);
+                var removed = (THandler) Delegate.Remove(check, handler);
                 current = Interlocked.CompareExchange(ref eventHandler, removed, check);
                 if (current == check)
                 {
@@ -157,7 +149,6 @@ namespace TnyFramework.Common.Event
                 }
             }
         }
-
 
         public void Remove(IEnumerable<THandler> handler)
         {
@@ -167,7 +158,6 @@ namespace TnyFramework.Common.Event
             }
         }
 
-
         public void Remove(params THandler[] handler)
         {
             foreach (var tHandler in handler)
@@ -175,7 +165,6 @@ namespace TnyFramework.Common.Event
                 Remove(tHandler);
             }
         }
-
 
         public void Clear()
         {
@@ -191,4 +180,5 @@ namespace TnyFramework.Common.Event
             }
         }
     }
+
 }

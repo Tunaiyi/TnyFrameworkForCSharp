@@ -12,11 +12,9 @@ namespace TnyFramework.Net.Message
 
         public int ServiceId => RpcAccessIdentify.ParseServerId(Id);
 
-
         public RpcAccessId()
         {
         }
-
 
         public RpcAccessId(long id)
         {

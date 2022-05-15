@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Base
 {
+
     public interface INetServer
     {
         /// <summary>
@@ -12,11 +13,11 @@ namespace TnyFramework.Net.Base
         /// </summary>
         IServerSetting Setting { get; }
 
-
         /// <summary>
         /// 是否启动
         /// </summary>
         /// <returns></returns>
         bool IsOpen();
     }
+
 }

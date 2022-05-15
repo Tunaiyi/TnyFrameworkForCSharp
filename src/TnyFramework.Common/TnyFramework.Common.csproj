@@ -9,8 +9,19 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Castle.Core" Version="4.4.1" />
         <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
     </ItemGroup>
-    
+
+    <ItemGroup>
+        <AssemblyAttribute Include="TnyFramework.Common.Scanner.Attributes.AssemblyTypeSelectorAttributes">
+            <_Parameter1>TnyFramework.Common.Enum.EnumLoaderTypeSelector</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj" />
+    </ItemGroup>
+
 
 </Project>

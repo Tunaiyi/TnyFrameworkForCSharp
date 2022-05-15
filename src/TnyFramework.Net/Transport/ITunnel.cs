@@ -1,6 +1,8 @@
 using TnyFramework.Net.Endpoint;
+
 namespace TnyFramework.Net.Transport
 {
+
     public interface ITunnel : ICommunicator, IConnection
     {
         /// <summary>
@@ -24,13 +26,11 @@ namespace TnyFramework.Net.Transport
         /// </summary>
         TunnelStatus Status { get; }
 
-
         /// <summary>
         /// 是否已经开启
         /// </summary>
         /// <returns></returns>
         bool IsOpen();
-
 
         /// <summary>
         /// 会话
@@ -45,4 +45,5 @@ namespace TnyFramework.Net.Transport
         /// </summary>
         IEndpoint<TUserId> Endpoint { get; }
     }
+
 }

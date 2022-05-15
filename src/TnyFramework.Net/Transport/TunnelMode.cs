@@ -1,6 +1,8 @@
 using TnyFramework.Common.Enum;
+
 namespace TnyFramework.Net.Transport
 {
+
     public class TunnelMode : BaseEnum<TunnelMode>
     {
         /// <summary>
@@ -13,4 +15,5 @@ namespace TnyFramework.Net.Transport
         /// </summary>
         public static readonly TunnelMode CLIENT = E(2);
     }
+
 }

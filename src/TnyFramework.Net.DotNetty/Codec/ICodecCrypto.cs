@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.DotNetty.Codec
 {
+
     /// <summary>
     /// 编码加解密器
     /// </summary>
@@ -14,7 +15,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         /// <param name="length">长度</param>
         /// <returns>返回加密字节</returns>
         byte[] Encrypt(DataPackageContext packager, byte[] bytes, int offset, int length);
-
 
         /// <summary>
         /// 解密
@@ -34,10 +34,10 @@ namespace TnyFramework.Net.DotNetty.Codec
             return bytes;
         }
 
-
         public byte[] Decrypt(DataPackageContext packager, byte[] bytes, int offset, int length)
         {
             return bytes;
         }
     }
+
 }

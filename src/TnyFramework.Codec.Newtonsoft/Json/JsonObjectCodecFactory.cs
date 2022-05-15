@@ -12,12 +12,10 @@ namespace TnyFramework.Codec.Newtonsoft.Json
         {
         }
 
-
         protected override IObjectCodec<T> Create<T>()
         {
             return new JsonObjectCodec<T>();
         }
-
 
         protected override IObjectCodec Create(Type type)
         {

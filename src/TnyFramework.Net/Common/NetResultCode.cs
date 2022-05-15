@@ -2,6 +2,7 @@ using TnyFramework.Common.Result;
 
 namespace TnyFramework.Net.Common
 {
+
     public class NetResultCode : ResultCode<NetResultCode>
     {
         /// <summary>
@@ -198,5 +199,11 @@ namespace TnyFramework.Net.Common
         ///  客户端请求失败
         /// </summary>    
         public static readonly IResultCode REQUEST_FAILED = Of(306, "客户端请求失败", ResultLevel.Warn);
+
+        /// <summary>
+        ///  RPC调用失败
+        /// </summary>    
+        public static readonly IResultCode RPC_INVOKE_FAILED = Of(400, "RPC调用异常", ResultLevel.Warn);
     }
+
 }

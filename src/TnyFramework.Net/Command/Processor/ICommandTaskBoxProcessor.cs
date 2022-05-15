@@ -1,6 +1,8 @@
 using TnyFramework.Net.Command.Tasks;
+
 namespace TnyFramework.Net.Command.Processor
 {
+
     public interface ICommandTaskBoxProcessor
     {
         /// <summary>
@@ -9,4 +11,5 @@ namespace TnyFramework.Net.Command.Processor
         /// <param name="box"></param>
         void Submit(CommandTaskBox box);
     }
+
 }

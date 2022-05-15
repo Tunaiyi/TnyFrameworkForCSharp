@@ -15,18 +15,15 @@ namespace TnyFramework.Net.Rpc
         [JsonProperty("user")]
         public RpcAccessIdentify UserIdentify { get; set; }
 
-
         public RpcAccessToken()
         {
         }
-
 
         public RpcAccessToken(RpcServiceType serviceType, int serverId, RpcAccessIdentify user) : base(serviceType, serverId, user.Index)
         {
             UserIdentify = user;
             IssueAt = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         }
-
 
         public override string ToString()
         {

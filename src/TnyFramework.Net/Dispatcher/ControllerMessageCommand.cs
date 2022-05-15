@@ -2,16 +2,20 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using TnyFramework.Common.Invoke;
+using TnyFramework.Common.FastInvoke;
+using TnyFramework.Common.FastInvoke.FuncInvoke;
 using TnyFramework.Common.Logger;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Dispatcher
 {
+
     public class ControllerMessageCommand : MessageCommand
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<ControllerMessageCommand>();
@@ -26,13 +30,11 @@ namespace TnyFramework.Net.Dispatcher
         /// </summary>
         private const string TASK_RESULT_PROPERTY_NAME = nameof(Task<object>.Result);
 
-
         public ControllerMessageCommand(MethodControllerHolder methodHolder, INetTunnel tunnel, IMessage message,
             MessageDispatcherContext dispatcherContext, IEndpointKeeperManager endpointKeeperManager) :
             base(new MessageCommandContext(methodHolder), tunnel, message, dispatcherContext, endpointKeeperManager)
         {
         }
-
 
         protected override async Task Invoke()
         {
@@ -75,7 +77,7 @@ namespace TnyFramework.Net.Dispatcher
 
             // 判断身份是否符合
             LOGGER.LogDebug("Controller [{Name}] 检测用户组调用权限", Name);
-            if (!controller.IsUserGroup(Tunnel.UserGroup))
+            if (!controller.IsUserGroup(MessagerType))
             {
                 LOGGER.LogError("Controller [{Name}] , 用户组 [{User}] 无法调用此协议", Name, Tunnel.UserGroup);
                 CommandContext.Intercept(NetResultCode.NO_PERMISSIONS);
@@ -89,7 +91,6 @@ namespace TnyFramework.Net.Dispatcher
             {
                 return;
             }
-
 
             // 执行调用
             LOGGER.LogDebug("Controller [{Name}] 执行业务", Name);
@@ -122,7 +123,14 @@ namespace TnyFramework.Net.Dispatcher
             LOGGER.LogDebug("Controller [{Name}] 处理Message完成!", Name);
         }
 
-
+        private IMessagerType MessagerType {
+            get {
+                if (Forward == null)
+                    return Tunnel.MessagerType;
+                var from = Forward.From;
+                return from != null ? from.ServiceType : Tunnel.MessagerType;
+            }
+        }
 
         private static IFastInvoker TaskResultInvoker(Type type)
         {
@@ -134,7 +142,6 @@ namespace TnyFramework.Net.Dispatcher
             var fastInvoker = FastFuncFactory.Invoker(property);
             return TASK_RESULT_INVOKER.TryAdd(type, fastInvoker) ? fastInvoker : TASK_RESULT_INVOKER[type];
         }
-
 
         /// <summary>
         /// 身份认证
@@ -153,13 +160,11 @@ namespace TnyFramework.Net.Dispatcher
             Authenticate(validator, certificateFactory);
         }
 
-
         private IAuthenticateValidator FindValidator(ControllerHolder controller)
         {
             var validator = DispatcherContext.Validator(controller.AuthValidatorType);
             return validator ?? DispatcherContext.Validator(Message.ProtocolId);
         }
-
 
         private void Authenticate(IAuthenticateValidator validator, ICertificateFactory certificateFactory)
         {
@@ -172,4 +177,5 @@ namespace TnyFramework.Net.Dispatcher
             }
         }
     }
+
 }

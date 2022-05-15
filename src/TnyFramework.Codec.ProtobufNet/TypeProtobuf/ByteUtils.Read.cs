@@ -1,10 +1,4 @@
-﻿//
-//  文件名称：ByteUtils.cs
-//  简   述：字节工具类，主要是一些算法
-//  创建标识：lrg 2019/11/15
-//
-
-using System;
+﻿using System;
 using System.IO;
 
 namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
@@ -25,7 +19,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return 4;
         }
 
-
         /// <summary>
         /// 从Stream读取32位固定长度
         /// </summary>
@@ -35,7 +28,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         {
             value = stream.ReadByte() | stream.ReadByte() << 8 | stream.ReadByte() << 16 | stream.ReadByte() << 24;
         }
-
 
         /// <summary>
         /// 从字节数组中读取32位固定长度
@@ -51,7 +43,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return readed;
         }
 
-
         /// <summary>
         /// 从Stream读取32位固定长度
         /// </summary>
@@ -62,7 +53,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             ReadFixed32(stream, out int intValue);
             value = Int2Float(intValue);
         }
-
 
         /// <summary>
         /// 从字节数组中读取64位固定长度
@@ -84,7 +74,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return 8;
         }
 
-
         /// <summary>
         /// 从Stream读取64位固定长度
         /// </summary>
@@ -102,7 +91,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
                     | ((long) stream.ReadByte() << 56);
         }
 
-
         /// <summary>
         /// 从字节数组中读取64位固定长度
         /// </summary>
@@ -117,7 +105,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return readed;
         }
 
-
         /// <summary>
         /// 从Stream读取64位固定长度
         /// </summary>
@@ -128,7 +115,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             ReadFixed64(stream, out long longValue);
             value = Long2Double(longValue);
         }
-
 
         /// <summary>
         /// 从字节数组中读取动态长度
@@ -157,12 +143,10 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             throw new ArgumentException("error varint!!");
         }
 
-
         public static int ReadVariant(byte[] bytes, int index, out int value)
         {
             return ReadVariant(bytes, index, false, out value);
         }
-
 
         /// <summary>
         /// 从字节数组中读取动态长度
@@ -179,14 +163,12 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return readed;
         }
 
-
         public static int ReadVariant(byte[] bytes, int index, out bool value)
         {
             var readed = ReadVariant(bytes, index, false, out int intValue);
             value = Convert.ToBoolean(intValue);
             return readed;
         }
-
 
         /// <summary>
         /// 从字节数组中读取动态长度
@@ -203,14 +185,12 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return readed;
         }
 
-
         public static int ReadVariant(byte[] bytes, int index, out byte value)
         {
             var readed = ReadVariant(bytes, index, false, out int intValue);
             value = (byte) intValue;
             return readed;
         }
-
 
         /// <summary>
         /// 从字节数组中读取动态长度
@@ -227,14 +207,12 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return readed;
         }
 
-
         public static int ReadVariant(byte[] bytes, int index, out sbyte value)
         {
             var readed = ReadVariant(bytes, index, false, out int intValue);
             value = (sbyte) intValue;
             return readed;
         }
-
 
         /// <summary>
         /// 从字节数组中读取动态长度
@@ -251,14 +229,12 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return readed;
         }
 
-
         public static int ReadVariant(byte[] bytes, int index, out float value)
         {
             var readed = ReadVariant(bytes, index, false, out int intValue);
             value = Int2Float(intValue);
             return readed;
         }
-
 
         /// <summary>
         /// 从字节数组中读取动态长度
@@ -287,12 +263,10 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             throw new ArgumentException("error varint!!");
         }
 
-
         public static int ReadVariant(byte[] bytes, int index, out long value)
         {
             return ReadVariant(bytes, index, false, out value);
         }
-
 
         /// <summary>
         /// 从字节数组中读取动态长度
@@ -309,14 +283,12 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return readed;
         }
 
-
         public static int ReadVariant(byte[] bytes, int index, out double value)
         {
             var readed = ReadVariant(bytes, index, false, out long longValue);
             value = Long2Double(longValue);
             return readed;
         }
-
 
         /// <summary>
         /// 从字节数组中读取字符串
@@ -337,7 +309,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return readed + len;
         }
 
-
         /// <summary>
         /// 从字节数组中读取字节数组
         /// </summary>
@@ -357,7 +328,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             Buffer.BlockCopy(bytes, index + readed, value, 0, len);
             return readed + len;
         }
-
 
         /// <summary>
         /// 从字节数组中读取字节数组

@@ -1,6 +1,8 @@
 using TnyFramework.Net.Base;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public interface INetServerGuideUnitContext : INetGuideUnitContext
     {
         IServerSetting LoadServerSetting();
@@ -9,4 +11,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
     public interface INetServerGuideUnitContext<TUserId> : INetGuideUnitContext<TUserId>, INetServerGuideUnitContext
     {
     }
+
 }

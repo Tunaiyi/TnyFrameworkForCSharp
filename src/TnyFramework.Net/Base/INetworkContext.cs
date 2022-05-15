@@ -13,12 +13,10 @@ namespace TnyFramework.Net.Base
         /// </summary>
         ICertificateFactory GetCertificateFactory();
 
-
         /// <summary>
         /// 认证工厂
         /// </summary>
         ICertificateFactory<TUserId> CertificateFactory<TUserId>();
-
 
         /// <summary>
         /// 消息公共方法

@@ -7,8 +7,10 @@ using TnyFramework.Net.DotNetty.Configuration.Rpc;
 using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Rpc.Auth;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.DotNetty.Configuration
 {
+
     public class RpcServerConfiguration : NettyServerConfiguration, IRpcServerConfiguration
     {
         private const string RPC_SESSION_KEEPER_NAME = "RpcSessionKeeper";
@@ -17,12 +19,10 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
         private UnitSpec<IIdGenerator, IRpcUnitContext> IdGeneratorSpec { get; }
 
-
         public static RpcServerConfiguration CreateRpcServer(IServiceCollection unitContainer)
         {
             return new RpcServerConfiguration(unitContainer);
         }
-
 
         private RpcServerConfiguration(IServiceCollection unitContainer) : base(unitContainer)
         {
@@ -38,7 +38,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
                 .Default<AutoIncrementIdGenerator>();
         }
 
-
         public RpcServerConfiguration RpcServer(ServerSetting setting, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
         {
             Server<RpcAccessIdentify>(setting.Name, spec => {
@@ -48,7 +47,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
             OnAddRpcServer(setting.Name);
             return this;
         }
-
 
         public RpcServerConfiguration RpcServer(string name, int port, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
         {
@@ -60,7 +58,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public RpcServerConfiguration RpcServer(string name, string host, int port, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
         {
             Server<RpcAccessIdentify>(name, spec => {
@@ -70,7 +67,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
             OnAddRpcServer(name);
             return this;
         }
-
 
         public RpcServerConfiguration RpcServer(string name, string host, int port, bool libuv,
             Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
@@ -83,7 +79,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public RpcServerConfiguration RpcServer(string name, string serveName, string host, int port,
             Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
         {
@@ -94,7 +89,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
             OnAddRpcServer(name);
             return this;
         }
-
 
         public RpcServerConfiguration RpcServer(string name, string serveName, string host, int port, bool libuv,
             Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
@@ -107,7 +101,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         private void OnAddRpcServer(string name)
         {
             // EndpointConfigure(endpointSpec => endpointSpec
@@ -116,13 +109,11 @@ namespace TnyFramework.Net.DotNetty.Configuration
             //         .KeeperFactory(RPC_SESSION_KEEPER_NAME)));
         }
 
-
         public RpcServerConfiguration RpcAuthServiceSpecConfigure(Action<RpcAuthServiceSpec> action)
         {
             action.Invoke(rpcUnitContext.RpcAuthServiceSpec);
             return this;
         }
-
 
         public RpcServerConfiguration IdGeneratorConfigure(Action<UnitSpec<IIdGenerator, IRpcUnitContext>> action)
         {
@@ -130,16 +121,15 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         private IAuthenticateValidator DefaultRpcPasswordValidator(INetUnitContext context)
         {
             return new RpcPasswordValidator(IdGeneratorSpec.Load(rpcUnitContext, UnitContainer), rpcUnitContext.LoadRpcAuthService());
         }
-
 
         private IAuthenticateValidator DefaultRpcTokenValidator(INetUnitContext context)
         {
             return new RpcTokenValidator(IdGeneratorSpec.Load(rpcUnitContext, UnitContainer), rpcUnitContext.LoadRpcAuthService());
         }
     }
+
 }

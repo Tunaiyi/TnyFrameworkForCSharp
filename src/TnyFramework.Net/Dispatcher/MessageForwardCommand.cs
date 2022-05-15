@@ -14,14 +14,12 @@ namespace TnyFramework.Net.Dispatcher
 
         private INetTunnel<RpcAccessIdentify> tunnel;
 
-
         public MessageForwardCommand(INetTunnel<RpcAccessIdentify> tunnel, IMessage message)
         {
             this.tunnel = tunnel;
             this.message = message;
             rpcContext = tunnel.Context;
         }
-
 
         protected override Task Action()
         {

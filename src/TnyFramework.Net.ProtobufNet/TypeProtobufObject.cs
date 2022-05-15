@@ -1,6 +1,6 @@
 using System;
-using TnyFramework.Common.Exception;
-using TnyFramework.Common.Invoke;
+using TnyFramework.Common.Exceptions;
+using TnyFramework.Common.FastInvoke.FuncInvoke;
 
 namespace TnyFramework.Net.ProtobufNet
 {
@@ -12,7 +12,6 @@ namespace TnyFramework.Net.ProtobufNet
         public Type Type { get; }
 
         private readonly Func<object> creator;
-
 
         public TypeProtobufObject(int id, Type type, Func<object> creator = null)
         {
@@ -36,19 +35,15 @@ namespace TnyFramework.Net.ProtobufNet
             }
         }
 
-
-
         public object Create()
         {
             return creator();
         }
 
-
         private bool Equals(TypeProtobufObject other)
         {
             return Id == other.Id && Type == other.Type;
         }
-
 
         public override bool Equals(object obj)
         {
@@ -57,7 +52,6 @@ namespace TnyFramework.Net.ProtobufNet
             if (obj.GetType() != this.GetType()) return false;
             return Equals((TypeProtobufObject) obj);
         }
-
 
         public override int GetHashCode()
         {

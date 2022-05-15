@@ -6,7 +6,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
 
     public static partial class ByteUtils
     {
-
         static readonly UTF8Encoding encoding = new UTF8Encoding();
         const long Int64Msb = 1L << 63;
         const int Int32Msb = 1 << 31;
@@ -73,7 +72,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         /// <returns></returns>
         public static int ComputeVarInt32Len(int value)
         {
-            return ComputeVarInt32Len((uint)value);
+            return ComputeVarInt32Len((uint) value);
         }
 
         private static int ComputeVarInt32Len(uint value)
@@ -96,7 +95,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         /// <returns></returns>
         public static int ComputeVarInt64Len(long value)
         {
-            return ComputeVarInt64Len((ulong)value);
+            return ComputeVarInt64Len((ulong) value);
         }
 
         private static int ComputeVarInt64Len(ulong value)
@@ -155,7 +154,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         {
             return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
         }
-
     }
 
 }

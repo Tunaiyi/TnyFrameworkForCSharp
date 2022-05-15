@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.DotNetty.Codec
 {
+
     /// <summary>
     /// 编码校验器
     /// </summary>
@@ -11,7 +12,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         /// <returns>长度</returns>
         int CodeLength { get; }
 
-
         /// <summary>
         /// 生成校验码
         /// </summary>
@@ -21,7 +21,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         /// <param name="length">长度</param>
         /// <returns>返回校验码</returns>
         byte[] Generate(DataPackageContext packager, byte[] body, int offset, int length);
-
 
         /// <summary>
         /// 校验校验码
@@ -38,16 +37,16 @@ namespace TnyFramework.Net.DotNetty.Codec
     public class NoopCodecVerifier : ICodecVerifier
     {
         public int CodeLength => 0;
-        
+
         public byte[] Generate(DataPackageContext packager, byte[] body, int offset, int length)
         {
             return body;
         }
-
 
         public bool Verify(DataPackageContext packager, byte[] body, int offset, int length, byte[] verifyCode)
         {
             return true;
         }
     }
+
 }

@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Base
 {
+
     public interface INetBootstrapSetting
     {
         /// <summary>
@@ -12,4 +13,5 @@ namespace TnyFramework.Net.Base
         /// </summary>
         string ServeName { get; }
     }
+
 }

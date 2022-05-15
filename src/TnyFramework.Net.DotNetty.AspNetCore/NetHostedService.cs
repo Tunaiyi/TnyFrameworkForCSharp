@@ -6,8 +6,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Base;
+
 namespace TnyFramework.Net.DotNetty.AspNetCore
 {
+
     public class NetHostedService : IHostedService
     {
         private readonly ILogger<NetHostedService> logger;
@@ -17,7 +19,6 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
         private readonly INetServerDiscoveryService serverDiscoveryService;
 
         private readonly ICoroutine coroutine;
-
 
         public NetHostedService(INetApplication application,
             INetServerDiscoveryService serverDiscoveryService,
@@ -29,13 +30,14 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
             coroutine = DefaultCoroutineFactory.Default.Create("NetHostedService");
         }
 
-
         public async Task StartAsync(CancellationToken cancellationToken)
         {
             var context = application.AppContext;
-            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] starting", context.Name, context.ServerId, context.AppType, context.ScopeType);
+            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] starting", context.Name, context.ServerId, context.AppType,
+                context.ScopeType);
             await application.Start();
-            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] started", context.Name, context.ServerId, context.AppType, context.ScopeType);
+            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] started", context.Name, context.ServerId, context.AppType,
+                context.ScopeType);
             IList<Task> tasks = new List<Task>();
             foreach (var server in application.Servers)
             {
@@ -61,13 +63,14 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
                 context.Name, context.ServerId, context.AppType, context.ScopeType);
         }
 
-
         public async Task StopAsync(CancellationToken cancellationToken)
         {
             var appContext = application.AppContext;
-            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] closing", appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
+            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] closing", appContext.Name, appContext.ServerId, appContext.AppType,
+                appContext.ScopeType);
             await application.Close();
-            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] closed", appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
+            logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] closed", appContext.Name, appContext.ServerId, appContext.AppType,
+                appContext.ScopeType);
             foreach (var server in application.Servers)
             {
 
@@ -87,4 +90,5 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
             await application.Close();
         }
     }
+
 }

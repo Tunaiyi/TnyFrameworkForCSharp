@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using TnyFramework.Codec;
-using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
 using TnyFramework.DI.Container;
@@ -19,6 +16,7 @@ using TnyFramework.Net.Demo.DTO;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
+using TnyFramework.Net.Rpc.Remote;
 using TnyFramework.Net.Transport;
 using static TnyFramework.Net.Demo.DTO.DTOOutline;
 
@@ -31,8 +29,6 @@ namespace TnyFramework.Net.Demo
         {
             // ConsoleLoggerContext.Init();
         }
-
-
 
         private class TestOnMessage : IOnMessage
         {
@@ -72,13 +68,11 @@ namespace TnyFramework.Net.Demo
             private readonly ITestOtherInterface testInterface;
             private readonly IServiceProvider serviceProvider;
 
-
             public MyTester(ITestOtherInterface testInterface, IServiceProvider serviceProvider)
             {
                 this.testInterface = testInterface;
                 this.serviceProvider = serviceProvider;
             }
-
 
             public void Say()
             {
@@ -90,7 +84,6 @@ namespace TnyFramework.Net.Demo
         {
             public string Name { get; }
 
-
             public MyClass()
             {
                 Console.WriteLine("New MyClass");
@@ -98,11 +91,9 @@ namespace TnyFramework.Net.Demo
             }
         }
 
-
         public class OtherClass : ITestInterface
         {
             public string Name { get; }
-
 
             public OtherClass()
             {
@@ -118,7 +109,6 @@ namespace TnyFramework.Net.Demo
                 Name = "OnlyTestOtherInterfaceClass";
             }
 
-
             public string Name { get; }
         }
 
@@ -129,17 +119,14 @@ namespace TnyFramework.Net.Demo
                 Name = "OnlyTestInterfaceClass";
             }
 
-
             public string Name { get; }
         }
-
 
         public class TestModule : IApplicationModule
         {
             public void Initialize(IServiceCollection collection)
             {
             }
-
 
             public void Close(IServiceCollection collection)
             {
@@ -153,13 +140,13 @@ namespace TnyFramework.Net.Demo
             public static readonly TestRpcServiceType TEST_SERVICE = Of(200, "TestService");
         }
 
-
-
-
-
-
         private static async Task Main(string[] args)
         {
+            var rcpResultStringCreator = RpcInvokerFastInvokers.RcpResultCreator(typeof(IRpcResult<string>));
+            var rpcResultString = rcpResultStringCreator.Invoke(null, ResultCode.SUCCESS, "abc");
+            var rcpResultCreator = RpcInvokerFastInvokers.RcpResultCreator(typeof(IRpcResult));
+            var rpcResult = rcpResultCreator.Invoke(null, ResultCode.SUCCESS, null);
+
             NetMessagerType.GetValues();
             var test = new ServiceCollection();
             test.AddSingletonUnit<OtherClass>("OtherClass")
@@ -183,7 +170,6 @@ namespace TnyFramework.Net.Demo
             Func<string, object> func = value => value;
             Console.WriteLine(typeof(Func<,>).GetGenericTypeDefinition());
             Console.WriteLine(func.GetType().GetGenericTypeDefinition() == typeof(Func<,>).GetGenericTypeDefinition());
-
 
             LogFactory.Logger<Program>().LogInformation("============");
             var services = new ServiceCollection();

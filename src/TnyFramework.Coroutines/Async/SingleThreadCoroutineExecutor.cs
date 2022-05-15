@@ -1,7 +1,9 @@
 using System;
 using System.Threading;
+
 namespace TnyFramework.Coroutines.Async
 {
+
     /// <summary>
     /// 线程池协程运行器
     /// </summary>
@@ -23,29 +25,26 @@ namespace TnyFramework.Coroutines.Async
             }
         }
 
-
         protected SingleThreadCoroutineExecutor(string name) : base(name)
         {
         }
 
-
-        public SingleThreadCoroutineExecutor(string name, Action<System.Exception> exceptionHandler = null, int threadMaxStackSize = 0)
+        public SingleThreadCoroutineExecutor(string name, Action<Exception> exceptionHandler = null, int threadMaxStackSize = 0)
             : base(1, name, exceptionHandler, threadMaxStackSize)
         {
         }
 
-
         public SingleThreadCoroutineExecutor(string name, TimeSpan? deadlockTimeout = null,
-            Action<System.Exception> exceptionHandler = null, int threadMaxStackSize = 0)
+            Action<Exception> exceptionHandler = null, int threadMaxStackSize = 0)
             : base(1, name, deadlockTimeout, exceptionHandler, threadMaxStackSize)
         {
         }
 
-
         public SingleThreadCoroutineExecutor(string name, TimeSpan? deadlockTimeout = null,
-            ApartmentState state = ApartmentState.Unknown, Action<System.Exception> exceptionHandler = null, int threadMaxStackSize = 0)
+            ApartmentState state = ApartmentState.Unknown, Action<Exception> exceptionHandler = null, int threadMaxStackSize = 0)
             : base(1, name, deadlockTimeout, state, exceptionHandler, threadMaxStackSize)
         {
         }
     }
+
 }

@@ -27,7 +27,6 @@ namespace TnyFramework.Net.Base
         /// </summary>
         public string Group { get; protected set; }
 
-
         protected override void OnCheck()
         {
             if (GROUP_MAP.TryAdd(Group, this))
@@ -39,18 +38,15 @@ namespace TnyFramework.Net.Base
             }
         }
 
-
         public new static MessagerType ForId(int id)
         {
             return BaseEnum<MessagerType>.ForId(id);
         }
 
-
         public new static MessagerType ForName(string name)
         {
             return BaseEnum<MessagerType>.ForName(name);
         }
-
 
         public static MessagerType ForGroup(string group)
         {
@@ -70,7 +66,7 @@ namespace TnyFramework.Net.Base
         }
 
         public new static void LoadAll() => LoadAll(typeof(T));
-        
+
         public new static IReadOnlyCollection<MessagerType> GetValues()
         {
             LoadAll(typeof(T));

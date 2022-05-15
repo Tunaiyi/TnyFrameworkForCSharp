@@ -12,7 +12,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         private UnitSpec<INetworkContext, INetServerGuideUnitContext<TUserId>> NetworkContextSpec { get; }
 
-
         public NetServerGuideUnitContext(INetUnitContext unitContext, IServiceCollection unitContainer) : base(unitContext, unitContainer)
         {
             ServerSettingSpec = new ServerSettingSpec();
@@ -21,7 +20,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
                 .Default(DefaultNetworkContext<TUserId>);
         }
 
-
         protected override void OnSetName(string name)
         {
             ServerSettingSpec.WithNamePrefix(name);
@@ -29,18 +27,15 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             NetworkContextSpec.WithNamePrefix(name);
         }
 
-
         public IServerSetting LoadServerSetting()
         {
             return ServerSettingSpec.Load(this, UnitContainer);
         }
 
-
         public override INetworkContext LoadNetworkContext()
         {
             return NetworkContextSpec.Load(this, UnitContainer);
         }
-
 
         private static INetworkContext DefaultNetworkContext<T>(INetServerGuideUnitContext<TUserId> context)
         {

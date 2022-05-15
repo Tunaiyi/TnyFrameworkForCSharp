@@ -4,6 +4,7 @@ using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Plugin
 {
+
     /// <summary>
     /// 插件接口
     /// </summary>
@@ -30,10 +31,10 @@ namespace TnyFramework.Net.Plugin
         /// <param name="attributes"></param>
         public abstract void Execute(ITunnel<TUid> tunnel, IMessage message, MessageCommandContext context, TAttribute attributes);
 
-
         public void Execute(ITunnel tunnel, IMessage message, MessageCommandContext context, object attributes)
         {
-            Execute((ITunnel<TUid>)tunnel, message, context, (TAttribute)attributes);
+            Execute((ITunnel<TUid>) tunnel, message, context, (TAttribute) attributes);
         }
     }
+
 }

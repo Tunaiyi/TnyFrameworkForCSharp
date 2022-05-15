@@ -7,14 +7,15 @@ using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.DotNetty.Bootstrap;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public class NetApplication : INetApplication
     {
         private readonly IServiceProvider serviceProvider;
         private readonly IList<INettyServerGuide> serverGuides;
         private bool registered;
-
 
         public NetApplication(IServiceProvider serviceProvider, IEnumerable<INettyServerGuide> serverGuides)
         {
@@ -24,11 +25,9 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             Register();
         }
 
-
         public IList<INetServer> Servers => serverGuides.Select(guide => (INetServer) guide).ToList();
 
         public INetAppContext AppContext { get; }
-
 
         public async Task Start()
         {
@@ -38,7 +37,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             }
         }
 
-
         public async Task Close()
         {
             foreach (var guide in serverGuides)
@@ -46,7 +44,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
                 await guide.Close();
             }
         }
-
 
         private void Register()
         {
@@ -65,4 +62,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             registered = true;
         }
     }
+
 }

@@ -1,9 +1,11 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
-using TnyFramework.Common.Extension;
+using TnyFramework.Common.Extensions;
 using TnyFramework.DI.Container;
+
 namespace TnyFramework.DI.Units
 {
+
     public class UnitSpec
     {
         public static UnitSpec<TUnit, TContext> Unit<TUnit, TContext>()
@@ -24,18 +26,15 @@ namespace TnyFramework.DI.Units
 
         private bool created;
 
-
         public string GetUnitName()
         {
             return unitName;
         }
 
-
         public UnitSpec(string unitName = "")
         {
             this.unitName = unitName;
         }
-
 
         public UnitSpec<TUnit, TContext> Default(TUnit value)
         {
@@ -45,7 +44,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public UnitSpec<TUnit, TContext> Default(UnitCreator<TUnit, TContext> value)
         {
             if (defaultCreator != null)
@@ -54,14 +52,12 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public UnitSpec<TUnit, TContext> UnitName(string value)
         {
             if (unitName.IsBlank())
                 unitName = value;
             return this;
         }
-
 
         public UnitSpec<TUnit, TContext> WithNamePrefix(string prefix)
         {
@@ -70,14 +66,12 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public UnitSpec<TUnit, TContext> WithNamePrefix<TType>(string prefix)
         {
             if (unitName.IsBlank())
                 unitName = prefix + typeof(TType).Name;
             return this;
         }
-
 
         public UnitSpec<TUnit, TContext> Default<TImplement>()
             where TImplement : TUnit, new()
@@ -88,7 +82,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public IUnitSpec<TUnit, TContext> Unit(TUnit value)
         {
             if (unit != null)
@@ -96,7 +89,6 @@ namespace TnyFramework.DI.Units
             unit = value;
             return this;
         }
-
 
         public IUnitSpec<TUnit, TContext> Creator<TImplement>()
             where TImplement : TUnit, new()
@@ -107,7 +99,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public IUnitSpec<TUnit, TContext> Creator(UnitCreator<TUnit, TContext> value)
         {
             if (creator != null)
@@ -115,7 +106,6 @@ namespace TnyFramework.DI.Units
             creator = value;
             return this;
         }
-
 
         public TUnit Load(TContext context, IServiceCollection services)
         {
@@ -144,4 +134,5 @@ namespace TnyFramework.DI.Units
             throw new NullReferenceException($"{nameof(TUnit)} is null");
         }
     }
+
 }

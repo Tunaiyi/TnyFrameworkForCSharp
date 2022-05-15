@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using TnyFramework.Net.Endpoint;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
 {
+
     public interface IEndpointUnitContext
     {
         IEndpointKeeperManager LoadEndpointKeeperManager();
@@ -14,4 +16,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
 
         IDictionary<string, ISessionKeeperFactory> LoadSessionKeeperFactories();
     }
+
 }

@@ -1,6 +1,8 @@
 using System;
+
 namespace TnyFramework.Common.Result
 {
+
     public interface IDoneResult : IDone
     {
         IResultCode Code { get; }
@@ -11,7 +13,6 @@ namespace TnyFramework.Common.Result
     public interface IDoneResult<out TValue> : IDoneResult, IDone<TValue>
     {
     }
-
 
     public static class DoneResultExtensions
     {
@@ -29,7 +30,6 @@ namespace TnyFramework.Common.Result
             }
         }
 
-
         /// <summary>
         /// 调用 consumer
         /// </summary>
@@ -39,7 +39,6 @@ namespace TnyFramework.Common.Result
         {
             run(done.Code, done.Value);
         }
-
 
         /// <summary>
         /// 如果成功则转换值
@@ -54,12 +53,10 @@ namespace TnyFramework.Common.Result
             return done.IsSuccess() ? DoneResults.Success<T>(mapper(done.Value)) : DoneResults.Failure<M, T>(done);
         }
 
-
         public static IDoneResult<T> MapOnFailed<M, T>(this IDoneResult<M> done, Func<IResultCode, string, T> mapper)
         {
             return done.IsFailure() ? DoneResults.Map(done, mapper(done.Code, done.Message)) : DoneResults.Success<T>();
         }
-
 
         //    default <T> DoneResult<T> mapOnFailed(Function<DoneResult<M>, T> mapper) {
         //        if (this.isFailure()) {
@@ -77,4 +74,5 @@ namespace TnyFramework.Common.Result
             return DoneResults.Map(done, returnValue);
         }
     }
+
 }

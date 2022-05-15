@@ -7,8 +7,10 @@ using TnyFramework.Net.Base;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.Transport
 {
+
     public abstract class BaseNetTunnel<TUserId, TEndpoint, TTransporter> : NetTunnel<TUserId, TEndpoint>
         where TEndpoint : INetEndpoint<TUserId>
         where TTransporter : IMessageTransporter
@@ -21,7 +23,6 @@ namespace TnyFramework.Net.Transport
 
         public override EndPoint LocalAddress => Transporter.LocalAddress;
 
-
         protected BaseNetTunnel(long id, TTransporter transporter, TunnelMode mode, INetworkContext context) : base(id, mode, context)
         {
             if (transporter == null)
@@ -30,13 +31,11 @@ namespace TnyFramework.Net.Transport
             Transporter.Bind(this);
         }
 
-
         public override bool IsActive()
         {
             var transporter = Transporter;
             return Status == TunnelStatus.Open && transporter != null && transporter.IsActive();
         }
-
 
         public override void Reset()
         {
@@ -59,24 +58,20 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-
         public override Task Write(IMessage message)
         {
             return CheckAvailable(null, out var task) ? Transporter.Write(message) : task;
         }
-
 
         public override Task Write(MessageAllocator allocator, MessageContext messageContext)
         {
             return CheckAvailable(messageContext, out var task) ? Transporter.Write(allocator, MessageFactory, messageContext) : task;
         }
 
-
         protected virtual void OnWriteUnavailable()
         {
 
         }
-
 
         protected override void DoDisconnect()
         {
@@ -91,7 +86,6 @@ namespace TnyFramework.Net.Transport
                 LOGGER.LogError(e, "transporter close error");
             }
         }
-
 
         private bool CheckAvailable(MessageContext context, out Task task)
         {
@@ -113,10 +107,10 @@ namespace TnyFramework.Net.Transport
             return false;
         }
 
-
         public override string ToString()
         {
             return $"{Mode}[{UserGroup}({UserId}) {Transporter}]";
         }
     }
+
 }

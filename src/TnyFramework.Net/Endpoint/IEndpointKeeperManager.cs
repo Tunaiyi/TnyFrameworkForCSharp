@@ -1,9 +1,10 @@
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
-using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Endpoint
 {
+
     /// <summary>
     /// Endpoint 管理器
     /// </summary>
@@ -15,4 +16,5 @@ namespace TnyFramework.Net.Endpoint
 
         TKeeper FindKeeper<TKeeper>(IMessagerType messagerType) where TKeeper : IEndpointKeeper;
     }
+
 }

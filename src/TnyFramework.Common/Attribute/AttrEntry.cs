@@ -1,5 +1,6 @@
 namespace TnyFramework.Common.Attribute
 {
+
     public interface IAttrPair
     {
         IAttrKey Key { get; }
@@ -14,13 +15,11 @@ namespace TnyFramework.Common.Attribute
             return new AttrPair<T>(ref key, value);
         }
 
-
         private AttrPair(ref AttrKey<T> key, T value)
         {
             Key = key;
             Value = value;
         }
-
 
         public AttrKey<T> Key { get; }
 
@@ -30,4 +29,5 @@ namespace TnyFramework.Common.Attribute
 
         object IAttrPair.Value => Value;
     }
+
 }

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using TnyFramework.Common.Assemblies;
 using TnyFramework.Common.Logger;
 using TnyFramework.DI.Container;
 using TnyFramework.DI.Extensions;
 using TnyFramework.DI.Units;
+using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Command.Processor;
 using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.DotNetty.Bootstrap;
@@ -15,12 +15,10 @@ using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
-using TnyFramework.Net.Rpc.Attributes;
 using TnyFramework.Net.Rpc.Auth;
 
 namespace TnyFramework.Net.DotNetty.Configuration
 {
-    
 
     public class NettyServerConfiguration : INettyServerConfiguration
     {
@@ -42,12 +40,10 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
         protected IServiceCollection UnitContainer { get; }
 
-
         public static NettyServerConfiguration CreateNetServer(IServiceCollection unitContainer)
         {
             return new NettyServerConfiguration(unitContainer);
         }
-
 
         protected NettyServerConfiguration(IServiceCollection unitContainer)
         {
@@ -62,7 +58,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
             //         c.LoadChannelMaker()));
         }
 
-
         public NettyServerConfiguration Server<TUserId>(string name, Action<INetServerGuideSpec<TUserId>> action)
         {
             var spec = new NetServerGuideSpec<TUserId>(name, NetUnitContext, UnitContainer);
@@ -71,7 +66,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public NettyServerConfiguration AppContext(int serverId, string name)
         {
             NetUnitContext.AppContextSpec
@@ -79,7 +73,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
                 .AppName(name);
             return this;
         }
-
 
         public NettyServerConfiguration AppContext(int serverId, string name, string appType, string scope)
         {
@@ -91,14 +84,11 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public NettyServerConfiguration AppContextConfigure(Action<INetAppContextSpec> action)
         {
             action.Invoke(NetUnitContext.AppContextSpec);
             return this;
         }
-
-
 
         public NettyServerConfiguration MessageDispatcherConfigure(
             Action<IUnitSpec<IMessageDispatcher, INetUnitContext>> action)
@@ -107,14 +97,12 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public NettyServerConfiguration CommandTaskBoxProcessor(
             Action<IUnitSpec<ICommandTaskBoxProcessor, INetUnitContext>> action)
         {
             action.Invoke(NetUnitContext.CommandTaskBoxProcessorSpec);
             return this;
         }
-
 
         public NettyServerConfiguration AddController<TController>() where TController : class, IController
         {
@@ -123,7 +111,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public NettyServerConfiguration AddController(IController controller)
         {
             UnitContainer.AddSingletonUnit(controller);
@@ -131,12 +118,11 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public NettyServerConfiguration AddController(Func<IServiceProvider, IController> factory)
         {
-            throw new NotImplementedException();
+            UnitContainer.AddSingletonUnit(factory);
+            return this;
         }
-
 
         public NettyServerConfiguration AddController<TController>(Func<IServiceProvider, TController> factory)
             where TController : IController
@@ -146,41 +132,44 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public NettyServerConfiguration AddControllers()
         {
-            return AddControllers(AssemblyUtils.LoadAllAssemblies());
+            return AddControllers(RpcTypeSelector.Controllers);
         }
-
 
         public NettyServerConfiguration AddControllers(ICollection<Assembly> assemblies)
         {
-            var iControllerType = typeof(IController);
-            foreach (var assembly in AssemblyUtils.LoadAllAssemblies(assemblies))
+            foreach (var assembly in assemblies)
             {
-                foreach (var type in assembly.GetTypes())
-                {
-                    if (type.IsAbstract || type.IsInterface || type == typeof(IController) || type == typeof(RpcAuthController))
-                    {
-                        continue;
-                    }
-                    if (iControllerType.IsAssignableFrom(type))
-                    {
-                        UnitContainer.AddSingletonUnit(type);
-                        LOGGER.LogInformation("AddController : {Controller}", type);
-                        continue;
-                    }
-                    var rpcController = type.GetCustomAttribute(typeof(RpcControllerAttribute));
-                    if (rpcController != null)
-                    {
-                        UnitContainer.AddSingletonUnit(type);
-                        LOGGER.LogInformation("AddController : {Controller}", type);
-                    }
-                }
+                AddControllers(assembly.GetTypes());
             }
             return this;
         }
 
+        private NettyServerConfiguration AddControllers(IEnumerable<Type> types)
+        {
+
+            foreach (var type in types)
+            {
+                var iControllerType = typeof(IController);
+                if (type.IsAbstract || type.IsInterface || type == typeof(IController) || type == typeof(RpcAuthController))
+                {
+                    continue;
+                }
+                if (iControllerType.IsAssignableFrom(type))
+                {
+                    UnitContainer.AddSingletonUnit(type);
+                    LOGGER.LogInformation("AddController : {Controller}", type);
+                    continue;
+                }
+                var rpcController = type.GetCustomAttribute(typeof(RpcControllerAttribute));
+                if (rpcController == null)
+                    continue;
+                UnitContainer.AddSingletonUnit(type);
+                LOGGER.LogInformation("AddController : {Controller}", type);
+            }
+            return this;
+        }
 
         public NettyServerConfiguration CommandPluginsConfigure(
             Action<IUnitCollectionSpec<ICommandPlugin, INetUnitContext>> action)
@@ -189,13 +178,11 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public NettyServerConfiguration EndpointConfigure(Action<IEndpointSpec> action)
         {
             action.Invoke(NetUnitContext.EndpointSpec);
             return this;
         }
-
 
         public NettyServerConfiguration AuthenticateValidatorsConfigure(
             Action<IUnitCollectionSpec<IAuthenticateValidator, INetUnitContext>> action)
@@ -204,13 +191,11 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public NettyServerConfiguration AddAuthenticateValidators(Action<IUnitSpec<IAuthenticateValidator, INetUnitContext>> action)
         {
             NetUnitContext.AuthenticateValidatorSpecs.AddSpec(action);
             return this;
         }
-
 
         public NettyServerConfiguration RegisterConfigurator(ICustomServerConfiguration configuration)
         {
@@ -218,18 +203,17 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-
         public NettyServerConfiguration RegisterConfigurator(Action<NettyServerConfiguration> action)
         {
             configurators.Add(new ActionCustomServerConfiguration(action));
             return this;
         }
 
-
         public NettyServerConfiguration Initialize()
         {
             if (initialized)
                 return this;
+            NetUnitContext?.Load();
             foreach (var customServerConfigurator in configurators)
             {
                 customServerConfigurator.Configure(this);

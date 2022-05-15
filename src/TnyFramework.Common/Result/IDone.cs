@@ -1,6 +1,8 @@
 using System;
+
 namespace TnyFramework.Common.Result
 {
+
     public interface IDone
     {
         /// <summary>
@@ -9,19 +11,16 @@ namespace TnyFramework.Common.Result
         /// <returns></returns>
         bool IsSuccess();
 
-
         /// <summary>
         /// 是否有结果值
         /// </summary>
         /// <returns></returns>
         bool IsPresent();
 
-
         /// <summary>
         /// 结果消息
         /// </summary>
         string Message { get; }
-
 
         /// <summary>
         /// 获取值
@@ -38,7 +37,6 @@ namespace TnyFramework.Common.Result
         TValue Value { get; }
     }
 
-
     public static class DoneExtensions
     {
         /// <summary>
@@ -54,8 +52,6 @@ namespace TnyFramework.Common.Result
             return value != null ? value : other;
         }
 
-
-
         /// <summary>
         /// 获取值,如果值为 null, 则返回 other的返回值
         /// </summary>
@@ -69,7 +65,6 @@ namespace TnyFramework.Common.Result
             return value != null ? value : other();
         }
 
-
         /// <summary>
         /// 获取值,如果值为 null, 则抛出exceptionFunc返回的异常
         /// </summary>
@@ -77,7 +72,7 @@ namespace TnyFramework.Common.Result
         /// <param name="exceptionFunc">异常提供器</param>
         /// <typeparam name="M"></typeparam>
         /// <returns></returns>
-        public static M OrElseThrow<M>(this IDone<M> done, System.Exception exception)
+        public static M OrElseThrow<M>(this IDone<M> done, Exception exception)
         {
             var value = done.Value;
             if (value != null)
@@ -85,7 +80,6 @@ namespace TnyFramework.Common.Result
             throw exception;
         }
 
-
         /// <summary>
         /// 获取值,如果值为 null, 则抛出exceptionFunc返回的异常
         /// </summary>
@@ -93,14 +87,13 @@ namespace TnyFramework.Common.Result
         /// <param name="exceptionFunc">异常提供器</param>
         /// <typeparam name="M"></typeparam>
         /// <returns></returns>
-        public static M OrElseThrow<M>(this IDone<M> done, Func<System.Exception> exceptionFunc)
+        public static M OrElseThrow<M>(this IDone<M> done, Func<Exception> exceptionFunc)
         {
             var value = done.Value;
             if (value != null)
                 return value;
             throw exceptionFunc();
         }
-
 
         /// <summary>
         /// 如果值存在则执行 Action<M> run
@@ -114,7 +107,6 @@ namespace TnyFramework.Common.Result
                 run(done.Value);
         }
 
-
         /// <summary>
         /// 如果成功则执行 Action<M> run
         /// </summary>
@@ -127,7 +119,6 @@ namespace TnyFramework.Common.Result
                 run(done.Value);
         }
 
-
         /// <summary>
         /// 是否失败
         /// </summary>
@@ -138,7 +129,6 @@ namespace TnyFramework.Common.Result
         {
             return !done.IsSuccess();
         }
-
 
         /// <summary>
         /// 如果失败则执行 Action<M> run
@@ -152,4 +142,5 @@ namespace TnyFramework.Common.Result
                 run(done.Value);
         }
     }
+
 }

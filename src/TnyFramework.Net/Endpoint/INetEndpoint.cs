@@ -3,11 +3,11 @@ using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Endpoint.Event;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Endpoint
 {
+
     /// <summary>
     /// 终端会话
     /// </summary>
@@ -21,7 +21,6 @@ namespace TnyFramework.Net.Endpoint
         /// <returns></returns>
         bool Receive(INetTunnel receiver, IMessage message);
 
-
         /// <summary>
         /// 异步发送消息
         /// </summary>
@@ -29,7 +28,6 @@ namespace TnyFramework.Net.Endpoint
         /// <param name="messageContext">发送消息上下文</param>
         /// <returns>返回发送回执</returns>
         ISendReceipt Send(INetTunnel sender, MessageContext messageContext);
-
 
         /// <summary>
         /// 分配生成消息
@@ -39,7 +37,6 @@ namespace TnyFramework.Net.Endpoint
         /// <returns>返回创建消息</returns>
         INetMessage BuildMessage(IMessageFactory messageFactory, MessageContext context);
 
-
         /// <summary>
         /// 使用指定认证登陆
         /// </summary>
@@ -47,19 +44,16 @@ namespace TnyFramework.Net.Endpoint
         /// <param name="onlineOne">通道</param>
         void Online(ICertificate newCertificate, INetTunnel onlineOne);
 
-
         /// <summary>
         /// 通知通道销毁
         /// </summary>
         /// <param name="tunnel">销毁通道</param>
         void OnUnactivated(INetTunnel tunnel);
 
-
         /// <summary>
         /// 消息盒
         /// </summary>
         CommandTaskBox CommandTaskBox { get; }
-
 
         /// <summary>
         /// 接管载入消息盒子
@@ -67,12 +61,10 @@ namespace TnyFramework.Net.Endpoint
         /// <param name="commandTaskBox">消息</param>
         void TakeOver(CommandTaskBox commandTaskBox);
 
-
         /// <summary>
         /// 终端下文
         /// </summary>
         IEndpointContext Context { get; }
-
 
         /// <summary>
         /// 上线事件总线, 可监听到当前 Endpoint 的事件
@@ -97,4 +89,5 @@ namespace TnyFramework.Net.Endpoint
     public interface INetEndpoint<out TUserId> : IEndpoint<TUserId>, INetEndpoint
     {
     }
+
 }

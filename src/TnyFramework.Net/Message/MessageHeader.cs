@@ -5,7 +5,6 @@ namespace TnyFramework.Net.Message
     {
         public abstract string Key { get; }
 
-
         public object GetValue()
         {
             return this;

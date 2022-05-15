@@ -9,12 +9,10 @@ namespace TnyFramework.Net.Command
     {
         private const long ANONYMITY_MESSAGER_ID = -1L;
 
-
         public static Certificate<T> CreateAuthenticated<T>(long id, T userId, long messagerId, IMessagerType messagerType)
         {
             return CreateAuthenticated(id, userId, messagerId, messagerType, DateTimeOffset.Now.ToUnixTimeMilliseconds());
         }
-
 
         public static Certificate<T> CreateAuthenticated<T>(long id, T userId, long messagerId, IMessagerType messagerType,
             long authenticateAt, bool renew = false)
@@ -22,7 +20,6 @@ namespace TnyFramework.Net.Command
             return new Certificate<T>(id, userId, messagerId, messagerType, renew ? CertificateStatus.Renew : CertificateStatus.Authenticated,
                 authenticateAt);
         }
-
 
         public static Certificate<T> CreateUnauthenticated<T>(T anonymityUserId = default)
         {
@@ -52,7 +49,6 @@ namespace TnyFramework.Net.Command
 
         public TUserId UserId { get; }
 
-
         public Certificate(long id, TUserId userId, long messagerId, IMessagerType messagerType, CertificateStatus status, long authenticateAt)
         {
             this.status = status;
@@ -64,7 +60,6 @@ namespace TnyFramework.Net.Command
             Status = status;
             UserId = userId;
         }
-
 
         public bool IsAuthenticated() => status.IsAuthenticated();
 

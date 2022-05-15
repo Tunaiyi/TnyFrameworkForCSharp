@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace TnyFramework.Net.Message
@@ -23,7 +24,6 @@ namespace TnyFramework.Net.Message
         /// </summary>
         long Time { get; }
 
-
         /// <summary>
         /// 获取转发 header
         /// </summary>
@@ -32,6 +32,13 @@ namespace TnyFramework.Net.Message
         /// <returns>Header</returns>
         T GetHeader<T>(string key) where T : MessageHeader<T>;
 
+        /// <summary>
+        /// 获取转发 header
+        /// </summary>
+        /// <param name="key">查找 key</param>
+        /// <param name="type">Header 类</param>
+        /// <returns>Header</returns>
+        MessageHeader GetHeader(string key, Type type);
 
         /// <summary>
         /// 获取转发 header
@@ -40,7 +47,6 @@ namespace TnyFramework.Net.Message
         /// <returns>Header</returns>
         MessageHeader GetHeader(string key);
 
-
         /// <summary>
         /// 获取转发 header
         /// </summary>
@@ -48,6 +54,12 @@ namespace TnyFramework.Net.Message
         /// <returns>Header列表</returns>
         IList<T> GetHeaders<T>() where T : MessageHeader<T>;
 
+        /// <summary>
+        /// 获取转发 header
+        /// </summary>
+        /// <param name="type">Header 类</param>
+        /// <returns>Header列表</returns>
+        IList<MessageHeader> GetHeaders(Type type);
 
         /// <summary>
         /// 获取转发 header
@@ -57,12 +69,10 @@ namespace TnyFramework.Net.Message
         /// <returns>Header</returns>
         T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>;
 
-
         /// <summary>
         /// 是否有 Header 存在
         /// </summary>
         bool IsHasHeaders { get; }
-
 
         /// <summary>
         /// 获取全部 Header
@@ -70,13 +80,11 @@ namespace TnyFramework.Net.Message
         /// <returns>Header 列表</returns>
         IList<MessageHeader> GetAllHeaders();
 
-
         /// <summary>
         /// 获取全部 Header
         /// </summary>
         /// <returns>全部 Header</returns>
         IDictionary<string, MessageHeader> GetAllHeadersMap();
-
 
         /// <summary>
         /// 是否存在指定 key 的 Header
@@ -85,7 +93,6 @@ namespace TnyFramework.Net.Message
         /// <returns>存在返回 true, 否则返回 false</returns>
         bool ExistHeader(string key);
 
-
         /// <summary>
         /// 是否存在指定 key 的 Header
         /// </summary>
@@ -93,7 +100,6 @@ namespace TnyFramework.Net.Message
         /// <typeparam name="T">是否是指定类</typeparam>
         /// <returns>存在返回 true, 否则返回 false</returns>
         bool ExistHeader<T>(string key) where T : MessageHeader<T>;
-
 
         /// <summary>
         /// 是否存在指定 key 的 Header

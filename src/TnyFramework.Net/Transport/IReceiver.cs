@@ -1,6 +1,8 @@
 using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.Transport
 {
+
     public interface IReceiver
     {
         /// <summary>
@@ -10,4 +12,5 @@ namespace TnyFramework.Net.Transport
         /// <returns>是否接收成功</returns>
         bool Receive(IMessage message);
     }
+
 }

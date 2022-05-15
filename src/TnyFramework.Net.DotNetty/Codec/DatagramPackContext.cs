@@ -1,11 +1,12 @@
 using TnyFramework.Net.DotNetty.Exception;
+
 namespace TnyFramework.Net.DotNetty.Codec
 {
+
     public class DataPackageContext
     {
         // 序号累计器
         private readonly DataPacketV1Setting setting;
-
 
         public DataPackageContext(long accessId, DataPacketV1Setting setting)
         {
@@ -14,14 +15,12 @@ namespace TnyFramework.Net.DotNetty.Codec
             PacketNumber = 0;
         }
 
-
         public long AccessId { get; }
 
         /// <summary>
         /// 包数量
         /// </summary>
         public int PacketNumber { get; private set; }
-
 
         /// <summary>
         /// 包数量++
@@ -31,7 +30,6 @@ namespace TnyFramework.Net.DotNetty.Codec
         {
             return ++PacketNumber;
         }
-
 
         /// <summary>
         /// 将计步器移动到第 number 个包
@@ -59,4 +57,5 @@ namespace TnyFramework.Net.DotNetty.Codec
             }
         }
     }
+
 }

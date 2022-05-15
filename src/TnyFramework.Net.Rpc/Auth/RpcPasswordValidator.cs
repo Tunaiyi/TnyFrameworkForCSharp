@@ -18,13 +18,11 @@ namespace TnyFramework.Net.Rpc.Auth
 
         public IList<int> AuthProtocolLimit { get; } = ImmutableList.Create<int>();
 
-
         public RpcPasswordValidator(IIdGenerator idGenerator, IRpcAuthService rpcAuthService)
         {
             this.idGenerator = idGenerator;
             this.rpcAuthService = rpcAuthService;
         }
-
 
         public ICertificate Validate(ITunnel tunnel, IMessage message, ICertificateFactory certificateFactory)
         {
@@ -32,7 +30,6 @@ namespace TnyFramework.Net.Rpc.Auth
                 return Validate(rpcTunnel, message, rpcFactory);
             throw new ValidationException("服务器错误");
         }
-
 
         public ICertificate<RpcAccessIdentify> Validate(ITunnel<RpcAccessIdentify> tunnel, IMessage message,
             ICertificateFactory<RpcAccessIdentify> factory)

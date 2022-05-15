@@ -3,21 +3,21 @@ using System.Diagnostics;
 using System.Threading;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
+
 namespace TnyFramework.Coroutines.Demo.Test
 {
+
     public class WorkRequest
     {
         private SendOrPostCallback callback;
 
         private object state;
 
-
         public WorkRequest(SendOrPostCallback callback, object state)
         {
             this.callback = callback;
             this.state = state;
         }
-
 
         public void Invoke()
         {
@@ -29,24 +29,20 @@ namespace TnyFramework.Coroutines.Demo.Test
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<TestSynchronizationContext>();
 
-
         private readonly List<WorkRequest> m_AsyncWorkQueue;
         private readonly List<WorkRequest> m_CurrentFrameWork = new List<WorkRequest>(20);
 
         private int m_TrackedCount = 0;
-
 
         public TestSynchronizationContext()
         {
             m_AsyncWorkQueue = new List<WorkRequest>(20);
         }
 
-
         public TestSynchronizationContext(List<WorkRequest> mAsyncWorkQueue)
         {
             m_AsyncWorkQueue = mAsyncWorkQueue;
         }
-
 
         public override SynchronizationContext CreateCopy()
         {
@@ -54,20 +50,17 @@ namespace TnyFramework.Coroutines.Demo.Test
             return new TestSynchronizationContext(this.m_AsyncWorkQueue);
         }
 
-
         public override void OperationStarted()
         {
             Interlocked.Increment(ref m_TrackedCount);
             LOGGER.LogInformation("OperationStarted {ThreadId}", Thread.CurrentThread.ManagedThreadId);
         }
 
-
         public override void OperationCompleted()
         {
             Interlocked.Decrement(ref m_TrackedCount);
             LOGGER.LogInformation("OperationCompleted {ThreadId}", Thread.CurrentThread.ManagedThreadId);
         }
-
 
         public override void Post(SendOrPostCallback callback, object state)
         {
@@ -78,12 +71,10 @@ namespace TnyFramework.Coroutines.Demo.Test
             }
         }
 
-
         public override void Send(SendOrPostCallback d, object state)
         {
             LOGGER.LogInformation("Send {ThreadId}", Thread.CurrentThread.ManagedThreadId);
         }
-
 
         public static void Context()
         {
@@ -93,12 +84,10 @@ namespace TnyFramework.Coroutines.Demo.Test
             }
         }
 
-
         private bool HasPendingTasks()
         {
             return m_AsyncWorkQueue.Count != 0 || m_TrackedCount != 0;
         }
-
 
         // SynchronizationContext must be set before any user code is executed. This is done on
         // Initial domain load and domain reload at MonoManager ReloadAssembly
@@ -106,7 +95,6 @@ namespace TnyFramework.Coroutines.Demo.Test
         {
             SetSynchronizationContext(new TestSynchronizationContext());
         }
-
 
         // Exec will execute tasks off the task list
         private void Exec()
@@ -127,7 +115,6 @@ namespace TnyFramework.Coroutines.Demo.Test
             }
         }
 
-
         // All requests must be processed on the main thread where the full Unity API is available
         // See ScriptRunDelayedTasks in PlayerLoopCallbacks.h
         public static void ExecuteTasks()
@@ -135,7 +122,6 @@ namespace TnyFramework.Coroutines.Demo.Test
             if (Current is TestSynchronizationContext context)
                 context.Exec();
         }
-
 
         private static bool ExecutePendingTasks(long millisecondsTimeout)
         {
@@ -161,4 +147,5 @@ namespace TnyFramework.Coroutines.Demo.Test
             return !context.HasPendingTasks();
         }
     }
+
 }

@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Endpoint.Event
 {
+
     /// <summary>
     /// 终端上线
     /// </summary>
@@ -14,5 +15,5 @@ namespace TnyFramework.Net.Endpoint.Event
     /// 终端关闭
     /// </summary>
     public delegate void EndpointClose(IEndpoint endpoint);
-    
+
 }

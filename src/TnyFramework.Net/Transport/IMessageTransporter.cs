@@ -1,8 +1,10 @@
 using System.Threading.Tasks;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.Transport
 {
+
     public interface IMessageTransporter : IConnection
     {
         /// <summary>
@@ -11,14 +13,12 @@ namespace TnyFramework.Net.Transport
         /// <param name="tunnel">通道</param>
         void Bind(INetTunnel tunnel);
 
-
         /// <summary>
         /// 发送消
         /// </summary>
         /// <param name="message">消息</param>
         /// <returns>写出等待对象</returns>
         Task Write(IMessage message);
-
 
         /// <summary>
         /// 发送消息
@@ -29,7 +29,6 @@ namespace TnyFramework.Net.Transport
         /// <returns>写出等待对象</returns>
         Task Write(IMessageAllocator maker, IMessageFactory factory, MessageContext context);
 
-
         /// <summary>
         /// 发送消息
         /// </summary>
@@ -39,4 +38,5 @@ namespace TnyFramework.Net.Transport
         /// <returns>写出等待对象</returns>
         Task Write(MessageAllocator maker, IMessageFactory factory, MessageContext context);
     }
+
 }

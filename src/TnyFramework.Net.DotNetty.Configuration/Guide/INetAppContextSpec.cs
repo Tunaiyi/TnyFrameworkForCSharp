@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public interface INetAppContextSpec
     {
         NetAppContextSpec ServerId(int value);
@@ -12,4 +13,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         NetAppContextSpec Locale(string value);
     }
+
 }

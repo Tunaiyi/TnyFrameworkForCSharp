@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Endpoint
 {
+
     public interface ISessionKeeperSetting : IEndpointKeeperSetting
     {
         ISessionSetting SessionSetting { get; }
@@ -12,4 +13,5 @@ namespace TnyFramework.Net.Endpoint
 
         long ClearSessionInterval { get; }
     }
+
 }

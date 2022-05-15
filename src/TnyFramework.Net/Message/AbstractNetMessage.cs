@@ -11,19 +11,16 @@ namespace TnyFramework.Net.Message
 
         private readonly AttributesContext attributes = new AttributesContext();
 
-
         protected AbstractNetMessage(INetMessageHead head)
         {
             this.head = head;
         }
-
 
         protected AbstractNetMessage(INetMessageHead head, object body)
         {
             this.head = head;
             Body = body;
         }
-
 
         public long Id => head.Id;
 
@@ -53,9 +50,13 @@ namespace TnyFramework.Net.Message
 
         public T GetHeader<T>(string key) where T : MessageHeader<T> => head.GetHeader<T>(key);
 
+        public MessageHeader GetHeader(string key, Type type) => head.GetHeader(key, type);
+
         public MessageHeader GetHeader(string key) => head.GetHeader(key);
 
         public IList<T> GetHeaders<T>() where T : MessageHeader<T> => head.GetHeaders<T>();
+
+        public IList<MessageHeader> GetHeaders(Type type) => head.GetHeaders(type);
 
         public T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.GetHeader(key);
 
@@ -76,7 +77,6 @@ namespace TnyFramework.Net.Message
         public void AllotMessageId(long id) => head.AllotMessageId(id);
 
         public int GetCode() => Code;
-
 
         public T BodyAs<T>()
         {

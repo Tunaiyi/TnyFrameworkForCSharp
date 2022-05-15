@@ -1,17 +1,18 @@
+using System;
+
 namespace TnyFramework.Net.Message
 {
+
     public static class Protocols
     {
         public static readonly int PING_PONG_PROTOCOL_NUM = -1;
 
         public static IProtocol PUSH = DefaultProtocol.Protocol(0, 0);
 
-
         public static IProtocol Protocol(int protocol)
         {
             return DefaultProtocol.Protocol(protocol, 0);
         }
-
 
         public static IProtocol Protocol(int protocol, int line)
         {
@@ -29,12 +30,10 @@ namespace TnyFramework.Net.Message
         /// </summary>
         int ProtocolId { get; }
 
-
         /// <summary>
         /// 获取信道号
         /// </summary>
         int Line { get; }
-
 
         /// <summary>
         /// 指定消息是否是属于此协议
@@ -52,15 +51,13 @@ namespace TnyFramework.Net.Message
             Line = line;
         }
 
-
         public int ProtocolId { get; }
 
         public int Line { get; }
 
-
         public bool IsOwn(IProtocol protocol)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 
@@ -70,16 +67,15 @@ namespace TnyFramework.Net.Message
         {
         }
 
-
         public static IProtocol Protocol(int protocol)
         {
             return new DefaultProtocol(protocol, 0);
         }
-
 
         public static IProtocol Protocol(int protocol, int line)
         {
             return new DefaultProtocol(protocol, line);
         }
     }
+
 }

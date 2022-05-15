@@ -18,6 +18,7 @@ namespace TnyFramework.Net.Message
             }
         }
 
+        [ProtoIgnore]
         public IRpcServiceType ServiceType { get; private set; }
 
         [ProtoMember(2)]
@@ -27,18 +28,15 @@ namespace TnyFramework.Net.Message
 
         public long Id => AccessId.Id;
 
-
         public ForwardRpcServicer()
         {
         }
-
 
         public ForwardRpcServicer(IRpcServiceType serviceType)
         {
             ServiceType = serviceType;
             ServiceTypeId = ServiceType.Id;
         }
-
 
         public ForwardRpcServicer(IRpcServicer servicer)
         {
@@ -47,12 +45,10 @@ namespace TnyFramework.Net.Message
             AccessId = new RpcAccessId(servicer.Id);
         }
 
-
         public bool IsHasAccessId()
         {
             return AccessId != null;
         }
-
 
         public int CompareTo(IRpcServicer other)
         {

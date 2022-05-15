@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Message
 {
+
     public interface IOctetMessageBody
     {
         bool Relay { get; }
@@ -13,4 +14,5 @@ namespace TnyFramework.Net.Message
     {
         new T Body { get; }
     }
+
 }

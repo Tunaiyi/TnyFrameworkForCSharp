@@ -22,7 +22,6 @@ namespace TnyFramework.Common.Result
         /// </summary>
         ResultLevel Level { get; }
 
-
         bool IsSuccess();
 
         bool IsFailure();
@@ -32,7 +31,6 @@ namespace TnyFramework.Common.Result
     {
         public const int SUCCESS_CODE = 100;
         public const int FAILURE_CODE = 101;
-
 
         /// <summary>
         /// 重构结果码
@@ -44,8 +42,6 @@ namespace TnyFramework.Common.Result
         /// </summary>
         public static readonly IResultCode FAILURE = Of(ResultConstants.FAILURE_CODE, "Failure");
 
-
-
         private static IResultCode Of(int id, string message, ResultLevel level = ResultLevel.General, Action<ResultCode> builder = null)
         {
             return E(id, it => {
@@ -54,7 +50,6 @@ namespace TnyFramework.Common.Result
                 builder?.Invoke(it);
             });
         }
-
 
         /// <summary>
         /// 结果码值
@@ -71,24 +66,20 @@ namespace TnyFramework.Common.Result
         /// </summary>
         public ResultLevel Level { get; protected set; } = ResultLevel.General;
 
-
         public bool IsSuccess()
         {
             return Value == SUCCESS_CODE;
         }
-
 
         public bool IsFailure()
         {
             return !IsSuccess();
         }
 
-
         public new static ResultCode ForId(int id)
         {
             return BaseEnum<ResultCode>.ForId(id);
         }
-
 
         public new static ResultCode ForName(string name)
         {
@@ -106,9 +97,8 @@ namespace TnyFramework.Common.Result
             }, builder);
         }
 
-
         public new static void LoadAll() => LoadAll(typeof(T));
-        
+
         public new static IReadOnlyCollection<ResultCode> GetValues()
         {
             LoadAll(typeof(T));

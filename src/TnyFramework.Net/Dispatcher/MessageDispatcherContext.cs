@@ -6,13 +6,14 @@ using TnyFramework.Common.Logger;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
+
 namespace TnyFramework.Net.Dispatcher
 {
+
     public class MessageDispatcherContext
     {
         private static readonly IEventBus<CommandExecute> COMMAND_EXECUTE_EVENT_BUS = EventBuses.Create<CommandExecute>();
         private static readonly IEventBus<CommandDone> COMMAND_DONE_EVENT_BUS = EventBuses.Create<CommandDone>();
-
 
         /// <summary>
         /// 激活事件总线, 可监听到所有 Command 的事件
@@ -23,7 +24,6 @@ namespace TnyFramework.Net.Dispatcher
         /// 断线事件总线, 可监听到所有 Command 的事件
         /// </summary>
         public static IEventBox<CommandDone> CommandDoneEventBox => COMMAND_DONE_EVENT_BUS;
-
 
         private static readonly ILogger LOGGER = LogFactory.Logger<MessageDispatcherContext>();
 
@@ -38,7 +38,6 @@ namespace TnyFramework.Net.Dispatcher
         public IEventBox<CommandExecute> CommandExecuteEvent => commandExecuteEvent;
 
         public IEventBox<CommandDone> CommandDoneEvent => commandDoneEvent;
-
 
         public MessageDispatcherContext(
             INetAppContext appContext,
@@ -63,13 +62,11 @@ namespace TnyFramework.Net.Dispatcher
 
         }
 
-
         public IList<ICommandPlugin> CommandPlugins { get; }
 
         public string AppType => appContext.AppType;
 
         public string ScopeType => appContext.ScopeType;
-
 
         public IAuthenticateValidator Validator(Type type)
         {
@@ -78,22 +75,20 @@ namespace TnyFramework.Net.Dispatcher
             return authenticateValidators.TryGetValue(type, out var validator) ? validator : null;
         }
 
-
         public IAuthenticateValidator Validator(int protocolId)
         {
             return authenticateValidators.TryGetValue(protocolId, out var validator) ? validator : null;
         }
-
 
         internal void FireExecute(MessageCommand messageCommand)
         {
             commandExecuteEvent.Notify(messageCommand);
         }
 
-
         internal void FireDone(MessageCommand messageCommand, Exception cause)
         {
             commandDoneEvent.Notify(messageCommand, cause);
         }
     }
+
 }

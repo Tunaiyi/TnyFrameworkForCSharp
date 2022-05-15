@@ -10,7 +10,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
     {
         private readonly TypeProtobufSchemeFactory factory;
 
-
         public TypeProtobufObjectCodec()
         {
             factory = TypeProtobufSchemeFactory.Factory;
@@ -20,7 +19,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         {
             this.factory = factory;
         }
-
 
         public override byte[] Encode(T value)
         {
@@ -39,7 +37,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return stream.ToArray();
         }
 
-
         public override void Encode(T value, Stream output)
         {
             if (value == null)
@@ -52,7 +49,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             ByteUtils.WriteFixed32(scheme.Id, output);
             Serializer.Serialize(output, value);
         }
-
 
         public override T Decode(byte[] bytes)
         {
@@ -68,7 +64,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             }
             throw new ObjectCodecException($"Unknown ${id} TypeProtobufScheme");
         }
-
 
         public override T Decode(Stream input)
         {

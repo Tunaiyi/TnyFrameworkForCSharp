@@ -1,6 +1,8 @@
 using TnyFramework.Common.Attribute;
+
 namespace TnyFramework.Net.Base
 {
+
     public class NetAppContext : AttributesContext, INetAppContext
     {
         public string Name { get; set; }
@@ -13,4 +15,5 @@ namespace TnyFramework.Net.Base
 
         public string Locale { get; set; } = "zh-CN";
     }
+
 }

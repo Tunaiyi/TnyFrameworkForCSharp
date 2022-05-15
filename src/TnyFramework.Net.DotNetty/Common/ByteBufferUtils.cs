@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+
 namespace TnyFramework.Net.DotNetty.Common
 {
 
@@ -71,7 +72,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <returns></returns>
         public static int ComputeVarInt32Len(int value)
         {
-            return ComputeVarInt32Len((uint)value);
+            return ComputeVarInt32Len((uint) value);
         }
 
         private static int ComputeVarInt32Len(uint value)
@@ -94,7 +95,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <returns></returns>
         public static int ComputeVarInt64Len(long value)
         {
-            return ComputeVarInt64Len((ulong)value);
+            return ComputeVarInt64Len((ulong) value);
         }
 
         private static int ComputeVarInt64Len(ulong value)
@@ -153,7 +154,6 @@ namespace TnyFramework.Net.DotNetty.Common
         {
             return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
         }
-
     }
 
 }

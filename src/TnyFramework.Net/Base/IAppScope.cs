@@ -23,7 +23,6 @@ namespace TnyFramework.Net.Base
         /// </summary>
         public string ScopeName { get; protected set; }
 
-
         protected override void OnCheck()
         {
             if (SCOPE_NAME_MAP.TryAdd(ScopeName, this))
@@ -35,18 +34,15 @@ namespace TnyFramework.Net.Base
             }
         }
 
-
         public new static AppScope ForId(int id)
         {
             return BaseEnum<AppScope>.ForId(id);
         }
 
-
         public new static AppScope ForName(string name)
         {
             return BaseEnum<AppScope>.ForName(name);
         }
-
 
         public static AppScope ForScopeName(string scopeName)
         {
@@ -65,9 +61,7 @@ namespace TnyFramework.Net.Base
             }, builder);
         }
 
-
         public new static void LoadAll() => LoadAll(typeof(T));
-
 
         public new static IReadOnlyCollection<AppScope> GetValues()
         {

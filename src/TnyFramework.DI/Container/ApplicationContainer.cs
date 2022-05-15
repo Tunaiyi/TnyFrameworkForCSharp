@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
-using TnyFramework.Common.Exception;
-
+using TnyFramework.Common.Exceptions;
 
 namespace TnyFramework.DI.Container
 {
+
     /// <summary>
     /// 应用容器
     /// </summary>
@@ -22,17 +22,14 @@ namespace TnyFramework.DI.Container
 
         private readonly ServiceCollection serviceCollection = new ServiceCollection();
 
-
         public ApplicationContainer()
         {
         }
-
 
         /// <summary>
         /// 获取服务提供器
         /// </summary>
         public IServiceProvider ServiceProvider { get; private set; }
-
 
         /// <summary>
         /// 注册模块
@@ -49,7 +46,6 @@ namespace TnyFramework.DI.Container
             return this;
         }
 
-
         /// <summary>
         /// 注册模块
         /// </summary>
@@ -62,7 +58,6 @@ namespace TnyFramework.DI.Container
             modules.Add(moduleInstance);
             return this;
         }
-
 
         /// <summary>
         /// 注册模块
@@ -77,10 +72,9 @@ namespace TnyFramework.DI.Container
             if (!typeof(IApplicationModule).IsAssignableFrom(type))
                 throw new CommonException($"{type} 没有实现 {typeof(IApplicationModule)} 接口");
             var module = Activator.CreateInstance(type);
-            modules.Add((IApplicationModule)module);
+            modules.Add((IApplicationModule) module);
             return this;
         }
-
 
         /// <summary>
         /// 启动
@@ -99,7 +93,6 @@ namespace TnyFramework.DI.Container
             });
         }
 
-
         /// <summary>
         /// 关闭
         /// </summary>
@@ -114,4 +107,5 @@ namespace TnyFramework.DI.Container
             }
         }
     }
+
 }

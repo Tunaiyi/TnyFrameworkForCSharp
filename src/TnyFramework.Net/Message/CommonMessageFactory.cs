@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Message
 {
+
     /// <summary>
     /// CommonMessage 工厂
     /// </summary>
@@ -10,10 +11,10 @@ namespace TnyFramework.Net.Message
             return new CommonMessage(new CommonMessageHead(id, subject), subject.Body);
         }
 
-
         public INetMessage Create(INetMessageHead head, object body)
         {
             return new CommonMessage(head, body);
         }
     }
+
 }

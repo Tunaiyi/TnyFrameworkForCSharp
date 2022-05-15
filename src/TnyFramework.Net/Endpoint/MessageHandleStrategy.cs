@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Endpoint
 {
+
     public enum MessageHandleStrategy
     {
         ///
@@ -17,4 +18,5 @@ namespace TnyFramework.Net.Endpoint
         ///
         Throw = 3,
     }
+
 }

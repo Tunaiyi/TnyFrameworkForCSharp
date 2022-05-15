@@ -1,6 +1,8 @@
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Endpoint
 {
+
     public interface IEndpoint : ICommunicator, IConnection, ISender
     {
         long Id { get; }
@@ -25,4 +27,5 @@ namespace TnyFramework.Net.Endpoint
     public interface IEndpoint<out TUserId> : IEndpoint, ICommunicator<TUserId>
     {
     }
+
 }

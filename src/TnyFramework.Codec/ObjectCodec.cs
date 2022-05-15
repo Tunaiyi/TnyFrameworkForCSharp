@@ -12,13 +12,11 @@ namespace TnyFramework.Codec
 
         public abstract T Decode(byte[] bytes);
 
-
         public abstract T Decode(Stream input);
 
         public abstract string Format(T value);
 
         public abstract T Parse(string data);
-
 
         public byte[] Encode(object value)
         {
@@ -31,7 +29,6 @@ namespace TnyFramework.Codec
             }
         }
 
-
         public void Encode(object value, Stream output)
         {
             if (value is T data)
@@ -43,18 +40,15 @@ namespace TnyFramework.Codec
             }
         }
 
-
         object IObjectCodec.Decode(byte[] bytes)
         {
             return Decode(bytes);
         }
 
-
         object IObjectCodec.Decode(Stream input)
         {
             return Decode(input);
         }
-
 
         public string Format(object value)
         {
@@ -66,7 +60,6 @@ namespace TnyFramework.Codec
                 throw new InvalidCastException($"{value} 无法转位 {nameof(T)}");
             }
         }
-
 
         object IObjectCodec.Parse(string data)
         {

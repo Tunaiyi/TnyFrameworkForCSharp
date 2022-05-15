@@ -13,13 +13,11 @@ namespace TnyFramework.Net.Rpc.Auth
 
         private readonly IRpcAuthService rpcAuthService;
 
-
         public RpcTokenValidator(IIdGenerator idCreator, IRpcAuthService rpcAuthService)
         {
             this.idCreator = idCreator;
             this.rpcAuthService = rpcAuthService;
         }
-
 
         public override ICertificate<RpcAccessIdentify> Validate(ITunnel<RpcAccessIdentify> tunnel, IMessage message,
             ICertificateFactory<RpcAccessIdentify> factory)

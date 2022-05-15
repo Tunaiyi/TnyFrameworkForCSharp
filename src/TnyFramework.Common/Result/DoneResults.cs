@@ -1,7 +1,9 @@
 using System;
-using TnyFramework.Common.Exception;
+using TnyFramework.Common.Exceptions;
+
 namespace TnyFramework.Common.Result
 {
+
     public static class DoneResults
     {
         public static bool IsSuccess(int code)
@@ -9,26 +11,20 @@ namespace TnyFramework.Common.Result
             return code == ResultCode.SUCCESS_CODE;
         }
 
-
         public static bool IsSuccess(IResultCode code)
         {
             return code.Value == ResultCode.SUCCESS_CODE;
         }
-
-
-
 
         public static IDoneResult<T> Failure<M, T>(IDoneResult<M> result)
         {
             throw new NotImplementedException();
         }
 
-
         public static IDoneResult<T> Map<M, T>(IDoneResult<M> done, T mapper)
         {
             throw new NotImplementedException();
         }
-
 
         /// <summary>
         /// 返回一个成功的结果, value 为 默认值
@@ -39,7 +35,6 @@ namespace TnyFramework.Common.Result
         {
             return new DoneResult<M>(ResultCode.SUCCESS, default, null);
         }
-
 
         /**
          * 返回一个成功的结果, value 不能为null
@@ -54,7 +49,6 @@ namespace TnyFramework.Common.Result
             return new DoneResult<M>(ResultCode.SUCCESS, value, null);
         }
 
-
         /**
          * 返回一个成功的结果, value 可为null
          *
@@ -65,7 +59,6 @@ namespace TnyFramework.Common.Result
         {
             return new DoneResult<M>(ResultCode.SUCCESS, value, null);
         }
-
 
         /**
          * 返回一个结果, 如果value为null时返回结果码为nullCode的结果,否则返回包含value的成功结果
@@ -79,7 +72,6 @@ namespace TnyFramework.Common.Result
             return value != null ? Success(value) : Failure<M>(nullCode);
         }
 
-
         /**
          * 返回一个结果 可成功或失败, 由code决定
          *
@@ -91,7 +83,6 @@ namespace TnyFramework.Common.Result
         {
             return new DoneResult<M>(code, value, null);
         }
-
 
         /**
          * 返回一个结果 可成功或失败, 由code决定
@@ -106,7 +97,6 @@ namespace TnyFramework.Common.Result
             return new DoneResult<M>(code, value, message);
         }
 
-
         /**
          * 返回结果
          *
@@ -117,7 +107,6 @@ namespace TnyFramework.Common.Result
         {
             return new DoneResult<M>(ResultCode.FAILURE, default, null);
         }
-
 
         /**
          * 返回一个以code为结果码的失败结果, 并设置 message
@@ -133,7 +122,6 @@ namespace TnyFramework.Common.Result
             }
             return new DoneResult<M>(code, default, null);
         }
-
 
         /**
          * 返回一个结果码为result的结果码的失败结果
@@ -151,7 +139,6 @@ namespace TnyFramework.Common.Result
 
         }
 
-
         /**
          * 返回一个DoneResults, 结果码为result的结果码, 返回内容为value的.
          *
@@ -163,7 +150,6 @@ namespace TnyFramework.Common.Result
         {
             return new DoneResult<M>(result.Code, value, result.Message);
         }
-
 
         /**
          * 返回一个DoneResults, 其结果码为result的结果码, 返回内容为mapper的返回结果.
@@ -178,4 +164,5 @@ namespace TnyFramework.Common.Result
             return new DoneResult<T>(result.Code, mapper(result.Code, result.Value), result.Message);
         }
     }
+
 }

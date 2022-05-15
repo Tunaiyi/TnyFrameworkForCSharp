@@ -1,6 +1,8 @@
-using TnyFramework.Common.Extension;
+using TnyFramework.Common.Extensions;
+
 namespace TnyFramework.Net.Base
 {
+
     public interface IServerBootstrapSetting : INetBootstrapSetting
     {
         /// <summary>
@@ -17,7 +19,6 @@ namespace TnyFramework.Net.Base
         /// 协议
         /// </summary>
         string Scheme { get; }
-        
     }
 
     public static class ServerBootstrapSettingExtensions
@@ -27,4 +28,5 @@ namespace TnyFramework.Net.Base
             return self.Name.IsBlank() ? self.ServeName : self.Name;
         }
     }
+
 }

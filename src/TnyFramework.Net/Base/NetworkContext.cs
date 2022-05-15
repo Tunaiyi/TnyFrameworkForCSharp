@@ -22,11 +22,9 @@ namespace TnyFramework.Net.Base
 
         public ICertificateFactory GetCertificateFactory() => CertificateFactory;
 
-
         public NetworkContext()
         {
         }
-
 
         public NetworkContext(
             IServerBootstrapSetting setting,
@@ -43,7 +41,6 @@ namespace TnyFramework.Net.Base
             CertificateFactory = certificateFactory;
             RpcForwarder = rpcForwarder;
         }
-
 
         ICertificateFactory<TUid> INetworkContext.CertificateFactory<TUid>()
         {

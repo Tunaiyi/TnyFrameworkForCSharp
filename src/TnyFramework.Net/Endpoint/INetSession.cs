@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Endpoint
 {
+
     public interface INetSession : INetEndpoint, ISession
     {
     }
@@ -7,4 +8,5 @@ namespace TnyFramework.Net.Endpoint
     public interface INetSession<out TUserId> : INetEndpoint<TUserId>, INetSession, ISession<TUserId>
     {
     }
+
 }

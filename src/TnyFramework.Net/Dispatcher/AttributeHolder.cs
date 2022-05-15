@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+
 namespace TnyFramework.Net.Dispatcher
 {
+
     public class AttributeHolder
     {
         /// <summary>
@@ -25,18 +27,15 @@ namespace TnyFramework.Net.Dispatcher
 
         public bool Empty { get; private set; } = true;
 
-
         public AttributeHolder(IEnumerable<Attribute> attributes)
         {
             Init(attributes);
         }
 
-
         public AttributeHolder(MemberInfo member)
         {
             Init(member.GetCustomAttributes());
         }
-
 
         public void Init(IEnumerable<Attribute> attributes)
         {
@@ -63,7 +62,6 @@ namespace TnyFramework.Net.Dispatcher
             Attributes = ImmutableList.CreateRange(attributeList);
         }
 
-
         public Attribute GetAttribute(Type attributeType)
         {
             var attributes = AttributesMap[attributeType];
@@ -71,20 +69,21 @@ namespace TnyFramework.Net.Dispatcher
             {
                 return null;
             }
-            return (Attribute)attributes[0];
+            return (Attribute) attributes[0];
         }
-
 
         public TAttribute GetAttribute<TAttribute>() where TAttribute : Attribute
         {
-            var attributes = AttributesMap[typeof(TAttribute)];
+            if (!AttributesMap.TryGetValue(typeof(TAttribute), out var attributes))
+            {
+                return null;
+            }
             if (attributes == null || attributes.Count == 0)
             {
                 return null;
             }
-            return (TAttribute)attributes[0];
+            return (TAttribute) attributes[0];
         }
-
 
         public IList<Attribute> GetAttributes(Type attributeType)
         {
@@ -96,21 +95,20 @@ namespace TnyFramework.Net.Dispatcher
             return attributes;
         }
 
-
         public IList<TAttribute> GetAttributes<TAttribute>() where TAttribute : Attribute
         {
             var type = typeof(TAttribute);
             var attributes = AttributesWithTypeMap[type];
             if (attributes != null)
             {
-                return (IList<TAttribute>)attributes;
+                return (IList<TAttribute>) attributes;
             }
             lock (this)
             {
                 attributes = AttributesWithTypeMap[type];
                 if (attributes != null)
                 {
-                    return (IList<TAttribute>)attributes;
+                    return (IList<TAttribute>) attributes;
                 }
                 var source = AttributesMap[type];
                 if (source == null || source.Count == 0)
@@ -120,7 +118,7 @@ namespace TnyFramework.Net.Dispatcher
                 var tAttributes = new List<TAttribute>();
                 foreach (var attribute in source)
                 {
-                    tAttributes.Add((TAttribute)attribute);
+                    tAttributes.Add((TAttribute) attribute);
                 }
                 var newOne = ImmutableList.CreateRange(tAttributes);
                 AttributesWithTypeMap[type] = newOne;
@@ -128,7 +126,7 @@ namespace TnyFramework.Net.Dispatcher
             }
         }
 
-
         public ICollection<Type> AttributeTypes => AttributesMap.Keys;
     }
+
 }

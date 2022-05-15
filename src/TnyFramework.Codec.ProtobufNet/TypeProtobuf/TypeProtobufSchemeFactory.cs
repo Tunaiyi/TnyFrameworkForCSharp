@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Reflection;
 using TnyFramework.Codec.ProtobufNet.Attributes;
-using TnyFramework.Common.Exception;
+using TnyFramework.Common.Exceptions;
 
 namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
 {
@@ -18,11 +18,9 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
 
         public static TypeProtobufSchemeFactory Factory { get; } = new TypeProtobufSchemeFactory();
 
-
         private TypeProtobufSchemeFactory()
         {
         }
-
 
         public TypeProtobufScheme Load<T>() where T : new()
         {
@@ -35,12 +33,10 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return Load<T>(attribute.Id);
         }
 
-
         public TypeProtobufScheme Load<T>(int id) where T : new()
         {
             return Register(new TypeProtobufScheme(id, typeof(T), () => new T()));
         }
-
 
         public TypeProtobufScheme Load(Type type)
         {
@@ -51,7 +47,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             }
             return Register(new TypeProtobufScheme(attribute.Id, type));
         }
-
 
         private TypeProtobufScheme Register(TypeProtobufScheme info)
         {
@@ -68,7 +63,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return exist;
         }
 
-
         public T Create<T>(int id) where T : new()
         {
             if (!idSchemeInfoMap.TryGetValue(id, out var info))
@@ -78,36 +72,31 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return (T) info.Create();
         }
 
-
         public bool Id<T>(out int id) where T : new()
         {
             return Id(typeof(T), out id);
         }
 
-
         public bool Id(Type type, out int id)
         {
-            var info = typeSchemeInfoMap[type];
-            if (info == null)
+            if (typeSchemeInfoMap.TryGetValue(type, out var info))
             {
-                id = -1;
-                return false;
+                id = info.Id;
+                return true;
             }
-            id = info.Id;
-            return true;
+            id = -1;
+            return false;
         }
-
 
         public bool Get(int id, out TypeProtobufScheme scheme)
         {
-            var info = idSchemeInfoMap[id];
-            if (info == null)
+            if (idSchemeInfoMap.TryGetValue(id, out var info))
             {
-                scheme = null;
-                return false;
+                scheme = info;
+                return true;
             }
-            scheme = info;
-            return true;
+            scheme = null;
+            return false;
         }
     }
 

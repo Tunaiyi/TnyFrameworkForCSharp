@@ -10,21 +10,17 @@ namespace TnyFramework.Codec
     {
         private readonly ConcurrentDictionary<Type, IObjectCodec> codecs = new ConcurrentDictionary<Type, IObjectCodec>();
 
-
         public IObjectCodec<T> CreateCodec<T>()
         {
             return (IObjectCodec<T>) codecs.GetOrAdd(typeof(T), _ => Create<T>());
         }
-
 
         public IObjectCodec CreateCodec(Type type)
         {
             return codecs.GetOrAdd(type, Create);
         }
 
-
         public IReadOnlyList<IMimeType> MediaTypes { get; }
-
 
         public ObjectCodecFactory(IMimeType mimeType, params IMimeType[] mediaTypes)
         {
@@ -32,7 +28,6 @@ namespace TnyFramework.Codec
             types.AddRange(mediaTypes);
             MediaTypes = types.ToImmutableList();
         }
-
 
         protected abstract IObjectCodec<T> Create<T>();
 

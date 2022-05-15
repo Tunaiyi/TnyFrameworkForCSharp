@@ -1,8 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+
 namespace TnyFramework.Coroutines.Async
 {
+
     /// <summary>
     /// 线程池协程运行器
     /// </summary>
@@ -12,13 +13,12 @@ namespace TnyFramework.Coroutines.Async
         {
         }
 
-
         public static ICoroutineExecutor Default { get; } = new ThreadPoolCoroutineExecutor();
-
 
         public void Summit(Action action)
         {
             Task.Run(action);
         }
     }
+
 }

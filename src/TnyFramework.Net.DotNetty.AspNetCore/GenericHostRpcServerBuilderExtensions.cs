@@ -2,15 +2,16 @@ using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TnyFramework.Common.Exception;
+using TnyFramework.Common.Exceptions;
 using TnyFramework.DI.Container;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.Rpc;
-using TnyFramework.Net.Rpc.Auth;
+
 namespace TnyFramework.Net.DotNetty.AspNetCore
 {
+
     public static class GenericHostRpcServerBuilderExtensions
     {
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder)
@@ -18,13 +19,11 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
             return builder.ConfigureRpcHost(null, null);
         }
 
-
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
             Action<INettyServerConfiguration> configure)
         {
             return builder.ConfigureRpcHost(null, configure);
         }
-
 
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
             Action<INetServerGuideSpec<RpcAccessIdentify>> guideConfigure)
@@ -32,15 +31,14 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
             return builder.ConfigureRpcHost(guideConfigure, null);
         }
 
-
         public static IHostBuilder UseNoopServerDiscovery<TUserId>(this IHostBuilder builder)
         {
             return builder.ConfigureServices((_, services) => { services.AddSingletonUnit<NoopServerDiscoveryService>(); });
         }
 
-
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
-            Action<INetServerGuideSpec<RpcAccessIdentify>> serverGuideSpec, Action<INettyServerConfiguration> configure)
+            Action<INetServerGuideSpec<RpcAccessIdentify>> serverGuideSpec,
+            Action<INettyServerConfiguration> configure)
         {
             builder.ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
@@ -66,4 +64,5 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
             return builder;
         }
     }
+
 }

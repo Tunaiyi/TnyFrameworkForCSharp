@@ -2,10 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Microsoft.Extensions.DependencyInjection;
-using TnyFramework.Common.Extension;
+using TnyFramework.Common.Extensions;
 using TnyFramework.DI.Container;
+
 namespace TnyFramework.DI.Units
 {
+
     public class UnitContainerSpec
     {
         public static UnitContainerSpec<TUnit, TSpec, TSpecImpl, TContext> Units<TUnit, TSpec, TSpecImpl, TContext>(Func<TSpecImpl> specFactory)
@@ -61,19 +63,16 @@ namespace TnyFramework.DI.Units
         /// </summary>
         private string namePrefix = string.Empty;
 
-
         public IUnitContainerSpec<TUnit, TSpec, TContext> WithNamePrefix(string prefix)
         {
             namePrefix = prefix;
             return this;
         }
 
-
         public UnitContainerSpec(Func<TSpecImpl> specFactory)
         {
             this.specFactory = specFactory;
         }
-
 
         public UnitContainerSpec<TUnit, TSpec, TSpecImpl, TContext> AddDefault(TUnit unit)
         {
@@ -87,7 +86,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public IUnitContainerSpec<TUnit, TSpec, TContext> AddDefaultSpec(Action<TSpec> action)
         {
             var spec = specFactory();
@@ -99,7 +97,6 @@ namespace TnyFramework.DI.Units
             defaultSpecs.Add(spec);
             return this;
         }
-
 
         public UnitContainerSpec<TUnit, TSpec, TSpecImpl, TContext> AddDefault(string name, TUnit unit)
         {
@@ -113,7 +110,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public UnitContainerSpec<TUnit, TSpec, TSpecImpl, TContext> AddDefault(UnitCreator<TUnit, TContext> value)
         {
             var spec = specFactory();
@@ -126,7 +122,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public UnitContainerSpec<TUnit, TSpec, TSpecImpl, TContext> AddDefault(string name, UnitCreator<TUnit, TContext> value)
         {
             var spec = specFactory();
@@ -134,8 +129,6 @@ namespace TnyFramework.DI.Units
             defaultSpecs.Add(spec);
             return this;
         }
-
-
 
         public UnitContainerSpec<TUnit, TSpec, TSpecImpl, TContext> AddDefault<TImplement>() where TImplement : TUnit, new()
         {
@@ -149,7 +142,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public UnitContainerSpec<TUnit, TSpec, TSpecImpl, TContext> AddDefault<TImplement>(string name) where TImplement : TUnit, new()
         {
             var spec = specFactory();
@@ -157,7 +149,6 @@ namespace TnyFramework.DI.Units
             defaultSpecs.Add(spec);
             return this;
         }
-
 
         public IUnitContainerSpec<TUnit, TSpec, TContext> Add(TUnit unit)
         {
@@ -171,7 +162,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public IUnitContainerSpec<TUnit, TSpec, TContext> AddSpec(Action<TSpec> action)
         {
             var spec = specFactory();
@@ -184,8 +174,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
-
         public IUnitContainerSpec<TUnit, TSpec, TContext> AddSpec(string name, Action<TSpec> action)
         {
             var spec = specFactory();
@@ -195,7 +183,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public IUnitContainerSpec<TUnit, TSpec, TContext> Add(string name, TUnit unit)
         {
             var spec = specFactory();
@@ -203,7 +190,6 @@ namespace TnyFramework.DI.Units
             specs.Add(spec);
             return this;
         }
-
 
         public IUnitContainerSpec<TUnit, TSpec, TContext> Add(UnitCreator<TUnit, TContext> value)
         {
@@ -217,7 +203,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public IUnitContainerSpec<TUnit, TSpec, TContext> Add(string name, UnitCreator<TUnit, TContext> value)
         {
             var spec = specFactory();
@@ -225,8 +210,6 @@ namespace TnyFramework.DI.Units
             specs.Add(spec);
             return this;
         }
-
-
 
         public IUnitContainerSpec<TUnit, TSpec, TContext> Add<TImplement>() where TImplement : TUnit, new()
         {
@@ -240,7 +223,6 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public IUnitContainerSpec<TUnit, TSpec, TContext> Add<TImplement>(string name) where TImplement : TUnit, new()
         {
             var spec = specFactory();
@@ -249,13 +231,11 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-
         public IUnitContainerSpec<TUnit, TSpec, TContext> Clear()
         {
             specs.Clear();
             return this;
         }
-
 
         private void DoLoad(TContext context, IServiceCollection services)
         {
@@ -280,13 +260,11 @@ namespace TnyFramework.DI.Units
             loaded = true;
         }
 
-
         public IList<TUnit> Load(TContext context, IServiceCollection services)
         {
             DoLoad(context, services);
             return unitList;
         }
-
 
         public IDictionary<string, TUnit> LoadDictionary(TContext context, IServiceCollection services)
         {
@@ -294,4 +272,5 @@ namespace TnyFramework.DI.Units
             return unitDictionary;
         }
     }
+
 }

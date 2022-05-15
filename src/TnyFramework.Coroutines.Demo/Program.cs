@@ -4,7 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Invoke;
+using TnyFramework.Common.FastInvoke.ActionInvoke;
+using TnyFramework.Common.FastInvoke.FuncInvoke;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
 
@@ -17,15 +18,26 @@ namespace TnyFramework.Coroutines.Demo
 
         private class Player
         {
-            private string Name = "Tom";
+            public static string Name { get; set; } = "NoneNameProperty";
 
+            public string SelfName { get; set; } = "NoneSelfNameProperty";
 
-            public string Say(String content)
+            private const string NAME = "Tom";
+
+            public static string name = "NoneNameField";
+
+            public string selfName = "NoneSelfNameField";
+
+            public string Say(string content)
             {
-                return $"{Name} say : {content}";
+                return $"{NAME} say : {content}";
+            }
+
+            public void Call(string content)
+            {
+                Console.WriteLine($"{NAME} call : {content}");
             }
         }
-
 
         private class CPlayer
         {
@@ -33,19 +45,16 @@ namespace TnyFramework.Coroutines.Demo
 
             private int Age { get; }
 
-
             public CPlayer(string name, int age)
             {
                 Name = name;
                 Age = age;
             }
 
-
             public string Say(string content)
             {
                 return $"{Name}[{Age}] say : {content}";
             }
-
 
             public static string Run(string content, int value1, int value2, int value3)
             {
@@ -63,13 +72,11 @@ namespace TnyFramework.Coroutines.Demo
             private readonly IHandler handler1;
             private readonly IHandler handler2;
 
-
             public ComboHandler(IHandler handler1, IHandler handler2)
             {
                 this.handler1 = handler1;
                 this.handler2 = handler2;
             }
-
 
             public void Run()
             {
@@ -77,7 +84,6 @@ namespace TnyFramework.Coroutines.Demo
                 handler2?.Run();
             }
         }
-
 
         public class EventTest
         {
@@ -87,18 +93,15 @@ namespace TnyFramework.Coroutines.Demo
 
             public static int value = 0;
 
-
             public EventTest(int status)
             {
                 this.status = status;
             }
 
-
             public void Run()
             {
                 action?.Run();
             }
-
 
             public void Add(ComboHandler action)
             {
@@ -128,9 +131,9 @@ namespace TnyFramework.Coroutines.Demo
 
         public delegate void Run1(string name, int value);
 
-
         private static async Task Main(string[] args)
         {
+            
 
             var bus = EventBuses.Create<Run>();
             bus.Add((name) => Console.WriteLine($"bus {name} run"));
@@ -145,7 +148,6 @@ namespace TnyFramework.Coroutines.Demo
             var bus1 = EventBuses.Create<Run1>();
             bus1.Notify("Tom", 19);
 
-
             var constructor = typeof(CPlayer).GetConstructor(new[] {typeof(string), typeof(int)});
             var cPlayerCreator = FastFuncFactory.Invoker(constructor);
             var cPlayer = (CPlayer) cPlayerCreator.Invoke(null, "abc", 10);
@@ -153,11 +155,57 @@ namespace TnyFramework.Coroutines.Demo
 
             var runMethod = typeof(CPlayer).GetMethod(nameof(CPlayer.Run));
             var runCaller = FastFuncFactory.Invoker(runMethod);
-            Console.WriteLine(runCaller.Invoke("22222", 1, 2, 3));
+            Console.WriteLine(runCaller.Invoke(null, "22222", 1, 2, 3));
 
             const int maxTime = 1000000;
             var delegateType = typeof(Func<,,>).MakeGenericType(typeof(Player), typeof(string), typeof(string));
             var player = new Player();
+
+            object value = null;
+
+            var sayMethod = typeof(Player).GetMethod(nameof(Player.Say));
+            var sayCaller = FastFuncFactory.CreateFactory(sayMethod).CreateInvoker(sayMethod);
+            sayCaller.Invoke(player, "sayCaller");
+
+            var callMethod = typeof(Player).GetMethod(nameof(Player.Call));
+            var callCaller = FastActionFactory.CreateFactory(callMethod).CreateInvoker(callMethod);
+            callCaller.Invoke(player, "callCaller");
+
+            var nameProperty = typeof(Player).GetProperty(nameof(Player.Name));
+            var namePropertyGetter = FastFuncFactory.CreateFactory(nameProperty).CreateInvoker(nameProperty);
+            value = namePropertyGetter.Invoke(null);
+            Console.WriteLine($"namePropertyGetter : {value}");
+
+            var namePropertySetter = FastActionFactory.CreateFactory(nameProperty).CreateInvoker(nameProperty);
+            namePropertySetter.Invoke(player, "nameProperty");
+            Console.WriteLine($"namePropertySetter : {Player.Name}");
+
+            var selfNameProperty = typeof(Player).GetProperty(nameof(Player.SelfName));
+            var selfNamePropertyGetter = FastFuncFactory.CreateFactory(selfNameProperty).CreateInvoker(selfNameProperty);
+            value = selfNamePropertyGetter.Invoke(player);
+            Console.WriteLine($"selfNamePropertyGetter : {value}");
+
+            var selfNamePropertySetter = FastActionFactory.CreateFactory(selfNameProperty).CreateInvoker(selfNameProperty);
+            selfNamePropertySetter.Invoke(player, "selfNameProperty");
+            Console.WriteLine($"selfNamePropertySetter : {player.SelfName}");
+
+            var nameField = typeof(Player).GetField(nameof(Player.name));
+            var nameFieldGetter = FastFuncFactory.CreateFactory(nameField).CreateInvoker(nameField);
+            value = nameFieldGetter.Invoke(null);
+            Console.WriteLine($"nameFieldGetter : {value}");
+
+            var nameFieldSetter = FastActionFactory.CreateFactory(nameField).CreateInvoker(nameField);
+            nameFieldSetter.Invoke(null, "nameField");
+            Console.WriteLine($"nameFieldSetter : {Player.name}");
+
+            var selfMameField = typeof(Player).GetField(nameof(Player.selfName));
+            var selfMameFieldGetter = FastFuncFactory.CreateFactory(selfMameField).CreateInvoker(selfMameField);
+            value = selfMameFieldGetter.Invoke(player);
+            Console.WriteLine($"selfMameFieldGetter : {value}");
+
+            var selfMameFieldSetter = FastActionFactory.CreateFactory(selfMameField).CreateInvoker(selfMameField);
+            selfMameFieldSetter.Invoke(player, "selfMameField");
+            Console.WriteLine($"selfMameFieldSetter : {player.selfName}");
 
             //创建LabelTarget用来返回值 (invoker, content) => invoker.Say((string)content)
             // var invoker = Expression.Parameter(typeof(Player), "invoker");
@@ -182,7 +230,6 @@ namespace TnyFramework.Coroutines.Demo
             watch.Stop();
             Console.WriteLine("sayMethod.Invoke : " + watch.ElapsedMilliseconds);
 
-
             var func = Delegate.CreateDelegate(delegateType, say);
             watch.Restart();
             times = 0;
@@ -192,7 +239,6 @@ namespace TnyFramework.Coroutines.Demo
             }
             watch.Stop();
             Console.WriteLine("func.DynamicInvoke : " + watch.ElapsedMilliseconds);
-
 
             watch.Restart();
             times = 0;
@@ -221,7 +267,6 @@ namespace TnyFramework.Coroutines.Demo
             watch.Stop();
             Console.WriteLine("exp.DynamicInvoke : " + watch.ElapsedMilliseconds + " content " + exp.Invoke(player, "abc"));
 
-
             watch.Restart();
             times = 0;
             while (times++ < maxTime)
@@ -239,7 +284,6 @@ namespace TnyFramework.Coroutines.Demo
             // }
             // watch.Stop();
             // Console.WriteLine("exp.Method.Invoke : " + watch.ElapsedMilliseconds);
-
 
             CoroutineSynchronizationContext.InitializeSynchronizationContext();
             var factory = new DefaultCoroutineFactory("Actor");
@@ -260,7 +304,7 @@ namespace TnyFramework.Coroutines.Demo
                 try
                 {
                     await coroutine1.Exec(() => DelayTest(4));
-                } catch (System.Exception e)
+                } catch (Exception e)
                 {
                     LOGGER.LogError(e, "[Run : {CoroName} at Thread-{ThreadId}] [C2 CALL C1 DelayTest] Exception", Coroutine.Current,
                         Thread.CurrentThread.ManagedThreadId);
@@ -274,13 +318,13 @@ namespace TnyFramework.Coroutines.Demo
             Console.ReadKey();
         }
 
-
         private static async Task SendOrPostCallback()
         {
             var source = new TaskCompletionSource<int>();
             await Task.Run(() => {
                 Thread.Sleep((int) 2000L);
-                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [SendOrPostCallback] TaskCompletionSource SetResult", Coroutine.Current,
+                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [SendOrPostCallback] TaskCompletionSource SetResult",
+                    Coroutine.Current,
                     Thread.CurrentThread.ManagedThreadId);
                 source.SetResult(1);
             });
@@ -290,7 +334,6 @@ namespace TnyFramework.Coroutines.Demo
             LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [SendOrPostCallback] Done!!!", Coroutine.Current,
                 Thread.CurrentThread.ManagedThreadId);
         }
-
 
         private static async Task DelayTest(int time)
         {
@@ -307,7 +350,6 @@ namespace TnyFramework.Coroutines.Demo
                     times, delay);
             }
         }
-
 
         private static async Task TestCount()
         {

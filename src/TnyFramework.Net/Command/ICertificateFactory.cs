@@ -12,7 +12,6 @@ namespace TnyFramework.Net.Command
         ICertificate RenewAuthenticate(long id, object userId, long messagerId, IMessagerType messagerType, long authenticateAt);
     }
 
-
     public interface ICertificateFactory<TUserId> : ICertificateFactory
     {
         new ICertificate<TUserId> Anonymous();

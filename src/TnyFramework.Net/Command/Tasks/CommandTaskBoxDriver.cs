@@ -1,8 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using TnyFramework.Net.Command.Processor;
+
 namespace TnyFramework.Net.Command.Tasks
 {
+
     public class CommandTaskBoxDriver
     {
         /* executor停止 */
@@ -17,13 +19,11 @@ namespace TnyFramework.Net.Command.Tasks
 
         private readonly ICommandTaskBoxDriverExecutor executor;
 
-
         public CommandTaskBoxDriver(CommandTaskBox taskBox, ICommandTaskBoxDriverExecutor executor)
         {
             this.taskBox = taskBox;
             this.executor = executor;
         }
-
 
         public void TrySummit()
         {
@@ -35,7 +35,6 @@ namespace TnyFramework.Net.Command.Tasks
                 executor.Execute(this);
             }
         }
-
 
         internal async Task Execute()
         {
@@ -56,4 +55,5 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
     }
+
 }

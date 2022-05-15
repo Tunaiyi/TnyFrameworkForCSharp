@@ -13,12 +13,10 @@ namespace TnyFramework.Net.Message
             return new TickMessageHead(MessageMode.Ping);
         }
 
-
         public static TickMessageHead Pong()
         {
             return new TickMessageHead(MessageMode.Pong);
         }
-
 
         public TickMessageHead(MessageMode mode) : base(mode)
         {
@@ -26,19 +24,16 @@ namespace TnyFramework.Net.Message
             Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         }
 
-
         public override long ToMessage => MessageConstants.EMPTY_MESSAGE_ID;
 
         public override int ProtocolId { get; }
 
         public override int Line => 0;
 
-
         public override bool IsOwn(IProtocol protocol)
         {
             return ProtocolId == protocol.ProtocolId;
         }
-
 
         public override long Id => 0;
 
@@ -48,9 +43,13 @@ namespace TnyFramework.Net.Message
 
         public override T GetHeader<T>(string key) => null;
 
+        public override MessageHeader GetHeader(string key, Type type) => null;
+
         public override MessageHeader GetHeader(string key) => null;
 
         public override IList<T> GetHeaders<T>() => ImmutableList<T>.Empty;
+
+        public override IList<MessageHeader> GetHeaders(Type type) => ImmutableList<MessageHeader>.Empty;
 
         public override T GetHeader<T>(MessageHeaderKey<T> key) => null;
 
@@ -65,7 +64,6 @@ namespace TnyFramework.Net.Message
         public override bool ExistHeader<T>(string key) => false;
 
         public override bool ExistHeader(MessageHeaderKey key) => false;
-
 
         public override void AllotMessageId(long id)
         {

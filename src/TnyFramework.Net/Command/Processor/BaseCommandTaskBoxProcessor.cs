@@ -1,6 +1,8 @@
 using TnyFramework.Net.Command.Tasks;
+
 namespace TnyFramework.Net.Command.Processor
 {
+
     public abstract class BaseCommandTaskBoxProcessor<TDriver> : ICommandTaskBoxProcessor
         where TDriver : CommandTaskBoxDriver
     {
@@ -15,7 +17,7 @@ namespace TnyFramework.Net.Command.Processor
             driver.TrySummit(); // 尝试提交
         }
 
-
         protected abstract CommandTaskBoxDriver CreateDriver(CommandTaskBox box);
     }
+
 }

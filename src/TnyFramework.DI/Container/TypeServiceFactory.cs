@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using TnyFramework.Common.Exception;
+using TnyFramework.Common.Exceptions;
 
 namespace TnyFramework.DI.Container
 {
@@ -13,7 +13,6 @@ namespace TnyFramework.DI.Container
         private readonly List<Type> parameterTypes;
 
         public Type Type { get; }
-
 
         public TypeServiceFactory(Type type)
         {
@@ -27,7 +26,6 @@ namespace TnyFramework.DI.Container
             var parameters = constructor.GetParameters();
             parameterTypes = parameters.Select(t => t.ParameterType).ToList();
         }
-
 
         public object Create(IServiceProvider provider)
         {

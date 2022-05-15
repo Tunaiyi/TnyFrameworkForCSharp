@@ -4,8 +4,10 @@ using TnyFramework.Common.Logger;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Dispatcher
 {
+
     internal class PluginChain
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<PluginChain>();
@@ -14,12 +16,10 @@ namespace TnyFramework.Net.Dispatcher
 
         private readonly CommandPluginHolder plugin;
 
-
         public PluginChain(CommandPluginHolder plugin)
         {
             this.plugin = plugin;
         }
-
 
         public void Execute(ITunnel tunnel, IMessage message, MessageCommandContext context)
         {
@@ -42,7 +42,6 @@ namespace TnyFramework.Net.Dispatcher
 
         }
 
-
         internal void Append(PluginChain chain)
         {
             if (next?.plugin == null)
@@ -54,4 +53,5 @@ namespace TnyFramework.Net.Dispatcher
             }
         }
     }
+
 }

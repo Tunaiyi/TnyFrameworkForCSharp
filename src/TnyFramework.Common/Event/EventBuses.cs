@@ -1,6 +1,8 @@
 using System;
+
 namespace TnyFramework.Common.Event
 {
+
     /// <summary>
     /// 事件总线静态类
     /// </summary>
@@ -11,7 +13,6 @@ namespace TnyFramework.Common.Event
         {
             return new EventBus<THandler>();
         }
-
 
         public static IEventBus<T> Event<T>(this object invoker, ref IEventBus<T> eventBus) where T : Delegate
         {
@@ -27,7 +28,6 @@ namespace TnyFramework.Common.Event
             }
             return eventBus;
         }
-
 
         public static IEventBus<T> ForkEvent<T>(this object invoker, IEventBus<T> parentBus, ref IEventBus<T> eventBus)
             where T : Delegate
@@ -45,7 +45,6 @@ namespace TnyFramework.Common.Event
             return eventBus;
         }
 
-
         public static IEventBus<THandler> Create<THandler>(out IEventBus<THandler> eventBus)
             where THandler : Delegate
         {
@@ -54,4 +53,5 @@ namespace TnyFramework.Common.Event
             return bus;
         }
     }
+
 }

@@ -1,6 +1,8 @@
 using System;
+
 namespace TnyFramework.Net.Rpc
 {
+
     [Flags]
     public enum CertificateStatus
     {
@@ -27,6 +29,7 @@ namespace TnyFramework.Net.Rpc
 
     public static class CertificateStatusExtensions
     {
-        public static bool IsAuthenticated(this CertificateStatus status) => ((int)status & 1) == 1;
+        public static bool IsAuthenticated(this CertificateStatus status) => ((int) status & 1) == 1;
     }
+
 }

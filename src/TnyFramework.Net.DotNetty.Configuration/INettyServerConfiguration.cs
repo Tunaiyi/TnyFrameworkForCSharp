@@ -22,12 +22,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
         NettyServerConfiguration AppContextConfigure(Action<INetAppContextSpec> action);
 
-
         NettyServerConfiguration MessageDispatcherConfigure(Action<IUnitSpec<IMessageDispatcher, INetUnitContext>> action);
 
-
         NettyServerConfiguration CommandTaskBoxProcessor(Action<IUnitSpec<ICommandTaskBoxProcessor, INetUnitContext>> action);
-
 
         NettyServerConfiguration AddController<TController>() where TController : class, IController;
 
@@ -38,7 +35,6 @@ namespace TnyFramework.Net.DotNetty.Configuration
         NettyServerConfiguration AddControllers();
 
         NettyServerConfiguration AddControllers(ICollection<Assembly> assemblies);
-
 
         NettyServerConfiguration CommandPluginsConfigure(Action<IUnitCollectionSpec<ICommandPlugin, INetUnitContext>> action);
 

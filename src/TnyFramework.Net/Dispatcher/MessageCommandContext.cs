@@ -2,16 +2,15 @@ using System;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Command;
 
-
 namespace TnyFramework.Net.Dispatcher
 {
+
     public class MessageCommandContext : IMessageCommandContext
     {
         public MessageCommandContext(MethodControllerHolder controller)
         {
             Controller = controller;
         }
-
 
         public MethodControllerHolder Controller { get; }
 
@@ -22,7 +21,6 @@ namespace TnyFramework.Net.Dispatcher
         public Exception Cause { get; private set; }
 
         public bool Done { get; private set; }
-
 
         public void Complete(object result)
         {
@@ -41,23 +39,21 @@ namespace TnyFramework.Net.Dispatcher
             }
         }
 
-
         public void Intercept(IRpcResult result)
         {
 
             Complete(result);
         }
 
-
         public void Intercept(IResultCode code)
         {
             Complete(code);
         }
-
 
         public void Intercept(IResultCode code, object body)
         {
             Complete(RpcResults.Result(code, body));
         }
     }
+
 }

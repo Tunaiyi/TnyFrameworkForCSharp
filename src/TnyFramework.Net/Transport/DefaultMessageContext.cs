@@ -29,7 +29,6 @@ namespace TnyFramework.Net.Transport
 
         public override IDictionary<string, MessageHeader> Headers => headers.ToImmutableDictionary();
 
-
         public override MessageContext WithHeader(MessageHeader header)
         {
             if (header == null)
@@ -38,23 +37,28 @@ namespace TnyFramework.Net.Transport
             return this;
         }
 
-
-        public override MessageContext WithHeaders(IEnumerable<MessageHeader> headers)
+        public override MessageContext WithHeader<TH>(Action<TH> action)
         {
-            foreach (var header in headers)
+            var header = new TH();
+            action?.Invoke(header);
+            headers.Add(header.Key, header);
+            return this;
+        }
+
+        public override MessageContext WithHeaders(IEnumerable<MessageHeader> values)
+        {
+            foreach (var header in values)
             {
                 if (header == null)
                     continue;
-                this.headers.Add(header.Key, header);
+                headers.Add(header.Key, header);
             }
             return this;
         }
 
-
         public TaskResponseSource ResponseSource { get; private set; }
 
         public Task WrittenTask { get; private set; }
-
 
         public DefaultMessageContext(MessageMode mode, IProtocol protocol, IResultCode resultCode,
             long toMessage = MessageConstants.EMPTY_MESSAGE_ID)
@@ -66,9 +70,7 @@ namespace TnyFramework.Net.Transport
             Line = protocol.Line;
         }
 
-
         public override bool ExistBody => Body != null;
-
 
         public override T BodyAs<T>()
         {
@@ -76,7 +78,6 @@ namespace TnyFramework.Net.Transport
                 return default;
             return (T) Body;
         }
-
 
         public override MessageContext WithBody(object messageBody)
         {
@@ -87,7 +88,6 @@ namespace TnyFramework.Net.Transport
             return this;
         }
 
-
         public override void Cancel(bool mayInterruptIfRunning)
         {
             ResponseSource?.TrySetCanceled();
@@ -96,7 +96,6 @@ namespace TnyFramework.Net.Transport
                 WrittenTask = Task.FromCanceled(CancellationToken.None);
             }
         }
-
 
         public override void Cancel(Exception cause)
         {
@@ -107,37 +106,31 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-
         public override Task<IMessage> Respond()
         {
             return ResponseSource?.Task;
         }
-
 
         public override bool IsRespondAwaitable()
         {
             return ResponseSource != null;
         }
 
-
         public override Task Written()
         {
             return WrittenTask ?? Task.CompletedTask;
         }
-
 
         public override bool IsWriteAwaitable()
         {
             return WrittenTask != null;
         }
 
-
         public override RequestContext WillRespondAwaiter(long timeout)
         {
             ResponseSource = new TaskResponseSource(timeout);
             return this;
         }
-
 
         public void SetWrittenTask(Task task)
         {

@@ -3,6 +3,7 @@ using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Transport
 {
+
     public static class MessageContexts
     {
         /// <summary>
@@ -15,7 +16,6 @@ namespace TnyFramework.Net.Transport
             return Push(protocol, ResultCode.SUCCESS);
         }
 
-
         /// <summary>
         /// 创建推送消息上下文
         /// </summary>
@@ -26,7 +26,6 @@ namespace TnyFramework.Net.Transport
         {
             return new DefaultMessageContext(MessageMode.Push, protocol, code);
         }
-
 
         /// <summary>
         /// 创建推送消息上下文
@@ -39,7 +38,6 @@ namespace TnyFramework.Net.Transport
             return new DefaultMessageContext(MessageMode.Push, protocol, ResultCode.SUCCESS)
                 .WithBody(body);
         }
-
 
         /// <summary>
         /// 创建推送消息上下文
@@ -54,8 +52,6 @@ namespace TnyFramework.Net.Transport
                 .WithBody(body);
         }
 
-        
-        
         /// <summary>
         /// 创建请求消息上下文
         /// </summary>
@@ -68,7 +64,6 @@ namespace TnyFramework.Net.Transport
                 .WithRequestBody(new MessageParamList(requestParams));
         }
 
-
         /// <summary>
         /// 创建响应消息上下文
         /// </summary>
@@ -79,7 +74,6 @@ namespace TnyFramework.Net.Transport
         {
             return Respond(protocol, ResultCode.SUCCESS, toMessage);
         }
-
 
         /// <summary>
         /// 创建响应消息上下文
@@ -93,7 +87,6 @@ namespace TnyFramework.Net.Transport
             return new DefaultMessageContext(MessageMode.Response, protocol, code, toMessage);
         }
 
-
         /// <summary>
         /// 创建响应消息上下文
         /// </summary>
@@ -106,7 +99,6 @@ namespace TnyFramework.Net.Transport
             return new DefaultMessageContext(MessageMode.Response, protocol, ResultCode.SUCCESS, toMessage)
                 .WithRequestBody(body);
         }
-
 
         /// <summary>
         /// 创建响应消息上下文
@@ -123,7 +115,6 @@ namespace TnyFramework.Net.Transport
                 .WithRequestBody(body);
         }
 
-
         /// <summary>
         /// 创建响应消息上下文
         /// </summary>
@@ -135,6 +126,5 @@ namespace TnyFramework.Net.Transport
             return new DefaultMessageContext(MessageMode.Response, request, code, request.Id);
         }
     }
-    
-    
+
 }

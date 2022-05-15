@@ -1,9 +1,9 @@
 namespace TnyFramework.Net.Transport
 {
+
     public abstract class RequestContext : MessageContext
     {
         private const long DEFAULT_FUTURE_TIMEOUT = 10000L;
-
 
         /// <summary>
         /// 设置消息 body
@@ -16,7 +16,6 @@ namespace TnyFramework.Net.Transport
             return this;
         }
 
-
         /// <summary>
         /// 设置响应等待者
         /// </summary>
@@ -27,7 +26,6 @@ namespace TnyFramework.Net.Transport
             return this;
         }
 
-
         /// <summary>
         /// 设置响应等待者
         /// </summary>
@@ -35,4 +33,5 @@ namespace TnyFramework.Net.Transport
         /// <returns>返回当前 context</returns>
         public abstract RequestContext WillRespondAwaiter(long timeout);
     }
+
 }

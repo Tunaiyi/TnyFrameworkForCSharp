@@ -1,12 +1,8 @@
-﻿//
-//  文件名称：MessageType.cs
-//  简   述：信息类型
-//  创建标识：lrg 2021/7/21
-//
+﻿using System;
 
-using System;
 namespace TnyFramework.Net.Message
 {
+
     [Flags]
     public enum MessageType
     {
@@ -28,12 +24,10 @@ namespace TnyFramework.Net.Message
 
     public static class MessageTypeExtensions
     {
-
         public static byte GetOption(this MessageType value)
         {
-            return (byte)value;
+            return (byte) value;
         }
-
     }
-}
 
+}

@@ -45,7 +45,6 @@ namespace TnyFramework.Net.Command
             return true;
         }
 
-
         public static bool IsOlderThan(this ICertificate one, ICertificate other)
         {
             if (one.IsAuthenticated() && !other.IsAuthenticated())
@@ -65,7 +64,6 @@ namespace TnyFramework.Net.Command
             return true;
         }
 
-
         public static bool IsSameUser(this ICertificate one, ICertificate other)
         {
             if (ReferenceEquals(one, other))
@@ -74,7 +72,6 @@ namespace TnyFramework.Net.Command
             }
             return Equals(one.GetUserId(), other.GetUserId()) && Equals(one.UserGroup, other.UserGroup);
         }
-
 
         public static bool IsSameCertificate(this ICertificate one, ICertificate other)
         {

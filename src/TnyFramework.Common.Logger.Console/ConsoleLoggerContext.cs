@@ -1,21 +1,19 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
-
 namespace TnyFramework.Common.Logger.Console
 {
+
     public class ConsoleLoggerContext : LoggerContext
     {
         private ConsoleLoggerContext()
         {
         }
 
-
         public static void Init()
         {
             LogFactory.DefaultFactory = CreateConsoleFactory();
         }
-
 
         private static ILoggerFactory CreateConsoleFactory()
         {
@@ -29,4 +27,5 @@ namespace TnyFramework.Common.Logger.Console
             });
         }
     }
+
 }

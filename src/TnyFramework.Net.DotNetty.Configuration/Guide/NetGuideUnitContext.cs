@@ -1,4 +1,3 @@
-using System;
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
@@ -37,7 +36,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         public abstract INetworkContext LoadNetworkContext();
 
-
         protected NetGuideUnitContext(INetUnitContext unitContext, IServiceCollection unitContainer)
         {
             UnitContainer = unitContainer;
@@ -51,7 +49,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             MessageFactorySpec = UnitSpec.Unit<IMessageFactory, INetGuideUnitContext<TUserId>>()
                 .Default<CommonMessageFactory>();
 
-
             // MessageBodyCodec
             MessageBodyCodecSpec = UnitSpec.Unit<IMessageBodyCodec, INetGuideUnitContext<TUserId>>()
                 .Default<TypeProtobufMessageBodyCodec>();
@@ -64,7 +61,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             MessageCodecSpec = UnitSpec.Unit<IMessageCodec, INetGuideUnitContext<TUserId>>()
                 .Default(DefaultMessageCodec);
 
-
             // CertificateFactory
             CertificateFactorySpec = UnitSpec.Unit<ICertificateFactory<TUserId>, INetGuideUnitContext<TUserId>>()
                 .Default<CertificateFactory<TUserId>>();
@@ -73,7 +69,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             ChannelMakerSpec = new DataPacketV1ChannelMakerSpec(UnitContainer);
 
         }
-
 
         public void SetName(string name)
         {
@@ -87,53 +82,42 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             OnSetName(name);
         }
 
-
         protected abstract void OnSetName(string name);
-
 
         public IChannelMaker LoadChannelMaker()
         {
             return ChannelMakerSpec.Load(this, UnitContainer);
         }
 
-
         public INettyTunnelFactory LoadTunnelFactory()
         {
             return TunnelFactorySpec.Load(this, UnitContainer);
         }
-
-
 
         public IMessageFactory LoadMessageFactory()
         {
             return MessageFactorySpec.Load(this, UnitContainer);
         }
 
-
-
         public IMessageCodec LoadMessageCodec()
         {
             return MessageCodecSpec.Load(this, UnitContainer);
         }
-
 
         public IMessageBodyCodec LoadMessageBodyCodec()
         {
             return MessageBodyCodecSpec.Load(this, UnitContainer);
         }
 
-
         public IMessageHeaderCodec LoadMessageHeaderCodec()
         {
             return MessageHeaderCodecSpec.Load(this, UnitContainer);
         }
 
-
         public ICertificateFactory<TUserId> LoadCertificateFactory()
         {
             return CertificateFactorySpec.Load(this, UnitContainer);
         }
-
 
         private static IMessageCodec DefaultMessageCodec(INetGuideUnitContext<TUserId> context)
         {

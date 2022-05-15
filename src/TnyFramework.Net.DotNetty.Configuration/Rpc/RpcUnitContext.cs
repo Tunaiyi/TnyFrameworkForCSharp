@@ -1,8 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.Rpc.Auth;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Rpc
 {
+
     public class RpcUnitContext : IRpcUnitContext
     {
         private IServiceCollection UnitContainer { get; }
@@ -11,7 +13,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Rpc
 
         public RpcAuthServiceSpec RpcAuthServiceSpec { get; }
 
-
         public RpcUnitContext(NetUnitContext netUnitContext, IServiceCollection unitContainer)
         {
             UnitContainer = unitContainer;
@@ -19,17 +20,15 @@ namespace TnyFramework.Net.DotNetty.Configuration.Rpc
             RpcAuthServiceSpec = new RpcAuthServiceSpec(this, unitContainer);
         }
 
-
-
         public IRpcAuthService LoadRpcAuthService()
         {
             return RpcAuthServiceSpec.Load(this, UnitContainer);
         }
-
 
         public IRpcUserPasswordManager LoadRpcUserPasswordManager()
         {
             return RpcAuthServiceSpec.LoadRpcUserPasswordManager();
         }
     }
+
 }

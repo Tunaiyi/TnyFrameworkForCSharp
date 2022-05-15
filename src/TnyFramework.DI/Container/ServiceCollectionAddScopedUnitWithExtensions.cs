@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using TnyFramework.DI.Extensions;
+
 namespace TnyFramework.DI.Container
 {
+
     public static class ServiceCollectionScopedUnitWithExtensions
     {
         public static IServiceCollection AddScopedUnit(this IServiceCollection services, Type instanceType, params Type[] serviceTypes)
         {
             return services.AddScopedUnit(string.Empty, instanceType, serviceTypes);
         }
-
 
         public static IServiceCollection AddScopedUnit(this IServiceCollection services, string name, Type instanceType,
             params Type[] serviceTypes)
@@ -20,13 +21,11 @@ namespace TnyFramework.DI.Container
             return services.RegisterScopedUnitWith(name, serviceInstance, instanceType, serviceTypes);
         }
 
-
         public static IServiceCollection AddScopedUnit(this IServiceCollection services, Type serviceType,
             Func<IServiceProvider, object> instanceFactory, params Type[] serviceTypes)
         {
             return services.AddScopedUnit(string.Empty, serviceType, instanceFactory, serviceTypes);
         }
-
 
         public static IServiceCollection AddScopedUnit(this IServiceCollection services, string name, Type serviceType,
             Func<IServiceProvider, object> instanceFactory, params Type[] serviceTypes)
@@ -36,13 +35,11 @@ namespace TnyFramework.DI.Container
             return services;
         }
 
-
         public static IServiceCollection AddScopedUnit(this IServiceCollection services, Type serviceType, Type instanceType,
             params Type[] serviceTypes)
         {
             return services.AddScopedUnit(string.Empty, serviceType, instanceType, serviceTypes);
         }
-
 
         public static IServiceCollection AddScopedUnit(this IServiceCollection services, string name, Type serviceType, Type instanceType,
             params Type[] serviceTypes)
@@ -52,13 +49,11 @@ namespace TnyFramework.DI.Container
             return services;
         }
 
-
         public static IServiceCollection AddScopedUnit<TInstance>(this IServiceCollection services, params Type[] serviceTypes)
             where TInstance : class
         {
             return services.AddScopedUnit<TInstance>(string.Empty, serviceTypes);
         }
-
 
         public static IServiceCollection AddScopedUnit<TInstance>(this IServiceCollection services, string name, params Type[] serviceTypes)
             where TInstance : class
@@ -69,14 +64,12 @@ namespace TnyFramework.DI.Container
             return services;
         }
 
-
         public static IServiceCollection AddScopedUnit<TService>(this IServiceCollection services,
             Func<IServiceProvider, TService> instanceFactory, params Type[] serviceTypes)
             where TService : class
         {
             return services.AddScopedUnit(string.Empty, instanceFactory, serviceTypes);
         }
-
 
         public static IServiceCollection AddScopedUnit<TService>(this IServiceCollection services, string name,
             Func<IServiceProvider, TService> instanceFactory, params Type[] serviceTypes)
@@ -87,7 +80,6 @@ namespace TnyFramework.DI.Container
             return services.RegisterScopedUnitWith(name, serviceInstance, serviceType, serviceTypes);
         }
 
-
         private static IServiceCollection RegisterScopedUnitWith(this IServiceCollection services, string name,
             IServiceInstance instance, Type instanceType, params Type[] serviceTypes)
         {
@@ -96,13 +88,11 @@ namespace TnyFramework.DI.Container
             return services;
         }
 
-
         private static IServiceCollection TryScopedUnits(this IServiceCollection services)
         {
             services.TryAdd(ServiceDescriptor.Scoped(typeof(IUnitCollection<>), typeof(UnitCollection<>)));
             return services;
         }
-
 
         private static IServiceCollection AddScopedUnitWith(this IServiceCollection services, string name,
             IServiceInstance instance, Type type)
@@ -112,7 +102,6 @@ namespace TnyFramework.DI.Container
             services.AddScoped(Unit.UnitType(type), _ => Unit.Create(type, instance, name));
             return services;
         }
-
 
         private static IServiceCollection AddScopedUnitsWith(this IServiceCollection services, string name,
             IServiceInstance instance, IEnumerable<Type> types)
@@ -126,4 +115,5 @@ namespace TnyFramework.DI.Container
             return services;
         }
     }
+
 }

@@ -42,13 +42,11 @@ namespace TnyFramework.Net.Endpoint
 
         public IEventBox<EndpointKeeperRemoveEndpoint> RemoveEndpointEvent => removeEndpointEvent;
 
-
         public IMessagerType MessagerType { get; }
 
         public string UserGroup => MessagerType.Group;
 
         public int Size => endpointMap.Count;
-
 
         public EndpointKeeper(IMessagerType messagerType)
         {
@@ -57,11 +55,9 @@ namespace TnyFramework.Net.Endpoint
             removeEndpointEvent = EndpointKeeper.RemoveEndpointEventBus.ForkChild();
         }
 
-
         public virtual void Start()
         {
         }
-
 
         IEndpoint IEndpointKeeper.GetEndpoint(object userId)
         {
@@ -70,24 +66,20 @@ namespace TnyFramework.Net.Endpoint
             return null;
         }
 
-
         public TEndpoint GetEndpoint(TUserId userId)
         {
             return endpointMap.TryGetValue(userId, out var endpoint) ? endpoint : default;
         }
-
 
         IList<IEndpoint> IEndpointKeeper.GetAllEndpoints()
         {
             return endpointMap.Values.Select(e => e as IEndpoint).ToList();
         }
 
-
         public IList<TEndpoint> GetAllEndpoints()
         {
             return ImmutableList.CreateRange(endpointMap.Values);
         }
-
 
         public void Send2User(object userId, MessageContext context)
         {
@@ -97,7 +89,6 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         public void Send2Users(IEnumerable<object> userIds, MessageContext context)
         {
             foreach (var userId in userIds)
@@ -106,12 +97,10 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         public void Send2AllOnline(MessageContext context)
         {
             throw new NotImplementedException();
         }
-
 
         public TEndpoint Close(TUserId userId)
         {
@@ -123,12 +112,10 @@ namespace TnyFramework.Net.Endpoint
             return endpoint;
         }
 
-
         public IEndpoint Close(object userId)
         {
             return Close((TUserId) userId);
         }
-
 
         public TEndpoint Offline(TUserId userId)
         {
@@ -140,14 +127,10 @@ namespace TnyFramework.Net.Endpoint
             return endpoint;
         }
 
-
-
         public IEndpoint Offline(object userId)
         {
             return Offline((TUserId) userId);
         }
-
-
 
         public void OfflineAll()
         {
@@ -157,7 +140,6 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         public void CloseAll()
         {
             foreach (var pair in endpointMap)
@@ -166,12 +148,9 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-
         public int OnlineSize => endpointMap.Values.Count(endpoint => endpoint.IsOnline());
 
-
         public abstract IEndpoint Online(ICertificate certificate, INetTunnel tunnel);
-
 
         public bool IsOnline(TUserId userId)
         {
@@ -179,20 +158,15 @@ namespace TnyFramework.Net.Endpoint
             return endpoint != null && endpoint.IsOnline();
         }
 
-
-
-
         public bool IsOnline(object userId)
         {
             return IsOnline((TUserId) userId);
         }
 
-
         protected TEndpoint FindEndpoint(object uid)
         {
             return endpointMap.TryGetValue(uid, out var endpoint) ? endpoint : default;
         }
-
 
         protected bool RemoveEndpoint(object uid, IEndpoint removeOne)
         {
@@ -203,7 +177,6 @@ namespace TnyFramework.Net.Endpoint
             removeEndpointEvent.Notify(this, endpoint);
             return true;
         }
-
 
         protected TEndpoint ReplaceEndpoint(object uid, IEndpoint newOne)
         {
@@ -221,25 +194,20 @@ namespace TnyFramework.Net.Endpoint
             return current;
         }
 
-
-
         protected virtual void OnEndpointOnline(TEndpoint endpoint)
         {
 
         }
-
 
         protected virtual void OnEndpointOffline(TEndpoint endpoint)
         {
 
         }
 
-
         protected virtual void OnEndpointClose(TEndpoint endpoint)
         {
 
         }
-
 
         public void NotifyEndpointOnline(IEndpoint endpoint)
         {
@@ -250,7 +218,6 @@ namespace TnyFramework.Net.Endpoint
             OnEndpointOnline((TEndpoint) endpoint);
         }
 
-
         public void NotifyEndpointOffline(IEndpoint endpoint)
         {
             if (!Equals(endpoint.MessagerType, MessagerType))
@@ -259,7 +226,6 @@ namespace TnyFramework.Net.Endpoint
             }
             OnEndpointOffline((TEndpoint) endpoint);
         }
-
 
         public void NotifyEndpointClose(IEndpoint endpoint)
         {

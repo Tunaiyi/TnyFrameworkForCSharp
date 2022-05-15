@@ -1,17 +1,17 @@
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public class ServerSettingSpec : UnitSpec<IServerSetting, object>, IServerSettingSpec
     {
         private ServerSetting Setting { get; } = new ServerSetting();
-
 
         public ServerSettingSpec(string unitName = "") : base(unitName)
         {
             Default(_ => Setting);
         }
-
 
         /// <summary>
         /// 设置服务名
@@ -24,7 +24,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return this;
         }
 
-
         /// <summary>
         /// 设置服务发现名
         /// </summary>
@@ -35,7 +34,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             Setting.ServeName = value;
             return this;
         }
-
 
         /// <summary>
         /// 设置主机名(域名/IP)
@@ -48,7 +46,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return this;
         }
 
-
         /// <summary>
         /// 设置端口
         /// </summary>
@@ -59,7 +56,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             Setting.Port = port;
             return this;
         }
-
 
         /// <summary>
         /// 是否使用 Libuv
@@ -72,4 +68,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return this;
         }
     }
+
 }

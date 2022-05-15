@@ -1,6 +1,8 @@
 using TnyFramework.Common.Attribute;
+
 namespace TnyFramework.Net.Base
 {
+
     public interface INetAppContext
     {
         /// <summary>
@@ -8,12 +10,10 @@ namespace TnyFramework.Net.Base
         /// </summary>
         string Name { get; }
 
-
         /// <summary>
         /// 应用类型标识
         /// </summary>
         string AppType { get; }
-
 
         /// <summary>
         /// 作用域类型标识
@@ -25,17 +25,16 @@ namespace TnyFramework.Net.Base
         /// </summary>
         string Locale { get; }
 
-
         /// <summary>
         /// 全局唯一 id
         /// 确保所有的服务器类型的 id 都不重复
         /// </summary>
         int ServerId { get; }
 
-
         /// <summary>
         /// 属性
         /// </summary>
         IAttributes Attributes { get; }
     }
+
 }

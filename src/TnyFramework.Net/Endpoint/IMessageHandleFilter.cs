@@ -1,6 +1,8 @@
 using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.Endpoint
 {
+
     public delegate MessageHandleStrategy MessageHandleFilter(IEndpoint endpoint, IMessageContent message);
 
     public class MessageHandleFilters
@@ -16,4 +18,5 @@ namespace TnyFramework.Net.Endpoint
     {
         MessageHandleStrategy Filter(IEndpoint endpoint, IMessageContent message);
     }
+
 }

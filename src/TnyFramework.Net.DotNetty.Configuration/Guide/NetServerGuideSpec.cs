@@ -1,8 +1,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Bootstrap;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public interface INetServerGuideBuilder
     {
         INettyServerGuide BuildGuide();
@@ -16,7 +18,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         public INettyServerGuide Guide { get; private set; }
 
         internal IServiceCollection UnitContainer { get; }
-
 
         public NetServerGuideSpec(string name, INetUnitContext unitContext, IServiceCollection unitContainer) :
             base(new NetServerGuideUnitContext<TUserId>(unitContext, unitContainer))
@@ -32,7 +33,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             context.ServerSettingSpec.ServiceName(name);
         }
 
-
         public INettyServerGuide BuildGuide()
         {
             if (Guide != null)
@@ -40,12 +40,10 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return Guide = Load(context, UnitContainer);
         }
 
-
         protected override INetServerGuideSpec<TUserId> Self()
         {
             return this;
         }
-
 
         public INetServerGuideSpec<TUserId> Server(IServerSetting setting)
         {
@@ -54,7 +52,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return this;
         }
 
-
         public INetServerGuideSpec<TUserId> Server(int port)
         {
             var serverSettings = context.ServerSettingSpec;
@@ -62,15 +59,12 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return this;
         }
 
-
         public INetServerGuideSpec<TUserId> Server(string host, int port)
         {
             var serverSettings = context.ServerSettingSpec;
             serverSettings.Host(host).Port(port);
             return this;
         }
-
-
 
         public INetServerGuideSpec<TUserId> Server(string host, int port, bool libuv)
         {
@@ -80,14 +74,12 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         }
 
-
         public INetServerGuideSpec<TUserId> Server(string serveName, string host, int port)
         {
             var serverSettings = context.ServerSettingSpec;
             serverSettings.ServeName(serveName).Host(host).Port(port);
             return this;
         }
-
 
         public INetServerGuideSpec<TUserId> Server(string serveName, string host, int port, bool libuv)
         {
@@ -97,4 +89,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return this;
         }
     }
+
 }

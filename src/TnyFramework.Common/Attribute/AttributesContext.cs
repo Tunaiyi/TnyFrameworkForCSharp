@@ -1,5 +1,6 @@
 namespace TnyFramework.Common.Attribute
 {
+
     public class AttributesContext
     {
         private volatile IAttributes attributes;
@@ -21,4 +22,5 @@ namespace TnyFramework.Common.Attribute
             }
         }
     }
+
 }

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Concurrent;
+
 namespace TnyFramework.Common.Attribute
 {
+
     public interface IAttrKey
     {
         string Name { get; }
@@ -13,7 +15,6 @@ namespace TnyFramework.Common.Attribute
         /// Key Map
         /// </summary>
         private static readonly ConcurrentDictionary<object, IAttrKey> KEY_MAP = new ConcurrentDictionary<object, IAttrKey>();
-
 
         /// <summary>
         /// 获取 key
@@ -27,18 +28,17 @@ namespace TnyFramework.Common.Attribute
             return LoadOrCreate<TValue>($"{type.FullName}.{key}");
         }
 
-
         private static AttrKey<TValue> LoadOrCreate<TValue>(string key)
         {
             KEY_MAP.TryGetValue(key, out var attrKey);
             if (attrKey != null)
-                return (AttrKey<TValue>)attrKey;
+                return (AttrKey<TValue>) attrKey;
             attrKey = new AttrKey<TValue>(key);
             if (!KEY_MAP.TryAdd(key, attrKey))
             {
                 attrKey = KEY_MAP[key];
             }
-            return (AttrKey<TValue>)attrKey;
+            return (AttrKey<TValue>) attrKey;
         }
     }
 
@@ -49,25 +49,22 @@ namespace TnyFramework.Common.Attribute
             Name = name;
         }
 
-
         public string Name { get; }
-
 
         private bool Equals(IAttrKey other)
         {
             return Name == other.Name;
         }
 
-
         public override bool Equals(object obj)
         {
             return ReferenceEquals(this, obj) || obj is AttrKey<T> other && Equals(other);
         }
-
 
         public override int GetHashCode()
         {
             return (Name != null ? Name.GetHashCode() : 0);
         }
     }
+
 }

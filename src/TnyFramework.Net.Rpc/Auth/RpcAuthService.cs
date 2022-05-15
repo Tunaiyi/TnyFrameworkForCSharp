@@ -12,13 +12,11 @@ namespace TnyFramework.Net.Rpc.Auth
 
         private readonly IRpcUserPasswordManager rpcUserPasswordManager;
 
-
         public RpcAuthService(INetAppContext netAppContext, IRpcUserPasswordManager rpcUserPasswordManager)
         {
             this.netAppContext = netAppContext;
             this.rpcUserPasswordManager = rpcUserPasswordManager;
         }
-
 
         public IDoneResult<RpcAccessIdentify> Authenticate(long id, string password)
         {
@@ -28,13 +26,11 @@ namespace TnyFramework.Net.Rpc.Auth
                 : DoneResults.Failure<RpcAccessIdentify>(NetResultCode.VALIDATOR_FAIL_ERROR);
         }
 
-
         public string CreateToken(RpcServiceType serviceType, RpcAccessIdentify user)
         {
             var token = new RpcAccessToken(serviceType, netAppContext.ServerId, user);
             return JsonConvert.SerializeObject(token);
         }
-
 
         public IDoneResult<IRpcToken> VerifyToken(string token)
         {

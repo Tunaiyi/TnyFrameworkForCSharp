@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Message
 {
+
     /// <summary>
     /// 消息结构
     /// </summary>
@@ -20,4 +21,5 @@ namespace TnyFramework.Net.Message
         /// </summary>
         MessageMode Mode { get; }
     }
+
 }

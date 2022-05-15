@@ -25,7 +25,6 @@ namespace TnyFramework.Net.Endpoint
         /// </summary>
         int Size { get; }
 
-
         /// <summary>
         /// 获取指定userId对应的Session <br>
         /// </summary>
@@ -33,13 +32,11 @@ namespace TnyFramework.Net.Endpoint
         /// <returns>返回获取的endpoint</returns>
         IEndpoint GetEndpoint(object userId);
 
-
         /// <summary>
         /// 获取所有的endpoints
         /// </summary>
         /// <returns>返回endpoints</returns>
         IList<IEndpoint> GetAllEndpoints();
-
 
         /// <summary>
         /// 使指定userId的endpoint关闭
@@ -48,14 +45,12 @@ namespace TnyFramework.Net.Endpoint
         /// <returns>返回关闭endpoint</returns>
         IEndpoint Close(object userId);
 
-
         /// <summary>
         /// 使指定userId的endpoint下线
         /// </summary>
         /// <param name="userId">指定userId</param>
         /// <returns>返回下线的endpoint</returns>
         IEndpoint Offline(object userId);
-
 
         /// <summary>
         /// 发信息给用户
@@ -64,7 +59,6 @@ namespace TnyFramework.Net.Endpoint
         /// <param name="context"></param>
         void Send2User(object userId, MessageContext context);
 
-
         /// <summary>
         /// 发信息给用户集合
         /// </summary>
@@ -72,34 +66,26 @@ namespace TnyFramework.Net.Endpoint
         /// <param name="context"></param>
         void Send2Users(IEnumerable<object> userIds, MessageContext context);
 
-
         /// <summary>
         /// 发送给所有在线的用户
         /// </summary>
         /// <param name="context">消息内容</param>
         void Send2AllOnline(MessageContext context);
 
-
-
         /// <summary>
         /// 使所有endpoint下线
         /// </summary>
         void OfflineAll();
-
-
 
         /// <summary>
         /// 是所有endpoint关闭
         /// </summary>
         void CloseAll();
 
-
         /// <summary>
         /// 计算在线人数 
         /// </summary>
         int OnlineSize { get; }
-
-
 
         /// <summary>
         /// 添加指定的endpoint
@@ -108,7 +94,6 @@ namespace TnyFramework.Net.Endpoint
         /// <param name="tunnel">注册tunnel</param>
         /// <returns>返回注册的 endpoint</returns>
         IEndpoint Online(ICertificate certificate, INetTunnel tunnel);
-
 
         /**
         * <p>
@@ -120,7 +105,6 @@ namespace TnyFramework.Net.Endpoint
         */
         bool IsOnline(object userId);
 
-
         /// <summary>
         /// 添加 Endpoint 事件
         /// </summary>
@@ -130,7 +114,6 @@ namespace TnyFramework.Net.Endpoint
         /// 移出 Endpoint 事件
         /// </summary>
         IEventBox<EndpointKeeperRemoveEndpoint> RemoveEndpointEvent { get; }
-
 
         /// <summary>
         /// 启动
@@ -148,13 +131,11 @@ namespace TnyFramework.Net.Endpoint
         /// <returns>返回获取的endpoint</returns>
         TEndpoint GetEndpoint(TUserId userId);
 
-
         /// <summary>
         /// 获取所有的endpoints
         /// </summary>
         /// <returns>返回endpoints</returns>
         new IList<TEndpoint> GetAllEndpoints();
-
 
         /// <summary>
         /// 使指定userId的endpoint关闭
@@ -163,14 +144,12 @@ namespace TnyFramework.Net.Endpoint
         /// <returns>返回关闭endpoint</returns>
         TEndpoint Close(TUserId userId);
 
-
         /// <summary>
         /// 使指定userId的endpoint下线
         /// </summary>
         /// <param name="userId">指定userId</param>
         /// <returns>返回下线的endpoint</returns>
         TEndpoint Offline(TUserId userId);
-
 
         /// <summary>
         /// 判断指定用户是否在线

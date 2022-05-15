@@ -6,23 +6,22 @@ using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.DotNetty.Transport
 {
+
     public class NettyChannelMessageTransporter : NettyChannelConnection, IMessageTransporter
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NettyChannelMessageTransporter>();
-
 
         public NettyChannelMessageTransporter(IChannel channel) : base(channel)
         {
         }
 
-
         public void Bind(INetTunnel tunnel)
         {
             channel?.GetAttribute(NettyNetAttrKeys.TUNNEL).Set(tunnel);
         }
-
 
         protected override void DoClose()
         {
@@ -35,18 +34,15 @@ namespace TnyFramework.Net.DotNetty.Transport
             }
         }
 
-
         public Task Write(IMessage message)
         {
             return channel.WriteAndFlushAsync(message);
         }
 
-
         public Task Write(IMessageAllocator maker, IMessageFactory factory, MessageContext context)
         {
             return Write(maker.Allocate, factory, context);
         }
-
 
         public Task Write(MessageAllocator maker, IMessageFactory factory, MessageContext context)
         {
@@ -67,4 +63,5 @@ namespace TnyFramework.Net.DotNetty.Transport
             });
         }
     }
+
 }

@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Text;
-using TnyFramework.Common.Exception;
-using TnyFramework.Common.Invoke;
+using TnyFramework.Common.Exceptions;
+using TnyFramework.Common.FastInvoke;
+using TnyFramework.Common.FastInvoke.ActionInvoke;
+using TnyFramework.Common.FastInvoke.FuncInvoke;
+using TnyFramework.Net.Attributes;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Plugin;
-using TnyFramework.Net.Rpc.Attributes;
 using TnyFramework.Net.Transport;
+
 namespace TnyFramework.Net.Dispatcher
 {
+
     public class MethodControllerHolder : ControllerHolder
     {
         /// <summary>
@@ -44,20 +49,21 @@ namespace TnyFramework.Net.Dispatcher
         /// </summary>
         private readonly IDictionary<Type, IList<Attribute>> indexParamAnnotationsMap;
 
+        private readonly RpcProfile rpcProfile;
 
         public void Run()
         {
         }
 
-
-        public MethodControllerHolder(object executor, MethodInfo method, RpcAttribute rpcController, MessageDispatcherContext context,
-            TypeControllerHolder typeController) :
-            base(executor)
+        public MethodControllerHolder(object executor, MethodInfo method, RpcProfile rpcProfile, MessageDispatcherContext context,
+            TypeControllerHolder typeController)
+            : base(executor)
         {
+            this.rpcProfile = rpcProfile;
             invoker = method.ReturnType == typeof(void)
                 ? FastActionFactory.CreateFactory(method).CreateInvoker(method)
                 : FastFuncFactory.CreateFactory(method).CreateInvoker(method);
-            Init(context, rpcController.MessageModes,
+            Init(context,
                 method.GetCustomAttributes<BeforePluginAttribute>(),
                 method.GetCustomAttributes<AfterPluginAttribute>(),
                 method.GetCustomAttribute<AuthenticationRequiredAttribute>(),
@@ -70,9 +76,8 @@ namespace TnyFramework.Net.Dispatcher
             var type = executor.GetType();
             nameBuilder.Append(type.Name).Append("#").Append(method.Name);
             var parameterInfos = method.GetParameters();
-            var indexCounter = 0;
             var paramAnnotationsMap = new Dictionary<Type, IDictionary<int, Attribute>>();
-            ParamDescriptions = InitParamDescriptions(paramAnnotationsMap, parameterInfos, nameBuilder, indexCounter, ref indexCounter);
+            ParamDescriptions = InitParamDescriptions(paramAnnotationsMap, parameterInfos, nameBuilder, method);
             nameBuilder.Append(")");
             Name = nameBuilder.ToString();
             this.executor = executor;
@@ -86,22 +91,22 @@ namespace TnyFramework.Net.Dispatcher
                 afterChain = AppendPlugin(afterChain, plugin);
             }
             ReturnType = method.ReturnType;
-            Protocol = rpcController.Protocol;
             indexParamAnnotationsMap = InitIndexParamAttributes(paramAnnotationsMap, ParamDescriptions.Count);
             MethodAttributeHolder = new AttributeHolder(method);
 
         }
 
-
-        private IList<ParamDescription> InitParamDescriptions(IDictionary<Type, IDictionary<int, Attribute>> paramAnnotationsMap,
-            IEnumerable<ParameterInfo> parameterInfos, StringBuilder nameBuilder, int indexCounter, ref int index)
+        private IList<ControllerParamDescription> InitParamDescriptions(IDictionary<Type, IDictionary<int, Attribute>> paramAnnotationsMap,
+            IEnumerable<ParameterInfo> parameterInfos, StringBuilder nameBuilder, MethodInfo method)
         {
-            var paramDescriptions = new List<ParamDescription>();
+            var indexCreator = new ParamIndexCreator(method);
+            var paramDescriptions = new List<ControllerParamDescription>();
+            var index = 0;
             foreach (var parameterInfo in parameterInfos)
             {
                 nameBuilder.Append(index > 0 ? ", " : "(");
                 nameBuilder.Append(parameterInfo.ParameterType);
-                var paramDescription = new ParamDescription(this, parameterInfo, ref indexCounter);
+                var paramDescription = new ControllerParamDescription(this, parameterInfo, indexCreator);
                 paramDescriptions.Add(paramDescription);
                 foreach (var attribute in paramDescription.Attributes)
                 {
@@ -117,7 +122,6 @@ namespace TnyFramework.Net.Dispatcher
             }
             return paramDescriptions.ToImmutableList();
         }
-
 
         private static IDictionary<Type, IList<Attribute>> InitIndexParamAttributes(
             Dictionary<Type, IDictionary<int, Attribute>> paramAnnotationsMap, int index)
@@ -140,8 +144,6 @@ namespace TnyFramework.Net.Dispatcher
             return indexAnnotationsMap.ToImmutableDictionary();
         }
 
-
-
         private static PluginChain AppendPlugin(PluginChain context, CommandPluginHolder plugin)
         {
             if (context == null)
@@ -152,7 +154,6 @@ namespace TnyFramework.Net.Dispatcher
             return context;
         }
 
-
         /// <summary>
         /// 返回类型
         /// </summary>
@@ -161,13 +162,12 @@ namespace TnyFramework.Net.Dispatcher
         /// <summary>
         /// 参数
         /// </summary>
-        public IList<ParamDescription> ParamDescriptions { get; }
+        public IList<ControllerParamDescription> ParamDescriptions { get; }
 
         /// <summary>
         /// 参数个数
         /// </summary>
         public int ParametersSize => ParamDescriptions.Count;
-
 
         /// <summary>
         /// 方法注解
@@ -175,44 +175,32 @@ namespace TnyFramework.Net.Dispatcher
         /// <returns></returns>
         private AttributeHolder MethodAttributeHolder { get; }
 
-        public int Protocol { get; }
+        public int Protocol => rpcProfile?.Protocol ?? -1;
 
-        public override IList<MessageMode> MessageModes {
-            get {
-                var modes = base.MessageModes;
-                if (modes != null && modes.Count > 0)
-                {
-                    return modes;
-                }
-                return typeController.MessageModes;
-            }
-        }
+        /// <summary>
+        /// 处理的消息类型
+        /// </summary>
+        public MessageMode MessageMode => rpcProfile.Mode;
 
-
-
-        public override bool IsUserGroup(String group)
+        public override bool IsUserGroup(IMessagerType messagerType)
         {
-            return UserGroups != null ? base.IsUserGroup(group) : typeController.IsUserGroup(group);
+            return UserGroups != null ? base.IsUserGroup(messagerType) : typeController.IsUserGroup(messagerType);
         }
-
 
         public override bool IsActiveByAppType(string appType)
         {
             return AppTypes != null ? base.IsActiveByAppType(appType) : typeController.IsActiveByAppType(appType);
         }
 
-
         public override bool IsActiveByScope(string scope)
         {
             return Scopes != null ? base.IsActiveByScope(scope) : typeController.IsActiveByScope(scope);
         }
 
-
         public override bool IsAuth()
         {
             return AuthAttribute != null ? base.IsAuth() : typeController.IsAuth();
         }
-
 
         public override Type AuthValidatorType {
             get {
@@ -235,7 +223,6 @@ namespace TnyFramework.Net.Dispatcher
             }
         }
 
-
         public object GetParameterValue(int index, INetTunnel tunnel, IMessage message, object body)
         {
             if (index >= ParamDescriptions.Count)
@@ -252,50 +239,40 @@ namespace TnyFramework.Net.Dispatcher
             return desc.GetValue(tunnel, message, body);
         }
 
-
         public override TAttribute GetTypeAttribute<TAttribute>()
         {
             return typeController.GetTypeAttribute<TAttribute>();
         }
-
 
         public override IList<TAttribute> GetTypeAttributes<TAttribute>()
         {
             return typeController.GetTypeAttributes<TAttribute>();
         }
 
-
         public TAttribute GetMethodAttribute<TAttribute>() where TAttribute : Attribute
         {
             return MethodAttributeHolder.GetAttribute<TAttribute>();
         }
-
 
         public IList<TAttribute> GetMethodAttributes<TAttribute>() where TAttribute : Attribute
         {
             return MethodAttributeHolder.GetAttributes<TAttribute>();
         }
 
-
-
         public IList<Attribute> GetParameterAnnotationsByType(Type type)
         {
             return !indexParamAnnotationsMap.TryGetValue(type, out var attributes) ? ImmutableList.Create<Attribute>() : attributes;
         }
-
 
         public IList<Attribute> GetParameterAnnotationsByIndex(int index)
         {
             return ParamDescriptions[index].Attributes;
         }
 
-
         public IList<Type> GetParameterAnnotationTypes()
         {
             return ImmutableList.CreateRange(indexParamAnnotationsMap.Keys);
         }
-
-
 
         public object Invoke(INetTunnel tunnel, IMessage message)
         {
@@ -309,7 +286,6 @@ namespace TnyFramework.Net.Dispatcher
             return invoker.Invoke(executor, parameters);
         }
 
-
         public void BeforeInvoke(ITunnel tunnel, IMessage message, MessageCommandContext context)
         {
             if (beforeChain == null)
@@ -318,7 +294,6 @@ namespace TnyFramework.Net.Dispatcher
             }
             beforeChain.Execute(tunnel, message, context);
         }
-
 
         public void AfterInvoke(ITunnel tunnel, IMessage message, MessageCommandContext context)
         {
@@ -329,10 +304,10 @@ namespace TnyFramework.Net.Dispatcher
             afterChain.Execute(tunnel, message, context);
         }
 
-
         public override string ToString()
         {
             return $"{nameof(Name)}: {Name}";
         }
     }
+
 }

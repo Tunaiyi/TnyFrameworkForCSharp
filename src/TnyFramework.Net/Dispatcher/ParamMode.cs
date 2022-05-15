@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Dispatcher
 {
+
     public enum ParamMode
     {
         None,
@@ -15,17 +16,28 @@ namespace TnyFramework.Net.Dispatcher
         Endpoint,
 
         Setting,
-        
-        Body,
 
         UserId,
 
-        IndexParam,
-
-        KeyParam,
+        Param,
 
         Code,
 
-        CodeNum
+        CodeNum,
+
+        Header,
+
+        FromService,
+
+        ToService,
+
+        Sender,
+
+        Receiver,
+
+        Body,
+
+        Ignore,
     }
+
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace TnyFramework.Net.Message
@@ -9,7 +10,6 @@ namespace TnyFramework.Net.Message
         {
             Mode = mode;
         }
-
 
         public MessageType Type => Mode.GetMessageType();
 
@@ -31,9 +31,13 @@ namespace TnyFramework.Net.Message
 
         public abstract T GetHeader<T>(string key) where T : MessageHeader<T>;
 
+        public abstract MessageHeader GetHeader(string key, Type type);
+
         public abstract MessageHeader GetHeader(string key);
 
         public abstract IList<T> GetHeaders<T>() where T : MessageHeader<T>;
+
+        public abstract IList<MessageHeader> GetHeaders(Type type);
 
         public abstract T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>;
 

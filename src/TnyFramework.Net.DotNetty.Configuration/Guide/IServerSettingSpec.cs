@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public interface IServerSettingSpec
     {
         ServerSettingSpec ServiceName(string value);
@@ -10,4 +11,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         ServerSettingSpec Libuv(bool value);
     }
+
 }

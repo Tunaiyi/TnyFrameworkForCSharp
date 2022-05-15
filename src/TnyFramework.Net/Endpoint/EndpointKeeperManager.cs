@@ -33,7 +33,6 @@ namespace TnyFramework.Net.Endpoint
 
         private IEventBox<EndpointKeeperCreate> CreateEvent => createEventBus;
 
-
         public EndpointKeeperManager(
             ISessionKeeperSetting defaultSessionKeeperSetting,
             IEnumerable<ISessionKeeperSetting> sessionKeeperSettings,
@@ -46,7 +45,6 @@ namespace TnyFramework.Net.Endpoint
             sessionFactoryMap = sessionKeeperFactories.ToImmutableDictionary();
             createEventBus = CREATE_EVENT_BUS.ForkChild();
         }
-
 
         private IEndpointKeeper Create(IMessagerType messagerType, TunnelMode tunnelMode)
         {
@@ -61,13 +59,11 @@ namespace TnyFramework.Net.Endpoint
             return factory.CreateKeeper(messagerType, setting);
         }
 
-
         public IEndpoint Online(ICertificate certificate, INetTunnel tunnel)
         {
             var keeper = LoadKeeper<IEndpointKeeper>(certificate.MessagerType, tunnel.Mode);
             return keeper.Online(certificate, tunnel);
         }
-
 
         public TKeeper LoadKeeper<TKeeper>(IMessagerType messagerType, TunnelMode tunnelMode) where TKeeper : IEndpointKeeper
         {
@@ -83,7 +79,6 @@ namespace TnyFramework.Net.Endpoint
             createEventBus.Notify(newOne);
             return (TKeeper) newOne;
         }
-
 
         public TKeeper FindKeeper<TKeeper>(IMessagerType messagerType) where TKeeper : IEndpointKeeper
         {

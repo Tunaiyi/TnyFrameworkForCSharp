@@ -6,16 +6,16 @@ using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport.Event;
+
 namespace TnyFramework.Net.Transport
 {
+
     public static class NetTunnel
     {
         internal static readonly IEventBus<TunnelActivate> ACTIVATE_EVENT_BUS = EventBuses.Create<TunnelActivate>();
         internal static readonly IEventBus<TunnelUnactivated> UNACTIVATED_EVENT_BUS = EventBuses.Create<TunnelUnactivated>();
         internal static readonly IEventBus<TunnelClose> CLOSE_EVENT_BUS = EventBuses.Create<TunnelClose>();
-
 
         /// <summary>
         /// 激活事件总线, 可监听到所有 Tunnel 的事件
@@ -43,12 +43,13 @@ namespace TnyFramework.Net.Transport
         private readonly ReaderWriterLockSlim endpointLock = new ReaderWriterLockSlim();
 
         public long Id { get; }
+
         public long AccessId { get; private set; }
 
         public TunnelMode Mode { get; }
 
         public TunnelStatus Status {
-            get => (TunnelStatus)status;
+            get => (TunnelStatus) status;
 
             protected set => status = value.Value();
         }
@@ -62,8 +63,6 @@ namespace TnyFramework.Net.Transport
         public ICertificateFactory CertificateFactory => Context.GetCertificateFactory();
 
         ICertificateFactory<TUserId> INetTunnel<TUserId>.CertificateFactory => Context.CertificateFactory<TUserId>();
-
-
 
         public abstract EndPoint RemoteAddress { get; }
 
@@ -79,7 +78,6 @@ namespace TnyFramework.Net.Transport
 
         public bool IsClosed() => Status == TunnelStatus.Closed;
 
-
         private readonly IEventBus<TunnelActivate> activateEvent;
         private readonly IEventBus<TunnelUnactivated> unactivatedEvent;
         private readonly IEventBus<TunnelClose> closeEvent;
@@ -89,7 +87,6 @@ namespace TnyFramework.Net.Transport
         public IEventBox<TunnelUnactivated> UnactivatedEvent => unactivatedEvent;
 
         public IEventBox<TunnelClose> CloseEvent => closeEvent;
-
 
         protected NetTunnel(long id, TunnelMode mode, INetworkContext context)
         {
@@ -101,25 +98,20 @@ namespace TnyFramework.Net.Transport
             closeEvent = NetTunnel.CLOSE_EVENT_BUS.ForkChild();
         }
 
-
         public IEndpoint GetEndpoint()
         {
             return endpoint;
         }
-
-
 
         INetEndpoint INetTunnel.GetEndpoint()
         {
             return endpoint;
         }
 
-
         protected void SetEndpoint(TEndpoint value)
         {
             endpoint = value;
         }
-
 
         public bool Receive(IMessage message)
         {
@@ -133,7 +125,6 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-
         public ISendReceipt Send(MessageContext messageContext)
         {
             endpointLock.EnterReadLock();
@@ -146,7 +137,6 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-
         public void SetAccessId(long accessId)
         {
             if (AccessId == 0)
@@ -154,8 +144,6 @@ namespace TnyFramework.Net.Transport
                 AccessId = accessId;
             }
         }
-
-
 
         public bool Bind(INetEndpoint newEndpoint)
         {
@@ -176,7 +164,7 @@ namespace TnyFramework.Net.Transport
                 }
                 if (endpoint == null)
                 {
-                    endpoint = (TEndpoint)newEndpoint;
+                    endpoint = (TEndpoint) newEndpoint;
                     return true;
                 } else
                 {
@@ -188,9 +176,7 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-
         protected abstract bool ReplaceEndpoint(INetEndpoint newEndpoint);
-
 
         public bool Open()
         {
@@ -223,17 +209,14 @@ namespace TnyFramework.Net.Transport
             return true;
         }
 
-
         protected virtual void OnOpened()
         {
         }
-
 
         protected virtual bool OnOpen()
         {
             return true;
         }
-
 
         public void Disconnect()
         {
@@ -255,20 +238,15 @@ namespace TnyFramework.Net.Transport
 
         }
 
-
-
         protected virtual void OnDisconnected()
         {
         }
 
-
         protected abstract void DoDisconnect();
-
 
         protected virtual void OnDisconnect()
         {
         }
-
 
         public bool Close()
         {
@@ -295,43 +273,34 @@ namespace TnyFramework.Net.Transport
             return true;
         }
 
-
         protected virtual void OnClosed()
         {
         }
-
 
         protected virtual void OnClose()
         {
         }
 
-
         public abstract void Reset();
-
 
         public void Pong()
         {
             Write(TickMessage.Pong());
         }
 
-
         public void Ping()
         {
             Write(TickMessage.Ping());
         }
 
-
-
-
-
         public abstract Task Write(IMessage message);
 
         public abstract Task Write(MessageAllocator allocator, MessageContext messageContext);
-
 
         public Task Write(IMessageAllocator allocator, MessageContext messageContext)
         {
             return Write(allocator.Allocate, messageContext);
         }
     }
+
 }

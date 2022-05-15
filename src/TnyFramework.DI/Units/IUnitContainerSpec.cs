@@ -1,6 +1,8 @@
 using System;
+
 namespace TnyFramework.DI.Units
 {
+
     public interface IUnitContainerSpec<in TUnit, out TSpec, out TContext> where TSpec : IUnitSpec<TUnit, TContext>
     {
         IUnitContainerSpec<TUnit, TSpec, TContext> Add(TUnit unit);
@@ -19,4 +21,5 @@ namespace TnyFramework.DI.Units
 
         IUnitContainerSpec<TUnit, TSpec, TContext> Clear();
     }
+
 }

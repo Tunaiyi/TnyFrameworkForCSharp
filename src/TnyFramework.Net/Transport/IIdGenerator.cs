@@ -1,7 +1,9 @@
 using System;
 using System.Threading;
+
 namespace TnyFramework.Net.Transport
 {
+
     public interface IIdGenerator
     {
         long Generate();
@@ -16,7 +18,6 @@ namespace TnyFramework.Net.Transport
         private readonly int bitSize;
         private readonly int concurrentLevel;
 
-
         private static int BitCount(int n)
         {
             var count = 0;
@@ -28,12 +29,10 @@ namespace TnyFramework.Net.Transport
             return count;
         }
 
-
         public AutoIncrementIdGenerator() : this(PROCESSORS_SIZE)
         {
 
         }
-
 
         public AutoIncrementIdGenerator(int concurrentLevel)
         {
@@ -41,7 +40,6 @@ namespace TnyFramework.Net.Transport
             idGenerators = new long[concurrentLevel];
             bitSize = BitCount(concurrentLevel);
         }
-
 
         public long Generate()
         {
@@ -51,4 +49,5 @@ namespace TnyFramework.Net.Transport
             return id;
         }
     }
+
 }

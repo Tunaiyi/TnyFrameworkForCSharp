@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 namespace TnyFramework.Net.Base
 {
+
     public interface INetApplication
     {
         INetAppContext AppContext { get; }
@@ -12,4 +14,5 @@ namespace TnyFramework.Net.Base
 
         Task Close();
     }
+
 }

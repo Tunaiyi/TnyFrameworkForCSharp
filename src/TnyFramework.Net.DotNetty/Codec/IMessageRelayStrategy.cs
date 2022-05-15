@@ -1,6 +1,8 @@
 using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.DotNetty.Codec
 {
+
     public interface IMessageRelayStrategy
     {
         bool IsRelay(IMessageHead head);
@@ -14,4 +16,5 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         public static NeverRelayStrategy Strategy => STRATEGY;
     }
+
 }

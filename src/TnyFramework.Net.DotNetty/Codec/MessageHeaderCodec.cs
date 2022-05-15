@@ -14,12 +14,17 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         private static readonly FastThreadLocal<MemoryStream> STEAM_LOCAL = new FastThreadLocal<MemoryStream>();
 
+        static MessageHeaderCodec()
+        {
+            var factory = TypeProtobufSchemeFactory.Factory;
+            factory.Load<RpcForwardHeader>();
+            factory.Load<RpcOriginalMessageIdHeader>();
+        }
 
         public MessageHeaderCodec()
         {
             codecFactory = new TypeProtobufObjectCodecFactory();
         }
-
 
         public MessageHeader Decode(IByteBuffer buffer)
         {
@@ -31,7 +36,6 @@ namespace TnyFramework.Net.DotNetty.Codec
                 return (MessageHeader) codec.Decode(stream);
             }
         }
-
 
         public void Encode(MessageHeader body, IByteBuffer buffer)
         {
@@ -53,19 +57,16 @@ namespace TnyFramework.Net.DotNetty.Codec
             }
         }
 
-
         public void Encode(object body, IByteBuffer buffer)
         {
             if (body is MessageHeader header)
                 Encode(header, buffer);
         }
 
-
         object INetContentCodec.Decode(IByteBuffer buffer)
         {
             return Decode(buffer);
         }
-
 
         protected static MemoryStream Stream(long length = -1)
         {

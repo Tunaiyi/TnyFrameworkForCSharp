@@ -1,12 +1,13 @@
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
+using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Rpc.Attributes;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Plugin
 {
+
     public class CommandPluginHolder
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<CommandPluginHolder>();
@@ -17,12 +18,10 @@ namespace TnyFramework.Net.Plugin
 
         private readonly object attributes;
 
-
         public CommandPluginHolder(ControllerHolder controller, ICommandPlugin plugin, PluginAttribute attributes)
             : this(controller, plugin, attributes.Attribute)
         {
         }
-
 
         private CommandPluginHolder(ControllerHolder controller, ICommandPlugin plugin, object attributes)
         {
@@ -30,7 +29,6 @@ namespace TnyFramework.Net.Plugin
             this.controller = controller;
             this.attributes = attributes;
         }
-
 
         public void InvokePlugin(ITunnel tunnel, IMessage message, MessageCommandContext context)
         {
@@ -41,4 +39,5 @@ namespace TnyFramework.Net.Plugin
             plugin.Execute(tunnel, message, context, attributes);
         }
     }
+
 }

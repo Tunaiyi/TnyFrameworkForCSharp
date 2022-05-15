@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using TnyFramework.Net.Command.Processor;
+
 namespace TnyFramework.Net.Command.Tasks
 {
+
     public class CommandTaskBox
     {
         private const int STATUS_IDLE = 0;
@@ -21,15 +23,12 @@ namespace TnyFramework.Net.Command.Tasks
 
         private volatile object attachment;
 
-
         public CommandTaskBox(ICommandTaskBoxProcessor processor)
         {
             this.processor = processor;
         }
 
-
         public bool IsEmpty => taskQueue.IsEmpty;
-
 
         public bool AddTask(ICommandTask task)
         {
@@ -48,7 +47,6 @@ namespace TnyFramework.Net.Command.Tasks
                 boxLock.ExitReadLock();
             }
         }
-
 
         public bool TakeOver(CommandTaskBox box)
         {
@@ -79,7 +77,6 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
 
-
         private bool Close(out IList<ICommandTask> tasks)
         {
             if (closed)
@@ -108,12 +105,10 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
 
-
         public bool Poll(out ICommandTask task)
         {
             return taskQueue.TryDequeue(out task);
         }
-
 
         public TAttachment GetAttachment<TAttachment>()
         {
@@ -121,9 +116,8 @@ namespace TnyFramework.Net.Command.Tasks
             {
                 return default;
             }
-            return (TAttachment)attachment;
+            return (TAttachment) attachment;
         }
-
 
         public TAttachment SetAttachmentIfNull<TAttachment>(ICommandTaskBoxProcessor checkProcessor, TAttachment value)
         {
@@ -139,7 +133,6 @@ namespace TnyFramework.Net.Command.Tasks
                 return value;
             }
         }
-
 
         public TAttachment SetAttachmentIfNull<TAttachment>(ICommandTaskBoxProcessor checkProcessor, Func<TAttachment> func)
         {
@@ -157,7 +150,6 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
 
-
         public TAttachment SetAttachment<TAttachment>(ICommandTaskBoxProcessor checkProcessor, TAttachment value)
         {
             if (processor != checkProcessor)
@@ -168,7 +160,6 @@ namespace TnyFramework.Net.Command.Tasks
                 return value;
             }
         }
-
 
         public TAttachment SetAttachment<TAttachment>(ICommandTaskBoxProcessor checkProcessor, Func<TAttachment> func)
         {
@@ -182,4 +173,5 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
     }
+
 }

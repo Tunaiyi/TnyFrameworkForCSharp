@@ -1,7 +1,9 @@
 using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Bootstrap;
+
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
+
     public interface INetServerGuideSpec<TUserId>
         : INetGuideSpec<INettyServerGuide, TUserId, INetServerGuideUnitContext<TUserId>, INetServerGuideSpec<TUserId>>
     {
@@ -17,4 +19,5 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         INetServerGuideSpec<TUserId> Server(string serveName, string host, int port, bool libuv);
     }
+
 }

@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+
 namespace TnyFramework.Net.Base
 {
+
     public class ServerSetting : IServerSetting
     {
         public string Name { get; set; }
@@ -12,12 +14,10 @@ namespace TnyFramework.Net.Base
         /// </summary>
         public bool Libuv { get; set; } = false;
 
-
         /// <summary>
         /// 绑定域名
         /// </summary>
         public string Host { get; set; } = "0.0.0.0";
-
 
         /// <summary>
         /// 绑定端口
@@ -34,7 +34,6 @@ namespace TnyFramework.Net.Base
         /// </summary>
         public string ServeHost { get; set; }
 
-
         /// <summary>
         /// 上报绑定端口
         /// </summary>
@@ -45,4 +44,5 @@ namespace TnyFramework.Net.Base
         /// </summary>
         public IDictionary<string, string> Metadata { get; set; }
     }
+
 }

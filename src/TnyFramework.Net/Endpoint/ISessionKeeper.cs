@@ -1,5 +1,6 @@
 namespace TnyFramework.Net.Endpoint
 {
+
     public interface ISessionKeeper : IEndpointKeeper
     {
     }
@@ -7,4 +8,5 @@ namespace TnyFramework.Net.Endpoint
     public interface ISessionKeeper<TUserId> : ISessionKeeper, IEndpointKeeper<TUserId, ISession<TUserId>>
     {
     }
+
 }

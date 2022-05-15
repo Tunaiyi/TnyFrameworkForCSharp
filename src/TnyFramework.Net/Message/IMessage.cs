@@ -1,6 +1,8 @@
 using TnyFramework.Common.Attribute;
+
 namespace TnyFramework.Net.Message
 {
+
     /// <summary>
     /// 消息接口
     /// </summary>
@@ -16,4 +18,5 @@ namespace TnyFramework.Net.Message
         /// </summary>
         IAttributes Attribute { get; }
     }
+
 }

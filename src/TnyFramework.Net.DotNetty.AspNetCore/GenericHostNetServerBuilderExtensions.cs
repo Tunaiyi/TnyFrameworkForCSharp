@@ -2,7 +2,7 @@ using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TnyFramework.Common.Exception;
+using TnyFramework.Common.Exceptions;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 
@@ -16,20 +16,17 @@ namespace TnyFramework.Net.DotNetty.AspNetCore
             return builder.ConfigureNetHost<TUserId>(null, null);
         }
 
-
         public static IHostBuilder ConfigureNetHost<TUserId>(this IHostBuilder builder,
             Action<INettyServerConfiguration> configure)
         {
             return builder.ConfigureNetHost<TUserId>(null, configure);
         }
 
-
         public static IHostBuilder ConfigureNetHost<TUserId>(this IHostBuilder builder,
             Action<INetServerGuideSpec<TUserId>> guideConfigure)
         {
             return builder.ConfigureNetHost<TUserId>(guideConfigure, null);
         }
-
 
         public static IHostBuilder ConfigureNetHost<TUserId>(this IHostBuilder builder,
             Action<INetServerGuideSpec<TUserId>> serverGuideSpec, Action<INettyServerConfiguration> configure)
