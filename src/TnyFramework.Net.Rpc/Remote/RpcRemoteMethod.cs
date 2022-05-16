@@ -230,6 +230,10 @@ namespace TnyFramework.Net.Rpc.Remote
                 {
                     invokeParams.SetTo(ServiceType);
                 }
+                if (desc.AttributeHolder.GetAttribute<RpcRouteParamAttribute>() != null)
+                {
+                    invokeParams.RouteValue = value;
+                }
                 switch (desc.Mode)
                 {
                     case ParamMode.Param:

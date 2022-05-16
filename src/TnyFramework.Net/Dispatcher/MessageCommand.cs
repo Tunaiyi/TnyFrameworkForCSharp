@@ -129,7 +129,7 @@ namespace TnyFramework.Net.Dispatcher
                     Sender = messageForwardHeader.Receiver,
                     To = messageForwardHeader.From,
                     Receiver = messageForwardHeader.Sender,
-                    Forwarders = messageForwardHeader.Forwarders
+                    ToForwarder = messageForwardHeader.FromForwarder
                 };
             }
             return null;

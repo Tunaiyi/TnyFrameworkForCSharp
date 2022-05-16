@@ -44,7 +44,7 @@ namespace TnyFramework.Net.Rpc.Remote
         /// <summary>
         /// 异步调用 CompleteSource 生成器
         /// </summary>
-        private readonly Func<IRpcCompleteSource> completeSourceCreator;
+        private readonly Func<IRpcCompleteSource> completeSourceFactory;
 
         public RpcRemoteInvoker(RpcRemoteMethod method, RpcRemoteInstance instance, IRpcRemoteRouter router)
         {
@@ -54,9 +54,9 @@ namespace TnyFramework.Net.Rpc.Remote
             this.router = router;
             if (!method.IsAsync())
                 return;
-            var messageTo = CreateMessageTo();
-            var sourceCreator = RpcInvokerFastInvokers.SourceCreator(method.BodyType);
-            completeSourceCreator = () => (IRpcCompleteSource) sourceCreator.Invoke(null, messageTo);
+            var messageToReturnValueConverter = CreateMessageToReturnValue(); // 创建 Message转返回值转化器
+            var sourceFactory = RpcInvokerFastInvokers.SourceFactory(method.BodyType); // 创建RpcCompleteSource构造调用器
+            completeSourceFactory = () => (IRpcCompleteSource) sourceFactory.Invoke(null, messageToReturnValueConverter);
         }
 
         public object Invoke(params object[] parameters)
@@ -88,7 +88,7 @@ namespace TnyFramework.Net.Rpc.Remote
             return Protocols.Protocol(method.Protocol, method.Line);
         }
 
-        private Func<IMessage, object> CreateMessageTo()
+        private Func<IMessage, object> CreateMessageToReturnValue()
         {
             if (Equals(method.BodyMode, RpcBodyMode.RESULT))
             {
@@ -146,7 +146,7 @@ namespace TnyFramework.Net.Rpc.Remote
 
         private Task ToReturnTask(Task<IMessage> messageTask)
         {
-            var source = completeSourceCreator();
+            var source = completeSourceFactory();
             messageTask.ContinueWith(task => {
                 if (task.IsFaulted)
                 {

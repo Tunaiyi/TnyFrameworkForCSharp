@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using ProtoBuf;
 using TnyFramework.Codec;
 using TnyFramework.Codec.Attributes;
@@ -13,20 +12,45 @@ namespace TnyFramework.Net.Message
     [ProtoContract]
     public class RpcForwardHeader : MessageHeader<RpcForwardHeader>
     {
+        /// <summary>
+        /// 请求服务
+        /// </summary>
         [ProtoMember(2)]
         public ForwardRpcServicer From { get; set; }
 
+        /// <summary>
+        /// 请求发送者
+        /// </summary>
         [ProtoMember(3)]
         public ForwardMessager Sender { get; set; }
 
+        /// <summary>
+        /// 目标服务
+        /// </summary>
         [ProtoMember(4)]
         public ForwardRpcServicer To { get; set; }
 
+        /// <summary>
+        /// 目标接受者
+        /// </summary>
         [ProtoMember(5)]
         public ForwardMessager Receiver { get; set; }
 
+        /// <summary>
+        /// 发生转发者
+        /// </summary>
         [ProtoMember(6, IsPacked = true)]
-        public List<ForwardRpcServicer> Forwarders { get; set; } = new List<ForwardRpcServicer>();
+        public ForwardRpcServicer FromForwarder { get; set; }
+
+        /// <summary>
+        /// 目标转发者
+        /// </summary>
+        [ProtoMember(7, IsPacked = true)]
+        public ForwardRpcServicer ToForwarder { get; set; }
+
+        public RpcForwardHeader()
+        {
+        }
 
         public override string Key => MessageHeaderConstants.RPC_FORWARD_HEADER_KEY;
 
@@ -57,6 +81,18 @@ namespace TnyFramework.Net.Message
         public RpcForwardHeader SetReceiver(IMessager receiver)
         {
             Receiver = ToForwardMessager(receiver);
+            return this;
+        }
+
+        public RpcForwardHeader SetFromForwarder(IRpcServicer fromService)
+        {
+            FromForwarder = ToForwardRpcServicer(fromService);
+            return this;
+        }
+
+        public RpcForwardHeader SetToForwarder(IRpcServicer toForwarder)
+        {
+            ToForwarder = ToForwardRpcServicer(toForwarder);
             return this;
         }
 

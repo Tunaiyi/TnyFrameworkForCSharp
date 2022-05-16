@@ -31,7 +31,7 @@ namespace TnyFramework.Net.Rpc.Remote
             return FastFuncFactory.Invoker(resultCodeMethod, null, null);
         }
 
-        public static IFastInvoker SourceCreator(Type bodyType)
+        public static IFastInvoker SourceFactory(Type bodyType)
         {
             var type = typeof(RpcCompleteSource<>).MakeGenericType(bodyType);
             var constructor = type.GetConstructors()[0];
