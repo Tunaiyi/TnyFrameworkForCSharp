@@ -24,6 +24,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         public UnitSpec<IMessageFactory, INetGuideUnitContext<TUserId>> MessageFactorySpec { get; }
 
+        public UnitSpec<IMessagerFactory, INetGuideUnitContext<TUserId>> MessagerFactorySpec { get; }
+
         public UnitSpec<IMessageBodyCodec, INetGuideUnitContext<TUserId>> MessageBodyCodecSpec { get; }
 
         public UnitSpec<IMessageHeaderCodec, INetGuideUnitContext<TUserId>> MessageHeaderCodecSpec { get; }
@@ -48,6 +50,10 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             // MessageFactory
             MessageFactorySpec = UnitSpec.Unit<IMessageFactory, INetGuideUnitContext<TUserId>>()
                 .Default<CommonMessageFactory>();
+
+            // MessagerFactory
+            MessagerFactorySpec = UnitSpec.Unit<IMessagerFactory, INetGuideUnitContext<TUserId>>()
+                .Default<InnerMessagerFactory>();
 
             // MessageBodyCodec
             MessageBodyCodecSpec = UnitSpec.Unit<IMessageBodyCodec, INetGuideUnitContext<TUserId>>()
@@ -74,6 +80,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         {
             TunnelFactorySpec.WithNamePrefix(name);
             MessageFactorySpec.WithNamePrefix(name);
+            MessagerFactorySpec.WithNamePrefix(name);
             MessageBodyCodecSpec.WithNamePrefix(name);
             MessageHeaderCodecSpec.WithNamePrefix(name);
             MessageCodecSpec.WithNamePrefix(name);
@@ -97,6 +104,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         public IMessageFactory LoadMessageFactory()
         {
             return MessageFactorySpec.Load(this, UnitContainer);
+        }
+
+        public IMessagerFactory LoadMessagerFactory()
+        {
+            return MessagerFactorySpec.Load(this, UnitContainer);
         }
 
         public IMessageCodec LoadMessageCodec()

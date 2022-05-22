@@ -98,6 +98,10 @@ namespace TnyFramework.Net.Rpc.Remote
                             Mode = ParamMode.ToService;
                         }
                     }
+                    if (Mode == ParamMode.None)
+                    {
+                        break;
+                    }
                 }
             }
 

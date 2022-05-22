@@ -14,6 +14,8 @@ namespace TnyFramework.Net.Base
 
         public IMessageFactory MessageFactory { get; }
 
+        public IMessagerFactory MessagerFactory { get; }
+
         public IServerBootstrapSetting Setting { get; }
 
         public ICertificateFactory<TUserId> CertificateFactory { get; }
@@ -31,6 +33,7 @@ namespace TnyFramework.Net.Base
             IMessageDispatcher messageDispatcher,
             ICommandTaskBoxProcessor commandTaskProcessor,
             IMessageFactory messageFactory,
+            IMessagerFactory messagerFactory,
             ICertificateFactory<TUserId> certificateFactory,
             IRpcForwarder rpcForwarder = null)
         {
@@ -38,6 +41,7 @@ namespace TnyFramework.Net.Base
             MessageDispatcher = messageDispatcher;
             CommandTaskProcessor = commandTaskProcessor;
             MessageFactory = messageFactory;
+            MessagerFactory = messagerFactory;
             CertificateFactory = certificateFactory;
             RpcForwarder = rpcForwarder;
         }

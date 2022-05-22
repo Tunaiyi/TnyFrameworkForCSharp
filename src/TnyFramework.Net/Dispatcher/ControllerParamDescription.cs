@@ -141,7 +141,10 @@ namespace TnyFramework.Net.Dispatcher
                             Mode = ParamMode.ToService;
                         }
                     }
-
+                    if (Mode != ParamMode.None)
+                    {
+                        break;
+                    }
                 }
             }
             if (Mode != ParamMode.None || !Require)
@@ -164,6 +167,7 @@ namespace TnyFramework.Net.Dispatcher
             }
             var head = message.Head;
             object value = null;
+            var context = tunnel.Context;
             switch (Mode)
             {
                 case ParamMode.None:
@@ -187,7 +191,6 @@ namespace TnyFramework.Net.Dispatcher
                     value = tunnel;
                     break;
                 case ParamMode.Setting: {
-                    var context = tunnel.Context;
                     value = context.Setting;
                     break;
                 }
@@ -262,7 +265,7 @@ namespace TnyFramework.Net.Dispatcher
                     var forwardHeader = head.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
                     if (forwardHeader != null)
                     {
-                        value = forwardHeader.Sender;
+                        value = context.MessagerFactory.CreateMessager(forwardHeader.Sender);
                     }
                     break;
                 }
@@ -270,7 +273,7 @@ namespace TnyFramework.Net.Dispatcher
                     var forwardHeader = head.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
                     if (forwardHeader != null)
                     {
-                        value = forwardHeader.Receiver;
+                        value = context.MessagerFactory.CreateMessager(forwardHeader.Receiver);
                     }
                     break;
                 }

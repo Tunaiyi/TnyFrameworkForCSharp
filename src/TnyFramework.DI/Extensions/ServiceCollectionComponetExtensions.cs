@@ -12,7 +12,10 @@ namespace TnyFramework.DI.Extensions
 
     public static class ServiceCollectionComponentExtensions
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<IServiceCollection>();
+        private static ILogger _LOGGER;
+
+        private static ILogger Logger => _LOGGER ?? (_LOGGER = LogFactory.Logger(typeof(ServiceCollectionComponentExtensions))); 
+
 
         public static IServiceCollection AddComponents(this IServiceCollection service)
         {
@@ -33,7 +36,7 @@ namespace TnyFramework.DI.Extensions
             var componentAttribute = type.GetCustomAttribute<ComponentAttribute>() ?? type.GetCustomAttribute<ServiceAttribute>();
             if (componentAttribute == null)
                 return;
-            LOGGER.LogInformation("Add Component : {Type}", type);
+            Logger.LogInformation("Add Component : {Type}", type);
             var name = componentAttribute.Named() ? "" : componentAttribute.Name;
             switch (componentAttribute.Mode)
             {

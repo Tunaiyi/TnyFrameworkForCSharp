@@ -28,7 +28,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         public TSpec TunnelConfigure(Action<IUnitSpec<INettyTunnelFactory, INetGuideUnitContext<TUserId>>> action)
         {
-            action.Invoke(context.TunnelFactorySpec);
+            action(context.TunnelFactorySpec);
             return Self();
         }
 
@@ -42,37 +42,43 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         public TSpec CertificateConfigure(
             Action<IUnitSpec<ICertificateFactory<TUserId>, INetGuideUnitContext<TUserId>>> action)
         {
-            action.Invoke(context.CertificateFactorySpec);
+            action(context.CertificateFactorySpec);
             return Self();
         }
 
         public TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, INetGuideUnitContext<TUserId>>> action)
         {
-            action.Invoke(context.MessageFactorySpec);
+            action(context.MessageFactorySpec);
+            return Self();
+        }
+
+        public TSpec MessagerConfigure(Action<IUnitSpec<IMessagerFactory, INetGuideUnitContext<TUserId>>> action)
+        {
+            action(context.MessagerFactorySpec);
             return Self();
         }
 
         public TSpec MessageBodyCodecConfigure(Action<UnitSpec<IMessageBodyCodec, INetGuideUnitContext<TUserId>>> action)
         {
-            action.Invoke(context.MessageBodyCodecSpec);
+            action(context.MessageBodyCodecSpec);
             return Self();
         }
 
         public TSpec MessageHeaderCodecConfigure(Action<UnitSpec<IMessageHeaderCodec, INetGuideUnitContext<TUserId>>> action)
         {
-            action.Invoke(context.MessageHeaderCodecSpec);
+            action(context.MessageHeaderCodecSpec);
             return Self();
         }
 
         public TSpec MessageCodecConfigure(Action<UnitSpec<IMessageCodec, INetGuideUnitContext<TUserId>>> action)
         {
-            action.Invoke(context.MessageCodecSpec);
+            action(context.MessageCodecSpec);
             return Self();
         }
 
         public TSpec ChannelMakerConfigure(Action<UnitSpec<IChannelMaker, INetGuideUnitContext>> action)
         {
-            action.Invoke(context.ChannelMakerSpec);
+            action(context.ChannelMakerSpec);
             return Self();
         }
     }

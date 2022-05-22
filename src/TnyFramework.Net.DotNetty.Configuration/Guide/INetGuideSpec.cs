@@ -23,6 +23,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, INetGuideUnitContext<TUserId>>> action);
 
+        TSpec MessagerConfigure(Action<IUnitSpec<IMessagerFactory, INetGuideUnitContext<TUserId>>> action);
+
         TSpec MessageBodyCodecConfigure(Action<UnitSpec<IMessageBodyCodec, INetGuideUnitContext<TUserId>>> action);
 
         TSpec MessageCodecConfigure(Action<UnitSpec<IMessageCodec, INetGuideUnitContext<TUserId>>> action);

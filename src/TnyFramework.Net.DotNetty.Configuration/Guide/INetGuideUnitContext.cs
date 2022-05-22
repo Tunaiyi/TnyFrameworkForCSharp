@@ -17,6 +17,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         IMessageFactory LoadMessageFactory();
 
+        IMessagerFactory LoadMessagerFactory();
+
         IMessageCodec LoadMessageCodec();
 
         IMessageBodyCodec LoadMessageBodyCodec();

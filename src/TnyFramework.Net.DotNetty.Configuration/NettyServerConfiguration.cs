@@ -22,7 +22,10 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
     public class NettyServerConfiguration : INettyServerConfiguration
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<NettyServerConfiguration>();
+        private static ILogger _LOGGER;
+
+        private static ILogger Logger => _LOGGER ?? (_LOGGER = LogFactory.Logger<NettyServerConfiguration>()); 
+        
 
         // private readonly UnitSpec<NettyServerGuide, INetUnitContext> serverGuideSpec;
 
@@ -107,14 +110,14 @@ namespace TnyFramework.Net.DotNetty.Configuration
         public NettyServerConfiguration AddController<TController>() where TController : class, IController
         {
             UnitContainer.AddSingletonUnit<TController>();
-            LOGGER.LogInformation("AddController : {Controller}", typeof(TController));
+            Logger.LogInformation("AddController : {Controller}", typeof(TController));
             return this;
         }
 
         public NettyServerConfiguration AddController(IController controller)
         {
             UnitContainer.AddSingletonUnit(controller);
-            LOGGER.LogInformation("AddController : {Controller}", controller.GetType());
+            Logger.LogInformation("AddController : {Controller}", controller.GetType());
             return this;
         }
 
@@ -128,7 +131,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
             where TController : IController
         {
             UnitContainer.AddSingletonUnit(factory);
-            LOGGER.LogInformation("AddController : {Controller}", typeof(TController));
+            Logger.LogInformation("AddController : {Controller}", typeof(TController));
             return this;
         }
 
@@ -159,14 +162,14 @@ namespace TnyFramework.Net.DotNetty.Configuration
                 if (iControllerType.IsAssignableFrom(type))
                 {
                     UnitContainer.AddSingletonUnit(type);
-                    LOGGER.LogInformation("AddController : {Controller}", type);
+                    Logger.LogInformation("AddController : {Controller}", type);
                     continue;
                 }
                 var rpcController = type.GetCustomAttribute(typeof(RpcControllerAttribute));
                 if (rpcController == null)
                     continue;
                 UnitContainer.AddSingletonUnit(type);
-                LOGGER.LogInformation("AddController : {Controller}", type);
+                Logger.LogInformation("AddController : {Controller}", type);
             }
             return this;
         }

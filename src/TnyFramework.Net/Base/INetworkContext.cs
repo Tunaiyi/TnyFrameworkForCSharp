@@ -19,9 +19,14 @@ namespace TnyFramework.Net.Base
         ICertificateFactory<TUserId> CertificateFactory<TUserId>();
 
         /// <summary>
-        /// 消息公共方法
+        /// 消息工厂
         /// </summary>
         IMessageFactory MessageFactory { get; }
+
+        /// <summary>
+        /// 消息者工厂
+        /// </summary>
+        IMessagerFactory MessagerFactory { get; }
 
         /// <summary>
         /// 服务配置¬
