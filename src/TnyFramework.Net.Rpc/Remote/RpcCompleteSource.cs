@@ -20,7 +20,7 @@ namespace TnyFramework.Net.Rpc.Remote
             .First(info => info.Name == "Result" && info.IsGenericMethod
                                                  && info.GetGenericArguments().Length == 1 && info.GetParameters().Length == 2
                                                  && info.GetParameters()[0].ParameterType == typeof(IResultCode)
-                                                 && info.GetParameters()[1].Name == "body");
+                                                 && info.GetParameters()[1].Name == "message");
 
         public static IFastInvoker RcpResultCreator(Type resultType)
         {

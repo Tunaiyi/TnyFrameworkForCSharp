@@ -43,6 +43,10 @@ namespace TnyFramework.Net.Message
 
         public abstract bool IsHasHeaders { get; }
 
+        public virtual bool IsForward() => ExistHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+
+        public virtual RpcForwardHeader ForwardHeader => GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+
         public abstract IList<MessageHeader> GetAllHeaders();
 
         public abstract IDictionary<string, MessageHeader> GetAllHeadersMap();

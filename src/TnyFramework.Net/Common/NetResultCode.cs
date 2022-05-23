@@ -201,9 +201,15 @@ namespace TnyFramework.Net.Common
         public static readonly IResultCode REQUEST_FAILED = Of(306, "客户端请求失败", ResultLevel.Warn);
 
         /// <summary>
-        ///  RPC调用失败
+        ///  RPC服务不可用
         /// </summary>    
-        public static readonly IResultCode RPC_INVOKE_FAILED = Of(400, "RPC调用异常", ResultLevel.Warn);
+        public static readonly IResultCode RPC_SERVICE_NOT_AVAILABLE = Of(400, "RPC服务不可用", ResultLevel.Warn);
+        
+        /// <summary>
+        ///   RPC调用失败
+        /// </summary>
+        public static readonly IResultCode RPC_INVOKE_FAILED = Of(401, "RPC调用异常", ResultLevel.Warn);
+        
     }
 
 }

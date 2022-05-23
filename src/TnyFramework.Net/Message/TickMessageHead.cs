@@ -55,6 +55,10 @@ namespace TnyFramework.Net.Message
 
         public override bool IsHasHeaders => false;
 
+        public override bool IsForward() => false;
+
+        public override RpcForwardHeader ForwardHeader => null;
+
         public override IList<MessageHeader> GetAllHeaders() => ImmutableList<MessageHeader>.Empty;
 
         public override IDictionary<string, MessageHeader> GetAllHeadersMap() => ImmutableDictionary<string, MessageHeader>.Empty;
