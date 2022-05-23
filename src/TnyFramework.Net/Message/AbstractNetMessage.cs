@@ -62,6 +62,10 @@ namespace TnyFramework.Net.Message
 
         public bool IsHasHeaders => head.IsHasHeaders;
 
+        public bool IsForward() => ExistHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+
+        public RpcForwardHeader ForwardHeader => GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+
         public IList<MessageHeader> GetAllHeaders() => head.GetAllHeaders();
 
         public IDictionary<string, MessageHeader> GetAllHeadersMap() => head.GetAllHeadersMap();

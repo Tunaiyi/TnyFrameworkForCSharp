@@ -1,4 +1,5 @@
 using TnyFramework.Common.Result;
+using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Command
 {
@@ -8,13 +9,24 @@ namespace TnyFramework.Net.Command
     {
         public TBody Body { get; }
 
+        public IMessage Message { get; }
+
         public IResultCode ResultCode { get; }
 
         public string Description { get; }
 
+        public DefaultRpcResult(IResultCode resultCode, IMessage message)
+        {
+            Body = message.BodyAs<TBody>();
+            Message = message;
+            ResultCode = resultCode;
+            Description = resultCode.Message;
+        }
+
         public DefaultRpcResult(IResultCode resultCode, TBody body)
         {
             Body = body;
+            Message = null;
             ResultCode = resultCode;
             Description = resultCode.Message;
         }
@@ -48,7 +60,18 @@ namespace TnyFramework.Net.Command
         /// <summary>
         /// 创建成功响应结果
         /// </summary>
-        /// <param name="body">信息体</param>
+        /// <param name="message">消息</param>
+        /// <typeparam name="TBody"></typeparam>
+        /// <returns>返回响应结果</returns>
+        public static IRpcResult<TBody> Success<TBody>(IMessage message)
+        {
+            return new DefaultRpcResult<TBody>(ResultCode.SUCCESS, message);
+        }
+
+        /// <summary>
+        /// 创建成功响应结果
+        /// </summary>
+        /// <param name="body"></param>
         /// <typeparam name="TBody"></typeparam>
         /// <returns>返回响应结果</returns>
         public static IRpcResult<TBody> Success<TBody>(TBody body)
@@ -78,11 +101,19 @@ namespace TnyFramework.Net.Command
         /// 请求结果
         /// </summary>
         /// <returns>结果</returns>
+        public static IRpcResult<TBody> Result<TBody>(IResultCode code, IMessage message)
+        {
+            return new DefaultRpcResult<TBody>(code, message);
+        }
+
+        /// <summary>
+        /// 请求结果
+        /// </summary>
+        /// <returns>结果</returns>
         public static IRpcResult<TBody> Result<TBody>(IResultCode code, TBody body)
         {
             return new DefaultRpcResult<TBody>(code, body);
         }
-        
     }
 
 }

@@ -8,7 +8,6 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
 
     public static class FastActionFactory
     {
-        
         public static IFastActionFactory CreateFactory(PropertyInfo property, Type actionInvokerType = null, Type actionParamType = null)
         {
             return CreateActionFactory(actionInvokerType ?? property.DeclaringType, actionParamType ?? property.PropertyType);
@@ -112,7 +111,6 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
                     throw new ArgumentException($"{member} 参数数量 > 15");
             }
         }
-
     }
 
 }

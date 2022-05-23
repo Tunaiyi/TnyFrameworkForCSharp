@@ -5,7 +5,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
 
     public class FastFunc<TInvoker, TResult> : BaseFastFunc<Func<TInvoker, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker);
@@ -15,7 +14,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker, (TP1) parameters[0]);
@@ -25,7 +23,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -37,7 +34,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -50,7 +46,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -64,7 +59,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -79,7 +73,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -95,7 +88,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -112,7 +104,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -130,7 +121,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -149,7 +139,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -169,7 +158,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TP11, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TP11, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -190,7 +178,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TP11, TP12, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TP11, TP12, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -212,7 +199,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TP11, TP12, TP13, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TP11, TP12, TP13, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -235,7 +221,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TP11, TP12, TP13, TP14, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TP11, TP12, TP13, TP14, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,
@@ -259,7 +244,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     public class FastFunc<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TP11, TP12, TP13, TP14, TP15, TResult>
         : BaseFastFunc<Func<TInvoker, TP1, TP2, TP3, TP4, TP5, TP6, TP7, TP8, TP9, TP10, TP11, TP12, TP13, TP14, TP15, TResult>>
     {
-        
         public override object Invoke(object invoker, params object[] parameters)
         {
             return Func.Invoke((TInvoker) invoker,

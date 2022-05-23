@@ -54,7 +54,7 @@ namespace TnyFramework.Net.Endpoint
             if (coroutine != null)
                 return;
             coroutine = DefaultCoroutineFactory.Default.Create("SessionKeeperClearInvalidedSession");
-            coroutine.Exec(async () => {
+            coroutine.AsyncExec(async () => {
                 try
                 {
                     ClearInvalidedSession();

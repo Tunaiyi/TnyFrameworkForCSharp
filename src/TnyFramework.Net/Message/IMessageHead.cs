@@ -75,6 +75,17 @@ namespace TnyFramework.Net.Message
         bool IsHasHeaders { get; }
 
         /// <summary>
+        /// 是否是转发
+        /// </summary>
+        /// <returns>是转发返回 True,否则返回 false</returns>
+        bool IsForward();
+
+        /// <summary>
+        /// 获取转发头
+        /// </summary>
+        RpcForwardHeader ForwardHeader { get; }
+
+        /// <summary>
         /// 获取全部 Header
         /// </summary>
         /// <returns>Header 列表</returns>

@@ -133,7 +133,6 @@ namespace TnyFramework.Coroutines.Demo
 
         private static async Task Main(string[] args)
         {
-            
 
             var bus = EventBuses.Create<Run>();
             bus.Add((name) => Console.WriteLine($"bus {name} run"));
@@ -296,14 +295,14 @@ namespace TnyFramework.Coroutines.Demo
             // LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [GOGO] 2", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
             // await coroutine1.Exec(SendOrPostCallback);
             // LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [GOGO] 3", Coroutine.Current, Thread.CurrentThread.ManagedThreadId);
-            await coroutine1.Run(() => Console.WriteLine("222"));
-            await coroutine1.Exec(() => DelayTest(1));
-            await coroutine2.Exec(async () => {
+            await coroutine1.AsyncAction(() => Console.WriteLine("222"));
+            await coroutine1.AsyncExec(() => DelayTest(1));
+            await coroutine2.AsyncExec(async () => {
                 LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [C2 CALL C1 DelayTest] Start", Coroutine.Current,
                     Thread.CurrentThread.ManagedThreadId);
                 try
                 {
-                    await coroutine1.Exec(() => DelayTest(4));
+                    await coroutine1.AsyncExec(() => DelayTest(4));
                 } catch (Exception e)
                 {
                     LOGGER.LogError(e, "[Run : {CoroName} at Thread-{ThreadId}] [C2 CALL C1 DelayTest] Exception", Coroutine.Current,

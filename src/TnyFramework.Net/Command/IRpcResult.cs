@@ -1,4 +1,5 @@
 using TnyFramework.Common.Result;
+using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Command
 {
@@ -6,6 +7,8 @@ namespace TnyFramework.Net.Command
     public interface IRpcResult
     {
         object Body { get; }
+
+        IMessage Message { get; }
 
         IResultCode ResultCode { get; }
 

@@ -22,8 +22,9 @@ namespace TnyFramework.Common.Event
         /// <summary>
         /// 添加监听
         /// </summary>
+        /// <param name="onNodeCreate"></param>
         /// <param name="handler"></param>
-        void Add(params THandler[] handler);
+        void Add(object onNodeCreate, params THandler[] handler);
 
         /// <summary>
         /// 移除监听

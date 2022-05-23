@@ -51,7 +51,8 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
             return CreateFactory(method, funcInvokerType, funcReturnType, funcParamTypes.AsEnumerable());
         }
 
-        public static IFastFuncFactory CreateFactory(MethodInfo method, Type funcInvokerType, Type funcReturnType, IEnumerable<ParameterInfo> funcParamTypes)
+        public static IFastFuncFactory CreateFactory(MethodInfo method, Type funcInvokerType, Type funcReturnType,
+            IEnumerable<ParameterInfo> funcParamTypes)
         {
             return CreateFactory(method, funcInvokerType, funcReturnType, funcParamTypes.Select(param => param.ParameterType).ToList());
         }

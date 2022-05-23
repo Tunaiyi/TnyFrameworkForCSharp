@@ -10,12 +10,12 @@
 
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj"/>
-        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj" />
+        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
     </ItemGroup>
 
 

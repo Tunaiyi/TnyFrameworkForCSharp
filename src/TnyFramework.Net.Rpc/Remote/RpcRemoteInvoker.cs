@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Exceptions;
@@ -46,6 +45,11 @@ namespace TnyFramework.Net.Rpc.Remote
         /// </summary>
         private readonly Func<IRpcCompleteSource> completeSourceFactory;
 
+        /// <summary>
+        /// 异步调用 CompleteSource 生成器
+        /// </summary>
+        private readonly Func<IMessage, object> returnValueFormatter;
+
         public RpcRemoteInvoker(RpcRemoteMethod method, RpcRemoteInstance instance, IRpcRemoteRouter router)
         {
             this.method = method;
@@ -54,9 +58,9 @@ namespace TnyFramework.Net.Rpc.Remote
             this.router = router;
             if (!method.IsAsync())
                 return;
-            var messageToReturnValueConverter = CreateMessageToReturnValue(); // 创建 Message转返回值转化器
+            returnValueFormatter = CreateMessageToReturnValue(); // 创建 Message转返回值转化器
             var sourceFactory = RpcInvokerFastInvokers.SourceFactory(method.BodyType); // 创建RpcCompleteSource构造调用器
-            completeSourceFactory = () => (IRpcCompleteSource) sourceFactory.Invoke(null, messageToReturnValueConverter);
+            completeSourceFactory = () => (IRpcCompleteSource) sourceFactory.Invoke(null, returnValueFormatter);
         }
 
         public object Invoke(params object[] parameters)
@@ -93,7 +97,7 @@ namespace TnyFramework.Net.Rpc.Remote
             if (Equals(method.BodyMode, RpcBodyMode.RESULT))
             {
                 var resultCreator = RpcInvokerFastInvokers.RcpResultCreator(method.BodyType);
-                return message => resultCreator.Invoke(null, ResultCode.ForId(message.Code), message.Body);
+                return message => resultCreator.Invoke(null, ResultCode.ForId(message.Code), message);
             }
             if (Equals(method.BodyMode, RpcBodyMode.MESSAGE) || Equals(method.BodyMode, RpcBodyMode.MESSAGE_HEAD))
             {
@@ -116,32 +120,6 @@ namespace TnyFramework.Net.Rpc.Remote
                 return message => ResultCode.ForId(message.Code);
             }
             return null;
-        }
-
-        private object GetReturnObject(IMessage message)
-        {
-            if (Equals(method.BodyMode, RpcBodyMode.MESSAGE)
-                || Equals(method.BodyMode, RpcBodyMode.MESSAGE_HEAD))
-            {
-                return message;
-            }
-            if (Equals(method.BodyMode, RpcBodyMode.RESULT))
-            {
-                return RpcResults.Result(ResultCode.ForId(message.Code), message.Body);
-            }
-            if (Equals(method.BodyMode, RpcBodyMode.BODY))
-            {
-                return message.Body;
-            }
-            if (Equals(method.BodyMode, RpcBodyMode.RESULT_CODE_ID))
-            {
-                return message.Code;
-            }
-            if (Equals(method.BodyMode, RpcBodyMode.RESULT_CODE))
-            {
-                return ResultCode.ForId(message.Code);
-            }
-            throw new RpcInvokeException(NetResultCode.REMOTE_EXCEPTION, "返回类型错误");
         }
 
         private Task ToReturnTask(Task<IMessage> messageTask)
@@ -178,7 +156,7 @@ namespace TnyFramework.Net.Rpc.Remote
                 return ToReturnTask(receipt.Respond());
             }
             var message = receipt.Respond().Result;
-            return GetReturnObject(message);
+            return returnValueFormatter(message);
         }
 
         private object Push(ISender accessPoint, int timeout, RpcRemoteInvokeParams invokeParams)

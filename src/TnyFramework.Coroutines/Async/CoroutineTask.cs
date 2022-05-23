@@ -27,21 +27,21 @@ namespace TnyFramework.Coroutines.Async
 
     internal class CoroutineActionTask : CoroutineTask<int>
     {
-        private readonly CoroutineAction action;
+        private readonly AsyncHandle handle;
 
         public Task SourceTask => Source?.Task;
 
-        public CoroutineActionTask(CoroutineAction action, bool createSource = true)
+        public CoroutineActionTask(AsyncHandle handle, bool createSource = true)
             : base(createSource)
         {
-            this.action = action;
+            this.handle = handle;
         }
 
         public override async Task Invoke()
         {
             try
             {
-                await action.Invoke();
+                await handle.Invoke();
                 Source?.SetResult(1);
             } catch (Exception e)
             {
@@ -52,9 +52,9 @@ namespace TnyFramework.Coroutines.Async
 
     internal class CoroutineFuncTask<T> : CoroutineTask<T>
     {
-        private readonly CoroutineFunc<T> function;
+        private readonly AsyncHandle<T> function;
 
-        public CoroutineFuncTask(CoroutineFunc<T> function, bool needSource = true)
+        public CoroutineFuncTask(AsyncHandle<T> function, bool needSource = true)
             : base(needSource)
         {
             this.function = function;

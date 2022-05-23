@@ -14,8 +14,7 @@ namespace TnyFramework.DI.Extensions
     {
         private static ILogger _LOGGER;
 
-        private static ILogger Logger => _LOGGER ?? (_LOGGER = LogFactory.Logger(typeof(ServiceCollectionComponentExtensions))); 
-
+        private static ILogger Logger => _LOGGER ?? (_LOGGER = LogFactory.Logger(typeof(ServiceCollectionComponentExtensions)));
 
         public static IServiceCollection AddComponents(this IServiceCollection service)
         {

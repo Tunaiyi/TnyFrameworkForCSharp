@@ -71,7 +71,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                         tunnel?.Receive(message);
                     } catch (System.Exception ex)
                     {
-                        LOGGER.LogError("#GameServerHandler#接受请求异常", ex);
+                        LOGGER.LogError(ex, "#GameServerHandler#接受请求异常");
                     }
                     break;
             }

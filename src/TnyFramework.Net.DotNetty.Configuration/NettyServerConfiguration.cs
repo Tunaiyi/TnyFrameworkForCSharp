@@ -24,8 +24,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
     {
         private static ILogger _LOGGER;
 
-        private static ILogger Logger => _LOGGER ?? (_LOGGER = LogFactory.Logger<NettyServerConfiguration>()); 
-        
+        private static ILogger Logger => _LOGGER ?? (_LOGGER = LogFactory.Logger<NettyServerConfiguration>());
 
         // private readonly UnitSpec<NettyServerGuide, INetUnitContext> serverGuideSpec;
 

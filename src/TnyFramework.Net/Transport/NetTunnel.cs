@@ -220,6 +220,7 @@ namespace TnyFramework.Net.Transport
 
         public void Disconnect()
         {
+            TEndpoint netEndpoint;
             lock (this)
             {
                 var current = Status;
@@ -227,14 +228,13 @@ namespace TnyFramework.Net.Transport
                 {
                     return;
                 }
-                OnDisconnect();
                 DoDisconnect();
                 Status = TunnelStatus.Suspend;
-                var netEndpoint = endpoint;
-                unactivatedEvent?.Notify(this);
-                netEndpoint?.OnUnactivated(this);
+                netEndpoint = endpoint;
                 OnDisconnected();
             }
+            netEndpoint?.OnUnactivated(this);
+            unactivatedEvent?.Notify(this);
 
         }
 
@@ -255,6 +255,7 @@ namespace TnyFramework.Net.Transport
             {
                 return false;
             }
+            TEndpoint netEndpoint;
             lock (this)
             {
                 current = Status;
@@ -265,11 +266,11 @@ namespace TnyFramework.Net.Transport
                 Status = TunnelStatus.Closed;
                 OnClose();
                 DoDisconnect();
-                var netEndpoint = endpoint;
-                netEndpoint?.OnUnactivated(this);
-                closeEvent?.Notify(this);
+                netEndpoint = endpoint;
                 OnClosed();
             }
+            netEndpoint?.OnUnactivated(this);
+            closeEvent?.Notify(this);
             return true;
         }
 

@@ -12,7 +12,6 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
         IFastInvoker CreateInvoker(MethodInfo method);
 
         IFastInvoker CreateInvoker(ConstructorInfo constructor);
-        
     }
 
 }

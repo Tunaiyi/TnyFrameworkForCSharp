@@ -1,5 +1,7 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Command.Processor;
 
 namespace TnyFramework.Net.Command.Tasks
@@ -17,9 +19,9 @@ namespace TnyFramework.Net.Command.Tasks
 
         private readonly CommandTaskBox taskBox;
 
-        private readonly ICommandTaskBoxDriverExecutor executor;
+        private readonly Action<AsyncHandle> executor;
 
-        public CommandTaskBoxDriver(CommandTaskBox taskBox, ICommandTaskBoxDriverExecutor executor)
+        public CommandTaskBoxDriver(CommandTaskBox taskBox, Action<AsyncHandle> executor)
         {
             this.taskBox = taskBox;
             this.executor = executor;
@@ -32,7 +34,7 @@ namespace TnyFramework.Net.Command.Tasks
                 return;
             if (Interlocked.CompareExchange(ref status, STATUS_SUBMIT_VALUE, STATUS_IDLE_VALUE) == current)
             {
-                executor.Execute(this);
+                executor(Execute);
             }
         }
 

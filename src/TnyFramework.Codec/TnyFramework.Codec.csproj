@@ -9,11 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.17.0"/>
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.17.0" />
     </ItemGroup>
 
 </Project>

@@ -127,7 +127,7 @@ namespace TnyFramework.Common.Event
             }
         }
 
-        public void Add(params THandler[] handler)
+        public void Add(object onNodeCreate, params THandler[] handler)
         {
             foreach (var tHandler in handler)
             {

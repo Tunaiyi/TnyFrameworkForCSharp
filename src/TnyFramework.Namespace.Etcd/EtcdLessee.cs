@@ -1,0 +1,211 @@
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using Etcdserverpb;
+using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Event;
+using TnyFramework.Common.Logger;
+using TnyFramework.Coroutines.Async;
+using TnyFramework.Namespace.Listener;
+
+namespace TnyFramework.Namespace.Etcd
+{
+
+    public class EtcdLessee : ILessee
+    {
+        private static readonly ILogger LOGGER = LogFactory.Logger<EtcdLessee>();
+
+        private const int STOP = 0;
+
+        private const int GRANT = 1;
+
+        private const int LIVE = 2;
+
+        private const int PAUSE = 3;
+
+        private const int SHUTDOWN = 4;
+
+        private volatile int status = STOP;
+
+        private readonly EtcdAccessor client;
+
+        private CancellationTokenSource keepAliveSource;
+
+        private readonly ICoroutine coroutine;
+
+        private readonly IEventBus<LesseeOnRenew> renewEvent = EventBuses.Create<LesseeOnRenew>();
+
+        private readonly IEventBus<LesseeOnCompleted> completedEvent = EventBuses.Create<LesseeOnCompleted>();
+
+        private readonly IEventBus<LesseeOnLease> leaseEvent = EventBuses.Create<LesseeOnLease>();
+
+        private readonly IEventBus<LesseeOnResume> resumeEvent = EventBuses.Create<LesseeOnResume>();
+
+        private readonly IEventBus<LesseeOnError> errorEvent = EventBuses.Create<LesseeOnError>();
+
+        public EtcdLessee(string name, EtcdAccessor client, long ttl)
+        {
+            this.client = client;
+            Ttl = ttl;
+            Name = name;
+            coroutine = DefaultCoroutineFactory.Default.Create("EtcdLessee");
+        }
+
+        public string Name { get; }
+
+        public long Id { get; private set; }
+
+        public long Ttl { get; private set; }
+
+        public IEventBox<LesseeOnRenew> RenewEvent => renewEvent;
+
+        public IEventBox<LesseeOnCompleted> CompletedEvent => completedEvent;
+
+        public IEventBox<LesseeOnError> ErrorEvent => errorEvent;
+
+        public IEventBox<LesseeOnLease> LeaseEvent => leaseEvent;
+
+        public IEventBox<LesseeOnResume> ResumeEvent => resumeEvent;
+
+        public bool IsLive()
+        {
+            return status == LIVE;
+        }
+
+        public bool IsPause()
+        {
+            return status == PAUSE;
+        }
+
+        public bool IsStop()
+        {
+            return status == STOP;
+        }
+
+        public bool IsGranting()
+        {
+            return status == GRANT;
+        }
+
+        public bool IsShutdown()
+        {
+            return status == SHUTDOWN;
+        }
+
+        public Task<bool> Lease()
+        {
+            return Lease(Ttl);
+        }
+
+        public Task<bool> Lease(long ttl)
+        {
+            return DoGrant(ttl, STOP);
+        }
+
+        internal Task<bool> Resume()
+        {
+            return DoGrant(Ttl, PAUSE);
+        }
+
+        private Task<bool> DoGrant(long ttl, int whenStatus)
+        {
+            return coroutine.AsyncExec(async () => {
+                try
+                {
+                    if (IsLive())
+                    {
+                        return true;
+                    }
+                    var current = status;
+                    if (current != Interlocked.CompareExchange(ref status, GRANT, whenStatus))
+                        return false;
+                    var response = await client.LeaseGrantAsync(new LeaseGrantRequest {
+                        TTL = ttl
+                    });
+                    Ttl = Ttl;
+                    Id = response.ID;
+                    var keepRequest = new LeaseKeepAliveRequest {
+                        ID = Id
+                    };
+                    var tokenSource = new CancellationTokenSource();
+                    var token = tokenSource.Token;
+                    keepAliveSource = tokenSource;
+                    if (whenStatus == PAUSE)
+                    {
+                        resumeEvent.Notify(this);
+                    } else
+                    {
+                        leaseEvent.Notify(this);
+                    }
+                    var _ = client.LeaseKeepAlive(keepRequest, OnKeepAlive, token);
+                    token.Register(() => coroutine.ExecAction(HandleCompleted));
+                    return true;
+                } catch (Exception e)
+                {
+                    HandleGrantError(whenStatus, e);
+                    throw;
+                }
+            });
+        }
+
+        private void HandleGrantError(int whenStatus, Exception e)
+        {
+            status = whenStatus;
+            LOGGER.LogError(e, "DoGrant exception");
+            errorEvent.Notify(this, e);
+            throw e;
+        }
+
+        private void HandleCompleted()
+        {
+            if (status == LIVE)
+            {
+                status = STOP;
+                var _ = DoRevoke();
+            }
+            completedEvent.Notify(this);
+        }
+
+        public Task<bool> Revoke()
+        {
+            return coroutine.AsyncExec(async () => {
+                if (IsStop())
+                {
+                    return true;
+                }
+                var current = status;
+                if (Interlocked.CompareExchange(ref status, STOP, LIVE) != current)
+                    return false;
+                await DoRevoke();
+                return true;
+            });
+
+        }
+
+        public Task Shutdown()
+        {
+            return coroutine.AsyncExec(async () => {
+                var current = status;
+                if (current == SHUTDOWN)
+                {
+                    return;
+                }
+                status = SHUTDOWN;
+                await DoRevoke();
+            });
+
+        }
+
+        private async Task DoRevoke()
+        {
+            keepAliveSource?.Cancel();
+            await client.LeaseRevokeAsync(new LeaseRevokeRequest {ID = Id}, cancellationToken: default);
+        }
+
+        private void OnKeepAlive(LeaseKeepAliveResponse response)
+        {
+            renewEvent.Notify(this);
+        }
+    }
+
+}

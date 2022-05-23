@@ -172,7 +172,7 @@ namespace TnyFramework.Coroutines.Async
 
         public Task Repeat(int times, Action action)
         {
-            return Exec(async () => {
+            return AsyncExec(async () => {
                 for (var index = 0; index < times; index++)
                 {
                     action.Invoke();
@@ -181,19 +181,19 @@ namespace TnyFramework.Coroutines.Async
             });
         }
 
-        public Task Repeat(int times, CoroutineAction action)
+        public Task Repeat(int times, AsyncHandle handle)
         {
-            return Exec(async () => {
+            return AsyncExec(async () => {
                 for (var index = 0; index < times; index++)
                 {
-                    await action.Invoke();
+                    await handle.Invoke();
                 }
             });
         }
 
-        public Task ExecUntil(CoroutineFunc<bool> func)
+        public Task ExecUntil(AsyncHandle<bool> func)
         {
-            return Exec(async () => {
+            return AsyncExec(async () => {
                 while (true)
                 {
                     if (await func.Invoke())
@@ -204,7 +204,7 @@ namespace TnyFramework.Coroutines.Async
 
         public Task RunUntil(Func<bool> func)
         {
-            return Exec(async () => {
+            return AsyncExec(async () => {
                 while (true)
                 {
                     if (!func.Invoke())
@@ -218,9 +218,9 @@ namespace TnyFramework.Coroutines.Async
             });
         }
 
-        public Task<T> ExecUntil<T>(CoroutineFunc<CoroutineState<T>> func)
+        public Task<T> ExecUntil<T>(AsyncHandle<CoroutineState<T>> func)
         {
-            return Exec(async () => {
+            return AsyncExec(async () => {
                 while (true)
                 {
                     var state = await func.Invoke();
@@ -234,7 +234,7 @@ namespace TnyFramework.Coroutines.Async
 
         public Task<T> RunUntil<T>(Func<CoroutineState<T>> func)
         {
-            return Exec(async () => {
+            return AsyncExec(async () => {
                 while (true)
                 {
                     var state = func.Invoke();
@@ -317,21 +317,41 @@ namespace TnyFramework.Coroutines.Async
             return Status == CoroutineStatus.Shutdown;
         }
 
-        public Task Run(Action action)
+        public void ExecAction(Action action)
+        {
+            CheckStartStatus();
+            var task = new ActionTask(action);
+            Context.Post(Invoke, task);
+        }
+
+        public void ExecFunc<T>(Func<T> function)
+        {
+            CheckStartStatus();
+            var task = new FuncTask<T>(function);
+            Context.Post(Invoke, task);
+        }
+
+        public void Exec(AsyncHandle handle)
+        {
+            CheckStartStatus();
+            DoRun(handle);
+        }
+
+        public void Exec<T>(AsyncHandle<T> function)
+        {
+            CheckStartStatus();
+            DoExec(function);
+        }
+
+        public Task AsyncAction(Action action)
         {
             CheckStartStatus();
             var task = new ActionTask(action);
             Context.Post(Invoke, task);
             return task.SourceTask;
         }
-
-        public async Task Exec(CoroutineAction action)
-        {
-            CheckStartStatus();
-            await DoRun(action);
-        }
-
-        public Task<T> Run<T>(Func<T> function)
+        
+        public Task<T> AsyncFunc<T>(Func<T> function)
         {
             CheckStartStatus();
             var task = new FuncTask<T>(function);
@@ -339,12 +359,18 @@ namespace TnyFramework.Coroutines.Async
             return task.SourceTask;
         }
 
-        public async Task<T> Exec<T>(CoroutineFunc<T> function)
+        public async Task AsyncExec(AsyncHandle handle)
+        {
+            CheckStartStatus();
+            await DoRun(handle);
+        }
+
+        public async Task<T> AsyncExec<T>(AsyncHandle<T> function)
         {
             CheckStartStatus();
             return await DoExec(function);
         }
-
+        
         public override string ToString()
         {
             return $"Coroutine[{Name}]-cid[{Id}]";
@@ -358,14 +384,14 @@ namespace TnyFramework.Coroutines.Async
             }
         }
 
-        private Task DoRun(CoroutineAction action)
+        private Task DoRun(AsyncHandle handle)
         {
-            var task = new CoroutineActionTask(action);
+            var task = new CoroutineActionTask(handle);
             Context.Post(Invoke, task);
             return task.SourceTask;
         }
 
-        private Task<T> DoExec<T>(CoroutineFunc<T> function)
+        private Task<T> DoExec<T>(AsyncHandle<T> function)
         {
             var task = new CoroutineFuncTask<T>(function);
             Context.Post(Invoke, task);

@@ -7,7 +7,7 @@ namespace TnyFramework.Coroutines.Async
     /// <summary>
     /// 协程接口
     /// </summary>
-    public interface ICoroutine
+    public interface ICoroutine : IAsyncExecutor
     {
         /// <summary>
         /// 协程状态
@@ -43,35 +43,6 @@ namespace TnyFramework.Coroutines.Async
         bool IsShutdown();
 
         /// <summary>
-        /// 在协程上运行一个action
-        /// </summary>
-        /// <param name="action">action</param>
-        Task Run(Action action);
-
-        /// <summary>
-        /// 在协程上运行一个返回 task<T> 的任务
-        /// </summary>
-        /// <param name="function">任务</param>
-        /// <typeparam name="T">类型</typeparam>
-        /// <returns>等待的任务</returns>
-        Task<T> Run<T>(Func<T> function);
-
-        /// <summary>
-        /// 在协程上运行一个返回 task 的任务
-        /// </summary>
-        /// <param name="action">运行任务</param>
-        /// <returns>task</returns>
-        Task Exec(CoroutineAction action);
-
-        /// <summary>
-        /// 在协程上运行一个返回 task<T> 的任务
-        /// </summary>
-        /// <param name="function">任务</param>
-        /// <typeparam name="T">类型</typeparam>
-        /// <returns>等待的任务</returns>
-        Task<T> Exec<T>(CoroutineFunc<T> function);
-
-        /// <summary>
         /// 延迟
         /// </summary>
         /// <param name="millisecondsDelay">延迟时间</param>
@@ -97,23 +68,23 @@ namespace TnyFramework.Coroutines.Async
         /// 重复运行
         /// </summary>
         /// <param name="times">次数</param>
-        /// <param name="action">行为</param>
+        /// <param name="handle">行为</param>
         /// <returns>task</returns>
-        Task Repeat(int times, CoroutineAction action);
+        Task Repeat(int times, AsyncHandle handle);
 
         /// <summary>
         /// 运行直到任务返回 true 则停止, 每次运行会进行 await func
         /// </summary>
         /// <param name="func">行为</param>
         /// <returns>task</returns>
-        Task ExecUntil(CoroutineFunc<bool> func);
+        Task ExecUntil(AsyncHandle<bool> func);
 
         /// <summary>
         /// 运行直到任务返回 true 则停止, 每次运行会进行 await func
         /// </summary>
         /// <param name="func">行为</param>
         /// <returns>task</returns>
-        Task<T> ExecUntil<T>(CoroutineFunc<CoroutineState<T>> func);
+        Task<T> ExecUntil<T>(AsyncHandle<CoroutineState<T>> func);
 
         /// <summary>
         /// 运行直到任务返回 true 则停止, 每次运行会进行 yield
