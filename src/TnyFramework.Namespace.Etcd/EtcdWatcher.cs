@@ -69,13 +69,14 @@ namespace TnyFramework.Namespace.Etcd
 
         public Task Close()
         {
-            return coroutine.AsyncFunc(async () => {
+            return coroutine.AsyncFunc(() => {
                 if (closed)
                 {
-                    return;
+                    return Task.CompletedTask;
                 }
                 closed = true;
                 watchCancel?.Cancel();
+                return Task.CompletedTask;
             });
         }
 
@@ -137,10 +138,10 @@ namespace TnyFramework.Namespace.Etcd
             });
         }
 
-        private async Task HandleCompleted()
+        private Task HandleCompleted()
         {
             if (id == -1)
-                return;
+                return Task.CompletedTask;
             id = -1;
             FireCompleted();
             var request = new WatchRequest {
@@ -151,6 +152,7 @@ namespace TnyFramework.Namespace.Etcd
             var _ =client.Watch(request, HandleUnwatch);
             watchCancel = null;
             watchSource = null;
+            return Task.CompletedTask;
         }
 
         private void HandleWatch(WatchResponse response)
