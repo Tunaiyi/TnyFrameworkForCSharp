@@ -3,9 +3,9 @@ using Castle.Core.Internal;
 namespace TnyFramework.Net.Rpc.Remote
 {
 
-    public class FirstRpcRemoteRouter : IRpcRemoteRouter
+    public class FirstRpcRouter : IRpcRouter
     {
-        public IRpcRemoteAccessPoint Route(RpcRemoteServiceSet servicer, RpcRemoteMethod method, object routeValue, object[] parameters)
+        public IRpcRemoteAccess Route(RpcRemoteServiceSet servicer, RpcRemoteMethod method, object routeValue, RpcRemoteInvokeParams parameters)
         {
             var nodes = servicer.OrderRemoteNodes;
             if (nodes.IsNullOrEmpty())
@@ -13,7 +13,7 @@ namespace TnyFramework.Net.Rpc.Remote
                 return null;
             }
             var node = nodes[0];
-            var accessPoints = node.OrderAccessPoints;
+            var accessPoints = node.GetOrderRemoteAccesses();
             return accessPoints.IsNullOrEmpty() ? null : accessPoints[0];
         }
     }

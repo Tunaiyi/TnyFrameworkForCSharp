@@ -9,23 +9,34 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Rpc
 {
 
-    public class RpcRemoteServiceSet
+    public class RpcRemoteServiceSet : IRpcRemoteSet
     {
-        private readonly IRpcServiceType serviceType;
+        private readonly ConcurrentDictionary<int, RpcRemoteServiceNode> remoteNodeMap = new ConcurrentDictionary<int, RpcRemoteServiceNode>();
 
-        private readonly ConcurrentDictionary<int, RpcRemoteNode> remoteNodeMap = new ConcurrentDictionary<int, RpcRemoteNode>();
-
-        private volatile IList<RpcRemoteNode> orderRemoteNodes = ImmutableList.Create<RpcRemoteNode>();
+        private volatile IList<RpcRemoteServiceNode> orderRemoteNodes = ImmutableList.Create<RpcRemoteServiceNode>();
 
         private volatile int version;
 
+        public IRpcServiceType ServiceType { get; }
+
         public int Version => version;
 
-        public IList<RpcRemoteNode> OrderRemoteNodes => orderRemoteNodes;
+        public IList<RpcRemoteServiceNode> OrderRemoteNodes => orderRemoteNodes;
 
         public RpcRemoteServiceSet(IRpcServiceType serviceType)
         {
-            this.serviceType = serviceType;
+            ServiceType = serviceType;
+        }
+
+        public IRpcRemoteNode FindRemoteNode(int nodeId)
+        {
+            return remoteNodeMap[nodeId];
+        }
+
+        public IRpcRemoteAccess FindRemoteAccess(int nodeId, long accessId)
+        {
+            var node = remoteNodeMap[nodeId];
+            return node?.GetRemoteAccess(accessId);
         }
 
         private void UpdateVersion()
@@ -47,28 +58,28 @@ namespace TnyFramework.Net.Rpc
             RefreshNodes(node);
         }
 
-        internal void OnNodeActivate(RpcRemoteNode rpcNode)
+        internal void OnNodeActivate(RpcRemoteServiceNode rpcServiceNode)
         {
-            RefreshNodes(rpcNode);
+            RefreshNodes(rpcServiceNode);
         }
 
-        internal void OnNodeUnactivated(RpcRemoteNode rpcNode)
+        internal void OnNodeUnactivated(RpcRemoteServiceNode rpcServiceNode)
         {
-            RefreshNodes(rpcNode);
+            RefreshNodes(rpcServiceNode);
         }
 
-        private RpcRemoteNode LoadOrCreate(ICommunicator<RpcAccessIdentify> endpoint)
+        private RpcRemoteServiceNode LoadOrCreate(ICommunicator<RpcAccessIdentify> endpoint)
         {
             var nodeId = endpoint.UserId;
             return remoteNodeMap.GetOrAdd(nodeId.ServerId, CreateNode);
         }
 
-        private RpcRemoteNode CreateNode(int serverId)
+        private RpcRemoteServiceNode CreateNode(int serverId)
         {
-            return new RpcRemoteNode(serverId, this);
+            return new RpcRemoteServiceNode(serverId, this);
         }
 
-        private void RefreshNodes(RpcRemoteNode rpcNode)
+        private void RefreshNodes(RpcRemoteServiceNode rpcNode)
         {
             if (!remoteNodeMap.TryGetValue(rpcNode.ServerId, out var currentNode))
                 return;
@@ -78,7 +89,7 @@ namespace TnyFramework.Net.Rpc
             UpdateVersion();
         }
 
-        private static bool ActiveNode(RpcRemoteNode node)
+        private static bool ActiveNode(IRpcRemoteNode node)
         {
             return node.IsActive();
         }

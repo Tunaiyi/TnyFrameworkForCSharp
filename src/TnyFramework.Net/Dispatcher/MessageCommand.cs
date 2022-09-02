@@ -28,21 +28,25 @@ namespace TnyFramework.Net.Dispatcher
 
         protected MessageCommandContext CommandContext { get; }
 
-        protected INetTunnel Tunnel { get; }
+        protected readonly INetTunnel tunnel;
 
-        protected IMessage Message { get; }
+        internal ITunnel Tunnel => tunnel;
 
-        protected RpcForwardHeader Forward { get; }
+        internal IEndpoint Endpoint => tunnel.GetEndpoint();
 
-        protected string AppType => DispatcherContext.AppType;
+        internal IMessage Message { get; }
 
-        protected string ScopeType => DispatcherContext.ScopeType;
+        internal  RpcForwardHeader Forward { get; }
+
+        internal  string AppType => DispatcherContext.AppType;
+
+        internal  string ScopeType => DispatcherContext.ScopeType;
 
         protected MessageCommand(MessageCommandContext context, INetTunnel tunnel, IMessage message, MessageDispatcherContext dispatcherContext,
             IEndpointKeeperManager endpointKeeperManager)
         {
+            this.tunnel = tunnel;
             CommandContext = context;
-            Tunnel = tunnel;
             Message = message;
             DispatcherContext = dispatcherContext;
             EndpointKeeperManager = endpointKeeperManager;
@@ -91,32 +95,22 @@ namespace TnyFramework.Net.Dispatcher
                     body = result;
                     break;
             }
-            MessageContext messageContext = null;
-            var messageForwardHeader = Message.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
-            var messageIdHeader = Message.GetHeader(MessageHeaderConstants.RPC_ORIGINAL_MESSAGE_ID);
             switch (Message.Mode)
             {
                 case MessageMode.Push:
                     if (body != null)
                     {
-                        messageContext = MessageContexts.Push(Message.Head, code, body)
-                            .WithHeader(CreateBackForwardHeader(messageForwardHeader));
+                        MessageSendAide.Push(tunnel, Message, code, body);
                     }
                     break;
                 case MessageMode.Request:
-                    var toMessage = messageIdHeader?.MessageId ?? Message.Id;
-                    messageContext = MessageContexts.Respond(Message, code, body, toMessage)
-                        .WithHeader(CreateBackForwardHeader(messageForwardHeader));
+                    MessageSendAide.Response(tunnel, Message, code, body);
                     break;
                 case MessageMode.Response:
                 case MessageMode.Ping:
                 case MessageMode.Pong:
                 default:
                     throw new ArgumentOutOfRangeException();
-            }
-            if (messageContext != null)
-            {
-                TunnelAide.ResponseMessage(Tunnel, messageContext);
             }
         }
 

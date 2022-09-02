@@ -114,7 +114,7 @@ namespace TnyFramework.Common.Result
          * @param code 结果码
          * @return 返回结果
          */
-        public static IDoneResult<M> Failure<M>(IResultCode code, String message = "")
+        public static IDoneResult<M> Failure<M>(IResultCode code, string message = "")
         {
             if (code.IsSuccess())
             {

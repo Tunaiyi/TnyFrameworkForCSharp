@@ -1145,7 +1145,26 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player1, nameNode.Value);
         }
 
-        private static async Task<NameNode<Player>> SaveToVersion(String path, Player player, int version)
+        [Test]
+        public void DicTest()
+        {
+            var dictionary = new Dictionary<string, Player>();
+            var p1= new Player("A", 1);
+            var p2= new Player("B", 2);
+            var p3= new Player("C", 3);
+            var p4= new Player("CC", 4);
+            dictionary["a"] = p1;
+            dictionary["b"] = p2;
+            dictionary["c"] = p3;
+            Assert.AreEqual(p1, dictionary["a"]);
+            Assert.AreEqual(p2, dictionary["b"]);
+            Assert.AreEqual(p3, dictionary["c"]);
+            dictionary["c"] = p4;
+            Assert.AreEqual(p4, dictionary["c"]);
+            // Assert.IsNull(dictionary["d"]);
+        }
+
+        private static async Task<NameNode<Player>> SaveToVersion(string path, Player player, int version)
         {
             NameNode<Player> node = null;
             for (var i = 0; i < version; i++)

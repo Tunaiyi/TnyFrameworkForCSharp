@@ -31,7 +31,7 @@ namespace TnyFramework.Namespace.Etcd
 
         private static readonly PartitionComparer<TNode> PARTITION_COMPARER = new PartitionComparer<TNode>();
 
-        private readonly ReaderWriterLock mutex = new ReaderWriterLock();
+        private readonly ReaderWriterLockSlim mutex = new ReaderWriterLockSlim();
 
         public EtcdNodeHashingMultimap(string path, HashingOptions<TNode> option, EtcdNamespaceExplorer explorer, ObjectCodecAdapter objectCodecAdapter)
             : base(path, option, explorer, objectCodecAdapter, false)
@@ -40,22 +40,22 @@ namespace TnyFramework.Namespace.Etcd
 
         private void WriterLock()
         {
-            mutex.AcquireWriterLock(1000);
+            mutex.EnterWriteLock();
         }
 
         private void WriterUnlock()
         {
-            mutex.ReleaseWriterLock();
+            mutex.ExitWriteLock();
         }
 
         private void ReaderLock()
         {
-            mutex.AcquireReaderLock(1000);
+            mutex.EnterReadLock();
         }
 
         private void ReaderUnlock()
         {
-            mutex.ReleaseReaderLock();
+            mutex.ExitReadLock();
         }
 
         protected override void LoadPartitions(IEnumerable<IPartition<TNode>> partitions)

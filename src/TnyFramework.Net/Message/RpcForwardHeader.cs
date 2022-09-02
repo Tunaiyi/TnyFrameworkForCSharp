@@ -16,7 +16,7 @@ namespace TnyFramework.Net.Message
         /// 请求服务
         /// </summary>
         [ProtoMember(2)]
-        public ForwardRpcServicer From { get; set; }
+        public ForwardPoint From { get; set; }
 
         /// <summary>
         /// 请求发送者
@@ -28,7 +28,7 @@ namespace TnyFramework.Net.Message
         /// 目标服务
         /// </summary>
         [ProtoMember(4)]
-        public ForwardRpcServicer To { get; set; }
+        public ForwardPoint To { get; set; }
 
         /// <summary>
         /// 目标接受者
@@ -40,13 +40,13 @@ namespace TnyFramework.Net.Message
         /// 发生转发者
         /// </summary>
         [ProtoMember(6, IsPacked = true)]
-        public ForwardRpcServicer FromForwarder { get; set; }
+        public ForwardPoint FromForwarder { get; set; }
 
         /// <summary>
         /// 目标转发者
         /// </summary>
         [ProtoMember(7, IsPacked = true)]
-        public ForwardRpcServicer ToForwarder { get; set; }
+        public ForwardPoint ToForwarder { get; set; }
 
         public RpcForwardHeader()
         {
@@ -74,7 +74,7 @@ namespace TnyFramework.Net.Message
 
         public RpcForwardHeader SetTo(IRpcServiceType serviceType)
         {
-            To = ToForwardRpcServicer(new ForwardRpcServicer(serviceType));
+            To = ToForwardRpcServicer(new ForwardPoint(serviceType));
             return this;
         }
 
@@ -90,22 +90,34 @@ namespace TnyFramework.Net.Message
             return this;
         }
 
-        public RpcForwardHeader SetToForwarder(IRpcServicer toForwarder)
+        public RpcForwardHeader SetToForwarder(IRpcServicer toService)
         {
-            ToForwarder = ToForwardRpcServicer(toForwarder);
+            ToForwarder = ToForwardRpcServicer(toService);
             return this;
         }
 
-        private static ForwardRpcServicer ToForwardRpcServicer(IRpcServicer rpcServicer)
+        public RpcForwardHeader SetFromForwarder(IRpcServicerPoint fromPoint)
+        {
+            FromForwarder = ToForwardRpcServicer(fromPoint);
+            return this;
+        }
+
+        public RpcForwardHeader SetToForwarder(IRpcServicerPoint toPoint)
+        {
+            ToForwarder = ToForwardRpcServicer(toPoint);
+            return this;
+        }
+
+        private static ForwardPoint ToForwardRpcServicer(IRpcServicer rpcServicer)
         {
             switch (rpcServicer)
             {
                 case null:
                     return null;
-                case ForwardRpcServicer value:
+                case ForwardPoint value:
                     return value;
                 default:
-                    return new ForwardRpcServicer(rpcServicer);
+                    return new ForwardPoint(rpcServicer);
             }
         }
 

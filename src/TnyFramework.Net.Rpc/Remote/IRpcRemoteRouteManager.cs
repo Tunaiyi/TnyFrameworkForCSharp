@@ -5,9 +5,9 @@ namespace TnyFramework.Net.Rpc.Remote
 
     public interface IRpcRemoteRouteManager
     {
-        IRpcRemoteRouter GetRouter<T>() where T : IRpcRemoteRouter;
+        IRpcRouter GetRouter<T>() where T : IRpcRouter;
 
-        IRpcRemoteRouter GetRouter(Type type);
+        IRpcRouter GetRouter(Type type);
     }
 
 }

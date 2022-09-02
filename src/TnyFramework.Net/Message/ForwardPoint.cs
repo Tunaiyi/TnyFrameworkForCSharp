@@ -5,7 +5,7 @@ namespace TnyFramework.Net.Message
 {
 
     [ProtoContract]
-    public class ForwardRpcServicer : IRpcServicer
+    public class ForwardPoint : IRpcServicerPoint
     {
         private int serviceTypeId;
 
@@ -28,21 +28,24 @@ namespace TnyFramework.Net.Message
 
         public long Id => AccessId.Id;
 
-        public ForwardRpcServicer()
+        public ForwardPoint()
         {
         }
 
-        public ForwardRpcServicer(IRpcServiceType serviceType)
+        public ForwardPoint(IRpcServiceType serviceType)
         {
             ServiceType = serviceType;
             ServiceTypeId = ServiceType.Id;
         }
 
-        public ForwardRpcServicer(IRpcServicer servicer)
+        public ForwardPoint(IRpcServicer servicer)
         {
             ServiceType = servicer.ServiceType;
             ServiceTypeId = ServiceType.Id;
-            AccessId = new RpcAccessId(servicer.Id);
+            if (servicer is IRpcServicerPoint point)
+            {
+                AccessId = new RpcAccessId(point.Id);
+            }
         }
 
         public bool IsHasAccessId()
@@ -50,10 +53,12 @@ namespace TnyFramework.Net.Message
             return AccessId != null;
         }
 
-        public int CompareTo(IRpcServicer other)
+        public int CompareTo(IRpcServicerPoint other)
         {
             if (ReferenceEquals(this, other)) return 0;
-            return ReferenceEquals(null, other) ? 1 : Id.CompareTo(other.Id);
+            if (ReferenceEquals(null, other)) return 1;
+            var serverId = ServerId.CompareTo(other.ServerId);
+            return serverId != 0 ? serverId : Id.CompareTo(other.Id);
         }
     }
 

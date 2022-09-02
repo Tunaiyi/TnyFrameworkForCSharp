@@ -164,7 +164,7 @@ namespace TnyFramework.Namespace.Etcd
         /// </summary>
         /// <param name="key">键值</param>
         /// <returns>返回键值 hash 值</returns>
-        protected long KeyHash(String key)
+        protected long KeyHash(string key)
         {
             return Math.Abs(KeyHasher.Hash(key, 0, MaxSlots));
         }

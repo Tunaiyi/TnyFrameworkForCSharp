@@ -1,4 +1,3 @@
-using System;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Command.Tasks;
 
@@ -19,10 +18,9 @@ namespace TnyFramework.Net.Command.Processor
             this.coroutineFactory = coroutineFactory;
         }
 
-        protected override Action<AsyncHandle> CreateExecutor()
+        protected override IAsyncExecutor CreateExecutor()
         {
-            var executor = coroutineFactory.Create("CoroutineCommandTaskBoxProcessor");
-            return action => executor.AsyncExec(action);
+            return coroutineFactory.Create("CoroutineCommandTaskBoxProcessor");
         }
     }
 

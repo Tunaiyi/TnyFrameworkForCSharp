@@ -1,11 +1,13 @@
 using Newtonsoft.Json;
 using TnyFramework.Common.Exceptions;
+using TnyFramework.Net.Base;
+using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Rpc
 {
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class RpcAccessIdentify : IRpcServicer
+    public class RpcAccessIdentify : IRpcServicerPoint, IMessager
     {
         private const long RPC_MAX_INDEX = 0xFF;
 
@@ -30,6 +32,12 @@ namespace TnyFramework.Net.Rpc
 
         [JsonIgnore]
         public int ServerId { get; set; }
+
+        [JsonIgnore]
+        public long MessagerId => ServerId;
+
+        [JsonIgnore]
+        public IMessagerType MessagerType => ServiceType;
 
         [JsonProperty("id")]
         public long Id {
@@ -93,10 +101,16 @@ namespace TnyFramework.Net.Rpc
             Id = FormatId(serviceType, serverId, index);
         }
 
-        public int CompareTo(IRpcServicer other)
+        public int CompareTo(IRpcServicerPoint other)
         {
             if (ReferenceEquals(this, other)) return 0;
             return ReferenceEquals(null, other) ? 1 : Id.CompareTo(other.Id);
+        }
+
+        public int CompareTo(IRpcServicer other)
+        {
+            if (ReferenceEquals(this, other)) return 0;
+            return ReferenceEquals(null, other) ? 1 : ServerId.CompareTo(other.ServerId);
         }
 
         public override string ToString()

@@ -3,25 +3,27 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
+using System.Threading.Tasks;
+using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Command.Processor;
 
 namespace TnyFramework.Net.Command.Tasks
 {
 
-    public class CommandTaskBox
+    public class CommandTaskBox : IAsyncExecutor
     {
         private const int STATUS_IDLE = 0;
         private const int STATUS_SUBMITTED = 1;
 
         private readonly ReaderWriterLockSlim boxLock = new ReaderWriterLockSlim();
 
-        private ICommandTaskBoxProcessor processor;
+        private readonly ConcurrentQueue<ICommandTask> taskQueue = new ConcurrentQueue<ICommandTask>();
 
-        private volatile bool closed = false;
-
-        private ConcurrentQueue<ICommandTask> taskQueue = new ConcurrentQueue<ICommandTask>();
+        private readonly ICommandTaskBoxProcessor processor;
 
         private volatile object attachment;
+
+        private volatile bool closed;
 
         public CommandTaskBox(ICommandTaskBoxProcessor processor)
         {
@@ -171,6 +173,16 @@ namespace TnyFramework.Net.Command.Tasks
                 attachment = value;
                 return value;
             }
+        }
+
+        public Task AsyncExec(AsyncHandle handle)
+        {
+            return processor.AsyncExec(this, handle);
+        }
+
+        public Task<T> AsyncExec<T>(AsyncHandle<T> function)
+        {
+            return processor.AsyncExec(this, function);
         }
     }
 

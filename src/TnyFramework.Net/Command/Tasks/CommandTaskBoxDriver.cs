@@ -2,12 +2,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TnyFramework.Coroutines.Async;
-using TnyFramework.Net.Command.Processor;
 
 namespace TnyFramework.Net.Command.Tasks
 {
 
-    public class CommandTaskBoxDriver
+    public class CommandTaskBoxDriver : IAsyncExecutor
     {
         /* executor停止 */
         private const int STATUS_IDLE_VALUE = 0;
@@ -19,9 +18,9 @@ namespace TnyFramework.Net.Command.Tasks
 
         private readonly CommandTaskBox taskBox;
 
-        private readonly Action<AsyncHandle> executor;
+        private readonly IAsyncExecutor executor;
 
-        public CommandTaskBoxDriver(CommandTaskBox taskBox, Action<AsyncHandle> executor)
+        public CommandTaskBoxDriver(CommandTaskBox taskBox, IAsyncExecutor executor)
         {
             this.taskBox = taskBox;
             this.executor = executor;
@@ -34,11 +33,21 @@ namespace TnyFramework.Net.Command.Tasks
                 return;
             if (Interlocked.CompareExchange(ref status, STATUS_SUBMIT_VALUE, STATUS_IDLE_VALUE) == current)
             {
-                executor(Execute);
+                executor.AsyncExec(Execute);
             }
         }
 
-        internal async Task Execute()
+        public Task AsyncExec(AsyncHandle handle)
+        {
+            return executor.AsyncExec(handle);
+        }
+
+        public Task<T> AsyncExec<T>(AsyncHandle<T> function)
+        {
+            return executor.AsyncExec(function);
+        }
+        
+        private async Task Execute()
         {
             try
             {

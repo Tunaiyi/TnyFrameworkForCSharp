@@ -38,7 +38,7 @@ namespace TnyFramework.Net.Rpc.Remote
         /// <summary>
         /// 路由
         /// </summary>
-        private readonly IRpcRemoteRouter router;
+        private readonly IRpcRouter router;
 
         /// <summary>
         /// 异步调用 CompleteSource 生成器
@@ -50,7 +50,7 @@ namespace TnyFramework.Net.Rpc.Remote
         /// </summary>
         private readonly Func<IMessage, object> returnValueFormatter;
 
-        public RpcRemoteInvoker(RpcRemoteMethod method, RpcRemoteInstance instance, IRpcRemoteRouter router)
+        public RpcRemoteInvoker(RpcRemoteMethod method, RpcRemoteInstance instance, IRpcRouter router)
         {
             this.method = method;
             this.instance = instance;
@@ -68,7 +68,7 @@ namespace TnyFramework.Net.Rpc.Remote
             try
             {
                 var invokeParams = method.GetParams(parameters);
-                var accessPoint = router.Route(servicer, method, invokeParams.RouteValue, parameters);
+                var accessPoint = router.Route(servicer, method, invokeParams.RouteValue, invokeParams);
                 if (accessPoint == null)
                 {
                     throw new RpcInvokeException(NetResultCode.REMOTE_EXCEPTION, $"调用 {method} 异常, 未找到有效的远程服务节点");

@@ -9,7 +9,7 @@ namespace TnyFramework.Net.Rpc
     {
         RpcAccessIdentify AccessId { get; }
 
-        ForwardRpcServicer ForwardRpcServicer { get; }
+        Message.ForwardPoint ForwardPoint { get; }
     }
 
 }

@@ -9,14 +9,14 @@ namespace TnyFramework.Net.Rpc
     {
         public RpcAccessIdentify AccessId => Endpoint.UserId;
 
-        public ForwardRpcServicer ForwardRpcServicer { get; }
+        public Message.ForwardPoint ForwardPoint { get; }
 
         internal IEndpoint<RpcAccessIdentify> Endpoint { get; }
 
         public RpcEndpointAccessPoint(IEndpoint<RpcAccessIdentify> endpoint)
         {
             Endpoint = endpoint;
-            ForwardRpcServicer = new ForwardRpcServicer(AccessId);
+            ForwardPoint = new Message.ForwardPoint(AccessId);
         }
 
         public ISendReceipt Send(MessageContext messageContext)

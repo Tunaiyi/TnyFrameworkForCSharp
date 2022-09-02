@@ -5,7 +5,7 @@ namespace TnyFramework.Net.Rpc
 {
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class RpcAccessToken : RpcAccessIdentify, IRpcToken
+    public class RpcAccessToken : RpcAccessIdentify
     {
         public IRpcServicer User => UserIdentify;
 

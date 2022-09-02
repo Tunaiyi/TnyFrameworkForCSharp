@@ -9,7 +9,7 @@ namespace TnyFramework.Net.Rpc.Auth
 
         string CreateToken(RpcServiceType serviceType, RpcAccessIdentify user);
 
-        IDoneResult<IRpcToken> VerifyToken(string token);
+        IDoneResult<RpcAccessToken> VerifyToken(string token);
     }
 
 }

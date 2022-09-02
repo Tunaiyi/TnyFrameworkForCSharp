@@ -1,6 +1,6 @@
 <Project>
     <PropertyGroup>
-        <PackageVersion>5.2.1-x</PackageVersion>
+        <PackageVersion>5.3.0-x</PackageVersion>
         <DebugType>embedded</DebugType>
         <DebugSymbols>true</DebugSymbols>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>

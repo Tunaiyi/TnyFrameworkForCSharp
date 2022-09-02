@@ -53,7 +53,7 @@ namespace TnyFramework.Net.Dispatcher
             if (message.Mode != MessageMode.Request)
                 return null;
             LOGGER.LogWarning("{Mode} controller [{Name}] not exist", message.Mode, message.ProtocolId);
-            return RunnableCommand.Action(() => tunnel.Send(MessageContexts.Respond(NetResultCode.SERVER_NO_SUCH_PROTOCOL, message)));
+            return RunnableCommand.Action(() => MessageSendAide.Response(tunnel, message, NetResultCode.SERVER_NO_SUCH_PROTOCOL, null));
         }
 
         /// <summary>

@@ -32,7 +32,7 @@ namespace TnyFramework.Net.Rpc.Auth
             return JsonConvert.SerializeObject(token);
         }
 
-        public IDoneResult<IRpcToken> VerifyToken(string token)
+        public IDoneResult<RpcAccessToken> VerifyToken(string token)
         {
             var rpcToken = JsonConvert.DeserializeObject<RpcAccessToken>(token);
             return DoneResults.Success(rpcToken);

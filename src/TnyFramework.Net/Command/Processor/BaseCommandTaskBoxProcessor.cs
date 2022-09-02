@@ -1,4 +1,4 @@
-using System;
+using System.Threading.Tasks;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Command.Tasks;
 
@@ -15,12 +15,24 @@ namespace TnyFramework.Net.Command.Processor
             driver.TrySummit(); // 尝试提交
         }
 
+        public Task AsyncExec(CommandTaskBox box, AsyncHandle handle)
+        {
+            var driver = box.GetAttachment<TDriver>() ?? box.SetAttachmentIfNull(this, () => CreateDriver(box));
+            return driver.AsyncExec(handle);
+        }
+
+        public Task<T> AsyncExec<T>(CommandTaskBox box, AsyncHandle<T> function)
+        {
+            var driver = box.GetAttachment<TDriver>() ?? box.SetAttachmentIfNull(this, () => CreateDriver(box));
+            return driver.AsyncExec(function);
+        }
+
         private CommandTaskBoxDriver CreateDriver(CommandTaskBox box)
         {
             return new CommandTaskBoxDriver(box, CreateExecutor());
         }
 
-        protected abstract Action<AsyncHandle> CreateExecutor();
+        protected abstract IAsyncExecutor CreateExecutor();
     }
 
 }

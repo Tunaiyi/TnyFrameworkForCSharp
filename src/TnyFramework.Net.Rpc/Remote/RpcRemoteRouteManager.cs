@@ -7,28 +7,28 @@ namespace TnyFramework.Net.Rpc.Remote
 
     public class RpcRemoteRouteManager : IRpcRemoteRouteManager
     {
-        private readonly IRpcRemoteRouter defaultRemoteRouter;
+        private readonly IRpcRouter defaultRouter;
 
-        private readonly IDictionary<Type, IRpcRemoteRouter> routers;
+        private readonly IDictionary<Type, IRpcRouter> routers;
 
-        public RpcRemoteRouteManager(IRpcRemoteRouter defaultRemoteRouter, IEnumerable<IRpcRemoteRouter> routers)
+        public RpcRemoteRouteManager(IRpcRouter defaultRouter, IEnumerable<IRpcRouter> routers)
         {
-            this.defaultRemoteRouter = defaultRemoteRouter;
+            this.defaultRouter = defaultRouter;
             this.routers = routers.ToImmutableDictionary(
                 router => router.GetType(),
                 router => router);
         }
 
-        public IRpcRemoteRouter GetRouter<T>() where T : IRpcRemoteRouter
+        public IRpcRouter GetRouter<T>() where T : IRpcRouter
         {
             return GetRouter(typeof(T));
         }
 
-        public IRpcRemoteRouter GetRouter(Type type)
+        public IRpcRouter GetRouter(Type type)
         {
-            if (type == null || type == typeof(IRpcRemoteRouter))
+            if (type == null || type == typeof(IRpcRouter))
             {
-                return defaultRemoteRouter;
+                return defaultRouter;
             }
             return routers.TryGetValue(type, out var router) ? router : null;
         }

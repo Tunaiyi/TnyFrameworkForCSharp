@@ -73,7 +73,7 @@ namespace TnyFramework.Net.Rpc.Remote
         /// <summary>
         /// 路由类型
         /// </summary>
-        public Type RouterType { get; } = typeof(IRpcRemoteRouter);
+        public Type RouterType { get; } = typeof(IRpcRouter);
 
         /// <summary>
         /// 异步

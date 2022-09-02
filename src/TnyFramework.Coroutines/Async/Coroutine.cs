@@ -317,48 +317,6 @@ namespace TnyFramework.Coroutines.Async
             return Status == CoroutineStatus.Shutdown;
         }
 
-        public void ExecAction(Action action)
-        {
-            CheckStartStatus();
-            var task = new ActionTask(action);
-            Context.Post(Invoke, task);
-        }
-
-        public void ExecFunc<T>(Func<T> function)
-        {
-            CheckStartStatus();
-            var task = new FuncTask<T>(function);
-            Context.Post(Invoke, task);
-        }
-
-        public void Exec(AsyncHandle handle)
-        {
-            CheckStartStatus();
-            DoRun(handle);
-        }
-
-        public void Exec<T>(AsyncHandle<T> function)
-        {
-            CheckStartStatus();
-            DoExec(function);
-        }
-
-        public Task AsyncAction(Action action)
-        {
-            CheckStartStatus();
-            var task = new ActionTask(action);
-            Context.Post(Invoke, task);
-            return task.SourceTask;
-        }
-        
-        public Task<T> AsyncFunc<T>(Func<T> function)
-        {
-            CheckStartStatus();
-            var task = new FuncTask<T>(function);
-            Context.Post(Invoke, task);
-            return task.SourceTask;
-        }
-
         public async Task AsyncExec(AsyncHandle handle)
         {
             CheckStartStatus();

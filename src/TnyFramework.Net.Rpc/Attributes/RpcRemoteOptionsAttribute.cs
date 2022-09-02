@@ -27,7 +27,7 @@ namespace TnyFramework.Net.Rpc.Attributes
         /// <summary>
         /// 路由器类型
         /// </summary>
-        public Type Router { get; set; } = typeof(IRpcRemoteRouter);
+        public Type Router { get; set; } = typeof(IRpcRouter);
     }
 
 }

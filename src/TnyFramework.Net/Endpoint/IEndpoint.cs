@@ -1,9 +1,10 @@
+using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Endpoint
 {
 
-    public interface IEndpoint : ICommunicator, IConnection, ISender
+    public interface IEndpoint : ICommunicator, IConnection, ISender, IAsyncExecutor
     {
         long Id { get; }
 

@@ -94,7 +94,7 @@ namespace TnyFramework.Net.Dispatcher
 
             // 执行调用
             LOGGER.LogDebug("Controller [{Name}] 执行业务", Name);
-            var result = controller.Invoke(Tunnel, Message);
+            var result = controller.Invoke(tunnel, Message);
             if (result is Task task) // 如果是 Task
             {
                 await task; // 等待
@@ -156,7 +156,7 @@ namespace TnyFramework.Net.Dispatcher
             {
                 return;
             }
-            var certificateFactory = Tunnel.CertificateFactory;
+            var certificateFactory = tunnel.CertificateFactory;
             Authenticate(validator, certificateFactory);
         }
 
@@ -173,7 +173,7 @@ namespace TnyFramework.Net.Dispatcher
             // 是否需要做登录校验,判断是否已经登录
             if (certificate != null && certificate.IsAuthenticated())
             {
-                EndpointKeeperManager.Online(certificate, Tunnel);
+                EndpointKeeperManager.Online(certificate, tunnel);
             }
         }
     }

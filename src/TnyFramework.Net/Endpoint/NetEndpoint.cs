@@ -1,9 +1,11 @@
 using System;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
 using TnyFramework.Common.Logger;
+using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Common;
@@ -385,6 +387,16 @@ namespace TnyFramework.Net.Endpoint
 
         public virtual void OnUnactivated(INetTunnel one)
         {
+        }
+
+        public Task AsyncExec(AsyncHandle handle)
+        {
+            return CommandTaskBox.AsyncExec(handle);
+        }
+
+        public Task<T> AsyncExec<T>(AsyncHandle<T> function)
+        {
+            return CommandTaskBox.AsyncExec(function);
         }
     }
 

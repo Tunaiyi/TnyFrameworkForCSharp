@@ -49,7 +49,7 @@ namespace TnyFramework.Net.Rpc.Remote
             return headerMap.Values.ToImmutableList();
         }
 
-        internal void SetParams(int index, Object value)
+        internal void SetParams(int index, object value)
         {
             if (Params[index] == null)
             {
@@ -73,7 +73,7 @@ namespace TnyFramework.Net.Rpc.Remote
 
         internal RpcRemoteInvokeParams SetTo(IRpcServiceType toService)
         {
-            To = new ForwardRpcServicer(toService);
+            To = new Message.ForwardPoint(toService);
             return this;
         }
 
@@ -93,7 +93,7 @@ namespace TnyFramework.Net.Rpc.Remote
             return this;
         }
 
-        internal RpcRemoteInvokeParams SetBody(Object body)
+        internal RpcRemoteInvokeParams SetBody(object body)
         {
             SetParams(0, body);
             return this;

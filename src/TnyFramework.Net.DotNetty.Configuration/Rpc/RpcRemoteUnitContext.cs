@@ -12,23 +12,23 @@ namespace TnyFramework.Net.DotNetty.Configuration.Rpc
 
         public UnitSpec<RpcRemoteSetting, IRpcRemoteUnitContext> RpcRemoteSettingSpec { get; }
 
-        public UnitSpec<IRpcRemoteRouter, IRpcRemoteUnitContext> DefaultRpcRemoteRouterSpec { get; }
+        public UnitSpec<IRpcRouter, IRpcRemoteUnitContext> DefaultRpcRemoteRouterSpec { get; }
 
         public RpcRemoteUnitContext(IServiceCollection unitContainer)
         {
             UnitContainer = unitContainer;
-            DefaultRpcRemoteRouterSpec = UnitSpec.Unit<IRpcRemoteRouter, IRpcRemoteUnitContext>()
-                .Default<FirstRpcRemoteRouter>();
+            DefaultRpcRemoteRouterSpec = UnitSpec.Unit<IRpcRouter, IRpcRemoteUnitContext>()
+                .Default<FirstRpcRouter>();
             RpcRemoteSettingSpec = UnitSpec.Unit<RpcRemoteSetting, IRpcRemoteUnitContext>()
                 .Default<RpcRemoteSetting>();
             unitContainer.BindSingleton<RpcRemoteInstanceFactory>();
             unitContainer.BindSingleton(provider => {
-                IRpcRemoteRouter defaultRpcRemoteRouter = null;
+                IRpcRouter defaultRpcRouter = null;
                 if (DefaultRpcRemoteRouterSpec != null)
                 {
-                    defaultRpcRemoteRouter = DefaultRpcRemoteRouterSpec.Load(this, UnitContainer);
+                    defaultRpcRouter = DefaultRpcRemoteRouterSpec.Load(this, UnitContainer);
                 }
-                return new RpcRemoteRouteManager(defaultRpcRemoteRouter, provider.GetServices<IRpcRemoteRouter>());
+                return new RpcRemoteRouteManager(defaultRpcRouter, provider.GetServices<IRpcRouter>());
             });
 
         }

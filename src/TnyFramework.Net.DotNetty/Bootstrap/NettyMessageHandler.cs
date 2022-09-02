@@ -122,8 +122,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).GetAndSet(null);
                 if (tunnel != null)
                 {
-                    //TODO 发送关闭消息
-                    TunnelAide.ResponseMessage(tunnel, MessageContexts.Push(Protocols.PUSH, code));
+                     MessageSendAide.Send(tunnel, MessageContexts.Push(Protocols.PUSH, code));
                 }
             } else
             {
