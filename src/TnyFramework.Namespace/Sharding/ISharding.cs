@@ -1,3 +1,11 @@
+// Copyright (c) 2020 Tunaiyi
+// Tny Framework For CSharp is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
 using System.Collections.Generic;
 using TnyFramework.Common.Event;
 using TnyFramework.Namespace.Sharding.Listener;
@@ -7,19 +15,18 @@ namespace TnyFramework.Namespace.Sharding
 
     public interface ISharding<TNode> where TNode : IShardingNode
     {
-        
         /// <summary>
         /// 最大槽数
         /// </summary>
         long MaxSlots { get; }
-        
+
         /// <summary>
         /// 节点是否存在
         /// </summary>
         /// <param name="partition">分区</param>
         /// <returns>存在返回 Ture, 否则返回 False</returns>
         bool Contains(IPartition<TNode> partition);
-            
+
         /// <summary>
         /// 获取节点对应的分区列表
         /// </summary>
@@ -78,7 +85,6 @@ namespace TnyFramework.Namespace.Sharding
         /// @return 返回丰满区数量
         /// </summary>
         int PartitionSize();
-
 
         ///  <summary>
         /// 分区改变事件

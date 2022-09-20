@@ -1,3 +1,11 @@
+// Copyright (c) 2020 Tunaiyi
+// Tny Framework For CSharp is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
 using System;
 using System.Collections;
 using System.Collections.Concurrent;
@@ -113,15 +121,18 @@ namespace TnyFramework.Namespace.Etcd
 
         public IHashingSubscriber<TValue> HashingSubscriber<TValue>(string parentPath, long maxSlotSize, ObjectMimeType<TValue> mineType)
         {
-            if (parentPath.IsBlank()) {
+            if (parentPath.IsBlank())
+            {
                 throw new NamespaceHashingException($"rootPath {parentPath} is blank");
             }
             return new EtcdHashingSubscriber<TValue>(parentPath, maxSlotSize, mineType, this);
         }
 
-        public IHashingPublisher<TKey, TValue> HashingPublisher<TKey, TValue>(string parentPath, long maxSlotSize, IHasher<TValue> valueHasher, ObjectMimeType<TValue> mineType)
+        public IHashingPublisher<TKey, TValue> HashingPublisher<TKey, TValue>(string parentPath, long maxSlotSize, IHasher<TValue> valueHasher,
+            ObjectMimeType<TValue> mineType)
         {
-            if (parentPath.IsBlank()) {
+            if (parentPath.IsBlank())
+            {
                 throw new NamespaceHashingException($"rootPath {parentPath} is blank");
             }
             return new EtcdHashingPublisher<TKey, TValue>(parentPath, maxSlotSize, valueHasher, mineType, this);
@@ -525,12 +536,13 @@ namespace TnyFramework.Namespace.Etcd
             return DecodeFirstKeyValue(type, txnResponse, t => t.ResponseRange, r => r.Kvs);
         }
 
-        public  NameNode<TValue> DecodeDeletePrevFirstKeyValue<TValue>(ObjectMimeType<TValue> type, TxnResponse txnResponse)
+        public NameNode<TValue> DecodeDeletePrevFirstKeyValue<TValue>(ObjectMimeType<TValue> type, TxnResponse txnResponse)
         {
             return DecodeFirstKeyValue(type, txnResponse, t => t.ResponseDeleteRange, r => r.PrevKvs);
         }
 
-        private NameNode<TValue> DecodeFirstKeyValue<TValue, TResponse>(ObjectMimeType<TValue> type, TxnResponse txnResponse, Func<ResponseOp, TResponse> txnToResponse, Func<TResponse, RepeatedField<KeyValue>> keyValueFunc)
+        private NameNode<TValue> DecodeFirstKeyValue<TValue, TResponse>(ObjectMimeType<TValue> type, TxnResponse txnResponse,
+            Func<ResponseOp, TResponse> txnToResponse, Func<TResponse, RepeatedField<KeyValue>> keyValueFunc)
         {
             return (from responseOp in txnResponse.Responses
                     let response = txnToResponse(responseOp)

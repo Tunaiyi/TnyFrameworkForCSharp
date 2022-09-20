@@ -1,3 +1,11 @@
+// Copyright (c) 2020 Tunaiyi
+// Tny Framework For CSharp is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -48,7 +56,6 @@ namespace TnyFramework.Namespace.Etcd
         // 名字
         public string Name { get; }
 
-
         // hash 算法
         protected IHasher<string> KeyHasher { get; }
 
@@ -63,7 +70,7 @@ namespace TnyFramework.Namespace.Etcd
         private readonly INamespaceExplorer explorer;
 
         private readonly long ttl;
-        
+
         // 租客
         private volatile ILessee lessee;
 
@@ -358,7 +365,7 @@ namespace TnyFramework.Namespace.Etcd
 
         private void WatchOnLoad(INameNodesWatcher<PartitionSlot<TNode>> watcher, IEnumerable<NameNode<PartitionSlot<TNode>>> nameNodes)
         {
-            coroutine.ExecAction(()=>{
+            coroutine.ExecAction(() => {
                 var partitions = (from node in nameNodes where node.Value != null select node.Value).ToList();
                 LoadPartitions(partitions);
             });
@@ -366,23 +373,19 @@ namespace TnyFramework.Namespace.Etcd
 
         private void WatchOnCreate(INameNodesWatcher<PartitionSlot<TNode>> watcher, NameNode<PartitionSlot<TNode>> node)
         {
-            
-            coroutine.ExecAction(()=>{
-                PutPartition(node.Value);
-            });
-            
+
+            coroutine.ExecAction(() => { PutPartition(node.Value); });
+
         }
 
         private void WatchOnUpdate(INameNodesWatcher<PartitionSlot<TNode>> watcher, NameNode<PartitionSlot<TNode>> node)
         {
-            coroutine.ExecAction(()=>{
-                PutPartition(node.Value);
-            });
+            coroutine.ExecAction(() => { PutPartition(node.Value); });
         }
 
         private void WatchOnDelete(INameNodesWatcher<PartitionSlot<TNode>> watcher, NameNode<PartitionSlot<TNode>> node)
         {
-            coroutine.ExecAction(()=>{
+            coroutine.ExecAction(() => {
                 var removeNode = node.Value;
                 if (nodePartitionTaskMap.TryGetValue(removeNode.Node.Key, out var tasks))
                 {
