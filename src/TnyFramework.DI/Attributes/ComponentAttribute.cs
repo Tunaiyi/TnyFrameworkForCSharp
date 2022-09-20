@@ -10,13 +10,16 @@ namespace TnyFramework.DI.Attributes
 
         public DIMode Mode { get; }
 
-        public ComponentAttribute(DIMode mode) : this("", mode)
+        public bool Lazy { get; }
+
+        public ComponentAttribute(DIMode mode) : this()
         {
         }
 
-        public ComponentAttribute(string name = "", DIMode mode = DIMode.Singleton)
+        public ComponentAttribute(string name = "", bool lazy = false, DIMode mode = DIMode.Singleton)
         {
             Name = name;
+            Lazy = lazy;
             Mode = mode;
         }
 

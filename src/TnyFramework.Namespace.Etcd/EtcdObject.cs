@@ -22,14 +22,14 @@ namespace TnyFramework.Namespace.Etcd
         protected readonly ObjectCodecAdapter objectCodecAdapter;
 
         internal EtcdAccessor Accessor => accessor;
-        
+
         public EtcdObject(EtcdAccessor accessor, ObjectCodecAdapter objectCodecAdapter)
         {
             this.accessor = accessor;
             this.objectCodecAdapter = objectCodecAdapter;
         }
 
-        protected ByteString Encode<TValue>(TValue value, ObjectMimeType<TValue> type)
+        public ByteString Encode<TValue>(TValue value, ObjectMimeType<TValue> type)
         {
             if (value == null)
             {
@@ -46,7 +46,7 @@ namespace TnyFramework.Namespace.Etcd
             }
         }
 
-        protected NameNode<TValue> DecodeKeyValue<TValue>(RepeatedField<KeyValue> pairs, ObjectMimeType<TValue> type)
+        public NameNode<TValue> DecodeKeyValue<TValue>(RepeatedField<KeyValue> pairs, ObjectMimeType<TValue> type)
         {
             if (pairs.IsEmpty())
             {
@@ -61,19 +61,19 @@ namespace TnyFramework.Namespace.Etcd
             return pairs.Select(kv => Decode(kv, type)).ToList();
         }
 
-        protected Task<TxnResponse> InTxn(Action<TxnRequest> requestInit)
+        public Task<TxnResponse> InTxn(Action<TxnRequest> requestInit)
         {
             var request = new TxnRequest();
             requestInit.Invoke(request);
             return accessor.TransactionAsync(request);
         }
 
-        protected NameNode<TValue> Decode<TValue>(KeyValue kv, ObjectMimeType<TValue> type)
+        public NameNode<TValue> Decode<TValue>(KeyValue kv, ObjectMimeType<TValue> type)
         {
             return Decode(kv.Value, kv, kv.CreateRevision, kv.Version, type);
         }
 
-        protected NameNode<TValue> Decode<TValue>(ByteString kvValue, KeyValue kv, long createRevision, long version, ObjectMimeType<TValue> type)
+        public NameNode<TValue> Decode<TValue>(ByteString kvValue, KeyValue kv, long createRevision, long version, ObjectMimeType<TValue> type)
         {
             var path = kv.Key.ToStringUtf8();
             var codec = objectCodecAdapter.Codec(type);

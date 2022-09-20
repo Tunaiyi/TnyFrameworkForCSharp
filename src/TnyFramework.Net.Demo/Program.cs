@@ -134,10 +134,16 @@ namespace TnyFramework.Net.Demo
             }
         }
 
+        public class TestAppType : AppType<TestAppType>
+        {
+            public static readonly TestAppType TEST_CLIENT = Of(100, "TestClient");
+            public static readonly TestAppType TEST_SERVICE = Of(200, "TestService");
+        }
+
         public class TestRpcServiceType : RpcServiceType<TestRpcServiceType>
         {
-            public static readonly TestRpcServiceType TEST_CLIENT = Of(100, "TestClient");
-            public static readonly TestRpcServiceType TEST_SERVICE = Of(200, "TestService");
+            public static readonly TestRpcServiceType TEST_CLIENT = Of(100, TestAppType.TEST_CLIENT, "TestClient");
+            public static readonly TestRpcServiceType TEST_SERVICE = Of(200, TestAppType.TEST_SERVICE, "TestService");
         }
 
         private static async Task Main(string[] args)

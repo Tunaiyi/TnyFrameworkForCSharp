@@ -9,7 +9,7 @@ namespace TnyFramework.DI.Extensions
 
     public class ComponentTypeSelector : TypeSelectorDefinition
     {
-        internal static IList<Type> Types { get; private set; }
+        public static IList<Type> Types { get; private set; }
 
         public ComponentTypeSelector()
         {

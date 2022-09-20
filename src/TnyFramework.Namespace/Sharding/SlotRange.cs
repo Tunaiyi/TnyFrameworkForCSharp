@@ -1,13 +1,13 @@
 namespace TnyFramework.Namespace.Sharding
 {
 
-    public class Range
+    public class SlotRange
     {
         public long Min { get; }
 
         public long Max { get; }
 
-        public Range(long min, long max)
+        public SlotRange(long min, long max)
         {
             Min = min;
             Max = max;

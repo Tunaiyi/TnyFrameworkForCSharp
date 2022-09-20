@@ -25,6 +25,21 @@ namespace TnyFramework.Net.Dispatcher
         }
 
         /// <summary>
+        /// 获取当前线程正在执行的终端
+        /// </summary>
+        public static IEndpoint CurrentEndpoint => Current.Endpoint;
+
+        /// <summary>
+        /// 获取当前线程正在执行的通道
+        /// </summary>
+        public static ITunnel CurrentTunnel => Current.Tunnel;
+        
+        /// <summary>
+        /// 获取当前线程正在处理的消息
+        /// </summary>
+        public static IMessage CurrentMessage => Current.Message;
+
+        /// <summary>
         /// 获取消息对象
         /// </summary>
         public IMessage Message => command.Message;

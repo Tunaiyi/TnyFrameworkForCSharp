@@ -1,16 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net47;net471;net472;net48;netstandard2.0</TargetFrameworks>
         <Configurations>Debug;Release;Publish</Configurations>
         <Platforms>AnyCPU</Platforms>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
     </PropertyGroup>
 
-
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
     </ItemGroup>
-
 </Project>

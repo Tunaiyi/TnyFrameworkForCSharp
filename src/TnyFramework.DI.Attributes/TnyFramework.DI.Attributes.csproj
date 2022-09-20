@@ -9,4 +9,8 @@
     </PropertyGroup>
 
 
+    <ItemGroup>
+        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj"/>
+    </ItemGroup>
+    
 </Project>

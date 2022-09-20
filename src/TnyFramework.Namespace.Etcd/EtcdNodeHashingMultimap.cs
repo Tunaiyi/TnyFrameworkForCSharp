@@ -154,6 +154,12 @@ namespace TnyFramework.Namespace.Etcd
             return partitions;
         }
 
+        protected override string PartitionPath(string slotPath, IPartition<TNode> partition)
+        {
+            return NamespacePathNames.NodePath(slotPath, partition.Key);
+        }
+        
+
         protected override void DoShutdown()
         {
         }

@@ -57,8 +57,7 @@ namespace TnyFramework.Common.Enum
             var type = typeof(T);
             lock (type)
             {
-                ID_ENUM_MAP.TryGetValue(item.Id, out var exist);
-                if (exist != null)
+                if (ID_ENUM_MAP.TryGetValue(item.Id, out var exist))
                 {
                     throw new ArgumentException($"{type} 枚举 {item.name} 与 {exist.name} 具有相同的 Id {item.Id}");
                 }
@@ -77,8 +76,7 @@ namespace TnyFramework.Common.Enum
             var type = typeof(T);
             lock (type)
             {
-                ID_ENUM_MAP.TryGetValue(item.Id, out var exist);
-                if (exist != null)
+                if (ID_ENUM_MAP.TryGetValue(item.Id, out var exist))
                 {
                     throw new ArgumentException($"{type} 枚举 {item.name} 与 {exist.name} 具有相同的 Id {item.Id}");
                 }
@@ -177,26 +175,37 @@ namespace TnyFramework.Common.Enum
                 {
                     foreach (var field in fields)
                     {
-                        if (!field.FieldType.IsAssignableFrom(type))
-                            continue;
-                        var item = field.GetValue(type);
-                        if (item == null)
+                        object item = null;
+                        try
                         {
-                            result = false;
-                            return;
-                        }
-                        if (!(item is T eItem))
-                            continue;
-                        eItem.name = field.Name;
-                        NAME_ENUM_MAP.TryGetValue(eItem.Name, out var exist);
-                        if (exist != null)
+                            if (!type.IsAssignableFrom(field.FieldType) && !field.FieldType.IsAssignableFrom(type))
+                            {
+                                // LOGGER.LogWarning("Field {fieldType} {field} 不属于 Type {enumType}", field.FieldType, field.Name, type);
+                                continue;
+                            }
+                            item = field.GetValue(type);
+                            if (item == null)
+                            {
+                                result = false;
+                                return;
+                            }
+                            if (!(item is T eItem))
+                                continue;
+                            eItem.name = field.Name;
+                            if (NAME_ENUM_MAP.TryGetValue(eItem.Name, out var exist))
+                            {
+                                result = false;
+                                throw new ArgumentException($"{type} 枚举 {eItem.name} 与 {exist.name} 具有相同的 Name {eItem.name}");
+                            }
+                            NAME_ENUM_MAP.Add(eItem.name, eItem);
+                            count++;
+                            eItem.OnCheck();
+                        } catch (Exception e)
                         {
-                            result = false;
-                            throw new ArgumentException($"{type} 枚举 {eItem.name} 与 {exist.name} 具有相同的 Name {eItem.name}");
+                            LOGGER.LogError(e, "Enum {Enum} Load {item} items", type, item);
+                            Console.WriteLine(e);
+                            throw;
                         }
-                        NAME_ENUM_MAP.Add(eItem.name, eItem);
-                        count++;
-                        eItem.OnCheck();
                     }
                 } finally
                 {

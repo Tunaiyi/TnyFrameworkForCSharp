@@ -8,18 +8,17 @@ using TnyFramework.Namespace.Sharding;
 namespace TnyFramework.Namespace.Etcd
 {
 
-    internal class EtcdPartitionRegisterTask
+    public class EtcdPartitionRegisterTask
     {
-        
         internal const int REGISTER_RESULT_SUCCESS = 1;
         internal const int REGISTER_RESULT_FAILED = 2;
-        internal  const int REGISTER_RESULT_RETRY = 3;
-        internal  const int REGISTER_RESULT_CANCEL = 4;
+        internal const int REGISTER_RESULT_RETRY = 3;
+        internal const int REGISTER_RESULT_CANCEL = 4;
     }
-    internal class EtcdPartitionRegisterTask<TNode> : EtcdPartitionRegisterTask
+
+    public class EtcdPartitionRegisterTask<TNode> : EtcdPartitionRegisterTask
         where TNode : IShardingNode
     {
-
         private static readonly ILogger LOGGER = LogFactory.Logger<EtcdPartitionRegisterTask<TNode>>();
 
         internal PartitionSlot<TNode> Partition { get; }
@@ -72,12 +71,14 @@ namespace TnyFramework.Namespace.Etcd
                     return await current.Task;
                 }
                 sync = true;
+                var taskSource = source;
                 if (source == null)
                 {
                     source = new TaskCompletionSource<ShardingPartition<TNode>>();
+                    taskSource = new TaskCompletionSource<ShardingPartition<TNode>>();
                 }
                 await DoRegister(source, false);
-                return await source.Task;
+                return await taskSource.Task;
             });
         }
 

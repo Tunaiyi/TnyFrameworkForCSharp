@@ -1,11 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Base;
+using TnyFramework.Net.DotNetty.NetCore.Launcher;
 
 namespace TnyFramework.Net.DotNetty.NetCore
 {
@@ -20,13 +23,18 @@ namespace TnyFramework.Net.DotNetty.NetCore
 
         private readonly ICoroutine coroutine;
 
+        private readonly ApplicationLifecycleProcessor lifecycleProcessor;
+
         public NetHostedService(INetApplication application,
             INetServerDiscoveryService serverDiscoveryService,
+            IServiceProvider provider,
             ILogger<NetHostedService> logger)
         {
             this.logger = logger;
             this.application = application;
             this.serverDiscoveryService = serverDiscoveryService;
+            ApplicationLifecycleProcessor.LoadHandler(provider);
+            lifecycleProcessor = new ApplicationLifecycleProcessor();
             coroutine = DefaultCoroutineFactory.Default.Create("NetHostedService");
         }
 
@@ -38,6 +46,7 @@ namespace TnyFramework.Net.DotNetty.NetCore
             await application.Start();
             logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] started", context.Name, context.ServerId, context.AppType,
                 context.ScopeType);
+            await lifecycleProcessor.OnPrepareStart();
             IList<Task> tasks = new List<Task>();
             foreach (var server in application.Servers)
             {
@@ -61,6 +70,7 @@ namespace TnyFramework.Net.DotNetty.NetCore
             await Task.WhenAll(tasks.ToArray());
             logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] RegisterInstance []",
                 context.Name, context.ServerId, context.AppType, context.ScopeType);
+            await lifecycleProcessor.OnPostStart();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
@@ -88,6 +98,7 @@ namespace TnyFramework.Net.DotNetty.NetCore
             logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] DeregisterInstance",
                 appContext.Name, appContext.ServerId, appContext.AppType, appContext.ScopeType);
             await application.Close();
+            await lifecycleProcessor.OnClosed();
         }
     }
 

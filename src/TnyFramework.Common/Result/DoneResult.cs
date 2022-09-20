@@ -23,6 +23,11 @@ namespace TnyFramework.Common.Result
             return DoneResults.IsSuccess(Code.Value);
         }
 
+        public bool IsFailure()
+        {
+            return !IsSuccess();
+        }
+
         public bool IsPresent()
         {
             return Value != null;

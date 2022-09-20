@@ -54,7 +54,7 @@ namespace TnyFramework.Namespace.Sharding
             return hashCode % maxSlots;
         }
 
-        public override long Max => maxSlots > 0 ? maxSlots : algorithm.Max;
+        public long Max => maxSlots > 0 ? maxSlots : algorithm.Max;
     }
 
 }

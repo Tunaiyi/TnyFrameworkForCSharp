@@ -42,7 +42,7 @@ namespace TnyFramework.Net.Transport
             }
             var forwardHeader = request.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
             var backForward = CreateBackForwardHeader(forwardHeader);
-            var context = MessageContexts.Request(request, code, body, toMessage)
+            var context = MessageContexts.Respond(request, code, body, toMessage)
                 .WithHeader(backForward);
             Send(tunnel, context, backForward == null);
         }

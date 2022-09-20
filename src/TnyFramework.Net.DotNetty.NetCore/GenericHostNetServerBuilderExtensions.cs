@@ -25,13 +25,13 @@ namespace TnyFramework.Net.DotNetty.NetCore
         public static IHostBuilder ConfigureNetHost<TUserId>(this IHostBuilder builder,
             Action<INetServerGuideSpec<TUserId>> guideConfigure)
         {
-            return builder.ConfigureNetHost<TUserId>(guideConfigure, null);
+            return builder.ConfigureNetHost(guideConfigure, null);
         }
 
         public static IHostBuilder ConfigureNetHost<TUserId>(this IHostBuilder builder,
             Action<INetServerGuideSpec<TUserId>> serverGuideSpec, Action<INettyServerConfiguration> configure)
         {
-            builder.ConfigureServices((hostBuilder, services) => {
+            return builder.ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
                 var options = new NetApplicationHostOptions();
                 configuration.Bind(NetApplicationHostOptions.ROOT_PATH, options);
@@ -51,10 +51,10 @@ namespace TnyFramework.Net.DotNetty.NetCore
                         serverGuideSpec?.Invoke(spec);
                     })
                     .Initialize();
+                services.AddSingleton(p => p);
                 services.AddHostedService<NetHostedService>();
                 configure?.Invoke(serverConfiguration);
             });
-            return builder;
         }
     }
 

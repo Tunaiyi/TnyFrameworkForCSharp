@@ -2,13 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Exceptions;
+using TnyFramework.Common.Logger;
 
 namespace TnyFramework.DI.Container
 {
 
     public class TypeServiceFactory : IServiceFactory
     {
+
+        private static readonly ILogger LOGGER = LogFactory.Logger<TypeServiceFactory>();
+        
         private readonly ConstructorInfo constructor;
         private readonly List<Type> parameterTypes;
 
@@ -21,6 +26,10 @@ namespace TnyFramework.DI.Container
             if (constructors.Length > 1)
             {
                 throw new IllegalArgumentException($"{type} constructor size > 1");
+            }
+            if (constructors.Length == 0)
+            {
+                throw new IllegalArgumentException($"{type} constructor is empty");
             }
             constructor = constructors[0];
             var parameters = constructor.GetParameters();

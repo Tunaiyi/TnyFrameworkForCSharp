@@ -16,6 +16,10 @@ namespace TnyFramework.Namespace.Sharding
 
         public long Slot { get; protected set; }
 
+        protected ShardingPartition()
+        {
+        }
+
         protected ShardingPartition(int index, TNode node)
         {
             Key = node.Key + "$" + index;

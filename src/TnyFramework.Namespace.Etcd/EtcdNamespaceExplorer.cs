@@ -520,12 +520,12 @@ namespace TnyFramework.Namespace.Etcd
             }
         }
 
-        private NameNode<TValue> DecodeGetRangeFirstKeyValue<TValue>(ObjectMimeType<TValue> type, TxnResponse txnResponse)
+        public NameNode<TValue> DecodeGetRangeFirstKeyValue<TValue>(ObjectMimeType<TValue> type, TxnResponse txnResponse)
         {
             return DecodeFirstKeyValue(type, txnResponse, t => t.ResponseRange, r => r.Kvs);
         }
 
-        private NameNode<TValue> DecodeDeletePrevFirstKeyValue<TValue>(ObjectMimeType<TValue> type, TxnResponse txnResponse)
+        public  NameNode<TValue> DecodeDeletePrevFirstKeyValue<TValue>(ObjectMimeType<TValue> type, TxnResponse txnResponse)
         {
             return DecodeFirstKeyValue(type, txnResponse, t => t.ResponseDeleteRange, r => r.PrevKvs);
         }

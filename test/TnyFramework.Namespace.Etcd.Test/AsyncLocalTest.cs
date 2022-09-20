@@ -2,6 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NUnit.Framework;
+using TnyFramework.Common.Lifecycle;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
 
@@ -12,6 +13,12 @@ namespace TnyFramework.Namespace.Etcd.Test
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<AsyncLocalTest>();
 
+        [Test]
+        public void TestBaseEnum()
+        {
+            LifecycleStage.LoadAll();
+        }
+        
         [Test]
         public async Task TestAsyncLocal()
         {

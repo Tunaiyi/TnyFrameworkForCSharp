@@ -13,27 +13,37 @@ namespace TnyFramework.Net.Rpc
         /// 用户组
         /// </summary>
         string Service { get; }
+
+        /// <summary>
+        /// app类型
+        /// </summary>
+        AppType AppType { get; }
     }
 
     public class RpcServiceType : BaseEnum<RpcServiceType>, IRpcServiceType
     {
         private static readonly ConcurrentDictionary<string, RpcServiceType> SERVICE_MAP = new ConcurrentDictionary<string, RpcServiceType>();
 
+        private static readonly ConcurrentDictionary<AppType, RpcServiceType> APP_TYPE_MAP = new ConcurrentDictionary<AppType, RpcServiceType>();
+
         /// <summary>
         /// 服务名
         /// </summary>
         public string Service { get; protected set; }
 
+        public AppType AppType { get; protected set; }
+
         public string Group => Service;
 
         protected override void OnCheck()
         {
-            if (SERVICE_MAP.TryAdd(Service, this))
-                return;
-            var value = SERVICE_MAP[Service];
-            if (!ReferenceEquals(value, this))
+            if (!SERVICE_MAP.TryAdd(Service, this) && !ReferenceEquals(SERVICE_MAP[Service], this))
             {
-                throw new ArgumentException($"{value} 与 {this} 存在相同的 Service {Service}");
+                throw new ArgumentException($"{SERVICE_MAP[Service]} 与 {this} 存在相同的 Service {Service}");
+            }
+            if (!APP_TYPE_MAP.TryAdd(AppType, this) && !ReferenceEquals(APP_TYPE_MAP[AppType], this))
+            {
+                throw new ArgumentException($"{APP_TYPE_MAP[AppType]} 与 {this} 存在相同的 AppType {Service}");
             }
         }
 
@@ -53,14 +63,22 @@ namespace TnyFramework.Net.Rpc
                 throw new ArgumentException($"枚举Service不存在 -> {service}");
             return obj;
         }
+
+        public static RpcServiceType ForAppType(AppType appType)
+        {
+            if (!APP_TYPE_MAP.TryGetValue(appType, out var obj))
+                throw new ArgumentException($"枚举AppType不存在 -> {appType}");
+            return obj;
+        }
     }
 
     public abstract class RpcServiceType<T> : RpcServiceType where T : RpcServiceType<T>, new()
     {
-        protected static T Of(int id, string service, Action<T> builder = null)
+        protected static T Of(int id, AppType appType, string service, Action<T> builder = null)
         {
             return E(id, new T {
-                Service = service
+                Service = service,
+                AppType = appType
             }, builder);
         }
 

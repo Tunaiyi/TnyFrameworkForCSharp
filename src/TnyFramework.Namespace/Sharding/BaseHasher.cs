@@ -5,8 +5,6 @@ namespace TnyFramework.Namespace.Sharding
 
     public abstract class BaseHasher<TValue> : IHasher<TValue>
     {
-        
-        public abstract long Max { get; }
 
         public long Hash(TValue value, int seed, long max)
         {

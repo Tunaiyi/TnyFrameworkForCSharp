@@ -8,6 +8,10 @@ namespace TnyFramework.Namespace.Sharding
     {
         private int Seed { get; set; }
 
+        public PartitionSlot()
+        {
+        }
+
         public PartitionSlot(int index, TNode node) : base(index, node)
         {
         }

@@ -10,9 +10,12 @@ namespace TnyFramework.Common.Extensions
             return collection == null || collection.Count == 0;
         }
 
-        public static bool IsEmpty<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
+        public static void AddRang<T>(this ICollection<T> collection, IEnumerable<T> valuse)
         {
-            return dictionary == null || dictionary.Count == 0;
+            foreach (var value in valuse)
+            {
+                collection.Add(value);
+            }
         }
     }
 

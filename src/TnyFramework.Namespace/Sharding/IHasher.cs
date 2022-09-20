@@ -7,7 +7,6 @@ namespace TnyFramework.Namespace.Sharding
 
         long Hash(TValue value, int seed);
 
-        long Max { get; }
     }
 
 }

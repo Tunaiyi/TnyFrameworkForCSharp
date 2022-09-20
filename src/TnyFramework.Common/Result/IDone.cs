@@ -12,6 +12,12 @@ namespace TnyFramework.Common.Result
         bool IsSuccess();
 
         /// <summary>
+        /// 是否成功 code
+        /// </summary>
+        /// <returns></returns>
+        bool IsFailure();
+
+        /// <summary>
         /// 是否有结果值
         /// </summary>
         /// <returns></returns>

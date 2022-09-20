@@ -63,7 +63,7 @@ namespace TnyFramework.Namespace.Etcd
             });
         }
 
-        public Task Subscribe(List<ShardingRange> ranges)
+        public Task Subscribe<TRange>(IList<TRange> ranges) where TRange : ShardingRange
         {
             return coroutine.AsyncExec(async () => {
                 if (closed)

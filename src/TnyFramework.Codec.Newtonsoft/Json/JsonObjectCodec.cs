@@ -7,15 +7,32 @@ namespace TnyFramework.Codec.Newtonsoft.Json
 
     public class JsonObjectCodec<T> : ObjectCodec<T>
     {
+        private readonly JsonSerializerSettings formatting;
+
+        public JsonObjectCodec(JsonSerializerSettings formatting)
+        {
+            this.formatting = formatting;
+        }
+
+        private string SerializeObject(T value)
+        {
+            return formatting == null ? JsonConvert.SerializeObject(value) : JsonConvert.SerializeObject(value, formatting);
+        }
+
+        private T DeserializeObject(string json)
+        {
+            return formatting == null ? JsonConvert.DeserializeObject<T>(json) : JsonConvert.DeserializeObject<T>(json, formatting);
+        }
+
         public override byte[] Encode(T value)
         {
-            var json = JsonConvert.SerializeObject(value);
+            var json = SerializeObject(value);
             return Encoding.UTF8.GetBytes(json);
         }
 
         public override void Encode(T value, Stream output)
         {
-            var json = JsonConvert.SerializeObject(value);
+            var json = SerializeObject(value);
             var data = Encoding.UTF8.GetBytes(json);
             output.Write(data, 0, data.Length);
         }
@@ -23,14 +40,14 @@ namespace TnyFramework.Codec.Newtonsoft.Json
         public override T Decode(byte[] bytes)
         {
             var json = Encoding.UTF8.GetString(bytes);
-            return JsonConvert.DeserializeObject<T>(json);
+            return DeserializeObject(json);
         }
 
         public override T Decode(Stream input)
         {
             var reader = new StreamReader(input);
             var json = reader.ReadToEnd();
-            return JsonConvert.DeserializeObject<T>(json);
+            return DeserializeObject(json);
         }
 
         public override string Format(T value)
@@ -40,7 +57,7 @@ namespace TnyFramework.Codec.Newtonsoft.Json
 
         public override T Parse(string data)
         {
-            return JsonConvert.DeserializeObject<T>(data);
+            return DeserializeObject(data);
         }
     }
 

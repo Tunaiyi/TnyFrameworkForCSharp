@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Etcdserverpb;
@@ -120,15 +121,14 @@ namespace TnyFramework.Namespace.Etcd
                     if (current != Interlocked.CompareExchange(ref status, GRANT, whenStatus))
                         return false;
                     var response = await client.LeaseGrantAsync(new LeaseGrantRequest {
-                        TTL = ttl
+                        TTL = Math.Max(ttl / 1000L, 1L)
                     });
-                    Ttl = Ttl;
+                    Ttl = ttl;
                     Id = response.ID;
-                    var keepRequest = new LeaseKeepAliveRequest {
-                        ID = Id
-                    };
                     var tokenSource = new CancellationTokenSource();
                     var token = tokenSource.Token;
+                    status = LIVE;
+                    StartKeepAlive(Id, token);
                     keepAliveSource = tokenSource;
                     if (whenStatus == PAUSE)
                     {
@@ -137,13 +137,31 @@ namespace TnyFramework.Namespace.Etcd
                     {
                         leaseEvent.Notify(this);
                     }
-                    var _ = client.LeaseKeepAlive(keepRequest, OnKeepAlive, token);
                     token.Register(() => coroutine.ExecAction(HandleCompleted));
                     return true;
                 } catch (Exception e)
                 {
                     HandleGrantError(whenStatus, e);
                     throw;
+                }
+            });
+        }
+
+        private void StartKeepAlive(long id, CancellationToken token)
+        {
+            coroutine.AsyncExec(async () => {
+                var stopwatch = new Stopwatch();
+                while (Id == id && IsLive() && !token.IsCancellationRequested)
+                {
+                    stopwatch.Reset();
+                    var keepRequest = new LeaseKeepAliveRequest {
+                        ID = Id
+                    };
+                    await client.LeaseKeepAlive(keepRequest, OnKeepAlive, token);
+                    stopwatch.Stop();
+                    var delay = Ttl / 3;
+                    delay = Math.Max(delay - stopwatch.ElapsedMilliseconds, 1);
+                    await Task.Delay((int) delay, token);
                 }
             });
         }

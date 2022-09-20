@@ -6,7 +6,7 @@ namespace TnyFramework.Namespace.Sharding
 
     public class ShardingRange
     {
-        private List<Range> ranges;
+        private List<SlotRange> ranges;
 
         public long FromSlot { get; }
 
@@ -31,7 +31,7 @@ namespace TnyFramework.Namespace.Sharding
             }
         }
 
-        public IReadOnlyList<Range> GetRanges()
+        public IReadOnlyList<SlotRange> GetRanges()
         {
             if (ranges != null)
             {
@@ -39,14 +39,14 @@ namespace TnyFramework.Namespace.Sharding
             }
             if (Across)
             {
-                ranges = new List<Range> {
-                    new Range(0L, this.ToSlot),
-                    new Range(FromSlot, this.MaxSlot)
+                ranges = new List<SlotRange> {
+                    new SlotRange(0L, this.ToSlot),
+                    new SlotRange(FromSlot, this.MaxSlot)
                 };
             } else
             {
-                ranges = new List<Range> {
-                    new Range(FromSlot, this.ToSlot)
+                ranges = new List<SlotRange> {
+                    new SlotRange(FromSlot, this.ToSlot)
                 };
             }
             return ranges;

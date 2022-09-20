@@ -14,7 +14,7 @@ namespace TnyFramework.Namespace
 
         ObjectMimeType<TValue> MineType { get; }
 
-        Task Subscribe(List<ShardingRange> ranges);
+        Task Subscribe<TRange>(IList<TRange> ranges) where TRange : ShardingRange;
 
         Task SubscribeAll();
 

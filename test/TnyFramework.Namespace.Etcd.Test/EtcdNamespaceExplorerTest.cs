@@ -22,7 +22,7 @@ namespace TnyFramework.Namespace.Etcd.Test
 
         private static readonly ObjectCodecFactory OBJECT_CODEC_FACTORY = new JsonObjectCodecFactory();
 
-        private static readonly ObjectCodecAdapter OBJECT_CODEC_ADAPTER = new(new List<ObjectCodecFactory> {OBJECT_CODEC_FACTORY});
+        private static readonly ObjectCodecAdapter OBJECT_CODEC_ADAPTER = new ObjectCodecAdapter(new List<ObjectCodecFactory> {OBJECT_CODEC_FACTORY});
 
         private static INamespaceExplorer explorer;
 
@@ -318,7 +318,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             subscriber.UpdateEvent.Add((_, node) => { updateList.Add(node.Value); });
             subscriber.DeleteEvent.Add((_, node) => { deleteList.Add(node.Value); });
 
-            await subscriber.Subscribe(new List<ShardingRange> {new(0, toSlot, maxSlot)});
+            await subscriber.Subscribe(new List<ShardingRange> {new ShardingRange(0, toSlot, maxSlot)});
             var lessee = await publisher.Lease();
             await Task.Delay(100);
 
