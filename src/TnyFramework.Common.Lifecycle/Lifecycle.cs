@@ -80,6 +80,8 @@ namespace TnyFramework.Common.Lifecycle
     {
         private Type handlerType;
 
+        public Type lifeType;
+
         private ILifecyclePriority Priority { get; set; }
 
         public TLife Next { get; private set; }
@@ -150,22 +152,22 @@ namespace TnyFramework.Common.Lifecycle
             Prev = life;
         }
 
-        private bool Equals(Lifecycle<TLife, THandler> other)
+        protected bool Equals(Lifecycle<TLife, THandler> other)
         {
-            return HandlerType == other.HandlerType;
+            return handlerType == other.handlerType && lifeType == other.lifeType;
         }
 
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
+            if (obj.GetType() != this.GetType()) return false;
             return Equals((Lifecycle<TLife, THandler>) obj);
         }
 
         public override int GetHashCode()
         {
-            return HandlerType != null ? HandlerType.GetHashCode() : 0;
+            return HashCode.Combine(handlerType, lifeType);
         }
 
         public static TLife Value<TSubHandler>()
@@ -193,7 +195,8 @@ namespace TnyFramework.Common.Lifecycle
                 return lifecycle;
             lifecycle = new TLife {
                 Priority = lifeCycleLevel,
-                handlerType = handleType
+                handlerType = handleType,
+                lifeType = typeof(TLife)
             };
             return PutLifecycle(stage, lifecycle);
         }

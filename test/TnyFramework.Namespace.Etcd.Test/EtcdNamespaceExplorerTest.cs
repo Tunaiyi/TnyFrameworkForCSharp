@@ -1182,7 +1182,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             const int maxSlots = 32;
             const int partitionCount = 6;
             var keyHash = HashAlgorithmHasher.Hasher<string>(maxSlots, XxHash3HashAlgorithm.XXH3_HASH_32);
-            var nodeHash = HashAlgorithmHasher.Hasher<PartitionSlot<TestShadingNode>>(p => p.NodeKey, maxSlots, XxHash3HashAlgorithm.XXH3_HASH_32);
+            var nodeHash = HashAlgorithmHasher.Hasher<IPartitionSlot<TestShadingNode>>(p => p.NodeKey, maxSlots, XxHash3HashAlgorithm.XXH3_HASH_32);
             var hashing1 = explorer.NodeHashing("/T2/Nodes", keyHash.Max, keyHash, nodeHash, EtcdNodeHashingMultimapFactory.Default, options => {
                     options.Name = "Harding1";
                     options.PartitionCount = partitionCount;

@@ -65,7 +65,7 @@ namespace TnyFramework.Net.DotNetty.Common
             if (LOGGER.IsEnabled(LogLevel.Debug))
             {
                 LOGGER.LogDebug(
-                    "MemoryAllotCounter 本次 分配 {} bytes 使用 {} bytes, 平均分配 {} bytes, 平均误差 {} bytes, 总分配 {} 次, 总分配 {} bytes, 最大 {} bytes, 最小 {} bytes",
+                    "MemoryAllotCounter 本次 分配 {allot} bytes 使用 {use} bytes, 平均分配 {perAllotSize} bytes, 平均误差 {perDevSize} bytes, 总分配 {count} 次, 总分配 {total} bytes, 最大 {maxSize} bytes, 最小 {minSize} bytes",
                     allot, useSize, totalSize / count, deviationSize / count, count, totalSize, maxSize, minSize);
             }
         }

@@ -6,31 +6,30 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Text;
+using System.Threading.Tasks;
 
-namespace TnyFramework.Namespace.Sharding
+namespace TnyFramework.Net.Dispatcher
 {
 
-    public class HashingOptions<TNode>
-        where TNode : IShardingNode
+    public class NoopCommand : ICommand
     {
-        public string Name { get; set; }
+        public static ICommand Command { get; } = new NoopCommand();
 
-        public long Ttl { get; set; } = 3000L;
-
-        public int PartitionCount { get; set; } = 5;
-
-        public long MaxSlots { get; set; } = 1024L;
-
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
-
-        public IHasher<string> KeyHasher { get; set; }
-
-        public IHasher<IPartitionSlot<TNode>> NodeHasher { get; set; }
-
-        public HashingOptions()
+        private NoopCommand()
         {
         }
+
+        public Task Execute()
+        {
+            return Task.CompletedTask;
+        }
+
+        public bool IsDone()
+        {
+            return true;
+        }
+
+        public string Name => nameof(NoopCommand);
     }
 
 }

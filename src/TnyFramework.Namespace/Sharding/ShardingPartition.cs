@@ -14,15 +14,15 @@ namespace TnyFramework.Namespace.Sharding
     public abstract class ShardingPartition<TNode> : IPartition<TNode>
         where TNode : IShardingNode
     {
-        public string Key { get; }
+        public string Key { get; set; }
 
         public string NodeKey => Node?.Key;
 
-        public int Index { get; }
+        public int Index { get; set; }
 
-        public TNode Node { get; }
+        public TNode Node { get; set; }
 
-        public long Slot { get; protected set; }
+        public long Slot { get; set; }
 
         protected ShardingPartition()
         {

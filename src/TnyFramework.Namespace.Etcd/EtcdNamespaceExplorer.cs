@@ -84,32 +84,32 @@ namespace TnyFramework.Namespace.Etcd
         }
 
         public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
-            IHasher<PartitionSlot<TNode>> nodeHasher) where TNode : IShardingNode
+            IHasher<IPartitionSlot<TNode>> nodeHasher) where TNode : IShardingNode
         {
             return NodeHashing(rootPath, maxSlotSize, keyHasher, nodeHasher, null, null);
         }
 
         public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
-            IHasher<PartitionSlot<TNode>> nodeHasher, INodeHashingFactory factory) where TNode : IShardingNode
+            IHasher<IPartitionSlot<TNode>> nodeHasher, INodeHashingFactory factory) where TNode : IShardingNode
         {
             return NodeHashing(rootPath, maxSlotSize, keyHasher, nodeHasher, factory, null);
         }
 
         public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
-            IHasher<PartitionSlot<TNode>> nodeHasher, Action<HashingOptions<TNode>> custom) where TNode : IShardingNode
+            IHasher<IPartitionSlot<TNode>> nodeHasher, Action<HashingOptions<TNode>> custom) where TNode : IShardingNode
         {
             return NodeHashing(rootPath, maxSlotSize, keyHasher, nodeHasher, null, custom);
         }
 
         public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
-            IHasher<PartitionSlot<TNode>> nodeHasher, INodeHashingFactory factory, Action<HashingOptions<TNode>> custom) where TNode : IShardingNode
+            IHasher<IPartitionSlot<TNode>> nodeHasher, INodeHashingFactory factory, Action<HashingOptions<TNode>> custom) where TNode : IShardingNode
         {
             var options = HashingOptions(maxSlotSize, keyHasher, nodeHasher);
             custom?.Invoke(options);
             return NodeHashing(rootPath, factory, options);
         }
 
-        public HashingOptions<TNode> HashingOptions<TNode>(long maxSlotSize, IHasher<string> keyHasher, IHasher<PartitionSlot<TNode>> nodeHasher)
+        public HashingOptions<TNode> HashingOptions<TNode>(long maxSlotSize, IHasher<string> keyHasher, IHasher<IPartitionSlot<TNode>> nodeHasher)
             where TNode : IShardingNode
         {
             return new HashingOptions<TNode> {
@@ -172,7 +172,7 @@ namespace TnyFramework.Namespace.Etcd
                 return leasers[lessee.Name];
             }
             lessee.CompletedEvent.Add(HandLessee);
-            lessee.ErrorEvent.Add((l, _) => HandLessee(l));
+            lessee.ErrorEvent.Add(HandLessee);
             await lessee.Lease();
             return lessee;
         }
@@ -549,6 +549,12 @@ namespace TnyFramework.Namespace.Etcd
                     where response != null
                     select DecodeKeyValue(keyValueFunc(response), type))
                 .FirstOrDefault();
+        }
+
+        private void HandLessee(ILessee source, Exception exception)
+        {
+            LOGGER.LogWarning(exception, "Lessee {id} exception", source.Id);
+            HandLessee(source);
         }
 
         private void HandLessee(ILessee source)

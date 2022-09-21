@@ -98,7 +98,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Launcher
                 // TransactionManager.close();
             } catch (System.Exception e)
             {
-                LOGGER.LogError(e, "服务生命周期 {} # 处理器 [{}] index {} | -> 异常", nameof(THandle), handle.GetType(), currentIndex);
+                LOGGER.LogError(e, "服务生命周期 {type} # 处理器 [{handler}] index {index} | -> 异常", nameof(THandle), handle.GetType(), currentIndex);
                 // TransactionManager.rollback(e);
                 if (!errorContinue)
                 {
@@ -133,7 +133,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Launcher
         {
 
             const string name = nameof(THandle);
-            LOGGER.LogInformation("服务生命周期处理 {} ! 初始化开始......", name);
+            LOGGER.LogInformation("服务生命周期处理 {index} ! 初始化开始......", name);
 
             var lifecycleList = LIFECYCLE_MAP.GetOrDefault(stage, () => new SortedSet<Lifecycle>());
             var index = 0;
@@ -163,7 +163,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Launcher
                             var handleType = processor.GetType();
                             var methodInfo = handleType.GetMethod(methodName);
                             var isAsync = methodInfo != null && methodInfo.GetCustomAttribute<AsyncProcessAttribute>() != null;
-                            LOGGER.LogInformation("服务生命周期 {} # 处理器 [{}] index {} |", name, processor.GetType(), index);
+                            LOGGER.LogInformation("服务生命周期 {life} # 处理器 [{handler}] index {index} |", name, processor.GetType(), index);
                             if (isAsync)
                             {
                                 tasks.Add(DoRun(handle, runner, index, errorContinue, true));
@@ -172,7 +172,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Launcher
                                 var _ = DoRun(handle, runner, index, errorContinue);
                             }
                             stopwatch.Stop();
-                            LOGGER.LogInformation("服务生命周期 {} # 处理器 [{}] index {} | -> 耗时 {} 完成",
+                            LOGGER.LogInformation("服务生命周期 {life} # 处理器 [{handler}] index {index} | -> 耗时 {cost} 完成",
                                 name, processor.GetType(), index, stopwatch.ElapsedMilliseconds);
                             index++;
                         }
@@ -184,7 +184,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Launcher
             {
                 await task;
             }
-            LOGGER.LogInformation("服务生命周期处理 {} 完成! 共 {} 个初始化器!", name, index);
+            LOGGER.LogInformation("服务生命周期处理 {name} 完成! 共 {count} 个初始化器!", name, index);
         }
     }
 

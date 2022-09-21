@@ -115,7 +115,7 @@ namespace TnyFramework.Namespace.Etcd
                 OnCompleted(currentSource, result);
             } catch (Exception e)
             {
-                LOGGER.LogError(e, "DoRegister {} exception", Partition);
+                LOGGER.LogError(e, "DoRegister {partition} exception", Partition);
                 sync = false;
                 OnCompleted(currentSource, REGISTER_RESULT_RETRY);
             }

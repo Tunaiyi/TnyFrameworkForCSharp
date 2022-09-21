@@ -11,10 +11,15 @@ using System;
 namespace TnyFramework.Namespace.Sharding
 {
 
-    public class PartitionSlot<TNode> : ShardingPartition<TNode>
+    public interface IPartitionSlot<out TNode> : IPartition<TNode>
         where TNode : IShardingNode
     {
-        private int Seed { get; set; }
+    }
+
+    public class PartitionSlot<TNode> : ShardingPartition<TNode>, IPartitionSlot<TNode>
+        where TNode : IShardingNode
+    {
+        public int Seed { get; set; }
 
         public PartitionSlot()
         {

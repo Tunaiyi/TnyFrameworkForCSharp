@@ -57,6 +57,16 @@ namespace TnyFramework.Namespace.Etcd
             mutex.ExitWriteLock();
         }
 
+        private void ReaderUpgradeableLock()
+        {
+            mutex.EnterUpgradeableReadLock();
+        }
+
+        private void ReaderUpgradeableUnlock()
+        {
+            mutex.ExitUpgradeableReadLock();
+        }
+
         private void ReaderLock()
         {
             mutex.EnterReadLock();
@@ -217,32 +227,34 @@ namespace TnyFramework.Namespace.Etcd
 
         public override List<ShardingRange<TNode>> GetAllRanges()
         {
-            ReaderLock();
+            ReaderUpgradeableLock();
+            ;
             try
             {
-                if (ranges != null)
+                var value = ranges;
+                if (value != null)
                 {
-                    return ranges;
+                    return value;
+                }
+                WriterLock();
+                try
+                {
+                    value = ranges;
+                    if (value != null)
+                    {
+                        return value;
+                    }
+                    return ranges = slotPartitionsMap.Values
+                        .SelectMany(partitions => partitions)
+                        .Select(partition => new ShardingRange<TNode>(partition, partition.Slot, MaxSlots))
+                        .ToList();
+                } finally
+                {
+                    WriterUnlock();
                 }
             } finally
             {
-                ReaderUnlock();
-            }
-            WriterLock();
-            try
-            {
-                if (ranges != null)
-                {
-                    return ranges;
-                }
-                return ranges = slotPartitionsMap.Values
-                    .SelectMany(partitions => partitions)
-                    .Select(partition => new ShardingRange<TNode>(partition, partition.Slot, MaxSlots))
-                    .ToList();
-
-            } finally
-            {
-                ReaderUnlock();
+                ReaderUpgradeableUnlock();
             }
 
         }

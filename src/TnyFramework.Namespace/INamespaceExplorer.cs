@@ -74,7 +74,7 @@ namespace TnyFramework.Namespace
         /// <param name="keyHasher">key哈希计算器</param>
         /// <param name="nodeHasher">节点哈希计算器</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<PartitionSlot<TNode>> nodeHasher)
+        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<IPartitionSlot<TNode>> nodeHasher)
             where TNode : IShardingNode;
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace TnyFramework.Namespace
         /// <param name="nodeHasher">节点哈希计算器</param>
         /// <param name="factory">节点存储器工厂</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<PartitionSlot<TNode>> nodeHasher,
+        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<IPartitionSlot<TNode>> nodeHasher,
             INodeHashingFactory factory) where TNode : IShardingNode;
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace TnyFramework.Namespace
         /// <param name="nodeHasher">节点哈希计算器</param>
         /// <param name="custom">选项自定义</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<PartitionSlot<TNode>> nodeHasher,
+        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<IPartitionSlot<TNode>> nodeHasher,
             Action<HashingOptions<TNode>> custom) where TNode : IShardingNode;
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace TnyFramework.Namespace
         /// <param name="factory">节点存储器工厂</param>
         /// <param name="custom">选项自定义</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<PartitionSlot<TNode>> nodeHasher,
+        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<IPartitionSlot<TNode>> nodeHasher,
             INodeHashingFactory factory, Action<HashingOptions<TNode>> custom) where TNode : IShardingNode;
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace TnyFramework.Namespace
         /// <param name="keyHasher">key哈希计算器</param>
         /// <param name="nodeHasher">节点哈希计算器</param>
         /// <returns>选项 Build</returns>
-        HashingOptions<TNode> HashingOptions<TNode>(long maxSlotSize, IHasher<string> keyHasher, IHasher<PartitionSlot<TNode>> nodeHasher)
+        HashingOptions<TNode> HashingOptions<TNode>(long maxSlotSize, IHasher<string> keyHasher, IHasher<IPartitionSlot<TNode>> nodeHasher)
             where TNode : IShardingNode;
 
         /// <summary>

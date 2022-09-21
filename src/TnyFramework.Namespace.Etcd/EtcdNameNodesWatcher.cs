@@ -143,7 +143,7 @@ namespace TnyFramework.Namespace.Etcd
                     return await DoWatch(response);
                 } catch (Exception e)
                 {
-                    LOGGER.LogError(e, "watch {} exception", WatchPath);
+                    LOGGER.LogError(e, "watch {path} exception", WatchPath);
                     status = UNWATCH;
                     throw;
                 }

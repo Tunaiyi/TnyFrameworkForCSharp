@@ -8,6 +8,8 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Logger;
 
 namespace TnyFramework.Coroutines.Async
 {
@@ -19,6 +21,8 @@ namespace TnyFramework.Coroutines.Async
 
     internal abstract class CoroutineTask<T> : ICoroutineTask
     {
+        protected readonly ILogger LOGGER = LogFactory.Logger<ICoroutineTask>();
+
         private Coroutine Coroutine { get; }
 
         protected TaskCompletionSource<T> Source { get; }
@@ -28,6 +32,13 @@ namespace TnyFramework.Coroutines.Async
             Source = createSource ? new TaskCompletionSource<T>() : null;
             Coroutine = null;
             Coroutine?.Track();
+        }
+
+        protected void HandleException(Exception cause)
+        {
+            var name = Coroutine.Current.Name;
+            var id = Coroutine.Current.Id;
+            LOGGER.LogWarning(cause, "Coroutine {Name} [{Id}] Invoke exception", name, id);
         }
 
         public abstract Task Invoke();
@@ -54,6 +65,7 @@ namespace TnyFramework.Coroutines.Async
             } catch (Exception e)
             {
                 Source?.SetException(e);
+                HandleException(e);
             }
         }
     }
@@ -79,6 +91,7 @@ namespace TnyFramework.Coroutines.Async
             } catch (Exception e)
             {
                 Source?.SetException(e);
+                HandleException(e);
             }
         }
     }
@@ -103,6 +116,7 @@ namespace TnyFramework.Coroutines.Async
             } catch (Exception e)
             {
                 Source?.SetException(e);
+                HandleException(e);
             }
             return Task.CompletedTask;
         }
@@ -128,6 +142,7 @@ namespace TnyFramework.Coroutines.Async
             } catch (Exception e)
             {
                 Source?.SetException(e);
+                HandleException(e);
             }
             return Task.CompletedTask;
         }

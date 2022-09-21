@@ -59,7 +59,7 @@ namespace TnyFramework.Net.Dispatcher
                 return new ControllerMessageCommand(controller, tunnel, message, this.context, this.endpointKeeperManager);
             }
             if (message.Mode != MessageMode.Request)
-                return null;
+                return NoopCommand.Command;
             LOGGER.LogWarning("{Mode} controller [{Name}] not exist", message.Mode, message.ProtocolId);
             return RunnableCommand.Action(() => MessageSendAide.Response(tunnel, message, NetResultCode.SERVER_NO_SUCH_PROTOCOL, null));
         }

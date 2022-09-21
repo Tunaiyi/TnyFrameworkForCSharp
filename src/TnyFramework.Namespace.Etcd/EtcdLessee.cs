@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
+using TnyFramework.Namespace.Exceptions;
 using TnyFramework.Namespace.Listener;
 
 namespace TnyFramework.Namespace.Etcd
@@ -36,11 +37,15 @@ namespace TnyFramework.Namespace.Etcd
 
         private volatile int status = STOP;
 
+        private volatile Stopwatch stopwatch = new Stopwatch();
+
         private readonly EtcdAccessor client;
 
         private CancellationTokenSource keepAliveSource;
 
         private readonly ICoroutine coroutine;
+
+        private readonly ICoroutine keepAliveCoroutine;
 
         private readonly IEventBus<LesseeOnRenew> renewEvent = EventBuses.Create<LesseeOnRenew>();
 
@@ -58,6 +63,7 @@ namespace TnyFramework.Namespace.Etcd
             Ttl = ttl;
             Name = name;
             coroutine = DefaultCoroutineFactory.Default.Create("EtcdLessee");
+            keepAliveCoroutine = DefaultCoroutineFactory.Default.Create("EtcdLesseeKeepAlive");
         }
 
         public string Name { get; }
@@ -75,6 +81,8 @@ namespace TnyFramework.Namespace.Etcd
         public IEventBox<LesseeOnLease> LeaseEvent => leaseEvent;
 
         public IEventBox<LesseeOnResume> ResumeEvent => resumeEvent;
+
+        public int nextKeepAlive;
 
         public bool IsLive()
         {
@@ -133,6 +141,7 @@ namespace TnyFramework.Namespace.Etcd
                     });
                     Ttl = ttl;
                     Id = response.ID;
+                    NextKeepAlive(response.TTL);
                     var tokenSource = new CancellationTokenSource();
                     var token = tokenSource.Token;
                     status = LIVE;
@@ -157,19 +166,18 @@ namespace TnyFramework.Namespace.Etcd
 
         private void StartKeepAlive(long id, CancellationToken token)
         {
-            coroutine.AsyncExec(async () => {
-                var stopwatch = new Stopwatch();
+            keepAliveCoroutine.AsyncExec(async () => {
                 while (Id == id && IsLive() && !token.IsCancellationRequested)
                 {
-                    stopwatch.Reset();
                     var keepRequest = new LeaseKeepAliveRequest {
                         ID = Id
                     };
                     await client.LeaseKeepAlive(keepRequest, OnKeepAlive, token);
-                    stopwatch.Stop();
-                    var delay = Ttl / 3;
-                    delay = Math.Max(delay - stopwatch.ElapsedMilliseconds, 1);
+                    var useTime = stopwatch.ElapsedMilliseconds;
+                    var delay = nextKeepAlive - useTime;
+                    delay = Math.Max(delay, 1);
                     await Task.Delay((int) delay, token);
+                    stopwatch.Restart();
                 }
             });
         }
@@ -228,9 +236,34 @@ namespace TnyFramework.Namespace.Etcd
             await client.LeaseRevokeAsync(new LeaseRevokeRequest {ID = Id}, cancellationToken: default);
         }
 
+        private void NextKeepAlive(long ttl)
+        {
+            nextKeepAlive = (int) (ttl * 1000 / 3);
+            if (stopwatch.IsRunning)
+            {
+                stopwatch.Stop();
+            }
+        }
+
         private void OnKeepAlive(LeaseKeepAliveResponse response)
         {
-            renewEvent.Notify(this);
+            var ttl = response.TTL;
+            if (ttl > 0)
+            {
+                NextKeepAlive(ttl);
+            }
+            coroutine.ExecAction(() => {
+                var id = response.ID;
+                if (ttl > 0)
+                {
+                    renewEvent.Notify(this);
+                } else
+                {
+                    status = PAUSE;
+                    errorEvent.Notify(this, new NamespaceLeaseNotFoundException($"Lease {id} 未找到"));
+                    Resume();
+                }
+            });
         }
     }
 

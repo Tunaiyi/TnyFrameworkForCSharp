@@ -104,7 +104,7 @@ namespace TnyFramework.Common.Enum
             CheckAndUpdateNames();
             if (!ID_ENUM_MAP.TryGetValue(id, out var result))
             {
-                throw new ArgumentException("枚举ID不存在 -> " + id);
+                throw new ArgumentException($"{typeof(T)} 枚举ID不存在 -> {id}");
             }
             return result;
         }
@@ -119,7 +119,7 @@ namespace TnyFramework.Common.Enum
             CheckAndUpdateNames();
             if (!NAME_ENUM_MAP.TryGetValue(name, out var result))
             {
-                throw new ArgumentException("枚举名称不存在 -> " + name);
+                throw new ArgumentException($"{typeof(T)} 枚举名称不存在 -> {name}");
             }
             return result;
         }
@@ -218,7 +218,7 @@ namespace TnyFramework.Common.Enum
                 } finally
                 {
                     TYPE_INIT_MAP[type] = result;
-                    LOGGER.LogDebug("Enum {Enum} LoadAll {} items", type, count);
+                    LOGGER.LogDebug("Enum {Enum} LoadAll {count} items", type, count);
                 }
             }
         }

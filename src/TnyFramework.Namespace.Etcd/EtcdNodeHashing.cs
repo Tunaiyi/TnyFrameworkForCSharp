@@ -60,7 +60,7 @@ namespace TnyFramework.Namespace.Etcd
         protected IHasher<string> KeyHasher { get; }
 
         // hash 算法
-        public IHasher<PartitionSlot<TNode>> NodeHasher { get; }
+        public IHasher<IPartitionSlot<TNode>> NodeHasher { get; }
 
         // 序列化类型
         private readonly ObjectMimeType<PartitionSlot<TNode>> partitionMineType;
@@ -176,16 +176,16 @@ namespace TnyFramework.Namespace.Etcd
             return Math.Abs(KeyHasher.Hash(key, 0, MaxSlots));
         }
 
-        /// <summary>
-        /// 节点hash 值
-        /// </summary>
-        /// <param name="slot">节点</param>
-        /// <param name="index">第几分区</param>
-        /// <returns>返回 hash 值</returns>
-        private long SlotHash(PartitionSlot<TNode> slot, int index)
-        {
-            return Math.Abs(NodeHasher.Hash(slot, index, MaxSlots));
-        }
+        // /// <summary>
+        // /// 节点hash 值
+        // /// </summary>
+        // /// <param name="slot">节点</param>
+        // /// <param name="index">第几分区</param>
+        // /// <returns>返回 hash 值</returns>
+        // private long SlotHash(IPartitionSlot<TNode> slot, int index)
+        // {
+        //     return Math.Abs(NodeHasher.Hash(slot, index, MaxSlots));
+        // }
 
         public Task<List<IPartition<TNode>>> Register(TNode node)
         {
