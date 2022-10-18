@@ -6,23 +6,14 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
-
-namespace TnyFramework.Codec.Attributes
+namespace TnyFramework.Codec.Newtonsoft.Json
 {
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-    public class CodableAttribute : Attribute
+    public class JsonMimeType : MimeType<JsonMimeType>
     {
-        /// <summary>
-        /// 协议 id
-        /// </summary>
-        public string Mime { get; }
+        private const string JSON_TYPE = "json";
 
-        public CodableAttribute(string mime)
-        {
-            Mime = mime;
-        }
+        public static readonly MimeType JSON = Of(100, JSON_TYPE);
     }
 
 }

@@ -16,7 +16,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
     /// </summary>
     public class TypeProtobufObjectCodecFactory : ObjectCodecFactory
     {
-        public TypeProtobufObjectCodecFactory() : base(MimeTypes.TYPE_PROTOBUF)
+        public TypeProtobufObjectCodecFactory() : base(TypeProtobufMimeType.TYPE_PROTOBUF)
         {
         }
 

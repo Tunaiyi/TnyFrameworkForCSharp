@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.Execptions;
 using TnyFramework.Common.Extensions;
@@ -121,13 +122,10 @@ namespace TnyFramework.Codec
                 {
                     return default;
                 }
-                switch (value)
-                {
-                    case T result:
-                        return result;
-                    default:
-                        throw new InvalidCastException($"{value} cast to {typeof(T)} exception");
-                }
+                return value switch {
+                    { } => value,
+                    _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
+                };
             } catch (IOException e)
             {
                 throw new ObjectCodecException($"decode {typeof(T)} to default format {codec} exception", e);
@@ -144,13 +142,10 @@ namespace TnyFramework.Codec
                 {
                     return default;
                 }
-                switch (value)
-                {
-                    case T result:
-                        return result;
-                    default:
-                        throw new InvalidCastException($"{value} cast to {typeof(T)} exception");
-                }
+                return value switch {
+                    { } => value,
+                    _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
+                };
             } catch (IOException e)
             {
                 throw new ObjectCodecException($"decode {typeof(T)} to default format {codec} exception", e);
@@ -167,13 +162,10 @@ namespace TnyFramework.Codec
                 {
                     return default;
                 }
-                switch (value)
-                {
-                    case T result:
-                        return result;
-                    default:
-                        throw new InvalidCastException($"{value} cast to {typeof(T)} exception");
-                }
+                return value switch {
+                    { } => value,
+                    _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
+                };
             } catch (IOException e)
             {
                 throw new ObjectCodecException($"decode {typeof(T)} to default format {codec} exception", e);
@@ -212,26 +204,36 @@ namespace TnyFramework.Codec
 
             private readonly IDictionary<IMimeType, IObjectCodec> objectCodes = new Dictionary<IMimeType, IObjectCodec>();
 
+            private readonly ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim();
+
             public ObjectCodecHolder(Type type, Func<IMimeType, Type, IObjectCodec> factory)
             {
                 Type = type;
                 var attribute = type.GetCustomAttribute<CodableAttribute>();
-                var defaultType = attribute?.MimeType;
+                var defaultType = attribute?.Mime;
                 if (!defaultType.IsNotBlank())
                     return;
-                DefaultFormat = MimeType.ForMetaType(defaultType);
+                DefaultFormat = MimeType.ForMimeType(defaultType);
                 DefaultCodec = factory(DefaultFormat, type);
                 AddCodec(DefaultFormat, DefaultCodec);
             }
 
             public IObjectCodec LoadObjectCodec(IMimeType mimeType, Func<IMimeType, Type, IObjectCodec> factory)
             {
-                return objectCodes.TryGetValue(mimeType, out var codec) ? codec : Load(mimeType, factory);
+                lockSlim.EnterUpgradeableReadLock();
+                try
+                {
+                    return objectCodes.TryGetValue(mimeType, out var codec) ? codec : Load(mimeType, factory);
+                } finally
+                {
+                    lockSlim.ExitUpgradeableReadLock();
+                }
             }
 
             private IObjectCodec Load(IMimeType mimeType, Func<IMimeType, Type, IObjectCodec> factory)
             {
-                lock (this)
+                lockSlim.EnterWriteLock();
+                try
                 {
                     if (objectCodes.TryGetValue(mimeType, out var codec))
                     {
@@ -240,16 +242,33 @@ namespace TnyFramework.Codec
                     codec = factory(mimeType, Type);
                     objectCodes.Add(mimeType, codec);
                     return codec;
+                } finally
+                {
+                    lockSlim.ExitWriteLock();
                 }
             }
 
             private void AddCodec(IMimeType mimeType, IObjectCodec codec)
             {
-                lock (this)
+                
+                lockSlim.EnterUpgradeableReadLock();
+                try
                 {
                     if (objectCodes.ContainsKey(mimeType))
                         return;
-                    objectCodes.Add(mimeType, codec);
+                    lockSlim.EnterWriteLock();
+                    try
+                    {
+                        if (objectCodes.ContainsKey(mimeType))
+                            return;
+                        objectCodes.Add(mimeType, codec);
+                    } finally
+                    {
+                        lockSlim.ExitWriteLock();
+                    }
+                } finally
+                {
+                    lockSlim.ExitUpgradeableReadLock();
                 }
             }
         }

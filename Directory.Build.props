@@ -54,10 +54,10 @@
         <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetRemoteUrl)"/>
     </Target>
 
-    <Target Name="LoaclInstallPublishPacksSymbolsNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">
-        <Message Text="Push Nuget To $(NugetRemoteUrl)"/>
-        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).symbols.nupkg -Source $(NugetRemoteUrl)"/>
-    </Target>
+<!--    <Target Name="LoaclInstallPublishPacksSymbolsNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">-->
+<!--        <Message Text="Push Nuget To $(NugetRemoteUrl)"/>-->
+<!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).symbols.nupkg -Source $(NugetRemoteUrl)"/>-->
+<!--    </Target>-->
 
 
 </Project>

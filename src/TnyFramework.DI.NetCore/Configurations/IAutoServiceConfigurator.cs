@@ -6,23 +6,20 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-namespace TnyFramework.Codec.Attributes
+namespace TnyFramework.DI.NetCore.Configurations
 {
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-    public class CodableAttribute : Attribute
+    public interface IAutoServiceConfigurator
     {
         /// <summary>
-        /// 协议 id
+        /// 配置 service
         /// </summary>
-        public string Mime { get; }
-
-        public CodableAttribute(string mime)
-        {
-            Mime = mime;
-        }
+        /// <param name="context">主机构建上下文</param>
+        /// <param name="serviceCollection">服务集合</param>
+        void Configure(HostBuilderContext context, IServiceCollection serviceCollection);
     }
 
 }

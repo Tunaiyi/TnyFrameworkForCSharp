@@ -7,7 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Codec;
-using TnyFramework.Common.Utils;
+using TnyFramework.Common.Util;
 
 namespace TnyFramework.Namespace.Etcd
 {

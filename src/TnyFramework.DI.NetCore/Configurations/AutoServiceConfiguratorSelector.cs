@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using TnyFramework.Common.Scanner;
 
-namespace TnyFramework.DI.NetCore
+namespace TnyFramework.DI.NetCore.Configurations
 {
 
     public class AutoServiceConfiguratorSelector : TypeSelectorDefinition

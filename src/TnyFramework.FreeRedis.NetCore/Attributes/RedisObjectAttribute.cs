@@ -8,27 +8,29 @@
 
 using System;
 
-namespace TnyFramework.Codec.ProtobufNet.Protobuf
+namespace TnyFramework.FreeRedis.NetCore.Attributes
 {
 
     /// <summary>
-    /// ProtobufObjectCodec 工厂
+    /// Redis 特性
     /// </summary>
-    public class ProtobufObjectCodecFactory : ObjectCodecFactory
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
+    public class RedisObjectAttribute : Attribute
     {
-        public ProtobufObjectCodecFactory() : base(TypeProtobuf.ProtobufMimeType.PROTOBUF)
-        {
-        }
+        /// <summary>
+        /// 数据源
+        /// </summary>
+        public string Source { get; }
 
-        protected override IObjectCodec<T> Create<T>()
-        {
-            return new ProtobufObjectCodec<T>();
-        }
+        /// <summary>
+        /// 媒体类型
+        /// </summary>
+        public string Mime { get; }
 
-        protected override IObjectCodec Create(Type type)
+        public RedisObjectAttribute(string mime, string source = "")
         {
-            var makeGenericType = typeof(ProtobufObjectCodec<>).MakeGenericType(type);
-            return (IObjectCodec) Activator.CreateInstance(makeGenericType);
+            Source = source;
+            Mime = mime;
         }
     }
 

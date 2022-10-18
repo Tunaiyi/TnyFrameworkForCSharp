@@ -15,9 +15,10 @@ using TnyFramework.DI.Container;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
+using TnyFramework.Net.DotNetty.NetCore.Configurations;
 using TnyFramework.Net.Rpc;
 
-namespace TnyFramework.Net.DotNetty.NetCore
+namespace TnyFramework.Net.DotNetty.NetCore.Extensions
 {
 
     public static class GenericHostRpcServerBuilderExtensions

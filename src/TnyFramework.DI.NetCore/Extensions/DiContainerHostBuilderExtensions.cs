@@ -10,8 +10,9 @@ using System;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TnyFramework.DI.NetCore.Configurations;
 
-namespace TnyFramework.DI.NetCore
+namespace TnyFramework.DI.NetCore.Extensions
 {
 
     public static class DiContainerHostBuilderExtensions

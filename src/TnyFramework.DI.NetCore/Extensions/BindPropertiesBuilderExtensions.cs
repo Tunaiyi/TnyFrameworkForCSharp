@@ -6,18 +6,23 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
-using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TnyFramework.DI.Extensions;
 
-namespace TnyFramework.DI.NetCore
+namespace TnyFramework.DI.NetCore.Extensions
 {
 
     public static class BindPropertiesBuilderExtensions
     {
+        public static IServiceCollection BindProperties<TProperties>(this IServiceCollection services, HostBuilderContext context,
+            string propertiesPath)
+            where TProperties : new()
+        {
+            return services.BindProperties<TProperties>(context.Configuration, propertiesPath);
+        }
+
         public static IServiceCollection BindProperties<TProperties>(this IServiceCollection services, IConfiguration configuration,
             string propertiesPath)
             where TProperties : new()
@@ -34,7 +39,6 @@ namespace TnyFramework.DI.NetCore
                 services.BindProperties<TProperties>(hostBuilder.Configuration, propertiesPath);
             });
         }
-
     }
 
 }

@@ -19,12 +19,12 @@ namespace TnyFramework.Codec.Newtonsoft.Json
     {
         private readonly JsonSerializerSettings formatting;
 
-        public JsonObjectCodecFactory() : base(MimeTypes.JSON)
+        public JsonObjectCodecFactory() : base(JsonMimeType.JSON)
         {
             formatting = null;
         }
 
-        public JsonObjectCodecFactory(JsonSerializerSettings formatting) : base(MimeTypes.JSON)
+        public JsonObjectCodecFactory(JsonSerializerSettings formatting) : base(JsonMimeType.JSON)
         {
             this.formatting = formatting;
         }

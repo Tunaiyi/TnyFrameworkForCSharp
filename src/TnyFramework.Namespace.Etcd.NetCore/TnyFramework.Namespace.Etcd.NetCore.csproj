@@ -19,6 +19,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\TnyFramework.DI.NetCore\TnyFramework.DI.NetCore.csproj" />
       <ProjectReference Include="..\TnyFramework.DI\TnyFramework.DI.csproj" />
       <ProjectReference Include="..\TnyFramework.Namespace.Etcd\TnyFramework.Namespace.Etcd.csproj" />
     </ItemGroup>

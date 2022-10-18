@@ -118,6 +118,16 @@ namespace TnyFramework.Namespace.Etcd
             };
         }
 
+        internal static Compare RevisionCompare(ByteString path, long revision, Compare.Types.CompareResult result)
+        {
+            return new Compare {
+                Key = path,
+                ModRevision = revision,
+                Target = Compare.Types.CompareTarget.Mod,
+                Result = result
+            };
+        }
+
         internal static RequestOp GetOperation(ByteString path)
         {
             return new RequestOp {

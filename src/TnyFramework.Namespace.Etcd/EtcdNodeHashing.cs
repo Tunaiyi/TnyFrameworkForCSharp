@@ -14,11 +14,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Codec;
+using TnyFramework.Codec.Newtonsoft.Json;
 using TnyFramework.Common.Event;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
-using TnyFramework.Common.Utils;
+using TnyFramework.Common.Util;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Namespace.Exceptions;
 using TnyFramework.Namespace.Sharding;
@@ -132,7 +133,7 @@ namespace TnyFramework.Namespace.Etcd
             {
                 throw new IllegalArgumentException($"partitionCount {partitionCount} must less or equals than maxSlots {MaxSlots}.");
             }
-            partitionMineType = ObjectMimeType.Of<PartitionSlot<TNode>>(MimeTypes.JSON);
+            partitionMineType = ObjectMimeType.Of<PartitionSlot<TNode>>(JsonMimeType.JSON);
         }
 
         public async Task<INodeHashing<TNode>> Start()

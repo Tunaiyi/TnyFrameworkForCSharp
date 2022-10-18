@@ -16,7 +16,7 @@ using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 namespace TnyFramework.Net.Demo.DTO
 {
 
-    [Codable(MimeTypes.PROTOBUF_TYPE)]
+    [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
     [TypeProtobuf(1000_03_00)]
     [ProtoContract]
     public class PlayerDTO

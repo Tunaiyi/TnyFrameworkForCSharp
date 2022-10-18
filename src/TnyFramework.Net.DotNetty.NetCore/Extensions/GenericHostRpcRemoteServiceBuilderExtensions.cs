@@ -10,7 +10,7 @@ using System;
 using Microsoft.Extensions.Hosting;
 using TnyFramework.Net.DotNetty.Configuration;
 
-namespace TnyFramework.Net.DotNetty.NetCore
+namespace TnyFramework.Net.DotNetty.NetCore.Extensions
 {
 
     public static class GenericHostRpcRemoteServiceBuilderExtensions

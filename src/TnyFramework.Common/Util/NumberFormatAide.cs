@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace TnyFramework.Common.Utils
+namespace TnyFramework.Common.Util
 {
 
     public static class NumberFormatAide

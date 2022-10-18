@@ -74,7 +74,8 @@ namespace TnyFramework.Namespace
         /// <param name="keyHasher">key哈希计算器</param>
         /// <param name="nodeHasher">节点哈希计算器</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<IPartitionSlot<TNode>> nodeHasher)
+        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+            IHasher<IPartitionSlot<TNode>> nodeHasher)
             where TNode : IShardingNode;
 
         /// <summary>
@@ -86,7 +87,8 @@ namespace TnyFramework.Namespace
         /// <param name="nodeHasher">节点哈希计算器</param>
         /// <param name="factory">节点存储器工厂</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<IPartitionSlot<TNode>> nodeHasher,
+        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+            IHasher<IPartitionSlot<TNode>> nodeHasher,
             INodeHashingFactory factory) where TNode : IShardingNode;
 
         /// <summary>
@@ -98,7 +100,8 @@ namespace TnyFramework.Namespace
         /// <param name="nodeHasher">节点哈希计算器</param>
         /// <param name="custom">选项自定义</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<IPartitionSlot<TNode>> nodeHasher,
+        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+            IHasher<IPartitionSlot<TNode>> nodeHasher,
             Action<HashingOptions<TNode>> custom) where TNode : IShardingNode;
 
         /// <summary>
@@ -111,7 +114,8 @@ namespace TnyFramework.Namespace
         /// <param name="factory">节点存储器工厂</param>
         /// <param name="custom">选项自定义</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher, IHasher<IPartitionSlot<TNode>> nodeHasher,
+        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+            IHasher<IPartitionSlot<TNode>> nodeHasher,
             INodeHashingFactory factory, Action<HashingOptions<TNode>> custom) where TNode : IShardingNode;
 
         /// <summary>
@@ -303,7 +307,7 @@ namespace TnyFramework.Namespace
         /// <param name="value">值</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回更新的节点 Task</returns>
-        Task<NameNode<TValue>> UpdateIf<TValue>(string path, long version, ObjectMimeType<TValue> type, TValue value);
+        Task<NameNode<TValue>> UpdateIfVersion<TValue>(string path, long version, ObjectMimeType<TValue> type, TValue value);
 
         /// <summary>
         /// 如果指定 path 节点存在并且节点版本等于指定version, 则更新该租约节点.
@@ -315,7 +319,7 @@ namespace TnyFramework.Namespace
         /// <param name="lessee">租客</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回更新的节点 Task</returns>
-        Task<NameNode<TValue>> UpdateIf<TValue>(string path, long version, ObjectMimeType<TValue> type, TValue value, ILessee lessee);
+        Task<NameNode<TValue>> UpdateIfVersion<TValue>(string path, long version, ObjectMimeType<TValue> type, TValue value, ILessee lessee);
 
         /// <summary>
         /// 如果指定 path 节点存在并且节点版本在指定区间内, 则更新该节点.
@@ -329,7 +333,7 @@ namespace TnyFramework.Namespace
         /// <param name="value">值</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回更新的节点 Task</returns>
-        Task<NameNode<TValue>> UpdateIf<TValue>(string path, long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder,
+        Task<NameNode<TValue>> UpdateIfVersion<TValue>(string path, long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder,
             ObjectMimeType<TValue> type, TValue value);
 
         /// <summary>
@@ -345,7 +349,61 @@ namespace TnyFramework.Namespace
         /// <param name="lessee">租客</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回更新的节点 Task</returns>
-        Task<NameNode<TValue>> UpdateIf<TValue>(string path, long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder,
+        Task<NameNode<TValue>> UpdateIfVersion<TValue>(string path, long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder,
+            ObjectMimeType<TValue> type, TValue value, ILessee lessee);
+
+        /// <summary>
+        /// 如果指定 path 节点存在并且节点修订版本等于指定revision, 则更新该节点.
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="revision">期望修订版本</param>
+        /// <param name="type">值MineType</param>
+        /// <param name="value">值</param>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <returns>返回更新的节点 Task</returns>
+        Task<NameNode<TValue>> UpdateIfRevision<TValue>(string path, long revision, ObjectMimeType<TValue> type, TValue value);
+
+        /// <summary>
+        /// 如果指定 path 节点存在并且节点修订版本等于指定revision, 则更新该租约节点.
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="revision">期望修订版本</param>
+        /// <param name="type">值MineType</param>
+        /// <param name="value">值</param>
+        /// <param name="lessee">租客</param>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <returns>返回更新的节点 Task</returns>
+        Task<NameNode<TValue>> UpdateIfRevision<TValue>(string path, long revision, ObjectMimeType<TValue> type, TValue value, ILessee lessee);
+
+        /// <summary>
+        /// 如果指定 path 节点存在并且节点修订版本在指定区间内, 则更新该节点.
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="minRevision">最小值</param>
+        /// <param name="minBorder">最小值边界</param>
+        /// <param name="maxRevision">最大值</param>
+        /// <param name="maxBorder">最大值边界</param>
+        /// <param name="type">值MineType</param>
+        /// <param name="value">值</param>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <returns>返回更新的节点 Task</returns>
+        Task<NameNode<TValue>> UpdateIfRevision<TValue>(string path, long minRevision, RangeBorder minBorder, long maxRevision, RangeBorder maxBorder,
+            ObjectMimeType<TValue> type, TValue value);
+
+        /// <summary>
+        /// 如果指定 path 节点存在并且节点修订版本在指定区间内, 则更新该租约节点.
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="minRevision">最小值</param>
+        /// <param name="minBorder">最小值边界</param>
+        /// <param name="maxRevision">最大值</param>
+        /// <param name="maxBorder">最大值边界</param>
+        /// <param name="type">值MineType</param>
+        /// <param name="value">值</param>
+        /// <param name="lessee">租客</param>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <returns>返回更新的节点 Task</returns>
+        Task<NameNode<TValue>> UpdateIfRevision<TValue>(string path, long minRevision, RangeBorder minBorder, long maxRevision, RangeBorder maxBorder,
             ObjectMimeType<TValue> type, TValue value, ILessee lessee);
 
         /// <summary>
@@ -407,7 +465,7 @@ namespace TnyFramework.Namespace
         /// <param name="value">值</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回更新的节点 Task</returns>
-        Task<NameNode<TValue>> UpdateByIdAndIf<TValue>(string path, long id, long version, ObjectMimeType<TValue> type, TValue value);
+        Task<NameNode<TValue>> UpdateByIdAndIfVersion<TValue>(string path, long id, long version, ObjectMimeType<TValue> type, TValue value);
 
         /// <summary>
         /// 如果指定 path 节点存在,同时id等于指定id,且版本等于指定version, 则更新该租约节点.
@@ -420,7 +478,8 @@ namespace TnyFramework.Namespace
         /// <param name="lessee">租客</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回更新的节点 Task</returns>
-        Task<NameNode<TValue>> UpdateByIdAndIf<TValue>(string path, long id, long version, ObjectMimeType<TValue> type, TValue value, ILessee lessee);
+        Task<NameNode<TValue>> UpdateByIdAndIfVersion<TValue>(string path, long id, long version, ObjectMimeType<TValue> type, TValue value,
+            ILessee lessee);
 
         /// <summary>
         /// 如果指定 path 节点存在,同时id等于指定id,并且节点版本在指定区间内, 则更新该节点.
@@ -435,7 +494,7 @@ namespace TnyFramework.Namespace
         /// <param name="value">值</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回更新的节点 Task</returns>
-        Task<NameNode<TValue>> UpdateByIdAndIf<TValue>(string path, long id, long minVersion, RangeBorder minBorder, long maxVersion,
+        Task<NameNode<TValue>> UpdateByIdAndIfVersion<TValue>(string path, long id, long minVersion, RangeBorder minBorder, long maxVersion,
             RangeBorder maxBorder, ObjectMimeType<TValue> type, TValue value);
 
         /// <summary>
@@ -452,7 +511,66 @@ namespace TnyFramework.Namespace
         /// <param name="lessee">租客</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回更新的节点 Task</returns>
-        Task<NameNode<TValue>> UpdateByIdAndIf<TValue>(string path, long id, long minVersion, RangeBorder minBorder, long maxVersion,
+        Task<NameNode<TValue>> UpdateByIdAndIfVersion<TValue>(string path, long id, long minVersion, RangeBorder minBorder, long maxVersion,
+            RangeBorder maxBorder, ObjectMimeType<TValue> type, TValue value, ILessee lessee);
+
+        /// <summary>
+        /// 如果指定 path 节点存在,同时id等于指定id,且修订版本等于指定revision, 则更新该节点.
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="id">指定 id</param>
+        /// <param name="revision">期望修订版本</param>
+        /// <param name="type">值MineType</param>
+        /// <param name="value">值</param>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <returns>返回更新的节点 Task</returns>
+        Task<NameNode<TValue>> UpdateByIdAndIfRevision<TValue>(string path, long id, long revision, ObjectMimeType<TValue> type, TValue value);
+
+        /// <summary>
+        /// 如果指定 path 节点存在,同时id等于指定id,且修订版本等于指定revision, 则更新该租约节点.
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="id">指定 id</param>
+        /// <param name="revision">期望修订版本</param>
+        /// <param name="type">值MineType</param>
+        /// <param name="value">值</param>
+        /// <param name="lessee">租客</param>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <returns>返回更新的节点 Task</returns>
+        Task<NameNode<TValue>> UpdateByIdAndIfRevision<TValue>(string path, long id, long revision, ObjectMimeType<TValue> type, TValue value,
+            ILessee lessee);
+
+        /// <summary>
+        /// 如果指定 path 节点存在,同时id等于指定id,并且节点修订版本在指定区间内, 则更新该节点.
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="id">指定 id</param>
+        /// <param name="minRevision">最小值</param>
+        /// <param name="minBorder">最小值边界</param>
+        /// <param name="maxRevision">最大值</param>
+        /// <param name="maxBorder">最大值边界</param>
+        /// <param name="type">值MineType</param>
+        /// <param name="value">值</param>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <returns>返回更新的节点 Task</returns>
+        Task<NameNode<TValue>> UpdateByIdAndIfRevision<TValue>(string path, long id, long minRevision, RangeBorder minBorder, long maxRevision,
+            RangeBorder maxBorder, ObjectMimeType<TValue> type, TValue value);
+
+        /// <summary>
+        /// 如果指定 path 节点存在,同时id等于指定id,并且节点修订版本在指定区间内, 则更新该租约节点.
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="id">指定 id</param>
+        /// <param name="minRevision">最小值</param>
+        /// <param name="minBorder">最小值边界</param>
+        /// <param name="maxRevision">最大值</param>
+        /// <param name="maxBorder">最大值边界</param>
+        /// <param name="type">值MineType</param>
+        /// <param name="value">值</param>
+        /// <param name="lessee">租客</param>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <returns>返回更新的节点 Task</returns>
+        Task<NameNode<TValue>> UpdateByIdAndIfRevision<TValue>(string path, long id, long minRevision, RangeBorder minBorder, long maxRevision,
             RangeBorder maxBorder, ObjectMimeType<TValue> type, TValue value, ILessee lessee);
 
         /// <summary>
@@ -501,7 +619,7 @@ namespace TnyFramework.Namespace
         /// <param name="version">期望版本</param>
         /// <param name="type">值MineType</param>
         /// <returns>返回删除节点 Task</returns>
-        Task<NameNode<TValue>> RemoveIf<TValue>(string path, long version, ObjectMimeType<TValue> type);
+        Task<NameNode<TValue>> RemoveIfVersion<TValue>(string path, long version, ObjectMimeType<TValue> type);
 
         /// <summary>
         /// 删除指定 path 节点, 并且节点版本在指定区间内.
@@ -514,7 +632,30 @@ namespace TnyFramework.Namespace
         /// <param name="type">值MineType</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回更新的节点 Task</returns>
-        Task<NameNode<TValue>> RemoveIf<TValue>(string path, long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder,
+        Task<NameNode<TValue>> RemoveIfVersion<TValue>(string path, long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder,
+            ObjectMimeType<TValue> type);
+
+        /// <summary>
+        /// 删除指定 path 节点, 且修订版本等于revision值
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="revision">期望修订版本</param>
+        /// <param name="type">值MineType</param>
+        /// <returns>返回删除节点 Task</returns>
+        Task<NameNode<TValue>> RemoveIfRevision<TValue>(string path, long revision, ObjectMimeType<TValue> type);
+
+        /// <summary>
+        /// 删除指定 path 节点, 并且节点修订版本在指定区间内.
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="minRevision">最小值</param>
+        /// <param name="minBorder">最小值边界</param> 
+        /// <param name="maxRevision">最大值</param>
+        /// <param name="maxBorder">最大值边界</param>
+        /// <param name="type">值MineType</param>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <returns>返回更新的节点 Task</returns>
+        Task<NameNode<TValue>> RemoveIfRevision<TValue>(string path, long minRevision, RangeBorder minBorder, long maxRevision, RangeBorder maxBorder,
             ObjectMimeType<TValue> type);
 
         /// <summary>
@@ -544,7 +685,7 @@ namespace TnyFramework.Namespace
         /// <param name="version">期望版本</param>
         /// <param name="type">值MineType</param>
         /// <returns>返回删除节点 Task</returns>
-        Task<NameNode<TValue>> RemoveByIdAndIf<TValue>(string path, long id, long version, ObjectMimeType<TValue> type);
+        Task<NameNode<TValue>> RemoveByIdAndIfVersion<TValue>(string path, long id, long version, ObjectMimeType<TValue> type);
 
         /// <summary>
         /// 删除指定 path 节点, 同时id等于指定id,并且节点版本在指定区间内.
@@ -558,7 +699,32 @@ namespace TnyFramework.Namespace
         /// <param name="type">值MineType</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回更新的节点 Task</returns>
-        Task<NameNode<TValue>> RemoveByIdAndIf<TValue>(string path, long id, long minVersion, RangeBorder minBorder, long maxVersion,
+        Task<NameNode<TValue>> RemoveByIdAndIfVersion<TValue>(string path, long id, long minVersion, RangeBorder minBorder, long maxVersion,
+            RangeBorder maxBorder, ObjectMimeType<TValue> type);
+
+        /// <summary>
+        /// 删除指定 path 节点, 且id等于指定id, 且修订版本等于revision值
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="id">指定 id</param>
+        /// <param name="revision">期望修订版本</param>
+        /// <param name="type">值MineType</param>
+        /// <returns>返回删除节点 Task</returns>
+        Task<NameNode<TValue>> RemoveByIdAndIfRevision<TValue>(string path, long id, long revision, ObjectMimeType<TValue> type);
+
+        /// <summary>
+        /// 删除指定 path 节点, 同时id等于指定id,并且节点修订版本在指定区间内.
+        /// </summary>
+        /// <param name="path">路径</param>
+        /// <param name="id">指定 id</param>
+        /// <param name="minRevision">最小值</param>
+        /// <param name="minBorder">最小值边界</param> 
+        /// <param name="maxRevision">最大值</param>
+        /// <param name="maxBorder">最大值边界</param>
+        /// <param name="type">值MineType</param>
+        /// <typeparam name="TValue">值类型</typeparam>
+        /// <returns>返回更新的节点 Task</returns>
+        Task<NameNode<TValue>> RemoveByIdAndIfRevision<TValue>(string path, long id, long minRevision, RangeBorder minBorder, long maxRevision,
             RangeBorder maxBorder, ObjectMimeType<TValue> type);
 
         Task Shutdown();

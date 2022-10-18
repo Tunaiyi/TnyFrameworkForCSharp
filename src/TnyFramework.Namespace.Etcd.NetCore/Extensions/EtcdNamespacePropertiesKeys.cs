@@ -6,23 +6,16 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
+using System.Net.Http;
 
-namespace TnyFramework.Codec.Attributes
+namespace TnyFramework.Namespace.Etcd.NetCore.Extensions
 {
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-    public class CodableAttribute : Attribute
+    public static class EtcdNamespacePropertiesKeys
     {
-        /// <summary>
-        /// 协议 id
-        /// </summary>
-        public string Mime { get; }
 
-        public CodableAttribute(string mime)
-        {
-            Mime = mime;
-        }
+        public const string ETCD_NAMESPACE_ROOT = "Tny:Namespace:Etcd";
+
     }
 
 }

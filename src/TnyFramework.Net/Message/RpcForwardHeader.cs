@@ -7,15 +7,15 @@
 // See the Mulan PSL v2 for more details.
 
 using ProtoBuf;
-using TnyFramework.Codec;
 using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.ProtobufNet.Attributes;
+using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 using TnyFramework.Net.Rpc;
 
 namespace TnyFramework.Net.Message
 {
 
-    [Codable(MimeTypes.PROTOBUF_TYPE)]
+    [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
     [TypeProtobuf(MessageHeaderConstants.RPC_FORWARD_HEADER_TYPE_PROTO)]
     [ProtoContract]
     public class RpcForwardHeader : MessageHeader<RpcForwardHeader>

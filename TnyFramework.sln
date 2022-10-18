@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Common.Lifecyc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.DI.NetCore", "src\TnyFramework.DI.NetCore\TnyFramework.DI.NetCore.csproj", "{ABC5CD1F-5BFE-4EF6-8311-EB28F4851F1F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.FreeRedis.NetCore", "src\TnyFramework.FreeRedis.NetCore\TnyFramework.FreeRedis.NetCore.csproj", "{2B5C335B-BA3E-4E3E-8D62-35665B3B08C2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -236,6 +238,12 @@ Global
 		{ABC5CD1F-5BFE-4EF6-8311-EB28F4851F1F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ABC5CD1F-5BFE-4EF6-8311-EB28F4851F1F}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
 		{ABC5CD1F-5BFE-4EF6-8311-EB28F4851F1F}.Publish|Any CPU.Build.0 = Publish|Any CPU
+		{2B5C335B-BA3E-4E3E-8D62-35665B3B08C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B5C335B-BA3E-4E3E-8D62-35665B3B08C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B5C335B-BA3E-4E3E-8D62-35665B3B08C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B5C335B-BA3E-4E3E-8D62-35665B3B08C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B5C335B-BA3E-4E3E-8D62-35665B3B08C2}.Publish|Any CPU.ActiveCfg = Publish|Any CPU
+		{2B5C335B-BA3E-4E3E-8D62-35665B3B08C2}.Publish|Any CPU.Build.0 = Publish|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -272,5 +280,6 @@ Global
 		{D6320E10-E046-4593-A272-CFAF67A8B635} = {A626F27B-46F7-4579-8700-342439C930F0}
 		{1474B5CE-AD19-4F97-A7F9-05553E60CA25} = {A626F27B-46F7-4579-8700-342439C930F0}
 		{ABC5CD1F-5BFE-4EF6-8311-EB28F4851F1F} = {A626F27B-46F7-4579-8700-342439C930F0}
+		{2B5C335B-BA3E-4E3E-8D62-35665B3B08C2} = {A626F27B-46F7-4579-8700-342439C930F0}
 	EndGlobalSection
 EndGlobal

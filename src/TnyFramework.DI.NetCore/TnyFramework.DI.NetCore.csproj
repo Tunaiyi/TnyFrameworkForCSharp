@@ -21,7 +21,7 @@
 
     <ItemGroup>
         <AssemblyAttribute Include="TnyFramework.Common.Scanner.Attributes.AssemblyTypeSelectorAttributes">
-            <_Parameter1>TnyFramework.DI.NetCore.AutoServiceConfiguratorSelector</_Parameter1>
+            <_Parameter1>TnyFramework.DI.NetCore.Configurations.AutoServiceConfiguratorSelector</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
     

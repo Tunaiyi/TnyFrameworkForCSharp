@@ -10,11 +10,12 @@ using ProtoBuf;
 using TnyFramework.Codec;
 using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.ProtobufNet.Attributes;
+using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 
 namespace TnyFramework.Net.Message
 {
 
-    [Codable(MimeTypes.PROTOBUF_TYPE)]
+    [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
     [TypeProtobuf(MessageHeaderConstants.RPC_ORIGINAL_MESSAGE_ID_TYPE_PROTO)]
     [ProtoContract]
     public class RpcOriginalMessageIdHeader : MessageHeader<RpcOriginalMessageIdHeader>

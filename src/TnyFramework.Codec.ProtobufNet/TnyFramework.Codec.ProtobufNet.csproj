@@ -19,7 +19,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Codec\TnyFramework.Codec.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Codec\TnyFramework.Codec.csproj" />
     </ItemGroup>
 
     <ItemGroup>
@@ -29,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="protobuf-net" Version="3.0.101"/>
+        <PackageReference Include="protobuf-net" Version="3.0.101" />
     </ItemGroup>
 
 </Project>

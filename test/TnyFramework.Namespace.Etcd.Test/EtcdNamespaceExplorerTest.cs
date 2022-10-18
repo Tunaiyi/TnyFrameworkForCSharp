@@ -55,7 +55,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             await explorer.RemoveAll(HEAD_OTHER);
         }
 
-        private static readonly ObjectMimeType<Player> MINE_TYPE = ObjectMimeType.Of<Player>(MimeTypes.JSON);
+        private static readonly ObjectMimeType<Player> MINE_TYPE = ObjectMimeType.Of<Player>(JsonMimeType.JSON);
 
         [Test]
         public async Task Get()
@@ -441,13 +441,13 @@ namespace TnyFramework.Namespace.Etcd.Test
         {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
-            var nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 2, MINE_TYPE, player1);
+            var nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 2, MINE_TYPE, player1);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 1, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 1, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
         }
@@ -460,13 +460,13 @@ namespace TnyFramework.Namespace.Etcd.Test
 
             var lessee = await explorer.Lease("testUpdateIfVersionWithLessee", 20);
 
-            var nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 2, MINE_TYPE, player1, lessee);
+            var nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 2, MINE_TYPE, player1, lessee);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, MINE_TYPE, player1, lessee);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, MINE_TYPE, player1, lessee);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 1, MINE_TYPE, player2, lessee);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 1, MINE_TYPE, player2, lessee);
             Assert.AreEqual(player2, nameNode.Value);
 
             await lessee.Shutdown();
@@ -482,23 +482,23 @@ namespace TnyFramework.Namespace.Etcd.Test
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
 
             // 0 x
-            var nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1);
+            var nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1);
             Assert.IsNull(nameNode);
 
             // 0 -> 1
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
             // 1 -> 2
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
             // 2 -> 3
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
             // 3 x
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player2);
             Assert.IsNull(nameNode);
 
             nameNode = await explorer.Get(PLAYER_NODE_1_KEY, MINE_TYPE);
@@ -507,59 +507,59 @@ namespace TnyFramework.Namespace.Etcd.Test
             await explorer.Remove(PLAYER_NODE_1_KEY);
 
             // 0 x
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Open, 2, RangeBorder.Open, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Open, 2, RangeBorder.Open, MINE_TYPE, player2);
             Assert.IsNull(nameNode);
 
             // 0 -> 1
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, -1, RangeBorder.Open, 2, RangeBorder.Open, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, -1, RangeBorder.Open, 2, RangeBorder.Open, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
             // 1 -> 2
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Open, 2, RangeBorder.Open, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Open, 2, RangeBorder.Open, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
             // 2 x
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Open, 2, RangeBorder.Open, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Open, 2, RangeBorder.Open, MINE_TYPE, player2);
             Assert.IsNull(nameNode);
 
             // 2 -> 3
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Open, 3, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Open, 3, RangeBorder.Unlimited, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
             await explorer.Remove(PLAYER_NODE_1_KEY);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 2, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 2, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 1, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 1, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
             await explorer.Remove(PLAYER_NODE_1_KEY);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 0, RangeBorder.Close, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 0, RangeBorder.Close, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 2, RangeBorder.Close, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 2, RangeBorder.Close, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 2, RangeBorder.Unlimited, 2, RangeBorder.Open, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 2, RangeBorder.Unlimited, 2, RangeBorder.Open, MINE_TYPE, player1);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 1, RangeBorder.Unlimited, 3, RangeBorder.Open, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 1, RangeBorder.Unlimited, 3, RangeBorder.Open, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 1, RangeBorder.Unlimited, 3, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 1, RangeBorder.Unlimited, 3, RangeBorder.Unlimited, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
             await explorer.Remove(PLAYER_NODE_1_KEY);
 
-            nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 1, RangeBorder.Unlimited, 3, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 1, RangeBorder.Unlimited, 3, RangeBorder.Unlimited, MINE_TYPE, player2);
             Assert.IsNull(nameNode);
 
         }
@@ -571,7 +571,7 @@ namespace TnyFramework.Namespace.Etcd.Test
 
             var lessee = await explorer.Lease("testUpdateIfMinAndMaxVersionWithLessee", 3000);
 
-            var nameNode = await explorer.UpdateIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1, lessee);
+            var nameNode = await explorer.UpdateIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1, lessee);
             Assert.AreEqual(player1, nameNode.Value);
 
             await lessee.Shutdown();
@@ -663,19 +663,19 @@ namespace TnyFramework.Namespace.Etcd.Test
             var player1 = new Player(PLAYER_NODE + "PL_2", 100);
             var player2 = new Player(PLAYER_NODE + "PL_1", 102);
 
-            var nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, 100, 2, MINE_TYPE, player1);
+            var nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, 100, 2, MINE_TYPE, player1);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, 100, 0, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, 100, 0, MINE_TYPE, player1);
             Assert.IsNull(nameNode);
 
             nameNode = await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player1);
             var id = nameNode.Id;
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 2, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 2, MINE_TYPE, player2);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
         }
@@ -688,19 +688,19 @@ namespace TnyFramework.Namespace.Etcd.Test
 
             var lessee = await explorer.Lease("testUpdateByIdIfVersionWithLessee", 3000);
 
-            var nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, 100, 2, MINE_TYPE, player1, lessee);
+            var nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, 100, 2, MINE_TYPE, player1, lessee);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, 100, 0, MINE_TYPE, player1, lessee);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, 100, 0, MINE_TYPE, player1, lessee);
             Assert.IsNull(nameNode);
 
             nameNode = await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player1);
             var id = nameNode.Id;
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 2, MINE_TYPE, player2, lessee);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 2, MINE_TYPE, player2, lessee);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, MINE_TYPE, player2, lessee);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, MINE_TYPE, player2, lessee);
             Assert.AreEqual(player2, nameNode.Value);
 
             await lessee.Shutdown();
@@ -716,26 +716,26 @@ namespace TnyFramework.Namespace.Etcd.Test
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
 
             // 0 -> 1
-            var nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, 100, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1);
+            var nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, 100, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1);
             Assert.IsNull(nameNode);
 
             nameNode = await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
             var id = nameNode.Id;
 
             // 1 -> 2
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
             // 2 -> 3
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
             // 3 -> 4
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
             // 4 x
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE, player2);
             Assert.IsNull(nameNode);
 
             nameNode = await explorer.Get(PLAYER_NODE_1_KEY, MINE_TYPE);
@@ -746,65 +746,65 @@ namespace TnyFramework.Namespace.Etcd.Test
             id = nameNode.Id;
 
             // 1 x
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE, player2);
             Assert.IsNull(nameNode);
 
             // 1 -> 2
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
             // 2 -> 3
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
             // 3 x
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE, player2);
             Assert.IsNull(nameNode);
 
             // 3 -> 4
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Open, 4, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Open, 4, RangeBorder.Unlimited, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
             await explorer.Remove(PLAYER_NODE_1_KEY);
             nameNode = await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
             id = nameNode.Id;
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 2, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 2, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
             await explorer.Remove(PLAYER_NODE_1_KEY);
             nameNode = await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
             id = nameNode.Id;
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 1, RangeBorder.Close, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 1, RangeBorder.Close, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Close, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Close, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Open, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Open, MINE_TYPE, player1);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 4, RangeBorder.Open, MINE_TYPE, player1);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 4, RangeBorder.Open, MINE_TYPE, player1);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 4, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 4, RangeBorder.Unlimited, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
             await explorer.Remove(PLAYER_NODE_1_KEY);
             nameNode = await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
             id = nameNode.Id;
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 0, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 0, RangeBorder.Unlimited, MINE_TYPE, player2);
             Assert.AreEqual(player2, nameNode.Value);
 
         }
@@ -820,7 +820,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             var nameNode = await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
             var id = nameNode.Id;
 
-            nameNode = await explorer.UpdateByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1, lessee);
+            nameNode = await explorer.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1, lessee);
             Assert.AreEqual(player1, nameNode.Value);
 
             await lessee.Shutdown();
@@ -927,15 +927,15 @@ namespace TnyFramework.Namespace.Etcd.Test
         {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
 
-            var nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 2, MINE_TYPE);
+            var nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 2, MINE_TYPE);
             Assert.IsNull(nameNode);
 
             await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player1);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 2, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 2, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 1, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 1, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
         }
 
@@ -944,70 +944,70 @@ namespace TnyFramework.Namespace.Etcd.Test
         {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
 
-            var nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 1, RangeBorder.Close, MINE_TYPE);
+            var nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 1, RangeBorder.Close, MINE_TYPE);
             Assert.IsNull(nameNode);
 
             await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player1);
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 1, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 1, RangeBorder.Close, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 4, RangeBorder.Close, 5, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 4, RangeBorder.Close, 5, RangeBorder.Close, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 3, RangeBorder.Close, 4, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 3, RangeBorder.Close, 4, RangeBorder.Close, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 3, RangeBorder.Open, 5, RangeBorder.Open, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 3, RangeBorder.Open, 5, RangeBorder.Open, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 2, RangeBorder.Open, 4, RangeBorder.Open, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 2, RangeBorder.Open, 4, RangeBorder.Open, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 3, RangeBorder.Open, 5, RangeBorder.Unlimited, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 3, RangeBorder.Open, 5, RangeBorder.Unlimited, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 2, RangeBorder.Open, 5, RangeBorder.Unlimited, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 2, RangeBorder.Open, 5, RangeBorder.Unlimited, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 4, RangeBorder.Close, 5, RangeBorder.Unlimited, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 4, RangeBorder.Close, 5, RangeBorder.Unlimited, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 3, RangeBorder.Close, 5, RangeBorder.Unlimited, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 3, RangeBorder.Close, 5, RangeBorder.Unlimited, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 3, RangeBorder.Open, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 3, RangeBorder.Open, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 4, RangeBorder.Open, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 4, RangeBorder.Open, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 2, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 2, RangeBorder.Close, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveIf(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 3, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveIfVersion(PLAYER_NODE_1_KEY, 0, RangeBorder.Unlimited, 3, RangeBorder.Close, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
         }
@@ -1061,12 +1061,12 @@ namespace TnyFramework.Namespace.Etcd.Test
             nameNode = await explorer.Get(PLAYER_NODE_1_KEY, MINE_TYPE);
             var id = nameNode.Id;
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 1, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, MINE_TYPE);
             Assert.IsNull(nameNode);
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 3, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 3, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 2, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 2, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
         }
 
@@ -1075,73 +1075,73 @@ namespace TnyFramework.Namespace.Etcd.Test
         {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
 
-            var nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, 100, 1, RangeBorder.Close, 1, RangeBorder.Close, MINE_TYPE);
+            var nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, 100, 1, RangeBorder.Close, 1, RangeBorder.Close, MINE_TYPE);
             Assert.IsNull(nameNode);
 
             nameNode = await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player1);
             var id = nameNode.Id;
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 1, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 1, RangeBorder.Close, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             nameNode = await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3);
             id = nameNode.Id;
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 4, RangeBorder.Close, 5, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 4, RangeBorder.Close, 5, RangeBorder.Close, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Close, 4, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Close, 4, RangeBorder.Close, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             id = (await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3)).Id;
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 3, RangeBorder.Close, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             id = (await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3)).Id;
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Open, 5, RangeBorder.Open, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Open, 5, RangeBorder.Open, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Open, 3, RangeBorder.Open, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 2, RangeBorder.Open, 4, RangeBorder.Open, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 2, RangeBorder.Open, 4, RangeBorder.Open, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             id = (await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3)).Id;
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Open, 5, RangeBorder.Unlimited, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Open, 5, RangeBorder.Unlimited, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 2, RangeBorder.Open, 5, RangeBorder.Unlimited, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 2, RangeBorder.Open, 5, RangeBorder.Unlimited, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             id = (await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3)).Id;
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 4, RangeBorder.Close, 5, RangeBorder.Unlimited, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 4, RangeBorder.Close, 5, RangeBorder.Unlimited, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Close, 5, RangeBorder.Unlimited, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Close, 5, RangeBorder.Unlimited, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             id = (await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3)).Id;
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Open, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Open, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 4, RangeBorder.Open, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 4, RangeBorder.Open, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
 
             id = (await SaveToVersion(PLAYER_NODE_1_KEY, player1, 3)).Id;
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 2, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 2, RangeBorder.Close, MINE_TYPE);
             Assert.IsNull(nameNode);
 
-            nameNode = await explorer.RemoveByIdAndIf(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Close, MINE_TYPE);
+            nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Close, MINE_TYPE);
             Assert.AreEqual(player1, nameNode.Value);
         }
 

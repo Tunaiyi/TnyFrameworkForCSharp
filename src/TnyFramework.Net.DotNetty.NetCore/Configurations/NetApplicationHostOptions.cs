@@ -9,7 +9,7 @@
 using Microsoft.Extensions.Configuration;
 using TnyFramework.Net.Base;
 
-namespace TnyFramework.Net.DotNetty.NetCore
+namespace TnyFramework.Net.DotNetty.NetCore.Configurations
 {
 
     public class NetApplicationHostOptions

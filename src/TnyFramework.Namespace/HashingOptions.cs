@@ -7,8 +7,9 @@
 // See the Mulan PSL v2 for more details.
 
 using System.Text;
+using TnyFramework.Namespace.Sharding;
 
-namespace TnyFramework.Namespace.Sharding
+namespace TnyFramework.Namespace
 {
 
     public class HashingOptions<TNode>

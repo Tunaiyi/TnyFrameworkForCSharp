@@ -7,21 +7,28 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
+using NUnit.Framework;
+using Random = TnyFramework.Common.Util.Random;
 
-namespace TnyFramework.Codec.Attributes
+namespace TnyFramework.Namespace.Etcd.Test
 {
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-    public class CodableAttribute : Attribute
+    public class RandomTest
     {
-        /// <summary>
-        /// 协议 id
-        /// </summary>
-        public string Mime { get; }
-
-        public CodableAttribute(string mime)
+        [Test]
+        public void TestRandom()
         {
-            Mime = mime;
+            var random = new Random(199999L, true);
+            for (var i = 0; i < 20; i++)
+            {
+                Console.WriteLine(random.NextInt(100));
+            }
+            var seed = random.Seed;
+            random = new Random(seed);
+            for (var i = 0; i < 20; i++)
+            {
+                Console.WriteLine(random.NextInt(100));
+            }
         }
     }
 

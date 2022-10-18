@@ -13,8 +13,9 @@ using Microsoft.Extensions.Hosting;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
+using TnyFramework.Net.DotNetty.NetCore.Configurations;
 
-namespace TnyFramework.Net.DotNetty.NetCore
+namespace TnyFramework.Net.DotNetty.NetCore.Extensions
 {
 
     public static class GenericHostNetServerBuilderExtensions

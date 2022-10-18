@@ -6,22 +6,19 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
-
-namespace TnyFramework.Codec.Attributes
+namespace TnyFramework.FreeRedis.NetCore.Client
 {
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-    public class CodableAttribute : Attribute
+    public class ZMember<TValue>
     {
-        /// <summary>
-        /// 协议 id
-        /// </summary>
-        public string Mime { get; }
+        public TValue Member { get; }
 
-        public CodableAttribute(string mime)
+        public decimal Score { get; }
+
+        public ZMember(decimal score, TValue member)
         {
-            Mime = mime;
+            Score = score;
+            Member = member;
         }
     }
 
