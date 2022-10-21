@@ -47,13 +47,14 @@ namespace TnyFramework.Net.DotNetty.NetCore
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            await lifecycleProcessor.OnPrepareStart();
             var context = application.AppContext;
             logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] starting", context.Name, context.ServerId, context.AppType,
                 context.ScopeType);
             await application.Start();
             logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] started", context.Name, context.ServerId, context.AppType,
                 context.ScopeType);
-            await lifecycleProcessor.OnPrepareStart();
+            await lifecycleProcessor.OnPostStart();
             IList<Task> tasks = new List<Task>();
             foreach (var server in application.Servers)
             {
@@ -77,7 +78,6 @@ namespace TnyFramework.Net.DotNetty.NetCore
             await Task.WhenAll(tasks.ToArray());
             logger.LogInformation("{AppName}(s{ServerId})[{AppType}|{ScopeType}] RegisterInstance []",
                 context.Name, context.ServerId, context.AppType, context.ScopeType);
-            await lifecycleProcessor.OnPostStart();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken)
