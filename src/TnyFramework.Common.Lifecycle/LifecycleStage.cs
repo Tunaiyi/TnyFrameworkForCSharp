@@ -65,6 +65,9 @@ namespace TnyFramework.Common.Lifecycle
                 throw new ArgumentException($"LifecycleType {type} 枚举不存在");
             return obj;
         }
+        public static implicit operator int(LifecycleStage type) => type.Id;
+
+        public static explicit operator LifecycleStage(int type) => ForId(type);
     }
 
     public class LifecycleStage<TLifecycle> : LifecycleStage

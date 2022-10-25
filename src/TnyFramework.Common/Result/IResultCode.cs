@@ -93,6 +93,10 @@ namespace TnyFramework.Common.Result
         {
             return BaseEnum<ResultCode>.ForName(name);
         }
+
+        public static implicit operator int(ResultCode type) => type.Id;
+
+        public static explicit operator ResultCode(int type) => ForId(type);
     }
 
     public abstract class ResultCode<T> : ResultCode where T : ResultCode<T>, new()

@@ -102,6 +102,10 @@ namespace TnyFramework.Net.Rpc.Remote
             }
             return false;
         }
+
+        public static implicit operator int(RpcBodyMode type) => type.Id;
+
+        public static explicit operator RpcBodyMode(int type) => ForId(type);
     }
 
 }

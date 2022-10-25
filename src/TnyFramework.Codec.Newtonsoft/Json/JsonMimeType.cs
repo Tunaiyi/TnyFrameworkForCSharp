@@ -14,6 +14,8 @@ namespace TnyFramework.Codec.Newtonsoft.Json
         private const string JSON_TYPE = "json";
 
         public static readonly MimeType JSON = Of(100, JSON_TYPE);
+        
+        
     }
 
 }

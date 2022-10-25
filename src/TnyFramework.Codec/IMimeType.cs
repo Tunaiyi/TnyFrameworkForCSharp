@@ -55,6 +55,10 @@ namespace TnyFramework.Codec
                 throw new ArgumentException($"枚举AppName不存在 -> {mime}");
             return obj;
         }
+
+        public static implicit operator int(MimeType type) => type.Id;
+
+        public static explicit operator MimeType(int type) => ForId(type);
     }
 
     public abstract class MimeType<T> : MimeType where T : MimeType<T>, new()

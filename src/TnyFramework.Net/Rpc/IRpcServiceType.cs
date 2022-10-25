@@ -78,6 +78,10 @@ namespace TnyFramework.Net.Rpc
                 throw new ArgumentException($"枚举AppType不存在 -> {appType}");
             return obj;
         }
+
+        public static implicit operator int(RpcServiceType type) => type.Id;
+
+        public static explicit operator RpcServiceType(int type) => ForId(type);
     }
 
     public abstract class RpcServiceType<T> : RpcServiceType where T : RpcServiceType<T>, new()

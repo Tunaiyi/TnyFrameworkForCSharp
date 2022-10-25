@@ -252,6 +252,18 @@ namespace TnyFramework.Common.Enum
         {
             return Name;
         }
+
+        public static implicit operator int(BaseEnum<T> type) => type.Id;
+
+        public static explicit operator BaseEnum<T>(int type) => ForId(type);
+
+        public static implicit operator T(BaseEnum<T> type)
+        {
+            if (type is T value)
+                return value;
+            return null;
+        }
+        
     }
 
 }

@@ -62,6 +62,11 @@ namespace TnyFramework.Net.Base
                 throw new ArgumentException($"枚举Group不存在 -> {group}");
             return obj;
         }
+
+        public static implicit operator int(MessagerType type) => type.Id;
+
+        public static explicit operator MessagerType(int type) => ForId(type);
+        
     }
 
     public abstract class MessagerType<T> : MessagerType where T : MessagerType<T>, new()

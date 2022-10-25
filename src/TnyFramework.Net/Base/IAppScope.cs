@@ -58,6 +58,12 @@ namespace TnyFramework.Net.Base
                 throw new ArgumentException($"枚举ScopeName不存在 -> {scopeName}");
             return obj;
         }
+        
+        
+        public static implicit operator int(AppScope type) => type.Id;
+
+        public static explicit operator AppScope(int type) => ForId(type);
+
     }
 
     public abstract class AppScope<T> : AppScope where T : AppScope<T>, new()
@@ -76,6 +82,7 @@ namespace TnyFramework.Net.Base
             LoadAll(typeof(T));
             return BaseEnum<AppScope>.GetValues();
         }
+        
     }
 
 }

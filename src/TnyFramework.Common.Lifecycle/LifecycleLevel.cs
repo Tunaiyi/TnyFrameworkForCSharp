@@ -90,12 +90,16 @@ namespace TnyFramework.Common.Lifecycle
             Order = order;
         }
 
-        protected static LifecycleLevel Of(int id)
+        private static LifecycleLevel Of(int id)
         {
             return E(id, new LifecycleLevel {
                 Order = id
             });
         }
+
+        public static implicit operator int(LifecycleLevel type) => type.Id;
+
+        public static explicit operator LifecycleLevel(int type) => ForId(type);
     }
 
 }

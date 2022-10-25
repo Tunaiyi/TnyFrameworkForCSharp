@@ -22,6 +22,10 @@ namespace TnyFramework.Net.Transport
         /// 客户端通道
         /// </summary>
         public static readonly TunnelMode CLIENT = E(2);
+
+        public static implicit operator int(TunnelMode type) => type.Id;
+
+        public static explicit operator TunnelMode(int type) => ForId(type);
     }
 
 }

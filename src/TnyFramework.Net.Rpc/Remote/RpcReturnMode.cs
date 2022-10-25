@@ -159,6 +159,10 @@ namespace TnyFramework.Net.Rpc.Remote
         {
             return BodyTypeFinder(method);
         }
+
+        public static implicit operator int(RpcReturnMode type) => type.Id;
+
+        public static explicit operator RpcReturnMode(int type) => ForId(type);
     }
 
 }

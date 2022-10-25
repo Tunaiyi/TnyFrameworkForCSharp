@@ -58,6 +58,11 @@ namespace TnyFramework.Net.Base
                 throw new ArgumentException($"枚举AppName不存在 -> {appName}");
             return obj;
         }
+        
+        public static implicit operator int(AppType type) => type.Id;
+
+        public static explicit operator AppType(int type) => ForId(type);
+
     }
 
     public abstract class AppType<T> : AppType where T : AppType<T>, new()
