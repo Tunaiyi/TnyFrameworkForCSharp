@@ -27,6 +27,7 @@
       <ProjectReference Include="..\..\src\TnyFramework.Common.Lifecycle\TnyFramework.Common.Lifecycle.csproj" />
       <ProjectReference Include="..\..\src\TnyFramework.Namespace.Algorithm.XXHash3\TnyFramework.Namespace.Algorithm.XXHash3.csproj" />
       <ProjectReference Include="..\..\src\TnyFramework.Namespace.Etcd\TnyFramework.Namespace.Etcd.csproj" />
+      <ProjectReference Include="..\..\src\TnyFramework.Navmesh\TnyFramework.Navmesh.csproj" />
     </ItemGroup>
 
 </Project>
