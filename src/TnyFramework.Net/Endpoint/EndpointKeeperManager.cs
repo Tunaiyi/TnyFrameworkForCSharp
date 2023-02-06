@@ -54,9 +54,9 @@ namespace TnyFramework.Net.Endpoint
             createEventBus = CREATE_EVENT_BUS.ForkChild();
         }
 
-        private IEndpointKeeper Create(IMessagerType messagerType, TunnelMode tunnelMode)
+        private IEndpointKeeper Create(IMessagerType messagerType, NetAccessMode accessMode)
         {
-            if (!Equals(tunnelMode, TunnelMode.SERVER))
+            if (!Equals(accessMode, NetAccessMode.Server))
                 return null;
             if (!sessionKeeperSettingMap.TryGetValue(messagerType, out var setting))
             {
@@ -69,32 +69,28 @@ namespace TnyFramework.Net.Endpoint
 
         public IEndpoint Online(ICertificate certificate, INetTunnel tunnel)
         {
-            var keeper = LoadKeeper<IEndpointKeeper>(certificate.MessagerType, tunnel.Mode);
+            var keeper = LoadKeeper(certificate.MessagerType, tunnel.AccessMode);
             return keeper.Online(certificate, tunnel);
         }
 
-        public TKeeper LoadKeeper<TKeeper>(IMessagerType messagerType, TunnelMode tunnelMode) where TKeeper : IEndpointKeeper
+        public IEndpointKeeper LoadKeeper(IMessagerType messagerType, NetAccessMode accessMode)
         {
-            var keeper = FindKeeper<TKeeper>(messagerType);
+            var keeper = FindKeeper(messagerType);
             if (keeper != null)
             {
                 return keeper;
             }
-            var newOne = Create(messagerType, tunnelMode);
+            var newOne = Create(messagerType, accessMode);
             if (!endpointKeeperMap.TryAdd(messagerType, newOne))
-                return (TKeeper) endpointKeeperMap[messagerType];
+                return endpointKeeperMap[messagerType];
             newOne.Start();
             createEventBus.Notify(newOne);
-            return (TKeeper) newOne;
+            return newOne;
         }
 
-        public TKeeper FindKeeper<TKeeper>(IMessagerType messagerType) where TKeeper : IEndpointKeeper
+        public IEndpointKeeper FindKeeper(IMessagerType messagerType)
         {
-            if (endpointKeeperMap.TryGetValue(messagerType, out var keeper))
-            {
-                return (TKeeper) keeper;
-            }
-            return default;
+            return endpointKeeperMap.TryGetValue(messagerType, out var keeper) ? keeper : default;
         }
     }
 

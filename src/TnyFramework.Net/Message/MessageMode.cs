@@ -62,6 +62,27 @@ namespace TnyFramework.Net.Message
                     return MessageType.Message;
             }
         }
+
+        public static int GetIndex(this MessageMode self)
+        {
+            switch (self)
+            {
+                case MessageMode.Request:
+                case MessageMode.Response:
+                case MessageMode.Push:
+                default:
+                    return (int) self;
+                case MessageMode.Ping:
+                    return 3;
+                case MessageMode.Pong:
+                    return 4;
+            }
+        }
+
+        public static string Mark(this MessageMode self)
+        {
+            return self.ToString().ToLower();
+        }
     }
 
 }

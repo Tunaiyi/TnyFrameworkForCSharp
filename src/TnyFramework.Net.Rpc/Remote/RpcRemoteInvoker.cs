@@ -11,7 +11,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
+using TnyFramework.Net.Command.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Common;
+using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Exceptions;
 using TnyFramework.Net.Transport;
@@ -41,7 +44,7 @@ namespace TnyFramework.Net.Rpc.Remote
         /// <summary>
         /// 远程服务
         /// </summary>
-        private readonly RpcRemoteServiceSet servicer;
+        private readonly IRpcInvokeNodeSet serviceSet;
 
         /// <summary>
         /// 路由
@@ -58,12 +61,18 @@ namespace TnyFramework.Net.Rpc.Remote
         /// </summary>
         private readonly Func<IMessage, object> returnValueFormatter;
 
-        public RpcRemoteInvoker(RpcRemoteMethod method, RpcRemoteInstance instance, IRpcRouter router)
+        /// <summary>
+        /// 监视器
+        /// </summary>
+        private readonly RpcMonitor rpcMonitor;
+
+        public RpcRemoteInvoker(RpcRemoteMethod method, RpcRemoteInstance instance, IRpcRouter router, RpcMonitor rpcMonitor)
         {
             this.method = method;
             this.instance = instance;
-            servicer = instance.ServiceSet;
+            serviceSet = instance.ServiceSet;
             this.router = router;
+            this.rpcMonitor = rpcMonitor;
             if (!method.IsAsync())
                 return;
             returnValueFormatter = CreateMessageToReturnValue(); // 创建 Message转返回值转化器
@@ -76,20 +85,21 @@ namespace TnyFramework.Net.Rpc.Remote
             try
             {
                 var invokeParams = method.GetParams(parameters);
-                var accessPoint = router.Route(servicer, method, invokeParams.RouteValue, invokeParams);
+                var accessPoint = router.Route(serviceSet, method, invokeParams);
                 if (accessPoint == null)
                 {
                     throw new RpcInvokeException(NetResultCode.REMOTE_EXCEPTION, $"调用 {method} 异常, 未找到有效的远程服务节点");
                 }
+                var endpoint = accessPoint.Endpoint;
                 var timeout = Timeout;
                 return method.Mode switch {
-                    MessageMode.Push => Push(accessPoint, timeout, invokeParams),
-                    MessageMode.Request => Request(accessPoint, timeout, invokeParams),
+                    MessageMode.Push => Push(endpoint, timeout, invokeParams),
+                    MessageMode.Request => Request(endpoint, timeout, invokeParams),
                     _ => throw new RpcInvokeException(NetResultCode.REMOTE_EXCEPTION, $"调用 {method} 异常, 非法 rpc 模式")
                 };
             } catch (Exception e)
             {
-                return HandleException(e);
+                return HandleRequestException(e);
             }
         }
 
@@ -153,47 +163,86 @@ namespace TnyFramework.Net.Rpc.Remote
             return source.Task;
         }
 
-        private object Request(ISender accessPoint, long timeout, RpcRemoteInvokeParams invokeParams)
+        private object Request(IEndpoint endpoint, long timeout, RpcRemoteInvokeParams invokeParams)
         {
-            var requestContext = MessageContexts.Request(Protocol(), invokeParams.Params);
-            requestContext.WillRespondAwaiter(timeout)
+            var content = MessageContents.Request(Protocol(), invokeParams.Params);
+            content.WillRespondAwaiter(timeout)
                 .WithHeaders(invokeParams.GetAllHeaders());
-            var receipt = accessPoint.Send(requestContext);
-            if (method.IsAsync())
+            var invokeContext = RpcInvocationContext.CreateConsumer(endpoint, content, rpcMonitor);
+            invokeContext.Prepare(RpcInvocationContexts.RpcOperation(method.Name, content));
+            try
             {
-                return ToReturnTask(receipt.Respond());
+                content.Respond().ContinueWith(task => {
+                    if (task.IsFaulted)
+                    {
+                        invokeContext.Complete(task.Exception);
+                    } else
+                    {
+                        invokeContext.Complete(task.Result);
+                    }
+                });
+                var receipt = endpoint.Send(content);
+                if (method.IsAsync())
+                {
+                    return ToReturnTask(receipt.Respond());
+                }
+                var message = receipt.Respond().Result;
+                invokeContext.Complete(message);
+                return returnValueFormatter(message);
+            } catch (Exception e)
+            {
+                invokeContext.Complete(e);
+                return HandleRequestException(e);
             }
-            var message = receipt.Respond().Result;
-            return returnValueFormatter(message);
         }
 
-        private object Push(ISender accessPoint, int timeout, RpcRemoteInvokeParams invokeParams)
+        // private void HandleException(Exception e) {
+        //     if (method.isSilently()) {
+        //         LOGGER.warn("{} invoke exception", this.method, e);
+        //     } else {
+        //         ResultCode code = ResultCodeExceptionAide.codeOf(e, NetResultCode.REMOTE_EXCEPTION);
+        //         throw new RpcInvokeException(code, e, "调用 {} 异常", this.method);
+        //     }
+        // }
+
+        private object Push(IEndpoint endpoint, int timeout, RpcRemoteInvokeParams invokeParams)
         {
             var code = invokeParams.Code ?? ResultCode.SUCCESS;
-            var messageContext = MessageContexts.Push(Protocol(), code)
+            var content = MessageContents.Push(Protocol(), code)
                 .WithBody(invokeParams.GetBody())
                 .WithHeaders(invokeParams.GetAllHeaders());
-            var receipt = accessPoint.Send(messageContext);
-            if (method.IsAsync())
+            var invokeContext = RpcInvocationContext.CreateConsumer(endpoint, content, rpcMonitor);
+            try
             {
-                return receipt.Written();
+                var receipt = endpoint.Send(content);
+                invokeContext.Complete();
+                if (method.IsAsync())
+                {
+                    return receipt.Written();
+                }
+                receipt.Written().Wait(timeout);
+                return null;
+            } catch (Exception e)
+            {
+                invokeContext.Complete(e);
+                return null;
             }
-            receipt.Written().Wait(timeout);
-            return null;
         }
 
-        private object HandleException(Exception e)
+        private object HandleRequestException(Exception e)
         {
             if (method.Silently)
             {
                 LOGGER.LogWarning(e, "{Method} invoke exception", method);
                 // TODO 根据返回值优雅处理!!
-                return null;
-            } else
-            {
-                var code = ResultCodeExceptionAide.CodeOf(e, NetResultCode.REMOTE_EXCEPTION);
-                throw new RpcInvokeException(code, e, $"调用 {this.method} 异常");
+                if (!method.IsAsync())
+                    return null;
+                var source = completeSourceFactory();
+                source.SetResult(null);
+                return source.Task;
             }
+            var code = ResultCodeExceptionAide.CodeOf(e, NetResultCode.REMOTE_EXCEPTION);
+            throw new RpcInvokeException(code, e, $"调用 {this.method} 异常");
         }
     }
 

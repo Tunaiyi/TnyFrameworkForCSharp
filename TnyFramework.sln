@@ -63,8 +63,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.DI.NetCore", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.FreeRedis.NetCore", "src\TnyFramework.FreeRedis.NetCore\TnyFramework.FreeRedis.NetCore.csproj", "{2B5C335B-BA3E-4E3E-8D62-35665B3B08C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Navmesh", "src\TnyFramework.Navmesh\TnyFramework.Navmesh.csproj", "{3D38D69E-B366-4389-9E3C-1872070323E3}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
+using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Endpoint;
 
 namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
@@ -21,6 +22,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
         private readonly SessionKeeperSettingSpec defaultSessionKeeperSetting;
         private readonly SessionKeeperSettingSpecs customSessionKeeperSettingSpecs;
         private readonly UnitCollectionSpec<ISessionKeeperFactory, IEndpointUnitContext> sessionKeeperFactorySpec;
+        private readonly UnitSpec<IMessagerAuthenticator, IEndpointUnitContext> messagerAuthenticatorSpec;
 
         private IServiceCollection UnitContainer { get; }
 
@@ -35,6 +37,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
                 .UnitName("DefaultSession").Default(DefaultSessionKeeperSetting));
             // 自定义 SessionKeeper 配置
             customSessionKeeperSettingSpecs = new SessionKeeperSettingSpecs();
+            messagerAuthenticatorSpec = Unit<IMessagerAuthenticator, IEndpointUnitContext>()
+                .UnitName("DefaultMessagerAuthenticator").Default(DefaultMessagerAuthenticator);
             Default(DefaultEndpointKeeperManager);
         }
 
@@ -86,6 +90,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             return this;
         }
 
+        public IMessagerAuthenticator LoadMessagerAuthenticator()
+        {
+            throw new NotImplementedException();
+        }
+
         public ISessionKeeperSetting LoadDefaultSessionKeeperSetting()
         {
             return defaultSessionKeeperSetting.Load(this, UnitContainer);
@@ -116,6 +125,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             return new SessionKeeperSetting {
                 Name = "default"
             };
+        }
+
+        public static IMessagerAuthenticator DefaultMessagerAuthenticator(IEndpointUnitContext context)
+        {
+            return new MessagerAuthenticateService(context.LoadEndpointKeeperManager());
         }
 
         public static IEndpointKeeperManager DefaultEndpointKeeperManager(IEndpointUnitContext context)

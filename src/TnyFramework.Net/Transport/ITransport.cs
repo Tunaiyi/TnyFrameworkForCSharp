@@ -26,17 +26,17 @@ namespace TnyFramework.Net.Transport
         /// 写出消息
         /// </summary>
         /// <param name="allocator">消费分发器</param>
-        /// <param name="messageContext">消息上下文</param>
+        /// <param name="messageContent">消息上下文</param>
         /// <returns></returns>
-        Task Write(MessageAllocator allocator, MessageContext messageContext);
+        Task Write(MessageAllocator allocator, MessageContent messageContent);
 
         /// <summary>
         /// 写出消息
         /// </summary>
         /// <param name="allocator">消费分发器</param>
-        /// <param name="messageContext">消息上下文</param>
+        /// <param name="messageContent">消息上下文</param>
         /// <returns></returns>
-        Task Write(IMessageAllocator allocator, MessageContext messageContext);
+        Task Write(IMessageAllocator allocator, MessageContent messageContent);
     }
 
 }

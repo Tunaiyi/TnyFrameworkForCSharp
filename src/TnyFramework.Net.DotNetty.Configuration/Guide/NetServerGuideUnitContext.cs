@@ -54,7 +54,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
                 unitContext.LoadCommandTaskProcessor(),
                 context.LoadMessageFactory(),
                 context.LoadMessagerFactory(),
-                context.LoadCertificateFactory());
+                context.LoadCertificateFactory(),
+                context.LoadRpcMonitor());
         }
     }
 

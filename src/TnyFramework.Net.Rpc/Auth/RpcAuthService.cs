@@ -31,7 +31,7 @@ namespace TnyFramework.Net.Rpc.Auth
             var identify = RpcAccessIdentify.Parse(id);
             return rpcUserPasswordManager.Auth(identify, password)
                 ? DoneResults.Success(identify)
-                : DoneResults.Failure<RpcAccessIdentify>(NetResultCode.VALIDATOR_FAIL_ERROR);
+                : DoneResults.Failure<RpcAccessIdentify>(NetResultCode.AUTH_FAIL_ERROR);
         }
 
         public string CreateToken(RpcServiceType serviceType, RpcAccessIdentify user)

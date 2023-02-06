@@ -7,31 +7,33 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Endpoint;
-using TnyFramework.Net.Transport;
+using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Rpc
 {
 
     public class RpcRemoteServiceAccess : IRpcServiceAccess
     {
-        public IEndpoint Endpoint { get; }
+        private readonly IEndpoint<RpcAccessIdentify> endpoint;
+
+        public IEndpoint Endpoint => endpoint;
 
         public long AccessId => Endpoint.MessagerId;
 
-        public RpcRemoteServiceAccess(IEndpoint endpoint)
-        {
-            Endpoint = endpoint;
-        }
+        public ForwardPoint ForwardPoint { get; }
 
-        public ISendReceipt Send(MessageContext messageContext)
+        public RpcRemoteServiceAccess(IEndpoint<RpcAccessIdentify> endpoint)
         {
-            return Endpoint.Send(messageContext);
+            this.endpoint = endpoint;
+            ForwardPoint = new ForwardPoint(endpoint.UserId);
         }
 
         public bool IsActive()
         {
             return Endpoint.IsActive();
         }
+
+        public RpcAccessIdentify Identify => endpoint.UserId;
     }
 
 }

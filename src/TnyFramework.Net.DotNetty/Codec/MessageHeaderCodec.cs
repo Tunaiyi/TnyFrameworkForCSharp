@@ -26,6 +26,7 @@ namespace TnyFramework.Net.DotNetty.Codec
         {
             var factory = TypeProtobufSchemeFactory.Factory;
             factory.Load<RpcForwardHeader>();
+            factory.Load<RpcTracingHeader>();
             factory.Load<RpcOriginalMessageIdHeader>();
         }
 

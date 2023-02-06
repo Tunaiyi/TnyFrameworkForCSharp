@@ -25,11 +25,6 @@ namespace TnyFramework.Net.Transport
         long AccessId { get; }
 
         /// <summary>
-        /// 通道模式
-        /// </summary>
-        TunnelMode Mode { get; }
-
-        /// <summary>
         /// 通道状态
         /// </summary>
         TunnelStatus Status { get; }

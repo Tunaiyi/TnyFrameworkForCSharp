@@ -14,7 +14,7 @@ using TnyFramework.Common.Result;
 namespace TnyFramework.Net.Message
 {
 
-    public class TickMessageHead : AbstractNetMessageHead
+    public class TickMessageHead : INetMessageHead
     {
         public static TickMessageHead Ping()
         {
@@ -26,58 +26,81 @@ namespace TnyFramework.Net.Message
             return new TickMessageHead(MessageMode.Pong);
         }
 
-        public TickMessageHead(MessageMode mode) : base(mode)
+        public long ToMessage => MessageConstants.EMPTY_MESSAGE_ID;
+
+        public MessageType Type { get; }
+
+        public MessageMode Mode { get; }
+
+        public int ProtocolId { get; }
+
+        public int Line => 0;
+
+        private TickMessageHead(MessageMode mode)
         {
+            Mode = mode;
             ProtocolId = Protocols.PING_PONG_PROTOCOL_NUM;
             Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         }
 
-        public override long ToMessage => MessageConstants.EMPTY_MESSAGE_ID;
-
-        public override int ProtocolId { get; }
-
-        public override int Line => 0;
-
-        public override bool IsOwn(IProtocol protocol)
+        public bool IsOwn(IProtocol protocol)
         {
             return ProtocolId == protocol.ProtocolId;
         }
 
-        public override long Id => 0;
+        public long Id => 0;
 
-        public override int Code => ResultConstants.SUCCESS_CODE;
+        public int Code => ResultConstants.SUCCESS_CODE;
 
-        public override long Time { get; }
+        public long Time { get; }
 
-        public override T GetHeader<T>(string key) => null;
+        public T GetHeader<T>(string key) where T : MessageHeader => default;
 
-        public override MessageHeader GetHeader(string key, Type type) => null;
+        public MessageHeader GetHeader(string key, Type type) => null;
 
-        public override MessageHeader GetHeader(string key) => null;
+        public IList<T> GetHeaders<T>() where T : MessageHeader => ImmutableList<T>.Empty;
 
-        public override IList<T> GetHeaders<T>() => ImmutableList<T>.Empty;
+        public MessageHeader GetHeader(string key) => null;
 
-        public override IList<MessageHeader> GetHeaders(Type type) => ImmutableList<MessageHeader>.Empty;
+        public IList<MessageHeader> GetHeaders(Type type) => ImmutableList<MessageHeader>.Empty;
 
-        public override T GetHeader<T>(MessageHeaderKey<T> key) => null;
+        public T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => default;
 
-        public override bool IsHasHeaders => false;
+        public bool IsHasHeaders() => false;
 
-        public override bool IsForward() => false;
+        public IDictionary<string, MessageHeader> GetAllHeaderMap() => ImmutableDictionary<string, MessageHeader>.Empty;
 
-        public override RpcForwardHeader ForwardHeader => null;
+        public bool IsForward() => false;
 
-        public override IList<MessageHeader> GetAllHeaders() => ImmutableList<MessageHeader>.Empty;
+        public RpcForwardHeader ForwardHeader => null;
 
-        public override IDictionary<string, MessageHeader> GetAllHeadersMap() => ImmutableDictionary<string, MessageHeader>.Empty;
+        public IList<MessageHeader> GetAllHeaders() => ImmutableList<MessageHeader>.Empty;
 
-        public override bool ExistHeader(string key) => false;
+        public bool ExistHeader(string key) => false;
 
-        public override bool ExistHeader<T>(string key) => false;
+        public bool ExistHeader<T>(string key) where T : MessageHeader<T> => false;
 
-        public override bool ExistHeader(MessageHeaderKey key) => false;
+        public bool ExistHeader(MessageHeaderKey key) => false;
 
-        public override void AllotMessageId(long id)
+        public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => false;
+
+        public T PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T> => null;
+
+        public T PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T> => null;
+
+        public bool RemoveHeader<T>(string key) => false;
+
+        public bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => false;
+
+        public void RemoveHeaders(IEnumerable<string> keys)
+        {
+        }
+
+        public void RemoveAllHeaders()
+        {
+        }
+
+        public void AllotMessageId(long id)
         {
         }
     }

@@ -9,7 +9,7 @@
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Attributes;
-using TnyFramework.Net.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
@@ -38,7 +38,7 @@ namespace TnyFramework.Net.Plugin
             this.attributes = attributes;
         }
 
-        public void InvokePlugin(ITunnel tunnel, IMessage message, MessageCommandContext context)
+        public void InvokePlugin(ITunnel tunnel, IMessage message, RpcInvokeContext context)
         {
             if (LOGGER.IsEnabled(LogLevel.Debug))
             {

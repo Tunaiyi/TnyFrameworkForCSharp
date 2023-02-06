@@ -58,9 +58,8 @@ namespace TnyFramework.Net.Command.Tasks
         {
             try
             {
-                while (taskBox.Poll(out var task))
+                while (taskBox.Poll(out var command))
                 {
-                    var command = task.Command;
                     if (!command.IsDone())
                     {
                         await command.Execute();

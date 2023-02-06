@@ -31,7 +31,8 @@ namespace TnyFramework.Net.Transport
 
         public override EndPoint LocalAddress => Transporter.LocalAddress;
 
-        protected BaseNetTunnel(long id, TTransporter transporter, TunnelMode mode, INetworkContext context) : base(id, mode, context)
+        protected BaseNetTunnel(long id, TTransporter transporter, NetAccessMode accessMode, INetworkContext context)
+            : base(id, accessMode, context)
         {
             if (transporter == null)
                 return;
@@ -71,9 +72,9 @@ namespace TnyFramework.Net.Transport
             return CheckAvailable(null, out var task) ? Transporter.Write(message) : task;
         }
 
-        public override Task Write(MessageAllocator allocator, MessageContext messageContext)
+        public override Task Write(MessageAllocator allocator, MessageContent messageContent)
         {
-            return CheckAvailable(messageContext, out var task) ? Transporter.Write(allocator, MessageFactory, messageContext) : task;
+            return CheckAvailable(messageContent, out var task) ? Transporter.Write(allocator, MessageFactory, messageContent) : task;
         }
 
         protected virtual void OnWriteUnavailable()
@@ -95,7 +96,7 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-        private bool CheckAvailable(MessageContext context, out Task task)
+        private bool CheckAvailable(MessageContent content, out Task task)
         {
             if (IsActive())
             {
@@ -103,13 +104,13 @@ namespace TnyFramework.Net.Transport
                 return true;
             }
             OnWriteUnavailable();
-            if (context != null)
+            if (content != null)
             {
-                context.Cancel(false);
-                task = context.Written();
+                content.Cancel(false);
+                task = content.Written();
             } else
             {
-                var cause = new TunnelDisconnectException($"{this} is disconnect");
+                var cause = new TunnelDisconnectedException($"{this} is disconnect");
                 task = Task.FromException(cause);
             }
             return false;
@@ -117,7 +118,7 @@ namespace TnyFramework.Net.Transport
 
         public override string ToString()
         {
-            return $"{Mode}[{UserGroup}({UserId}) {Transporter}]";
+            return $"{AccessMode}[{UserGroup}({UserId}) {Transporter}]";
         }
     }
 

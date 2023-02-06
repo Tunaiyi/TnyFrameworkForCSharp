@@ -13,7 +13,7 @@ using DotNetty.Common.Utilities;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.DotNetty.Common;
-using TnyFramework.Net.DotNetty.Exception;
+using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.DotNetty.Codec
@@ -69,7 +69,7 @@ namespace TnyFramework.Net.DotNetty.Codec
             ByteBufferUtils.WriteVariant(message.Id, buffer);
             var head = message.Head;
             var mode = head.Mode;
-            var hasHeader = message.IsHasHeaders;
+            var hasHeader = message.IsHasHeaders();
             var option = mode.GetOption();
             option = (byte) (option |
                              (message.ExistBody ? CodecConstants.MESSAGE_HEAD_OPTION_EXIST_BODY : (byte) 0) |

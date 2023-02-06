@@ -10,8 +10,9 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
+using TnyFramework.Net.Command.Auth;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Processor;
-using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
@@ -33,19 +34,19 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         public UnitSpec<IMessageDispatcher, INetUnitContext> MessageDispatcherSpec { get; }
 
-        public UnitSpec<IRpcRemoteServiceManager, INetUnitContext> RpcRemoteServiceManagerSpec { get; }
+        public UnitSpec<IRpcInvokeNodeManager, INetUnitContext> RpcRemoteServiceManagerSpec { get; }
 
         public UnitSpec<ICommandTaskBoxProcessor, INetUnitContext> CommandTaskBoxProcessorSpec { get; }
 
         public UnitCollectionSpec<ICommandPlugin, INetUnitContext> CommandPluginSpecs { get; }
 
-        public UnitCollectionSpec<IAuthenticateValidator, INetUnitContext> AuthenticateValidatorSpecs { get; }
+        public UnitCollectionSpec<IAuthenticationValidator, INetUnitContext> AuthenticateValidatorSpecs { get; }
 
         public NetUnitContext(IServiceCollection unitContainer)
         {
             UnitContainer = unitContainer;
 
-            RpcRemoteServiceManagerSpec = UnitSpec.Unit<IRpcRemoteServiceManager, INetUnitContext>()
+            RpcRemoteServiceManagerSpec = UnitSpec.Unit<IRpcInvokeNodeManager, INetUnitContext>()
                 .Default(DefaultRpcRemoteServiceManager);
 
             // MessageDispatcher 
@@ -63,7 +64,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             CommandPluginSpecs = UnitCollectionSpec.Units<ICommandPlugin, INetUnitContext>();
 
             // AuthenticateValidator
-            AuthenticateValidatorSpecs = UnitCollectionSpec.Units<IAuthenticateValidator, INetUnitContext>();
+            AuthenticateValidatorSpecs = UnitCollectionSpec.Units<IAuthenticationValidator, INetUnitContext>();
 
             // Endpoint
             EndpointSpec = new EndpointSpec(UnitContainer);
@@ -89,7 +90,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return MessageDispatcherContextSpec.Load(this, UnitContainer);
         }
 
-        public IRpcRemoteServiceManager LoadRpcRemoteServiceManager()
+        public IRpcInvokeNodeManager LoadRpcRemoteServiceManager()
         {
             return RpcRemoteServiceManagerSpec.Load(this, UnitContainer);
         }
@@ -114,7 +115,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return CommandPluginSpecs.Load(this, UnitContainer);
         }
 
-        public IList<IAuthenticateValidator> LoadAuthenticateValidators()
+        public IList<IAuthenticationValidator> LoadAuthenticateValidators()
         {
             return AuthenticateValidatorSpecs.Load(this, UnitContainer);
         }
@@ -129,12 +130,12 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         private static MessageDispatcher DefaultMessageDispatcher(INetUnitContext context)
         {
-            return new MessageDispatcher(context.LoadMessageDispatcherContext(), context.EndpointUnitContext.LoadEndpointKeeperManager());
+            return new MessageDispatcher(context.LoadMessageDispatcherContext(), context.EndpointUnitContext.LoadMessagerAuthenticator());
         }
 
-        private static RpcRemoteServiceManager DefaultRpcRemoteServiceManager(INetUnitContext context)
+        private static RpcInvokeNodeManager DefaultRpcRemoteServiceManager(INetUnitContext context)
         {
-            return new RpcRemoteServiceManager();
+            return new RpcInvokeNodeManager();
         }
     }
 

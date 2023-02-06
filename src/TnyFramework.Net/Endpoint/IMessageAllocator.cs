@@ -12,11 +12,11 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Endpoint
 {
 
-    public delegate IMessage MessageAllocator(IMessageFactory factory, MessageContext context);
+    public delegate IMessage MessageAllocator(IMessageFactory factory, MessageContent content);
 
     public interface IMessageAllocator
     {
-        IMessage Allocate(IMessageFactory factory, MessageContext context);
+        IMessage Allocate(IMessageFactory factory, MessageContent content);
     }
 
 }

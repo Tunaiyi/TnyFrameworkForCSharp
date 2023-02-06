@@ -7,9 +7,11 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Rpc;
+using IRpcContext = TnyFramework.Net.Rpc.IRpcContext;
 
 namespace TnyFramework.Net.Base
 {
@@ -40,6 +42,11 @@ namespace TnyFramework.Net.Base
         /// 服务配置¬
         /// </summary>
         IServerBootstrapSetting Setting { get; }
+
+        /// <summary>
+        /// 服务配置¬
+        /// </summary>
+        RpcMonitor RpcMonitor { get; }
     }
 
 }

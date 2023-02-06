@@ -25,6 +25,11 @@ namespace TnyFramework.Net.Transport
         EndPoint LocalAddress { get; }
 
         /// <summary>
+        /// 接入模式
+        /// </summary>
+        NetAccessMode AccessMode { get; }
+
+        /// <summary>
         /// 是否活跃
         /// </summary>
         /// <returns></returns>

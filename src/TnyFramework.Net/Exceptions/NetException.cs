@@ -9,26 +9,41 @@
 using System;
 using System.Runtime.Serialization;
 using TnyFramework.Common.Exceptions;
+using TnyFramework.Common.Result;
+using TnyFramework.Net.Common;
 
 namespace TnyFramework.Net.Exceptions
 {
 
-    public class NetException : CommonException
+    public class NetException : ResultCodeException
     {
-        public NetException()
+        private static readonly IResultCode CODE = NetResultCode.SERVER_ERROR;
+
+        public object Body { get; }
+
+        public NetException(string message = "")
+            : base(CODE, message)
         {
+            Body = null;
         }
 
-        public NetException(SerializationInfo info, StreamingContext context) : base(info, context)
+        public NetException(IResultCode code = null, object body = null, string message = "")
+            : base(code ?? CODE, message)
         {
+            Body = body;
         }
 
-        public NetException(string message) : base(message)
+        public NetException(Exception innerException, IResultCode code = null, object body = null, string message = "")
+            : base(code ?? CODE, innerException, message)
         {
+            Body = body;
         }
 
-        public NetException(Exception innerException, string message) : base(innerException, message)
+        public NetException(SerializationInfo info, StreamingContext context, IResultCode code = null,
+            object body = null)
+            : base(code ?? CODE, info, context)
         {
+            Body = body;
         }
     }
 

@@ -26,9 +26,9 @@ namespace TnyFramework.Net.Rpc
             ForwardPoint = new Message.ForwardPoint(AccessId);
         }
 
-        public ISendReceipt Send(MessageContext messageContext)
+        public ISendReceipt Send(MessageContent content)
         {
-            return Endpoint.Send(messageContext);
+            return Endpoint.Send(content);
         }
 
         public int CompareTo(IRpcRemoteAccessPoint other)

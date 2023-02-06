@@ -13,15 +13,15 @@ namespace TnyFramework.Net.Rpc.Remote
 
     public class FirstRpcRouter : IRpcRouter
     {
-        public IRpcRemoteAccess Route(RpcRemoteServiceSet servicer, RpcRemoteMethod method, object routeValue, RpcRemoteInvokeParams parameters)
+        public IRpcAccess Route(IRpcInvokeNodeSet servicer, RpcRemoteMethod method, RpcRemoteInvokeParams parameters)
         {
-            var nodes = servicer.OrderRemoteNodes;
+            var nodes = servicer.GetOrderInvokeNodes();
             if (nodes.IsNullOrEmpty())
             {
                 return null;
             }
             var node = nodes[0];
-            var accessPoints = node.GetOrderRemoteAccesses();
+            var accessPoints = node.GetOrderAccesses();
             return accessPoints.IsNullOrEmpty() ? null : accessPoints[0];
         }
     }

@@ -50,39 +50,52 @@ namespace TnyFramework.Net.Message
 
         public object Body { get; }
 
-        public IDictionary<string, MessageHeader> Headers => Head.GetAllHeadersMap();
-
         public IAttributes Attribute => attributes.Attributes;
 
         public bool ExistBody => Body != null;
 
-        public T GetHeader<T>(string key) where T : MessageHeader<T> => head.GetHeader<T>(key);
+        public T GetHeader<T>(string key) where T : MessageHeader => head.GetHeader<T>(key);
 
         public MessageHeader GetHeader(string key, Type type) => head.GetHeader(key, type);
 
         public MessageHeader GetHeader(string key) => head.GetHeader(key);
 
-        public IList<T> GetHeaders<T>() where T : MessageHeader<T> => head.GetHeaders<T>();
+        public IList<T> GetHeaders<T>() where T : MessageHeader => head.GetHeaders<T>();
 
         public IList<MessageHeader> GetHeaders(Type type) => head.GetHeaders(type);
 
         public T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.GetHeader(key);
 
-        public bool IsHasHeaders => head.IsHasHeaders;
+        bool IMessageHeaderContainer.IsHasHeaders() => head.IsHasHeaders();
 
-        public bool IsForward() => ExistHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+        public IDictionary<string, MessageHeader> GetAllHeaderMap() => head.GetAllHeaderMap();
 
-        public RpcForwardHeader ForwardHeader => GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+        public bool IsForward() => head.IsForward();
+
+        public RpcForwardHeader ForwardHeader => head.ForwardHeader;
 
         public IList<MessageHeader> GetAllHeaders() => head.GetAllHeaders();
-
-        public IDictionary<string, MessageHeader> GetAllHeadersMap() => head.GetAllHeadersMap();
 
         public bool ExistHeader(string key) => head.ExistHeader(key);
 
         public bool ExistHeader<T>(string key) where T : MessageHeader<T> => head.ExistHeader<T>(key);
 
         public bool ExistHeader(MessageHeaderKey key) => head.ExistHeader(key);
+
+        public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.ExistHeader(key);
+
+        public T PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T> => head.PutHeader(header);
+
+        public T PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T> =>
+            head.PutHeaderIfAbsent(header);
+
+        public bool RemoveHeader<T>(string key) => head.RemoveHeader<T>(key);
+
+        public bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.RemoveHeader(key);
+
+        public void RemoveHeaders(IEnumerable<string> keys) => head.RemoveHeaders(keys);
+
+        public void RemoveAllHeaders() => head.RemoveAllHeaders();
 
         public bool IsOwn(IProtocol protocol) => head.IsOwn(protocol);
 

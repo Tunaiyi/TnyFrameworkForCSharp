@@ -11,7 +11,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net47;net471;net472;net48;netcoreapp3.1</TargetFrameworks>
+        <TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1</TargetFrameworks>
         <Configurations>Debug;Release;Publish</Configurations>
         <Platforms>AnyCPU</Platforms>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

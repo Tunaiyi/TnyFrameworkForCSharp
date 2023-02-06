@@ -19,8 +19,8 @@ using DotNetty.Transport.Libuv;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.DotNetty.Exception;
 using TnyFramework.Net.DotNetty.Transport;
+using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.DotNetty.Bootstrap
@@ -48,7 +48,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
         private const int STATUS_CLOSING = 2;
         private const int STATUS_CLOSE = 3;
 
-        private readonly NettyMessageHandler messageHandler = new NettyMessageHandler();
+        private readonly NettyMessageHandler messageHandler;
 
         private readonly IIdGenerator idGenerator = new AutoIncrementIdGenerator();
 
@@ -77,6 +77,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             this.context = context;
             this.channelMaker = channelMaker;
             this.setting = setting;
+            messageHandler = new NettyMessageHandler(context);
         }
 
         /// <summary>
@@ -163,21 +164,21 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         private ServerBootstrap Bootstrap()
         {
-            var bootstrap = new ServerBootstrap();
+            var serverBootstrap = new ServerBootstrap();
             if (setting.Libuv)
             {
                 var dispatcher = new DispatcherEventLoopGroup();
                 bossGroup = dispatcher;
                 workerGroup = new WorkerEventLoopGroup(dispatcher);
-                bootstrap.Channel<TcpServerChannel>();
+                serverBootstrap.Channel<TcpServerChannel>();
             } else
             {
                 bossGroup = new MultithreadEventLoopGroup(1);
                 workerGroup = new MultithreadEventLoopGroup();
-                bootstrap.Channel<TcpServerSocketChannel>();
+                serverBootstrap.Channel<TcpServerSocketChannel>();
             }
 
-            bootstrap.Group(bossGroup, workerGroup)
+            serverBootstrap.Group(bossGroup, workerGroup)
                 .Option(ChannelOption.SoReuseaddr, true)
                 .Option(ChannelOption.SoBacklog, 2048)
                 .ChildOption(ChannelOption.SoKeepalive, true)
@@ -190,7 +191,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                         var id = idGenerator.Generate();
                         var tunnel = tunnelFactory.Create(id, channel, context);
                         tunnel.Open();
-                    } catch (System.Exception e)
+                    } catch (Exception e)
                     {
                         LOGGER.LogError(e, $"create {channel} channel exception");
                         channel.CloseAsync();
@@ -198,7 +199,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                     }
 
                 }));
-            return bootstrap;
+            return serverBootstrap;
         }
 
         private static string ToAddressString(string host, int port)

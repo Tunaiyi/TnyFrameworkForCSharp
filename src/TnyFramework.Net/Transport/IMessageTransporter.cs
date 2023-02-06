@@ -33,18 +33,18 @@ namespace TnyFramework.Net.Transport
         /// </summary>
         /// <param name="maker">消息创建器</param>
         /// <param name="factory">消息消息工厂</param>
-        /// <param name="context">消息上下文</param>
+        /// <param name="content">消息上下文</param>
         /// <returns>写出等待对象</returns>
-        Task Write(IMessageAllocator maker, IMessageFactory factory, MessageContext context);
+        Task Write(IMessageAllocator maker, IMessageFactory factory, MessageContent content);
 
         /// <summary>
         /// 发送消息
         /// </summary>
         /// <param name="maker">消息创建器</param>
         /// <param name="factory">消息消息工厂</param>
-        /// <param name="context">消息上下文</param>
+        /// <param name="content">消息上下文</param>
         /// <returns>写出等待对象</returns>
-        Task Write(MessageAllocator maker, IMessageFactory factory, MessageContext context);
+        Task Write(MessageAllocator maker, IMessageFactory factory, MessageContent content);
     }
 
 }

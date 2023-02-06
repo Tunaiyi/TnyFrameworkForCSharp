@@ -17,7 +17,7 @@ namespace TnyFramework.Net.DotNetty.Transport
     {
         public INetTunnel Create(long id, IChannel channel, INetworkContext context)
         {
-            var transport = new NettyChannelMessageTransporter(channel);
+            var transport = new NettyChannelMessageTransporter(NetAccessMode.Server, channel);
             return new ServerTunnel<TUserId, NettyChannelMessageTransporter>(id, transport, context); // 创建 Tunnel 已经transport.bind
         }
     }

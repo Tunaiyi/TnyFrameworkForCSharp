@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Attributes;
-using TnyFramework.Net.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Attributes;
 

@@ -6,13 +6,18 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
 using System.IO;
+using System.Threading.Tasks;
 using DotNetty.Handlers.Timeout;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
+using TnyFramework.Net.Base;
+using TnyFramework.Net.Command.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
@@ -26,18 +31,20 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         public override bool IsSharable => true;
 
+        private readonly RpcMonitor rpcMonitor;
+
+        public NettyMessageHandler(INetworkContext networkContext)
+        {
+            rpcMonitor = networkContext.RpcMonitor;
+        }
+
         public override void ChannelActive(IChannelHandlerContext context)
         {
             if (LOGGER.IsEnabled(LogLevel.Information))
             {
                 var channel = context.Channel;
-                if (channel.Active)
-                {
-                    LOGGER.LogInformation("[Tunnel] 连接成功 ## 通道 {Remote} ==> {Local}", channel.RemoteAddress, channel.LocalAddress);
-                } else
-                {
-                    LOGGER.LogInformation("[Tunnel] 连接失败 ## 通道 {Remote} ==> {Local}", channel.RemoteAddress, channel.LocalAddress);
-                }
+                LOGGER.LogInformation(channel.Active ? "[Tunnel] 连接成功 ## 通道 {Remote} ==> {Local}" : "[Tunnel] 连接失败 ## 通道 {Remote} ==> {Local}",
+                    channel.RemoteAddress, channel.LocalAddress);
             }
             base.ChannelActive(context);
         }
@@ -52,7 +59,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 {
                     LOGGER.LogInformation("[Tunnel] 断开链接 ## 通道 {Remote} ==> {Local} 断开链接", channel.RemoteAddress, channel.LocalAddress);
                 }
-                if (Equals(tunnel.Mode, TunnelMode.SERVER))
+                if (Equals(tunnel.AccessMode, NetAccessMode.Server))
                 {
                     tunnel.Close();
                 } else
@@ -76,8 +83,13 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                     try
                     {
                         var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).Get();
-                        tunnel?.Receive(message);
-                    } catch (System.Exception ex)
+                        if (tunnel != null)
+                        {
+                            var rpcContext = RpcInvocationContext.CreateProvider(tunnel, message);
+                            tunnel.Receive(rpcContext);
+                            rpcMonitor.OnReceive(rpcContext);
+                        }
+                    } catch (Exception ex)
                     {
                         LOGGER.LogError(ex, "#GameServerHandler#接受请求异常");
                     }
@@ -85,7 +97,17 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             }
         }
 
-        public override void ExceptionCaught(IChannelHandlerContext context, System.Exception cause)
+        public override Task WriteAsync(IChannelHandlerContext context, object msg)
+        {
+            if (!(msg is INetMessage message))
+                return context.WriteAsync(msg);
+            var channel = context.Channel;
+            var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).Get();
+            rpcMonitor.OnSend(tunnel, message);
+            return context.WriteAsync(msg);
+        }
+
+        public override void ExceptionCaught(IChannelHandlerContext context, Exception cause)
         {
             var channel = context.Channel;
             if (this == channel.Pipeline.Last())
@@ -121,7 +143,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             base.ExceptionCaught(context, cause);
         }
 
-        private void HandleResultCodeException(IChannel channel, IResultCode code, System.Exception cause)
+        private void HandleResultCodeException(IChannel channel, IResultCode code, Exception cause)
         {
             if (code.Level == ResultLevel.Error)
             {
@@ -130,7 +152,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).GetAndSet(null);
                 if (tunnel != null)
                 {
-                    MessageSendAide.Send(tunnel, MessageContexts.Push(Protocols.PUSH, code));
+                    RpcMessageAide.Send(tunnel, MessageContents.Push(Protocols.PUSH, code));
                 }
             } else
             {

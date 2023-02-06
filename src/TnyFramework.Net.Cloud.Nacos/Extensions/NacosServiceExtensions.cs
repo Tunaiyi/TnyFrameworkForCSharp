@@ -16,7 +16,7 @@ using Nacos.Microsoft.Extensions.Configuration;
 using Nacos.V2.DependencyInjection;
 using TnyFramework.DI.Container;
 
-namespace TnyFramework.Net.Cloud.Nacos
+namespace TnyFramework.Net.Cloud.Nacos.Extensions
 {
 
     public static class NacosServiceExtensions

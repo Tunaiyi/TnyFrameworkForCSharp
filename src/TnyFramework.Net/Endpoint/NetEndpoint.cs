@@ -15,6 +15,7 @@ using TnyFramework.Common.Event;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Endpoint.Event;
@@ -73,6 +74,8 @@ namespace TnyFramework.Net.Endpoint
 
         public IEventBox<EndpointClose> CloseEvent => closeEvent;
 
+        public override NetAccessMode AccessMode => tunnel.AccessMode;
+
         public NetEndpoint(ICertificate<TUserId> certificate, IEndpointContext context)
         {
             Id = TransporterIdFactory.NewEndpointId();
@@ -91,9 +94,9 @@ namespace TnyFramework.Net.Endpoint
 
         public IEndpointContext Context { get; }
 
-        public EndPoint RemoteAddress => CurrentTunnel?.LocalAddress;
+        public override EndPoint RemoteAddress => CurrentTunnel?.LocalAddress;
 
-        public EndPoint LocalAddress => CurrentTunnel?.RemoteAddress;
+        public override EndPoint LocalAddress => CurrentTunnel?.RemoteAddress;
 
         public long OfflineTime { get; private set; }
 
@@ -140,29 +143,53 @@ namespace TnyFramework.Net.Endpoint
 
         public MessageHandleFilter ReceiveFilter { get; set; }
 
-        public bool Receive(IMessage message) => Receive(null, message);
-
-        public bool Receive(INetTunnel receiver, IMessage message)
+        public bool Receive(IRpcProviderContext rpcContext)
         {
-
-            var filter = ReceiveFilter;
-            if (filter != null)
+            RpcRejectReceiveException cause;
+            var result = MessageHandleStrategy.Handle;
+            try
             {
-                switch (filter(this, message))
+                var filter = ReceiveFilter;
+                var rcTunnel = rpcContext.NetTunnel;
+                var message = rpcContext.NetMessage;
+                var source = PollSource(message);
+                if (source != null)
                 {
-                    case MessageHandleStrategy.Ignore:
-                        return true;
-                    case MessageHandleStrategy.Throw:
-                        var causeMessage = $"{this} cannot receive {message} from {receiver} after being filtered by {filter}";
-                        throw new EndpointException(causeMessage);
+                    CommandTaskBox.AsyncExec(() => {
+                        source.SetResult(message);
+                        return source.Task as Task;
+                    });
                 }
-            }
-            var source = PollSource(message);
-            if (source != null)
+                if (filter != null)
+                {
+                    result = filter(this, message);
+                }
+                if (result.IsHandleable())
+                {
+                    return CommandTaskBox.AddCommand(rpcContext);
+                }
+                cause = new RpcRejectReceiveException(RejectMessage(true, filter, message, rcTunnel));
+            } catch (Exception e)
             {
-                CommandTaskBox.AddTask(new RespondCommandTask(message, source));
+                LOGGER.LogError(e, "");
+                rpcContext.Complete(e);
+                throw new NetException(NetResultCode.SERVER_ERROR, e);
             }
-            return CommandTaskBox.AddTask(new MessageCommandTask(message, receiver, Context.MessageDispatcher));
+            LOGGER.LogError(cause, "");
+            rpcContext.Complete(cause);
+            if (result.IsThrowable())
+            {
+                throw cause;
+            }
+            return true;
+        }
+
+        private string RejectMessage(bool receive, MessageHandleFilter filter, IMessageSubject message, IConnection handleTunnel)
+        {
+            if (filter == null)
+                throw new ArgumentNullException(nameof(filter));
+            var mode = receive ? "receive" : "send";
+            return $"{this} cannot {mode} {message} from {handleTunnel} after being filtered by {nameof(filter)}";
         }
 
         protected void SetTunnel(INetTunnel value)
@@ -176,50 +203,44 @@ namespace TnyFramework.Net.Endpoint
             CommandTaskBox.TakeOver(commandTaskBox);
         }
 
-        public ISendReceipt Send(MessageContext messageContext) => Send(null, messageContext);
+        public ISendReceipt Send(MessageContent content) => Send(null, content);
 
-        public ISendReceipt Send(INetTunnel sender, MessageContext messageContext)
+        public ISendReceipt Send(INetTunnel sendTunnel, MessageContent content)
         {
+            RpcRejectSendException cause;
+            var result = MessageHandleStrategy.Handle;
             try
             {
+                sendTunnel ??= CurrentTunnel;
                 if (IsClosed())
                 {
-                    messageContext.Cancel(new EndpointCloseException($"endpoint {this} closed"));
-                    return messageContext;
-                }
-                if (sender == null)
-                {
-                    sender = CurrentTunnel;
+                    content.Cancel(new EndpointClosedException($"endpoint {this} closed"));
+                    return content;
                 }
                 var filter = SendFilter;
                 if (filter != null)
                 {
-                    var throwable = true;
-                    switch (filter(this, messageContext))
-                    {
-                        case MessageHandleStrategy.Ignore:
-                            messageContext.Cancel(false);
-                            return messageContext;
-                        case MessageHandleStrategy.Throw:
-                            messageContext.Cancel(false);
-                            var causeMessage = $"{this} cannot send {messageContext} to {sender} after being filtered by {filter}";
-                            if (throwable)
-                            {
-                                throw new EndpointException(causeMessage);
-                            }
-                            return messageContext;
-                        case MessageHandleStrategy.Handle:
-                            break;
-                    }
+                    result = filter(this, content);
                 }
-                sender.Write(BuildMessage, messageContext);
-                return messageContext;
+                if (result.IsHandleable())
+                {
+                    sendTunnel.Write(CreateMessage, content);
+                    return content;
+                }
+                cause = new RpcRejectSendException(RejectMessage(false, filter, content, sendTunnel));
             } catch (Exception e)
             {
                 LOGGER.LogError(e, "");
-                messageContext.Cancel(e);
-                throw new NetException(e, "");
+                content.Cancel(e);
+                throw new NetException(NetResultCode.SERVER_ERROR, e);
             }
+            LOGGER.LogError(cause, "");
+            content.Cancel(cause);
+            if (result.IsThrowable())
+            {
+                throw cause;
+            }
+            return content;
         }
 
         private long AllocateMessageId()
@@ -227,10 +248,10 @@ namespace TnyFramework.Net.Endpoint
             return Interlocked.Increment(ref idCreator);
         }
 
-        public INetMessage BuildMessage(IMessageFactory messageFactory, MessageContext context)
+        public INetMessage CreateMessage(IMessageFactory messageFactory, MessageContent content)
         {
-            var message = messageFactory.Create(AllocateMessageId(), context);
-            if (context is DefaultMessageContext requestContext && requestContext.IsRespondAwaitable())
+            var message = messageFactory.Create(AllocateMessageId(), content);
+            if (content is DefaultMessageContent requestContext && requestContext.IsRespondAwaitable())
             {
                 PutSource(message.Id, requestContext.ResponseSource);
             }
@@ -264,17 +285,17 @@ namespace TnyFramework.Net.Endpoint
             TaskResponseSourceMonitor.RemoveMonitor(this);
         }
 
-        public bool IsActive()
+        public override bool IsActive()
         {
             var current = CurrentTunnel;
             return current != null && current.IsActive();
         }
 
+        public override bool IsClosed() => Status == EndpointStatus.Close;
+
         public bool IsOnline() => Status == EndpointStatus.Online;
 
         public bool IsOffline() => Status == EndpointStatus.Offline;
-
-        public bool IsClosed() => Status == EndpointStatus.Close;
 
         public void Offline()
         {
@@ -315,7 +336,7 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-        public bool Close()
+        public override bool Close()
         {
             if (IsClosed())
             {
@@ -348,16 +369,16 @@ namespace TnyFramework.Net.Endpoint
             var currentCert = Certificate;
             if (!newCertificate.IsAuthenticated())
             {
-                throw new ValidatorFailException(NetResultCode.NO_LOGIN);
+                throw new AuthFailedException(NetResultCode.NO_LOGIN);
             }
             if (currentCert != null && currentCert.IsAuthenticated() && !currentCert.IsSameCertificate(newCertificate))
             {
                 // 是否是同一个授权
-                throw new ValidatorFailException(NetResultCode.VALIDATOR_FAIL_ERROR, $"Certificate new [{newCertificate}] 与 old [{currentCert}] 不同");
+                throw new AuthFailedException($"Certificate new [{newCertificate}] 与 old [{currentCert}] 不同");
             }
             if (IsClosed()) // 判断 session 状态是否可以重登
             {
-                throw new ValidatorFailException(NetResultCode.SESSION_LOSS_ERROR);
+                throw new AuthFailedException(NetResultCode.SESSION_LOSS_ERROR);
             }
         }
 
@@ -389,7 +410,7 @@ namespace TnyFramework.Net.Endpoint
             } else
             {
                 OfflineIf(newTunnel);
-                throw new ValidatorFailException(NetResultCode.VALIDATOR_FAIL_ERROR, $"{newTunnel} tunnel is bound session");
+                throw new AuthFailedException($"{newTunnel} tunnel is bound session");
             }
         }
 

@@ -20,7 +20,7 @@ namespace TnyFramework.Net.Message
         /// <param name="id">消息 di</param>
         /// <param name="subject"> 内容</param>
         /// <returns>创建的消息</returns>
-        INetMessage Create(long id, IMessageContent subject);
+        INetMessage Create(long id, IMessageSubject subject);
 
         /// <summary>
         /// 创建 message

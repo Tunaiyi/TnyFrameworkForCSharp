@@ -26,6 +26,8 @@ namespace TnyFramework.Net.Endpoint
         }
 
         public override void OnUnactivated(INetTunnel tunnel) => Close();
+
+        
     }
 
 }

@@ -29,7 +29,7 @@ namespace TnyFramework.Net.Rpc
         /// </summary>
         /// <param name="point">服务点</param>
         /// <returns>返回接入点</returns>
-        IRpcRemoteAccess FindForwardAccess(IRpcServicerPoint point);
+        IRpcAccess FindForwardAccess(IRpcServicerPoint point);
     }
 
 }

@@ -12,7 +12,7 @@ using System.Runtime.Serialization;
 namespace TnyFramework.Common.Exceptions
 {
 
-    public class CommonException : ApplicationException
+    public class CommonException : Exception
     {
         public CommonException()
         {

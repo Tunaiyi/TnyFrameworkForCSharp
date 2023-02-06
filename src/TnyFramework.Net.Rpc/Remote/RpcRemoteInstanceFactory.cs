@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
+using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Rpc.Attributes;
 using TnyFramework.Net.Rpc.Exceptions;
@@ -44,16 +45,19 @@ namespace TnyFramework.Net.Rpc.Remote
         private static readonly ILogger LOGGER = LogFactory.Logger<RpcInvokeHandler>();
 
         private readonly RpcRemoteSetting setting;
+        
+        private readonly RpcMonitor rpcMonitor;
 
-        private readonly IRpcRemoteServiceManager rpcRemoteService;
+        private readonly IRpcInvokeNodeManager rpcInvokeNode;
 
         private readonly IRpcRemoteRouteManager rpcRouteManager;
 
-        public RpcRemoteInstanceFactory(RpcRemoteSetting setting, IRpcRemoteServiceManager rpcRemoteService, IRpcRemoteRouteManager rpcRouteManager)
+        public RpcRemoteInstanceFactory(RpcRemoteSetting setting, IRpcInvokeNodeManager rpcInvokeNode, IRpcRemoteRouteManager rpcRouteManager, RpcMonitor rpcMonitor)
         {
             this.setting = setting;
-            this.rpcRemoteService = rpcRemoteService;
+            this.rpcInvokeNode = rpcInvokeNode;
             this.rpcRouteManager = rpcRouteManager;
+            this.rpcMonitor = rpcMonitor;
         }
 
         public T Create<T>()
@@ -86,7 +90,7 @@ namespace TnyFramework.Net.Rpc.Remote
                 service = rpcService.ForwardService;
             }
             var serviceType = RpcServiceType.ForService(service);
-            var remoteServicer = rpcRemoteService.LoadOrCreate(serviceType);
+            var remoteServicer = rpcInvokeNode.LoadOrCreate(serviceType);
             var instance = new RpcRemoteInstance(rpcType, setting, remoteServicer);
 
             IDictionary<MethodInfo, IRpcRemoteInvoker> invokerMap = new Dictionary<MethodInfo, IRpcRemoteInvoker>();
@@ -103,7 +107,7 @@ namespace TnyFramework.Net.Rpc.Remote
                 {
                     throw new RpcInvokeException(NetResultCode.REMOTE_EXCEPTION, $"调用 {method.Method} 异常, 未找到 {method.RouterType} RpcRouter");
                 }
-                var invoker = new RpcRemoteInvoker(method, instance, router);
+                var invoker = new RpcRemoteInvoker(method, instance, router, rpcMonitor);
                 count++;
                 invokerMap.Add(method.Method, invoker);
             }

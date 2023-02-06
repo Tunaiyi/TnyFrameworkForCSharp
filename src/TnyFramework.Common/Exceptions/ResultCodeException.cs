@@ -32,6 +32,7 @@ namespace TnyFramework.Common.Exceptions
         }
 
         public IResultCode Code { get; }
+
     }
 
 }

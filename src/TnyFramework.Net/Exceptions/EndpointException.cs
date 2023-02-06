@@ -8,25 +8,39 @@
 
 using System;
 using System.Runtime.Serialization;
+using TnyFramework.Common.Result;
+using TnyFramework.Net.Common;
 
 namespace TnyFramework.Net.Exceptions
 {
 
     public class EndpointException : NetException
     {
-        public EndpointException()
+        private static readonly IResultCode CODE = NetResultCode.ENDPOINT_CLOSE;
+
+        public EndpointException(string message = "") : base(CODE, message)
         {
         }
 
-        public EndpointException(SerializationInfo info, StreamingContext context) : base(info, context)
+        public EndpointException(IResultCode code = null, object body = null, string message = "")
+            : base(code ?? CODE, body, message)
         {
         }
 
-        public EndpointException(string message) : base(message)
+        public EndpointException(Exception innerException, IResultCode code = null, object body = null,
+            string message = "")
+            : base(innerException, code ?? CODE, body, message)
         {
         }
 
-        public EndpointException(Exception innerException, string message) : base(innerException, message)
+        public EndpointException(SerializationInfo info, StreamingContext context, IResultCode code = null,
+            object body = null)
+            : base(info, context, code ?? CODE, body)
+        {
+        }
+
+        public EndpointException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         {
         }
     }

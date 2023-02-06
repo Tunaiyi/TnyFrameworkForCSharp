@@ -8,6 +8,8 @@
 
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Configuration.Channel;
@@ -34,6 +36,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         IMessageHeaderCodec LoadMessageHeaderCodec();
 
         INetworkContext LoadNetworkContext();
+        
+        RpcMonitor LoadRpcMonitor();
 
         IDataPacketV1ChannelMakerUnitContext ChannelMakerUnitContext { get; }
 

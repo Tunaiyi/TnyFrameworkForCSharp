@@ -14,7 +14,7 @@ using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Net.Attributes;
-using TnyFramework.Net.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Attributes;
 

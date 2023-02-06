@@ -27,4 +27,17 @@ namespace TnyFramework.Net.Endpoint
         Throw = 3,
     }
 
+    public static class MessageHandleStrategyExtensions
+    {
+        public static bool IsHandleable(this MessageHandleStrategy value)
+        {
+            return value == MessageHandleStrategy.Handle;
+        }
+
+        public static bool IsThrowable(this MessageHandleStrategy value)
+        {
+            return value == MessageHandleStrategy.Throw;
+        }
+    }
+
 }

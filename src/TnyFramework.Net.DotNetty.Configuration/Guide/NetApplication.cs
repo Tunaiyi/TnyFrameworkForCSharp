@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.DotNetty.Bootstrap;
 
 namespace TnyFramework.Net.DotNetty.Configuration.Guide

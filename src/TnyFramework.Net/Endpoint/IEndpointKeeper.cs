@@ -64,21 +64,21 @@ namespace TnyFramework.Net.Endpoint
         /// 发信息给用户
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="context"></param>
-        void Send2User(object userId, MessageContext context);
+        /// <param name="content"></param>
+        void Send2User(object userId, MessageContent content);
 
         /// <summary>
         /// 发信息给用户集合
         /// </summary>
         /// <param name="userIds">用户ID列表</param>
-        /// <param name="context"></param>
-        void Send2Users(IEnumerable<object> userIds, MessageContext context);
+        /// <param name="content"></param>
+        void Send2Users(IEnumerable<object> userIds, MessageContent content);
 
         /// <summary>
         /// 发送给所有在线的用户
         /// </summary>
-        /// <param name="context">消息内容</param>
-        void Send2AllOnline(MessageContext context);
+        /// <param name="content">消息内容</param>
+        void Send2AllOnline(MessageContent content);
 
         /// <summary>
         /// 使所有endpoint下线

@@ -13,7 +13,7 @@ using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.DotNetty.Common;
-using TnyFramework.Net.DotNetty.Exception;
+using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.DotNetty.Codec

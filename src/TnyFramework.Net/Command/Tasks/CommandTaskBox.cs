@@ -13,7 +13,9 @@ using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using TnyFramework.Coroutines.Async;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Processor;
+using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Command.Tasks
 {
@@ -25,7 +27,7 @@ namespace TnyFramework.Net.Command.Tasks
 
         private readonly ReaderWriterLockSlim boxLock = new ReaderWriterLockSlim();
 
-        private readonly ConcurrentQueue<ICommandTask> taskQueue = new ConcurrentQueue<ICommandTask>();
+        private readonly ConcurrentQueue<ICommand> commandQueue = new ConcurrentQueue<ICommand>();
 
         private readonly ICommandTaskBoxProcessor processor;
 
@@ -38,9 +40,14 @@ namespace TnyFramework.Net.Command.Tasks
             this.processor = processor;
         }
 
-        public bool IsEmpty => taskQueue.IsEmpty;
+        public bool IsEmpty => commandQueue.IsEmpty;
 
-        public bool AddTask(ICommandTask task)
+        public bool AddCommand(IRpcProviderContext rpcContext)
+        {
+            return DoAddCommand(() => CreateCommand(rpcContext));
+        }
+
+        public bool AddCommand(ICommand command)
         {
             boxLock.EnterReadLock();
             try
@@ -49,7 +56,61 @@ namespace TnyFramework.Net.Command.Tasks
                 {
                     return false;
                 }
-                taskQueue.Enqueue(task);
+                commandQueue.Enqueue(command);
+                processor.Submit(this);
+                return true;
+            } finally
+            {
+                boxLock.ExitReadLock();
+            }
+        }
+
+        private ICommand CreateCommand(IRpcProviderContext rpcContext)
+        {
+            var message = rpcContext.NetMessage;
+            switch (message.Mode)
+            {
+                case MessageMode.Push:
+                case MessageMode.Request:
+                case MessageMode.Response:
+                    var context = rpcContext.NetworkContext;
+                    var dispatcher = context.MessageDispatcher;
+                    return dispatcher.Dispatch(rpcContext);
+                case MessageMode.Ping:
+                    var tunnel = rpcContext.NetTunnel;
+                    rpcContext.Complete();
+                    return new RunnableCommand(tunnel.Pong);
+                case MessageMode.Pong:
+                default:
+                    rpcContext.CompleteSilently();
+                    break;
+            }
+            return null;
+        }
+
+        public Task AsyncExec(AsyncHandle handle)
+        {
+            return processor.AsyncExec(this, handle);
+        }
+
+        public Task<T> AsyncExec<T>(AsyncHandle<T> function)
+        {
+            return processor.AsyncExec(this, function);
+        }
+
+        private bool DoAddCommand(Func<ICommand> commandFunc)
+        {
+            boxLock.EnterReadLock();
+            try
+            {
+                if (closed)
+                {
+                    return false;
+                }
+                var command = commandFunc.Invoke();
+                if (command == null)
+                    return false;
+                commandQueue.Enqueue(command);
                 processor.Submit(this);
                 return true;
             } finally
@@ -77,7 +138,7 @@ namespace TnyFramework.Net.Command.Tasks
                     return true;
                 foreach (var task in remain)
                 {
-                    taskQueue.Enqueue(task);
+                    commandQueue.Enqueue(task);
                 }
                 processor.Submit(this);
                 return true;
@@ -87,7 +148,7 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
 
-        private bool Close(out IList<ICommandTask> tasks)
+        private bool Close(out IList<ICommand> tasks)
         {
             if (closed)
             {
@@ -103,8 +164,8 @@ namespace TnyFramework.Net.Command.Tasks
                     return false;
                 }
                 closed = true;
-                var returnQueue = ImmutableList.CreateRange(taskQueue);
-                while (taskQueue.TryDequeue(out _))
+                var returnQueue = ImmutableList.CreateRange(commandQueue);
+                while (commandQueue.TryDequeue(out _))
                 {
                 }
                 tasks = returnQueue;
@@ -115,9 +176,9 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
 
-        public bool Poll(out ICommandTask task)
+        public bool Poll(out ICommand task)
         {
-            return taskQueue.TryDequeue(out task);
+            return commandQueue.TryDequeue(out task);
         }
 
         public TAttachment GetAttachment<TAttachment>()
@@ -144,7 +205,8 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
 
-        public TAttachment SetAttachmentIfNull<TAttachment>(ICommandTaskBoxProcessor checkProcessor, Func<TAttachment> func)
+        public TAttachment SetAttachmentIfNull<TAttachment>(ICommandTaskBoxProcessor checkProcessor,
+            Func<TAttachment> func)
         {
             if (processor != checkProcessor)
                 return default;
@@ -181,16 +243,6 @@ namespace TnyFramework.Net.Command.Tasks
                 attachment = value;
                 return value;
             }
-        }
-
-        public Task AsyncExec(AsyncHandle handle)
-        {
-            return processor.AsyncExec(this, handle);
-        }
-
-        public Task<T> AsyncExec<T>(AsyncHandle<T> function)
-        {
-            return processor.AsyncExec(this, function);
         }
     }
 

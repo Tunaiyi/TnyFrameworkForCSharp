@@ -10,7 +10,7 @@
 
 <Project>
     <PropertyGroup>
-        <PackageVersion>5.3.0-x</PackageVersion>
+        <PackageVersion>5.5.0-x</PackageVersion>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <LangVersion>8</LangVersion>
         <DebugType>embedded</DebugType>

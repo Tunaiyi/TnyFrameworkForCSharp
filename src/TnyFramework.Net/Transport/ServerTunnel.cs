@@ -25,7 +25,7 @@ namespace TnyFramework.Net.Transport
         private readonly ILogger logger = ServerTunnel.LOGGER;
 
         public ServerTunnel(long id, TTransporter transporter, INetworkContext context)
-            : base(id, transporter, TunnelMode.SERVER, context)
+            : base(id, transporter, NetAccessMode.Server, context)
         {
             var factory = context.CertificateFactory<TUserId>();
             Bind(new AnonymityEndpoint<TUserId>(factory, context, this));

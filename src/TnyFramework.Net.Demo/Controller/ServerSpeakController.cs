@@ -13,8 +13,8 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Base;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Demo.DTO;
-using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
@@ -37,7 +37,7 @@ namespace TnyFramework.Net.Demo.Controller
         [RpcRequest(CtrlerIds.SPEAK_4_SAY)]
         public SayContentDTO Say(IEndpoint<long> endpoint, string message)
         {
-            endpoint.Send(MessageContexts.Push(Protocols.Protocol(CtrlerIds.SPEAK_4_PUSH), "因为 [" + message + "] 推条信息给你! " + Rand()));
+            endpoint.Send(MessageContents.Push(Protocols.Protocol(CtrlerIds.SPEAK_4_PUSH), "因为 [" + message + "] 推条信息给你! " + Rand()));
             return new SayContentDTO(endpoint.Id, "respond " + message);
         }
 
@@ -66,7 +66,7 @@ namespace TnyFramework.Net.Demo.Controller
                           "\ndoubleValue:" + doubleValue +
                           "\nbooleanValue:" + booleanValue +
                           "\nmessage:" + message;
-            endpoint.Send(MessageContexts.Push(Protocols.Protocol(CtrlerIds.SPEAK_4_PUSH), "因为 [" + message + "] 推条信息给你! " + Rand()));
+            endpoint.Send(MessageContents.Push(Protocols.Protocol(CtrlerIds.SPEAK_4_PUSH), "因为 [" + message + "] 推条信息给你! " + Rand()));
             return new SayContentDTO(endpoint.Id, "test result: " + content);
         }
 

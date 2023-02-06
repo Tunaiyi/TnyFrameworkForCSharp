@@ -12,7 +12,7 @@ using TnyFramework.Net.Message;
 namespace TnyFramework.Net.Transport
 {
 
-    public interface ICommunicator : IMessager
+    public interface ICommunicator : IConnection, IMessager
     {
         /// <summary>
         /// 获取用户 id

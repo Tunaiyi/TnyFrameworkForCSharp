@@ -19,9 +19,9 @@ namespace TnyFramework.Net.Rpc.Auth
 
         public const int RPC_AUTH_PASSWORD_INDEX = 1;
 
-        public static RequestContext AuthRequest(long id, string password)
+        public static RequestContent AuthRequest(long id, string password)
         {
-            return MessageContexts.Request(Protocols.Protocol(RpcProtocol.RPC_AUTH_4_AUTHENTICATE), id, password);
+            return MessageContents.Request(Protocols.Protocol(RpcProtocol.RPC_AUTH_4_AUTHENTICATE), id, password);
         }
 
         public static long GetIdParam(MessageParamList paramList)

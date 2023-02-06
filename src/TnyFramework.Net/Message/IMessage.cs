@@ -14,7 +14,7 @@ namespace TnyFramework.Net.Message
     /// <summary>
     /// 消息接口
     /// </summary>
-    public interface IMessage : IMessageHead, IMessageContent
+    public interface IMessage : IMessageSubject, IMessageHead
     {
         /// <summary>
         /// 消息头

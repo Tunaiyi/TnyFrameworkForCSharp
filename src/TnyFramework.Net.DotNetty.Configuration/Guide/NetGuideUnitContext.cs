@@ -10,6 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Configuration.Channel;
@@ -38,9 +40,14 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         public UnitSpec<IMessageHeaderCodec, INetGuideUnitContext<TUserId>> MessageHeaderCodecSpec { get; }
 
+        public UnitSpec<RpcMonitor, INetGuideUnitContext<TUserId>> RpcMonitorSpec { get; }
+
         public UnitSpec<IMessageCodec, INetGuideUnitContext<TUserId>> MessageCodecSpec { get; }
 
         public UnitSpec<ICertificateFactory<TUserId>, INetGuideUnitContext<TUserId>> CertificateFactorySpec { get; }
+
+        
+        public UnitCollectionSpec<IRpcMonitorHandler, INetGuideUnitContext<TUserId>> RpcMonitorListenerSpecs { get; }
 
         public DataPacketV1ChannelMakerSpec ChannelMakerSpec { get; }
 
@@ -79,9 +86,21 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             CertificateFactorySpec = UnitSpec.Unit<ICertificateFactory<TUserId>, INetGuideUnitContext<TUserId>>()
                 .Default<CertificateFactory<TUserId>>();
 
+            // CertificateFactory
+            RpcMonitorSpec = UnitSpec.Unit<RpcMonitor, INetGuideUnitContext<TUserId>>()
+                .Default(DefaultRpcMonitor);
+
             // ChannelMaker 
             ChannelMakerSpec = new DataPacketV1ChannelMakerSpec(UnitContainer);
+            
+            // RpcMonitorListener
+            RpcMonitorListenerSpecs = UnitCollectionSpec.Units<IRpcMonitorHandler, INetGuideUnitContext<TUserId>>();
 
+        }
+
+        private RpcMonitor DefaultRpcMonitor(INetGuideUnitContext<TUserId> context)
+        {
+            return new RpcMonitor(RpcMonitorListenerSpecs.Load(context, UnitContainer));
         }
 
         public void SetName(string name)
@@ -98,6 +117,11 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         }
 
         protected abstract void OnSetName(string name);
+
+        public RpcMonitor LoadRpcMonitor()
+        {
+            return RpcMonitorSpec.Load(this, UnitContainer);
+        }
 
         public IChannelMaker LoadChannelMaker()
         {

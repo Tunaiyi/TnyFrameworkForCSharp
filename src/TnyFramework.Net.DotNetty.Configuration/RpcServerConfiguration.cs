@@ -10,6 +10,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
+using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.DotNetty.Configuration.Rpc;
 using TnyFramework.Net.Rpc;
@@ -129,12 +130,12 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-        private IAuthenticateValidator DefaultRpcPasswordValidator(INetUnitContext context)
+        private IAuthenticationValidator DefaultRpcPasswordValidator(INetUnitContext context)
         {
             return new RpcPasswordValidator(IdGeneratorSpec.Load(rpcUnitContext, UnitContainer), rpcUnitContext.LoadRpcAuthService());
         }
 
-        private IAuthenticateValidator DefaultRpcTokenValidator(INetUnitContext context)
+        private IAuthenticationValidator DefaultRpcTokenValidator(INetUnitContext context)
         {
             return new RpcTokenValidator(IdGeneratorSpec.Load(rpcUnitContext, UnitContainer), rpcUnitContext.LoadRpcAuthService());
         }

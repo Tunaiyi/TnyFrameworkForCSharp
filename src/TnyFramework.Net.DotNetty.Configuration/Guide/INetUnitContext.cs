@@ -8,8 +8,9 @@
 
 using System.Collections.Generic;
 using TnyFramework.Net.Base;
+using TnyFramework.Net.Command.Auth;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Processor;
-using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
@@ -28,14 +29,14 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         ICommandTaskBoxProcessor LoadCommandTaskProcessor();
 
         IEndpointUnitContext EndpointUnitContext { get; }
-
+        
         INetAppContext LoadAppContext();
 
-        IRpcRemoteServiceManager LoadRpcRemoteServiceManager();
+        IRpcInvokeNodeManager LoadRpcRemoteServiceManager();
 
         IList<ICommandPlugin> LoadCommandPlugins();
 
-        IList<IAuthenticateValidator> LoadAuthenticateValidators();
+        IList<IAuthenticationValidator> LoadAuthenticateValidators();
     }
 
 }

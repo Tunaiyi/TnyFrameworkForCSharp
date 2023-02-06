@@ -10,8 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using TnyFramework.DI.Units;
+using TnyFramework.Net.Command.Auth;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Processor;
-using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.Plugin;
@@ -48,9 +49,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
         NettyServerConfiguration EndpointConfigure(Action<IEndpointSpec> action);
 
-        NettyServerConfiguration AuthenticateValidatorsConfigure(Action<IUnitCollectionSpec<IAuthenticateValidator, INetUnitContext>> action);
+        NettyServerConfiguration AuthenticateValidatorsConfigure(Action<IUnitCollectionSpec<IAuthenticationValidator, INetUnitContext>> action);
 
-        NettyServerConfiguration AddAuthenticateValidators(Action<IUnitSpec<IAuthenticateValidator, INetUnitContext>> action);
+        NettyServerConfiguration AddAuthenticateValidators(Action<IUnitSpec<IAuthenticationValidator, INetUnitContext>> action);
     }
 
 }

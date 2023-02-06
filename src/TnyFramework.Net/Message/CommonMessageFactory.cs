@@ -14,7 +14,7 @@ namespace TnyFramework.Net.Message
     /// </summary>
     public class CommonMessageFactory : IMessageFactory
     {
-        public INetMessage Create(long id, IMessageContent subject)
+        public INetMessage Create(long id, IMessageSubject subject)
         {
             return new CommonMessage(new CommonMessageHead(id, subject), subject.Body);
         }

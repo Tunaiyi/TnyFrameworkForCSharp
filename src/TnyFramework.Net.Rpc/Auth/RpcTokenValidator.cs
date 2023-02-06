@@ -8,6 +8,7 @@
 
 using System;
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
@@ -15,7 +16,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Rpc.Auth
 {
 
-    public class RpcTokenValidator : AuthenticateValidator<RpcAccessIdentify>
+    public class RpcTokenValidator : AuthenticationValidator<RpcAccessIdentify>
     {
         private readonly IIdGenerator idCreator;
 
@@ -41,10 +42,10 @@ namespace TnyFramework.Net.Rpc.Auth
                         rpcToken.ServiceType, DateTimeOffset.Now.ToUnixTimeMilliseconds());
                 }
                 var resultCode = result.Code;
-                throw new ValidationException(resultCode, $"Rpc登录认证失败. {{resultCode}} : {result.Message}");
+                throw new AuthFailedException(resultCode, null, $"Rpc登录认证失败. {{resultCode}} : {result.Message}");
             } catch (Exception e)
             {
-                throw new ValidationException(e, "Rpc登录认证失败");
+                throw new AuthFailedException(e, null, null, "Rpc登录认证失败");
             }
         }
     }

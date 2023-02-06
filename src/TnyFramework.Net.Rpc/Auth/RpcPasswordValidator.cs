@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
@@ -17,7 +18,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Rpc.Auth
 {
 
-    public class RpcPasswordValidator : IAuthenticateValidator<RpcAccessIdentify>
+    public class RpcPasswordValidator : IAuthenticationValidator<RpcAccessIdentify>
     {
         private readonly IRpcAuthService rpcAuthService;
 
@@ -35,7 +36,7 @@ namespace TnyFramework.Net.Rpc.Auth
         {
             if (tunnel is ITunnel<RpcAccessIdentify> rpcTunnel && certificateFactory is ICertificateFactory<RpcAccessIdentify> rpcFactory)
                 return Validate(rpcTunnel, message, rpcFactory);
-            throw new ValidationException("服务器错误");
+            throw new AuthFailedException("服务器错误");
         }
 
         public ICertificate<RpcAccessIdentify> Validate(ITunnel<RpcAccessIdentify> tunnel, IMessage message,
@@ -44,13 +45,13 @@ namespace TnyFramework.Net.Rpc.Auth
             var paramList = message.BodyAs<MessageParamList>();
             if (paramList == null)
             {
-                throw new ValidationException("Rpc登录参数错误");
+                throw new AuthFailedException("Rpc登录参数错误");
             }
             var id = RpcAuthMessageContexts.GetIdParam(paramList);
             var password = RpcAuthMessageContexts.GetPasswordParam(paramList);
             var result = rpcAuthService.Authenticate(id, password);
             if (result.IsFailure())
-                throw new ValidationException($"Rpc登录认证失败, Code : {result.Value} ; Message : {result.Message}");
+                throw new AuthFailedException($"Rpc登录认证失败, Code : {result.Value} ; Message : {result.Message}");
             var identify = result.Value;
             return factory.Authenticate(idGenerator.Generate(), identify, identify.Id, identify.ServiceType,
                 DateTimeOffset.Now.ToUnixTimeMilliseconds());

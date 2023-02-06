@@ -16,8 +16,9 @@ using TnyFramework.DI.Container;
 using TnyFramework.DI.Extensions;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Attributes;
+using TnyFramework.Net.Command.Auth;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Processor;
-using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
@@ -32,7 +33,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
     {
         private static ILogger _LOGGER;
 
-        private static ILogger Logger => _LOGGER ?? (_LOGGER = LogFactory.Logger<NettyServerConfiguration>());
+        private static ILogger Logger => _LOGGER ??= LogFactory.Logger<NettyServerConfiguration>();
 
         // private readonly UnitSpec<NettyServerGuide, INetUnitContext> serverGuideSpec;
 
@@ -195,13 +196,13 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
         public NettyServerConfiguration AuthenticateValidatorsConfigure(
-            Action<IUnitCollectionSpec<IAuthenticateValidator, INetUnitContext>> action)
+            Action<IUnitCollectionSpec<IAuthenticationValidator, INetUnitContext>> action)
         {
             action.Invoke(NetUnitContext.AuthenticateValidatorSpecs);
             return this;
         }
 
-        public NettyServerConfiguration AddAuthenticateValidators(Action<IUnitSpec<IAuthenticateValidator, INetUnitContext>> action)
+        public NettyServerConfiguration AddAuthenticateValidators(Action<IUnitSpec<IAuthenticationValidator, INetUnitContext>> action)
         {
             NetUnitContext.AuthenticateValidatorSpecs.AddSpec(action);
             return this;

@@ -21,29 +21,29 @@ namespace TnyFramework.Net.Endpoint
     /// </summary>
     public interface INetEndpoint : IEndpoint, IReceiver
     {
-        /// <summary>
-        /// 处理收到消息
-        /// </summary>
-        /// <param name="receiver">通道</param>
-        /// <param name="message">消息</param>
-        /// <returns></returns>
-        bool Receive(INetTunnel receiver, IMessage message);
+        // /// <summary>
+        // /// 处理收到消息
+        // /// </summary>
+        // /// <param name="receiver">通道</param>
+        // /// <param name="message">消息</param>
+        // /// <returns></returns>
+        // bool Receive(INetTunnel receiver, IMessage message);
 
         /// <summary>
         /// 异步发送消息
         /// </summary>
-        /// <param name="sender">发送的通道</param>
-        /// <param name="messageContext">发送消息上下文</param>
+        /// <param name="sendTunnel">发送的通道</param>
+        /// <param name="content">发送消息上下文</param>
         /// <returns>返回发送回执</returns>
-        ISendReceipt Send(INetTunnel sender, MessageContext messageContext);
+        ISendReceipt Send(INetTunnel sendTunnel, MessageContent content);
 
         /// <summary>
         /// 分配生成消息
         /// </summary>
         /// <param name="messageFactory">消息工厂</param>
-        /// <param name="context">发送内容</param>
+        /// <param name="content">发送内容</param>
         /// <returns>返回创建消息</returns>
-        INetMessage BuildMessage(IMessageFactory messageFactory, MessageContext context);
+        INetMessage CreateMessage(IMessageFactory messageFactory, MessageContent content);
 
         /// <summary>
         /// 使用指定认证登陆

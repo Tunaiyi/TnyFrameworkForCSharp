@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
 using System.Threading.Tasks;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
@@ -22,7 +23,7 @@ namespace TnyFramework.Net.DotNetty.Transport
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NettyChannelMessageTransporter>();
 
-        public NettyChannelMessageTransporter(IChannel channel) : base(channel)
+        public NettyChannelMessageTransporter(NetAccessMode accessMode, IChannel channel) : base(accessMode, channel)
         {
         }
 
@@ -47,25 +48,25 @@ namespace TnyFramework.Net.DotNetty.Transport
             return channel.WriteAndFlushAsync(message);
         }
 
-        public Task Write(IMessageAllocator maker, IMessageFactory factory, MessageContext context)
+        public Task Write(IMessageAllocator maker, IMessageFactory factory, MessageContent content)
         {
-            return Write(maker.Allocate, factory, context);
+            return Write(maker.Allocate, factory, content);
         }
 
-        public Task Write(MessageAllocator maker, IMessageFactory factory, MessageContext context)
+        public Task Write(MessageAllocator maker, IMessageFactory factory, MessageContent content)
         {
             return channel.EventLoop.SubmitAsync<object>(() => {
                 IMessage message = null;
                 try
                 {
-                    message = maker(factory, context);
-                } catch (System.Exception e)
+                    message = maker(factory, content);
+                } catch (Exception e)
                 {
-                    context.Cancel(e);
+                    content.Cancel(e);
                     LOGGER.LogError(e, "");
                 }
                 var task = channel.WriteAndFlushAsync(message);
-                if (context is IMessageWritableContext ctx)
+                if (content is IMessageWritableContext ctx)
                     ctx.SetWrittenTask(task);
                 return default;
             });

@@ -62,6 +62,8 @@ namespace TnyFramework.Net.Message
 
         public override string Key => MessageHeaderConstants.RPC_FORWARD_HEADER_KEY;
 
+        public override bool IsTransitive => false;
+
         public RpcForwardHeader SetFrom(IRpcServicer fromService)
         {
             From = ToForwardRpcServicer(fromService);

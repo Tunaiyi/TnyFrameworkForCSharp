@@ -24,12 +24,12 @@ namespace TnyFramework.Common.Result
             return code.Value == ResultCode.SUCCESS_CODE;
         }
 
-        public static IDoneResult<T> Failure<M, T>(IDoneResult<M> result)
+        public static IDoneResult<T> Failure<TM, T>(IDoneResult<TM> result)
         {
             throw new NotImplementedException();
         }
 
-        public static IDoneResult<T> Map<M, T>(IDoneResult<M> done, T mapper)
+        public static IDoneResult<T> Map<TM, T>(IDoneResult<TM> done, T mapper)
         {
             throw new NotImplementedException();
         }
@@ -37,11 +37,11 @@ namespace TnyFramework.Common.Result
         /// <summary>
         /// 返回一个成功的结果, value 为 默认值
         /// </summary>
-        /// <typeparam name="M"></typeparam>
+        /// <typeparam name="TM"></typeparam>
         /// <returns></returns>
-        public static IDoneResult<M> Success<M>()
+        public static IDoneResult<TM> Success<TM>()
         {
-            return new DoneResult<M>(ResultCode.SUCCESS, default, null);
+            return new DoneResult<TM>(ResultCode.SUCCESS, default, null);
         }
 
         /**
@@ -50,11 +50,11 @@ namespace TnyFramework.Common.Result
          * @param value
          * @return
          */
-        public static IDoneResult<M> Success<M>(M value)
+        public static IDoneResult<TM> Success<TM>(TM value)
         {
             if (value == null)
                 throw new NullReferenceException();
-            return new DoneResult<M>(ResultCode.SUCCESS, value, null);
+            return new DoneResult<TM>(ResultCode.SUCCESS, value, null);
         }
 
         /**
@@ -63,9 +63,9 @@ namespace TnyFramework.Common.Result
          * @param value
          * @return
          */
-        public static IDoneResult<M> SuccessNullable<M>(M value)
+        public static IDoneResult<TM> SuccessNullable<TM>(TM value)
         {
-            return new DoneResult<M>(ResultCode.SUCCESS, value, null);
+            return new DoneResult<TM>(ResultCode.SUCCESS, value, null);
         }
 
         /**
@@ -75,9 +75,9 @@ namespace TnyFramework.Common.Result
          * @param nullCode 失败时结果码
          * @return 返回结果
          */
-        public static IDoneResult<M> SuccessIfNotNull<M>(M value, IResultCode nullCode)
+        public static IDoneResult<TM> SuccessIfNotNull<TM>(TM value, IResultCode nullCode)
         {
-            return value != null ? Success(value) : Failure<M>(nullCode);
+            return value != null ? Success(value) : Failure<TM>(nullCode);
         }
 
         /**
@@ -87,9 +87,9 @@ namespace TnyFramework.Common.Result
          * @param code  结果码
          * @return 返回结果
          */
-        public static IDoneResult<M> Done<M>(IResultCode code, M value)
+        public static IDoneResult<TM> Done<TM>(IResultCode code, TM value)
         {
-            return new DoneResult<M>(code, value, null);
+            return new DoneResult<TM>(code, value, null);
         }
 
         /**
@@ -100,9 +100,9 @@ namespace TnyFramework.Common.Result
          * @param message 消息
          * @return 返回结果
          */
-        public static IDoneResult<M> Done<M>(IResultCode code, M value, string message)
+        public static IDoneResult<TM> Done<TM>(IResultCode code, TM value, string message)
         {
-            return new DoneResult<M>(code, value, message);
+            return new DoneResult<TM>(code, value, message);
         }
 
         /**
@@ -111,9 +111,9 @@ namespace TnyFramework.Common.Result
          * @param <M>
          * @return
          */
-        public static IDoneResult<M> Failure<M>()
+        public static IDoneResult<TM> Failure<TM>()
         {
-            return new DoneResult<M>(ResultCode.FAILURE, default, null);
+            return new DoneResult<TM>(ResultCode.FAILURE, default, null);
         }
 
         /**
@@ -122,13 +122,13 @@ namespace TnyFramework.Common.Result
          * @param code 结果码
          * @return 返回结果
          */
-        public static IDoneResult<M> Failure<M>(IResultCode code, string message = "")
+        public static IDoneResult<TM> Failure<TM>(IResultCode code, string message = "")
         {
             if (code.IsSuccess())
             {
                 throw new IllegalArgumentException($"code [{code}] is success");
             }
-            return new DoneResult<M>(code, default, null);
+            return new DoneResult<TM>(code, default, null);
         }
 
         /**
@@ -137,13 +137,13 @@ namespace TnyFramework.Common.Result
          * @param result 失败结果
          * @return 返回结果
          */
-        public static IDoneResult<M> Failure<M>(IDoneResult result, string message = null)
+        public static IDoneResult<TM> Failure<TM>(IDoneResult result, string message = null)
         {
             if (result.IsSuccess())
             {
                 throw new IllegalArgumentException($"code [{result.Code}] is success");
             }
-            return message == null ? new DoneResult<M>(result.Code, default, result.Message) : new DoneResult<M>(result.Code, default, message);
+            return message == null ? new DoneResult<TM>(result.Code, default, result.Message) : new DoneResult<TM>(result.Code, default, message);
 
         }
 
@@ -154,9 +154,9 @@ namespace TnyFramework.Common.Result
          * @param value  返回值
          * @return DoneResults
          */
-        public static IDoneResult<M> Map<M>(IDoneResult result, M value)
+        public static IDoneResult<TM> Map<TM>(IDoneResult result, TM value)
         {
-            return new DoneResult<M>(result.Code, value, result.Message);
+            return new DoneResult<TM>(result.Code, value, result.Message);
         }
 
         /**
@@ -167,7 +167,7 @@ namespace TnyFramework.Common.Result
          * @param <M>    返回类型
          * @return DoneResults
          */
-        public static IDoneResult<T> Map<M, T>(this IDoneResult<M> result, Func<IResultCode, M, T> mapper)
+        public static IDoneResult<T> Map<TM, T>(this IDoneResult<TM> result, Func<IResultCode, TM, T> mapper)
         {
             return new DoneResult<T>(result.Code, mapper(result.Code, result.Value), result.Message);
         }

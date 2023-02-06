@@ -12,7 +12,7 @@ using DotNetty.Codecs;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
-using TnyFramework.Net.DotNetty.Exception;
+using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.DotNetty.Codec
@@ -49,7 +49,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                     try
                     {
                         encoder.EncodeObject(context, message, output);
-                    } catch (System.Exception e)
+                    } catch (Exception e)
                     {
                         NetPacketCodecErrorHandler.HandleOnEncodeError(LOGGER, context, e, closeOnError);
                     }

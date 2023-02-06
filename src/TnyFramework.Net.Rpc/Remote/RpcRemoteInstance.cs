@@ -20,11 +20,11 @@ namespace TnyFramework.Net.Rpc.Remote
 
         internal RpcRemoteSetting Setting { get; }
 
-        internal RpcRemoteServiceSet ServiceSet { get; }
+        internal IRpcInvokeNodeSet ServiceSet { get; }
 
         private IDictionary<MethodInfo, IRpcRemoteInvoker> invokerMap = ImmutableDictionary<MethodInfo, IRpcRemoteInvoker>.Empty;
 
-        public RpcRemoteInstance(Type rpcType, RpcRemoteSetting setting, RpcRemoteServiceSet serviceSet)
+        public RpcRemoteInstance(Type rpcType, RpcRemoteSetting setting, IRpcInvokeNodeSet serviceSet)
         {
             RpcType = rpcType;
             Setting = setting;

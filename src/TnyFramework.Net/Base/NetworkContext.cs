@@ -7,8 +7,9 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Command.Processor;
-using TnyFramework.Net.Dispatcher;
 using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Base
@@ -25,6 +26,8 @@ namespace TnyFramework.Net.Base
         public IMessagerFactory MessagerFactory { get; }
 
         public IServerBootstrapSetting Setting { get; }
+
+        public RpcMonitor RpcMonitor { get; }
 
         public ICertificateFactory<TUserId> CertificateFactory { get; }
 
@@ -43,6 +46,7 @@ namespace TnyFramework.Net.Base
             IMessageFactory messageFactory,
             IMessagerFactory messagerFactory,
             ICertificateFactory<TUserId> certificateFactory,
+            RpcMonitor rpcMonitor,
             IRpcForwarder rpcForwarder = null)
         {
             Setting = setting;
@@ -51,6 +55,7 @@ namespace TnyFramework.Net.Base
             MessageFactory = messageFactory;
             MessagerFactory = messagerFactory;
             CertificateFactory = certificateFactory;
+            RpcMonitor = rpcMonitor;
             RpcForwarder = rpcForwarder;
         }
 

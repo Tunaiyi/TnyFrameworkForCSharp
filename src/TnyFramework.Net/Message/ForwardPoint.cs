@@ -7,34 +7,41 @@
 // See the Mulan PSL v2 for more details.
 
 using ProtoBuf;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Rpc;
 
 namespace TnyFramework.Net.Message
 {
 
     [ProtoContract]
-    public class ForwardPoint : IRpcServicerPoint
+    public class ForwardPoint : IRpcAccessPoint
     {
         private int serviceTypeId;
+
+        private IRpcServiceType serviceType;
 
         [ProtoMember(1)]
         public int ServiceTypeId {
             get => serviceTypeId;
             set {
                 serviceTypeId = value;
-                ServiceType = RpcServiceType.ForId(serviceTypeId);
+                serviceType = RpcServiceType.ForId(serviceTypeId);
             }
         }
 
         [ProtoIgnore]
-        public IRpcServiceType ServiceType { get; private set; }
+        public IRpcServiceType ServiceType => GetServiceType();
 
         [ProtoMember(2)]
         public RpcAccessId AccessId { get; }
 
-        public int ServerId => AccessId.ServiceId;
+        public int ServerId => AccessId?.ServiceId ?? -1;
 
         public long Id => AccessId.Id;
+
+        public long MessagerId => AccessId?.Id ?? -1;
+
+        public IMessagerType MessagerType => ServiceType;
 
         public ForwardPoint()
         {
@@ -42,13 +49,13 @@ namespace TnyFramework.Net.Message
 
         public ForwardPoint(IRpcServiceType serviceType)
         {
-            ServiceType = serviceType;
+            this.serviceType = serviceType;
             ServiceTypeId = ServiceType.Id;
         }
 
         public ForwardPoint(IRpcServicer servicer)
         {
-            ServiceType = servicer.ServiceType;
+            serviceType = servicer.ServiceType;
             ServiceTypeId = ServiceType.Id;
             if (servicer is IRpcServicerPoint point)
             {
@@ -56,17 +63,32 @@ namespace TnyFramework.Net.Message
             }
         }
 
-        public bool IsHasAccessId()
+        public ForwardPoint(RpcServiceType serviceType, long accessId)
+        {
+            this.serviceType = serviceType;
+            serviceTypeId = serviceType.Id;
+            AccessId = new RpcAccessId(accessId);
+        }
+
+        private IRpcServiceType GetServiceType()
+        {
+            if (serviceType == null)
+            {
+                return serviceType = RpcServiceType.ForId(serviceTypeId);
+            }
+            return serviceType;
+        }
+
+        public bool IsAppointed()
         {
             return AccessId != null;
         }
 
-        public int CompareTo(IRpcServicerPoint other)
+        public int CompareTo(IRpcAccessPoint other)
         {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
-            var serverId = ServerId.CompareTo(other.ServerId);
-            return serverId != 0 ? serverId : Id.CompareTo(other.Id);
+            return MessagerId.CompareTo(other.MessagerId);
         }
     }
 

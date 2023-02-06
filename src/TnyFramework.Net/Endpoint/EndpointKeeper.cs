@@ -89,23 +89,23 @@ namespace TnyFramework.Net.Endpoint
             return ImmutableList.CreateRange(endpointMap.Values);
         }
 
-        public void Send2User(object userId, MessageContext context)
+        public void Send2User(object userId, MessageContent content)
         {
             if (endpointMap.TryGetValue(userId, out var endpoint))
             {
-                endpoint.Send(context);
+                endpoint.Send(content);
             }
         }
 
-        public void Send2Users(IEnumerable<object> userIds, MessageContext context)
+        public void Send2Users(IEnumerable<object> userIds, MessageContent content)
         {
             foreach (var userId in userIds)
             {
-                Send2User(userId, context);
+                Send2User(userId, content);
             }
         }
 
-        public void Send2AllOnline(MessageContext context)
+        public void Send2AllOnline(MessageContent content)
         {
             throw new NotImplementedException();
         }

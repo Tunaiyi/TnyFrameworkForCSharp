@@ -77,7 +77,13 @@ namespace TnyFramework.Net.Rpc.Remote
 
         public void SetResult(IMessage message)
         {
-            source.SetResult((TBody) messageTo(message));
+            if (message == null)
+            {
+                source.SetResult(default);
+            } else
+            {
+                source.SetResult((TBody) messageTo(message));
+            }
         }
     }
 

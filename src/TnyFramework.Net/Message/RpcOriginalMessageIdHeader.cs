@@ -24,6 +24,8 @@ namespace TnyFramework.Net.Message
         public long MessageId { get; set; }
 
         public override string Key => MessageHeaderConstants.RPC_ORIGINAL_MESSAGE_ID_KEY;
+
+        public override bool IsTransitive => false;
     }
 
 }

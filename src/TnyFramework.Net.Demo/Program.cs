@@ -55,7 +55,7 @@ namespace TnyFramework.Net.Demo
                 };
                 dto.message = $"{dto.userId} - {dto.certId} 登录成功 at {DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
                 LOGGER.LogInformation("will send Current thread {ThreadId}", Thread.CurrentThread.ManagedThreadId);
-                var send = tunnel.Send(MessageContexts.Respond(ResultCode.SUCCESS, message)
+                var send = tunnel.Send(MessageContents.Respond(ResultCode.SUCCESS, message)
                     .WithBody(dto));
                 await send.Written();
                 LOGGER.LogInformation("sent : Current thread {ThreadId}", Thread.CurrentThread.ManagedThreadId);
@@ -224,7 +224,7 @@ namespace TnyFramework.Net.Demo
                         .KeeperFactory("defaultSessionKeeperFactory")))
                 .AddController<LoginController>()
                 .AddController<ServerSpeakController>()
-                .AuthenticateValidatorsConfigure(spec => spec.Add<DemoAuthenticateValidator>())
+                .AuthenticateValidatorsConfigure(spec => spec.Add<DemoAuthenticationValidator>())
                 .Initialize();
             var provider = unitContainer.BuildServiceProvider();
             var application = provider.GetService<INetApplication>();

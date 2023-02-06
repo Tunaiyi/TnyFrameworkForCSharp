@@ -8,6 +8,7 @@
 
 using System;
 using TnyFramework.Common.Exceptions;
+using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Rpc;
 
 namespace TnyFramework.Net.Attributes
@@ -35,9 +36,9 @@ namespace TnyFramework.Net.Attributes
         /// <exception cref="CommonException"></exception>
         public AuthenticationRequiredAttribute(Type validator, params string[] userGroups)
         {
-            if (!typeof(IAuthenticateValidator).IsAssignableFrom(validator))
+            if (!typeof(IAuthenticationValidator).IsAssignableFrom(validator))
             {
-                throw new CommonException($"{validator} 没有继承 {typeof(IAuthenticateValidator)}");
+                throw new CommonException($"{validator} 没有继承 {typeof(IAuthenticationValidator)}");
             }
             UserGroups = userGroups;
             Validator = validator;
@@ -47,7 +48,7 @@ namespace TnyFramework.Net.Attributes
         /// 身份验证器类型
         /// </summary>
         public void SetValidator<TValidator>()
-            where TValidator : IAuthenticateValidator
+            where TValidator : IAuthenticationValidator
         {
             Validator = typeof(TValidator);
         }

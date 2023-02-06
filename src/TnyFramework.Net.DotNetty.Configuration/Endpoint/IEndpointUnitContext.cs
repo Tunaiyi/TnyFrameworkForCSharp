@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using System.Collections.Generic;
+using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Endpoint;
 
 namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
@@ -15,6 +16,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
     public interface IEndpointUnitContext
     {
         IEndpointKeeperManager LoadEndpointKeeperManager();
+
+        IMessagerAuthenticator LoadMessagerAuthenticator();
 
         ISessionKeeperSetting LoadDefaultSessionKeeperSetting();
 

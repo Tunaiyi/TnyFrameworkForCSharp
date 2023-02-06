@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using TnyFramework.Common.Event;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport.Event;
@@ -54,7 +55,8 @@ namespace TnyFramework.Net.Transport
 
         public long AccessId { get; private set; }
 
-        public TunnelMode Mode { get; }
+
+        // public NetAccessMode AccessMode { get; }
 
         public TunnelStatus Status {
             get => (TunnelStatus) status;
@@ -72,19 +74,20 @@ namespace TnyFramework.Net.Transport
 
         ICertificateFactory<TUserId> INetTunnel<TUserId>.CertificateFactory => Context.CertificateFactory<TUserId>();
 
-        public abstract EndPoint RemoteAddress { get; }
-
-        public abstract EndPoint LocalAddress { get; }
+        // public abstract override EndPoint RemoteAddress { get; }
+        //
+        // public abstract override EndPoint LocalAddress { get; }
 
         public INetEndpoint<TUserId> Endpoint => endpoint;
 
+        public override NetAccessMode AccessMode { get; }
+
         IEndpoint<TUserId> ITunnel<TUserId>.Endpoint => Endpoint;
 
-        public abstract bool IsActive();
 
         public bool IsOpen() => Status == TunnelStatus.Open;
 
-        public bool IsClosed() => Status == TunnelStatus.Closed;
+        public override bool IsClosed() => Status == TunnelStatus.Closed;
 
         private readonly IEventBus<TunnelActivate> activateEvent;
         private readonly IEventBus<TunnelUnactivated> unactivatedEvent;
@@ -96,11 +99,11 @@ namespace TnyFramework.Net.Transport
 
         public IEventBox<TunnelClose> CloseEvent => closeEvent;
 
-        protected NetTunnel(long id, TunnelMode mode, INetworkContext context)
+        protected NetTunnel(long id, NetAccessMode accessMode, INetworkContext context)
         {
             Id = id;
-            Mode = mode;
             Context = context;
+            AccessMode = accessMode;
             activateEvent = NetTunnel.ACTIVATE_EVENT_BUS.ForkChild();
             unactivatedEvent = NetTunnel.UNACTIVATED_EVENT_BUS.ForkChild();
             closeEvent = NetTunnel.CLOSE_EVENT_BUS.ForkChild();
@@ -121,24 +124,24 @@ namespace TnyFramework.Net.Transport
             endpoint = value;
         }
 
-        public bool Receive(IMessage message)
+        public bool Receive(IRpcProviderContext context)
         {
             endpointLock.EnterReadLock();
             try
             {
-                return endpoint.Receive(this, message);
+                return endpoint.Receive(context);
             } finally
             {
                 endpointLock.ExitReadLock();
             }
         }
 
-        public ISendReceipt Send(MessageContext messageContext)
+        public ISendReceipt Send(MessageContent content)
         {
             endpointLock.EnterReadLock();
             try
             {
-                return endpoint.Send(this, messageContext);
+                return endpoint.Send(this, content);
             } finally
             {
                 endpointLock.ExitReadLock();
@@ -256,7 +259,7 @@ namespace TnyFramework.Net.Transport
         {
         }
 
-        public bool Close()
+        public override bool Close()
         {
             var current = Status;
             if (current == TunnelStatus.Closed)
@@ -304,11 +307,11 @@ namespace TnyFramework.Net.Transport
 
         public abstract Task Write(IMessage message);
 
-        public abstract Task Write(MessageAllocator allocator, MessageContext messageContext);
+        public abstract Task Write(MessageAllocator allocator, MessageContent messageContent);
 
-        public Task Write(IMessageAllocator allocator, MessageContext messageContext)
+        public Task Write(IMessageAllocator allocator, MessageContent messageContent)
         {
-            return Write(allocator.Allocate, messageContext);
+            return Write(allocator.Allocate, messageContent);
         }
     }
 

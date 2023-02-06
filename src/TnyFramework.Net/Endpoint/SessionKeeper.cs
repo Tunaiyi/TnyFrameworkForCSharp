@@ -78,11 +78,11 @@ namespace TnyFramework.Net.Endpoint
         {
             if (!certificate.IsAuthenticated())
             {
-                throw new ValidatorFailException(NetResultCode.VALIDATOR_FAIL_ERROR, $"cert {certificate} is unauthentic");
+                throw new AuthFailedException(NetResultCode.AUTH_FAIL_ERROR, null, $"cert {certificate} is unauthentic");
             }
             if (!Equals(MessagerType, certificate.MessagerType))
             {
-                throw new ValidatorFailException(NetResultCode.VALIDATOR_FAIL_ERROR,
+                throw new AuthFailedException(NetResultCode.AUTH_FAIL_ERROR, null,
                     $"cert {certificate} userType is {certificate.UserGroup}, not {MessagerType}");
             }
             var uid = certificate.GetUserId();
@@ -100,13 +100,13 @@ namespace TnyFramework.Net.Endpoint
             {
                 // 旧 session 失效
                 Logger.LogWarning("旧session {User} 已经丢失", newTunnel.GetUserId());
-                throw new ValidatorFailException(NetResultCode.SESSION_LOSS_ERROR);
+                throw new AuthFailedException(NetResultCode.SESSION_LOSS_ERROR);
             }
             if (existSession.IsClosed())
             {
                 // 旧 session 已经关闭(失效)
                 Logger.LogWarning("旧session {Session} 已经关闭", existSession);
-                throw new ValidatorFailException(NetResultCode.SESSION_LOSS_ERROR);
+                throw new AuthFailedException(NetResultCode.SESSION_LOSS_ERROR);
             }
 
             var current = (INetSession<TUserId>) existSession;
@@ -127,7 +127,7 @@ namespace TnyFramework.Net.Endpoint
                 if (!certificate.IsSameCertificate(oldCert) && certificate.IsOlderThan(oldCert))
                 {
                     Logger.LogWarning("认证已过 {Cer}", certificate);
-                    throw new ValidatorFailException(NetResultCode.INVALID_CERTIFICATE_ERROR);
+                    throw new AuthFailedException(NetResultCode.INVALID_CERTIFICATE_ERROR);
                 }
             }
             var endpoint = newTunnel.GetEndpoint();
