@@ -18,7 +18,7 @@ namespace TnyFramework.Net.Transport
         /// </summary>
         /// <param name="rpcContext">消息</param>
         /// <returns>是否接收成功</returns>
-        bool Receive(IRpcProviderContext rpcContext);
+        bool Receive(IRpcEnterContext rpcContext);
     }
 
 }

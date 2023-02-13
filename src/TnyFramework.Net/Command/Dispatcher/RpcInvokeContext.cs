@@ -21,7 +21,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private readonly INetAppContext appContext;
 
-        public RpcInvokeContext(MethodControllerHolder controller, IRpcProviderContext rpcContext, INetAppContext appContext)
+        public RpcInvokeContext(MethodControllerHolder controller, IRpcEnterContext rpcContext, INetAppContext appContext)
         {
             Controller = controller;
             RpcContext = rpcContext;
@@ -32,7 +32,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public MethodControllerHolder Controller { get; }
 
-        public IRpcProviderContext RpcContext { get; }
+        public IRpcEnterContext RpcContext { get; }
 
         public string Name => Controller.SimpleName;
 

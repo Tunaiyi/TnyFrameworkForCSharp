@@ -21,7 +21,7 @@ namespace TnyFramework.Coroutines.Async
         Task AsyncExec(AsyncHandle handle);
 
         /// <summary>
-        /// 在协程上运行一个返回 task<T> 的任务
+        /// <![CDATA[在协程上运行一个返回 task<T> 的任务]]>
         /// </summary>
         /// <param name="function">任务</param>
         /// <typeparam name="T">类型</typeparam>

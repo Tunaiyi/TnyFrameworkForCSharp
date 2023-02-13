@@ -358,21 +358,6 @@ namespace TnyFramework.Coroutines.Demo
             }
         }
 
-        private static async Task TestCount()
-        {
-            var index = 0;
-            while (index < 3)
-            {
-                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [TestCount] INDEX = {Index}",
-                    Coroutine.Current, Thread.CurrentThread.ManagedThreadId, index);
-                index++;
-                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [TestCount] Yield before",
-                    Coroutine.Current, Thread.CurrentThread.ManagedThreadId, index);
-                await Task.Yield();
-                LOGGER.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [TestCount] Yielded",
-                    Coroutine.Current, Thread.CurrentThread.ManagedThreadId, index);
-            }
-        }
     }
 
 }

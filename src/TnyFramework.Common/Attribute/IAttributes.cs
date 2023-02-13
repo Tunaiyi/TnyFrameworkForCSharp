@@ -50,6 +50,15 @@ namespace TnyFramework.Common.Attribute
         bool TryAdd<T>(AttrKey<T> key, Func<T> supplier);
 
         /// <summary>
+        /// 插入指定的 key 与 value, 如果key在则返回 false, 不存在则插入value并返回true
+        /// </summary>
+        /// <param name="key">键</param>
+        /// <param name="supplier">值提供器</param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns> 是否插入</returns>
+        T Load<T>(AttrKey<T> key, Func<T> supplier);
+
+        /// <summary>
         /// 删除指定key的属性
         /// </summary>
         /// <param name="key">指定的Key</param>

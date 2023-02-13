@@ -15,6 +15,7 @@
         <LangVersion>8</LangVersion>
         <DebugType>embedded</DebugType>
         <DebugSymbols>true</DebugSymbols>
+        <LangVersion>10</LangVersion>
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(Configuration)' == 'Publish' Or '$(Configuration)' == 'Release'">

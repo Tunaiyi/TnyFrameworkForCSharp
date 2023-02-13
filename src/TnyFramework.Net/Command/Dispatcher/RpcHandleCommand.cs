@@ -8,20 +8,23 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Logger;
 
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
     public abstract class RpcHandleCommand : ICommand
     {
+        private static readonly ILogger LOGGER = LogFactory.Logger<RpcHandleCommand>();
 
-        protected readonly IRpcProviderContext rpcContext;
+        protected readonly IRpcEnterContext rpcContext;
 
         private Exception cause;
 
         private bool Done { get; set; }
 
-        protected RpcHandleCommand(IRpcProviderContext rpcContext)
+        protected RpcHandleCommand(IRpcEnterContext rpcContext)
         {
             this.rpcContext = rpcContext;
         }
@@ -34,6 +37,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                 Done = true;
             } catch (Exception e)
             {
+                LOGGER.LogError(e, "{name} execute exception", Name);
                 cause = e;
                 OnException(e);
             } finally

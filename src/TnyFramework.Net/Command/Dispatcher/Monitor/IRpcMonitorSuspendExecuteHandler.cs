@@ -6,17 +6,9 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Command.Dispatcher.Monitor;
+
+public interface IRpcMonitorSuspendExecuteHandler : IRpcMonitorHandler
 {
-
-    public enum RpcInvocationMode
-    {
-        
-        Enter,
-        
-        Exit,
-        
-        
-    }
-
+    void OnSuspend(IRpcEnterContext rpcContext);
 }

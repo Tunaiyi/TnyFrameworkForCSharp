@@ -14,7 +14,7 @@ namespace TnyFramework.Net.Message
 
     public class CommonMessageHead : AbstractNetMessageHead
     {
-        private long id;
+        private long id;  
 
         public override long Id => id;
 
@@ -28,20 +28,25 @@ namespace TnyFramework.Net.Message
 
         public override long Time { get; }
 
+        public override MessageMode Mode { get; }
+
         public CommonMessageHead(long id, MessageMode mode, int line, int protocolId, int code, long toMessage,
             long time, IDictionary<string, MessageHeader> headers) : base(headers)
         {
             this.id = id;
-            ToMessage = toMessage;
-            ProtocolId = protocolId;
             Line = line;
-            Code = code;
+            Mode = mode;
+            ProtocolId = protocolId;
             Time = time;
+            ToMessage = toMessage;
+            Code = code;
         }
 
         public CommonMessageHead(long id, IMessageSubject subject) : base(subject.GetAllHeaderMap())
         {
             this.id = id;
+            Line = subject.Line;
+            Mode = subject.Mode;
             ProtocolId = subject.ProtocolId;
             Code = subject.GetCode();
             ToMessage = subject.ToMessage;

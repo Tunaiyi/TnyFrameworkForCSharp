@@ -36,6 +36,17 @@ namespace TnyFramework.Common.Attribute
             return LoadOrCreate<TValue>($"{type.FullName}.{key}");
         }
 
+        /// <summary>
+        /// 获取 key
+        /// </summary>
+        /// <param name="key">key 值</param>
+        /// <typeparam name="TValue">返回 AttrKey</typeparam>
+        /// <returns></returns>
+        public static AttrKey<TValue> Key<TValue>(string key)
+        {
+            return LoadOrCreate<TValue>($"{typeof(TValue).FullName}.{key}");
+        }
+
         private static AttrKey<TValue> LoadOrCreate<TValue>(string key)
         {
             KEY_MAP.TryGetValue(key, out var attrKey);

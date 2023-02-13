@@ -46,7 +46,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             this.messagerAuthenticator = messagerAuthenticator;
         }
 
-        public ICommand Dispatch(IRpcProviderContext rpcContext)
+        public ICommand Dispatch(IRpcEnterContext rpcContext)
         {
             var message = rpcContext.NetMessage;
             // 获取方法持有器
@@ -57,7 +57,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                 return new RpcInvokeCommand(context, handleContext, messagerAuthenticator);
             }
             if (message.Mode != MessageMode.Request)
-                return NoopCommand.Command;
+                return new RpcNoopCommand(rpcContext);
             LOGGER.LogWarning("{Mode} controller [{Name}] not exist", message.Mode, message.ProtocolId);
             return new RpcRespondCommand(rpcContext, NetResultCode.SERVER_NO_SUCH_PROTOCOL, null);
         }

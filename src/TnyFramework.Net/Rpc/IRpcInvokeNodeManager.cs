@@ -13,9 +13,9 @@ namespace TnyFramework.Net.Rpc
 
     public interface IRpcInvokeNodeManager
     {
-        IRpcInvokeNodeSet LoadOrCreate(IMessagerType serviceType);
+        IRpcInvokeNodeSet LoadInvokeNodeSet(IMessagerType serviceType);
 
-        IRpcInvokeNodeSet Find(IMessagerType serviceType);
+        IRpcInvokeNodeSet FindInvokeNodeSet(IMessagerType serviceType);
     }
 
 }

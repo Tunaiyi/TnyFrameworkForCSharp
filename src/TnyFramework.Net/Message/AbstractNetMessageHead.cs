@@ -23,7 +23,7 @@ namespace TnyFramework.Net.Message
 
         public MessageType Type => Mode.GetMessageType();
 
-        public MessageMode Mode { get; }
+        public abstract MessageMode Mode { get; }
 
         public abstract long ToMessage { get; }
 

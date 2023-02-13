@@ -133,9 +133,9 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return new MessageDispatcher(context.LoadMessageDispatcherContext(), context.EndpointUnitContext.LoadMessagerAuthenticator());
         }
 
-        private static RpcInvokeNodeManager DefaultRpcRemoteServiceManager(INetUnitContext context)
+        private static RpcServicerManager DefaultRpcRemoteServiceManager(INetUnitContext context)
         {
-            return new RpcInvokeNodeManager();
+            return new RpcServicerManager();
         }
     }
 

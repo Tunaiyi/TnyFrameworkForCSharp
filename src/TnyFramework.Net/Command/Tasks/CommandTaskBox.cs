@@ -42,7 +42,7 @@ namespace TnyFramework.Net.Command.Tasks
 
         public bool IsEmpty => commandQueue.IsEmpty;
 
-        public bool AddCommand(IRpcProviderContext rpcContext)
+        public bool AddCommand(IRpcEnterContext rpcContext)
         {
             return DoAddCommand(() => CreateCommand(rpcContext));
         }
@@ -65,7 +65,7 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
 
-        private ICommand CreateCommand(IRpcProviderContext rpcContext)
+        private ICommand CreateCommand(IRpcEnterContext rpcContext)
         {
             var message = rpcContext.NetMessage;
             switch (message.Mode)

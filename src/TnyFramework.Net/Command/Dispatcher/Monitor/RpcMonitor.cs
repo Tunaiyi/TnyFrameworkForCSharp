@@ -24,7 +24,10 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
         private readonly IList<IRpcMonitorBeforeInvokeHandler> beforeInvokeHandlers = new List<IRpcMonitorBeforeInvokeHandler>();
         private readonly IList<IRpcMonitorAfterInvokeHandler> afterInvokeHandlers = new List<IRpcMonitorAfterInvokeHandler>();
         private readonly IList<IRpcMonitorReceiveHandler> receiveHandlers = new List<IRpcMonitorReceiveHandler>();
+        private readonly IList<IRpcMonitorResumeExecuteHandler> resumeExecuteHandlers = new List<IRpcMonitorResumeExecuteHandler>();
+        private readonly IList<IRpcMonitorSuspendExecuteHandler> suspendExecuteHandlers = new List<IRpcMonitorSuspendExecuteHandler>();
         private readonly IList<IRpcMonitorSendHandler> sendHandlers = new List<IRpcMonitorSendHandler>();
+        private readonly IList<IRpcMonitorTransferHandler> transferHandlers = new List<IRpcMonitorTransferHandler>();
 
         public RpcMonitor(IList<IRpcMonitorHandler> listeners)
         {
@@ -44,11 +47,20 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
                     case IRpcMonitorSendHandler sh:
                         sendHandlers.Add(sh);
                         break;
+                    case IRpcMonitorTransferHandler sh:
+                        transferHandlers.Add(sh);
+                        break;
+                    case IRpcMonitorResumeExecuteHandler reh:
+                        resumeExecuteHandlers.Add(reh);
+                        break;
+                    case IRpcMonitorSuspendExecuteHandler seh:
+                        suspendExecuteHandlers.Add(seh);
+                        break;
                 }
             }
         }
 
-        public void OnReceive(IRpcProviderContext rpcContext)
+        public void OnReceive(IRpcEnterContext rpcContext)
         {
             var tunnel = rpcContext.NetTunnel;
             var message = rpcContext.NetMessage;
@@ -113,6 +125,70 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
                 } catch (Exception e)
                 {
                     LOGGER.LogError(e, "RpcMonitor.OnBeforeInvoke");
+                }
+            }
+        }
+
+        public void OnResume(IRpcEnterContext rpcContext)
+        {
+            if (resumeExecuteHandlers.Count <= 0)
+                return;
+            foreach (var handler in resumeExecuteHandlers)
+            {
+                try
+                {
+                    handler.OnResume(rpcContext);
+                } catch (Exception e)
+                {
+                    LOGGER.LogError(e, "RpcMonitor.OnResume");
+                }
+            }
+        }
+
+        public void OnSuspend(IRpcEnterContext rpcContext)
+        {
+            if (suspendExecuteHandlers.Count <= 0)
+                return;
+            foreach (var handler in suspendExecuteHandlers)
+            {
+                try
+                {
+                    handler.OnSuspend(rpcContext);
+                } catch (Exception e)
+                {
+                    LOGGER.LogError(e, "RpcMonitor.OnSuspend");
+                }
+            }
+        }
+
+        public void OnTransfer(IRpcTransferContext rpcContext)
+        {
+            if (transferHandlers.Count <= 0)
+                return;
+            foreach (var handler in transferHandlers)
+            {
+                try
+                {
+                    handler.OnTransfer(rpcContext);
+                } catch (Exception e)
+                {
+                    LOGGER.LogError(e, "RpcMonitor.OnTransfer");
+                }
+            }
+        }
+
+        public void OnTransfered(IRpcTransferContext rpcContext, IMessageSubject result, Exception exception)
+        {
+            if (transferHandlers.Count <= 0)
+                return;
+            foreach (var handler in transferHandlers)
+            {
+                try
+                {
+                    handler.OnTransfered(rpcContext, result, exception);
+                } catch (Exception e)
+                {
+                    LOGGER.LogError(e, "RpcMonitor.OnTransfered");
                 }
             }
         }

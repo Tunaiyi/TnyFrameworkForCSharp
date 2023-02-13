@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
-    public class RunnableCommand : BaseCommand
+    public class RunnableCommand : Command
     {
         private readonly Action action;
 

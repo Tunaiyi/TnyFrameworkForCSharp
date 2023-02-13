@@ -12,11 +12,11 @@ using TnyFramework.Common.Attribute;
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
-    public class RpcContexts
+    public static class RpcContexts
     {
-        private static readonly AsyncLocal<IRpcProviderContext> LOCAL_CONTEXT = new AsyncLocal<IRpcProviderContext>();
+        private static readonly AsyncLocal<IRpcEnterContext> LOCAL_CONTEXT = new AsyncLocal<IRpcEnterContext>();
 
-        private static readonly IRpcProviderContext EMPTY = new RpcProviderInvocationContext(null, null, EmptyAttributes.GetEmpty());
+        private static readonly IRpcEnterContext EMPTY = new RpcEnterInvocationContext(null, null, false, EmptyAttributes.GetEmpty());
 
         public static IRpcContext Current {
             get {
@@ -24,24 +24,25 @@ namespace TnyFramework.Net.Command.Dispatcher
                 if (info != null)
                     return info;
                 info = EMPTY;
+                info.Resume();
                 LOCAL_CONTEXT.Value = info;
                 return info;
             }
         }
 
-        internal static void SetCurrent(IRpcProviderContext context)
+        internal static void SetCurrent(IRpcEnterContext context)
         {
             var info = LOCAL_CONTEXT.Value;
-            if (info == null || info.IsEmpty())
-            {
-                LOCAL_CONTEXT.Value = context;
-            }
+            if (info is not {Valid: true})
+                return;
+            info.Suspend();
+            LOCAL_CONTEXT.Value = context;
         }
 
         internal static void Clear()
         {
             var info = LOCAL_CONTEXT.Value;
-            if (info != null && !info.IsEmpty())
+            if (info is {Valid: false})
             {
                 LOCAL_CONTEXT.Value = EMPTY;
             }

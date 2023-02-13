@@ -92,7 +92,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
 
         public IMessagerAuthenticator LoadMessagerAuthenticator()
         {
-            throw new NotImplementedException();
+            return messagerAuthenticatorSpec.Load(this, UnitContainer);
         }
 
         public ISessionKeeperSetting LoadDefaultSessionKeeperSetting()

@@ -32,13 +32,13 @@ namespace TnyFramework.Net.Base
         internal static void LogSend(ITunnel tunnel, IMessage message)
         {
             var logger = GetMessageSendLogger(tunnel.UserGroup, message);
-            logger?.LogDebug("# Tunnel {} [发送] =>> IMessage : {}", tunnel, message);
+            logger?.LogDebug("# {tunnel} [发送] =>> Message : {message}", tunnel, message);
         }
 
         internal static void LogReceive(ITunnel tunnel, IMessage message)
         {
             var logger = GetMessageReceiveLogger(tunnel.UserGroup, message);
-            logger?.LogDebug("# Tunnel {} [接收] <<= IMessage : {}", tunnel, message);
+            logger?.LogDebug("# {tunnel} [接收] <<= Message : {message}", tunnel, message);
         }
     }
 

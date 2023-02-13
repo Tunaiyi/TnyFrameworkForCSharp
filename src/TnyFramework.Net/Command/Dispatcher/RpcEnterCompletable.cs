@@ -8,38 +8,13 @@
 
 using System;
 using TnyFramework.Common.Result;
-using TnyFramework.Coroutines.Async;
-using TnyFramework.Net.Base;
-using TnyFramework.Net.Command.Dispatcher.Monitor;
-using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
-    public interface IRpcProviderContext : IRpcInvocationContext
+    public interface IRpcEnterCompletable
     {
-        /// <summary>
-        /// @return 获取消息
-        /// </summary>
-        INetMessage NetMessage { get; }
-
-        /// <summary>
-        /// @return 获取通道
-        /// </summary>
-        INetTunnel NetTunnel { get; }
-
-        /// <summary>
-        /// @return rpc监控
-        /// </summary>
-        RpcMonitor RpcMonitor { get; }
-
-        /// <summary>
-        /// @return rpc监控
-        /// </summary>
-        INetworkContext NetworkContext { get; }
-
-
         /// <summary>
         /// 静默完成
         /// </summary>
@@ -77,5 +52,6 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <return>是否完成成功</return>
         bool Complete(MessageContent content, Exception error);
     }
+
 
 }

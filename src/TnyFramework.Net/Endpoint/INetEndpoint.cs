@@ -8,6 +8,7 @@
 
 using TnyFramework.Common.Event;
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Endpoint.Event;
 using TnyFramework.Net.Message;
@@ -19,7 +20,7 @@ namespace TnyFramework.Net.Endpoint
     /// <summary>
     /// 终端会话
     /// </summary>
-    public interface INetEndpoint : IEndpoint, IReceiver
+    public interface INetEndpoint : IEndpoint, IMessageReceiver
     {
         // /// <summary>
         // /// 处理收到消息

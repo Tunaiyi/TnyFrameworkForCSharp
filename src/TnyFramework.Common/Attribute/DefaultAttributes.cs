@@ -67,6 +67,21 @@ namespace TnyFramework.Common.Attribute
             }
         }
 
+        public T Load<T>(AttrKey<T> key, Func<T> supplier)
+        {
+            CheckNotNull(key, "TryAdd Attributes key is null");
+            CheckNotNull(supplier, "TryAdd Attributes supplier is null");
+            lock (this)
+            {
+                if (attributeMap.TryGetValue(key, out var exist))
+                    return (T) exist;
+                var value = supplier.Invoke();
+                CheckNotNull(value, "TryAdd Attributes supplier return value is null");
+                attributeMap[key] = value;
+                return value;
+            }
+        }
+
         public T Remove<T>(AttrKey<T> key)
         {
             CheckNotNull(key, "Remove Attributes key is null");

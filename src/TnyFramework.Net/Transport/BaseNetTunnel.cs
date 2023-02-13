@@ -118,7 +118,7 @@ namespace TnyFramework.Net.Transport
 
         public override string ToString()
         {
-            return $"{AccessMode}[{UserGroup}({UserId}) {Transporter}]";
+            return $"Tunnel({AccessMode})[{UserGroup}({UserId})]{Transporter}";
         }
     }
 

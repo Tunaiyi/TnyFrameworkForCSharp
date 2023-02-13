@@ -101,12 +101,7 @@ namespace TnyFramework.Common.Enum
         /// <returns></returns>
         public static T ForId(int id)
         {
-            CheckAndUpdateNames();
-            if (!ID_ENUM_MAP.TryGetValue(id, out var result))
-            {
-                throw new ArgumentException($"{typeof(T)} 枚举ID不存在 -> {id}");
-            }
-            return result;
+            return GetById(id);
         }
 
         /// <summary>
@@ -116,12 +111,43 @@ namespace TnyFramework.Common.Enum
         /// <returns></returns>
         public static T ForName(string name)
         {
+            return GetByName(name);
+        }
+
+        /// <summary>
+        /// 通过ID获得枚举
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="throwOnNull"></param>
+        /// <returns></returns>
+        protected static T GetById(int id, bool throwOnNull = true)
+        {
             CheckAndUpdateNames();
-            if (!NAME_ENUM_MAP.TryGetValue(name, out var result))
+            if (ID_ENUM_MAP.TryGetValue(id, out var result))
+                return result;
+            if (throwOnNull)
             {
-                throw new ArgumentException($"{typeof(T)} 枚举名称不存在 -> {name}");
+                throw new ArgumentException($"{typeof(T)} 枚举ID不存在 -> {id}");
             }
-            return result;
+            return null;
+        }
+
+        /// <summary>
+        /// 通过名称获得枚举
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="throwOnNull"></param>
+        /// <returns></returns>
+        protected static T GetByName(string name, bool throwOnNull = true)
+        {
+            CheckAndUpdateNames();
+            if (NAME_ENUM_MAP.TryGetValue(name, out var result))
+                return result;
+            if (throwOnNull)
+            {
+                throw new ArgumentException($"{typeof(T)} 枚举Name不存在 -> {name}");
+            }
+            return null;
         }
 
         /// <summary>
@@ -263,7 +289,6 @@ namespace TnyFramework.Common.Enum
                 return value;
             return null;
         }
-        
     }
 
 }

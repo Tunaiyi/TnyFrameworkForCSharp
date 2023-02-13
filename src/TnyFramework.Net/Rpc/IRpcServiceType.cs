@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using TnyFramework.Common.Enum;
 using TnyFramework.Net.Base;
 
 namespace TnyFramework.Net.Rpc
@@ -28,23 +27,24 @@ namespace TnyFramework.Net.Rpc
         AppType AppType { get; }
     }
 
-    public class RpcServiceType : BaseEnum<RpcServiceType>, IRpcServiceType
+    public class RpcServiceType : MessagerType, IRpcServiceType
     {
-        private static readonly ConcurrentDictionary<string, RpcServiceType> SERVICE_MAP = new ConcurrentDictionary<string, RpcServiceType>();
+        private static readonly ConcurrentDictionary<string, RpcServiceType> SERVICE_MAP = new();
 
-        private static readonly ConcurrentDictionary<AppType, RpcServiceType> APP_TYPE_MAP = new ConcurrentDictionary<AppType, RpcServiceType>();
+        private static readonly ConcurrentDictionary<AppType, RpcServiceType> APP_TYPE_MAP = new();
+
+        protected static readonly List<RpcServiceType> SERVICES = new();
 
         /// <summary>
         /// 服务名
         /// </summary>
-        public string Service { get; protected set; }
+        public string Service => Group;
 
         public AppType AppType { get; protected set; }
 
-        public string Group => Service;
-
         protected override void OnCheck()
         {
+            base.OnCheck();
             if (!SERVICE_MAP.TryAdd(Service, this) && !ReferenceEquals(SERVICE_MAP[Service], this))
             {
                 throw new ArgumentException($"{SERVICE_MAP[Service]} 与 {this} 存在相同的 Service {Service}");
@@ -53,16 +53,27 @@ namespace TnyFramework.Net.Rpc
             {
                 throw new ArgumentException($"{APP_TYPE_MAP[AppType]} 与 {this} 存在相同的 AppType {Service}");
             }
+            SERVICES.Add(this);
         }
 
         public new static RpcServiceType ForId(int id)
         {
-            return BaseEnum<RpcServiceType>.ForId(id);
+            var value = GetById(id, false);
+            if (value == null)
+            {
+                throw new ArgumentException($"{typeof(RpcServiceType)} 枚举ID不存在 -> {id}");
+            }
+            return value as RpcServiceType;
         }
 
         public new static RpcServiceType ForName(string name)
         {
-            return BaseEnum<RpcServiceType>.ForName(name);
+            var value = GetByName(name, false);
+            if (value == null)
+            {
+                throw new ArgumentException($"{typeof(RpcServiceType)} 枚举Name不存在 -> {name}");
+            }
+            return value as RpcServiceType;
         }
 
         public static RpcServiceType ForService(string service)
@@ -89,7 +100,7 @@ namespace TnyFramework.Net.Rpc
         protected static T Of(int id, AppType appType, string service, Action<T> builder = null)
         {
             return E(id, new T {
-                Service = service,
+                Group = service,
                 AppType = appType
             }, builder);
         }
@@ -99,7 +110,7 @@ namespace TnyFramework.Net.Rpc
         public new static IReadOnlyCollection<RpcServiceType> GetValues()
         {
             LoadAll();
-            return BaseEnum<RpcServiceType>.GetValues();
+            return SERVICES;
         }
     }
 

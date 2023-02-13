@@ -38,7 +38,7 @@ namespace TnyFramework.Net.Message
 
         public T GetHeader<T>(string key) where T : MessageHeader
         {
-            var value = GetHeader(key);
+            var value = Headers.Get(key);
             if (value is T header)
                 return header;
             return null;
@@ -96,6 +96,16 @@ namespace TnyFramework.Net.Message
         public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>
         {
             return GetHeader(key) != null;
+        }
+
+        public MessageHeader PutHeader(MessageHeader header)
+        {
+            return Headers.Put(header.Key, header);
+        }
+
+        public MessageHeader PutHeaderIfAbsent(MessageHeader header)
+        {
+            return Headers.PutIfAbsent(header.Key, header);
         }
 
         public T PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T>

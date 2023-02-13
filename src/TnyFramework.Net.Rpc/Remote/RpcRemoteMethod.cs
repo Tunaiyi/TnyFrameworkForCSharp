@@ -14,6 +14,7 @@ using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Net.Attributes;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Attributes;
@@ -26,7 +27,17 @@ namespace TnyFramework.Net.Rpc.Remote
         /// <summary>
         /// 服务类型
         /// </summary>
-        public IRpcServiceType ServiceType { get; }
+        public IMessagerType ServiceType { get; }
+
+        /// <summary>
+        /// 目标
+        /// </summary>
+        public RpcServiceType TargetServiceType { get; }
+
+        /// <summary>
+        /// 转发
+        /// </summary>
+        public RpcServiceType ForwardServiceType { get; }
 
         /// <summary>
         /// 是否通过代理调用
@@ -141,7 +152,11 @@ namespace TnyFramework.Net.Rpc.Remote
             ReturnType = options.Router;
             Forward = !rpcService.ForwardService.IsNullOrEmpty();
             Mode = profile.Mode;
-            ServiceType = RpcServiceType.ForService(rpcService.Service);
+            ServiceType = MessagerType.ForGroup(rpcService.Service);
+            if (Forward) {
+                TargetServiceType = RpcServiceType.ForService(rpcService.Service);
+                ForwardServiceType = RpcServiceType.ForService(rpcService.ForwardService);
+            }
             if (method.DeclaringType != null)
             {
                 Name = method.DeclaringType.Name + "." + method.Name;
@@ -225,7 +240,9 @@ namespace TnyFramework.Net.Rpc.Remote
 
         public RpcRemoteInvokeParams GetParams(IList<object> paramValues)
         {
-            var invokeParams = new RpcRemoteInvokeParams(MessageParamSize);
+            var invokeParams = new RpcRemoteInvokeParams(MessageParamSize) {
+                Forward = Forward
+            };
             for (var index = 0; index < paramValues.Count; index++)
             {
                 var desc = Parameters[index];
@@ -236,7 +253,7 @@ namespace TnyFramework.Net.Rpc.Remote
                 }
                 if (Forward)
                 {
-                    invokeParams.SetTo(ServiceType);
+                    invokeParams.SetTo(TargetServiceType);
                 }
                 if (desc.AttributeHolder.GetAttribute<RpcRouteParamAttribute>() != null)
                 {

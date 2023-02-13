@@ -56,7 +56,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         protected override async Task OnRun()
         {
-            rpcContext.Prepare(RpcInvocationContexts.RpcOperation(invokeContext.Name, rpcContext.NetMessage));
+            rpcContext.Invoke(RpcTransactionContext.RpcOperation(invokeContext.Name, rpcContext.NetMessage));
             // 调用逻辑业务
             await Invoke();
         }
@@ -175,6 +175,18 @@ namespace TnyFramework.Net.Command.Dispatcher
             return TASK_RESULT_INVOKER.TryAdd(type, fastInvoker) ? fastInvoker : TASK_RESULT_INVOKER[type];
         }
 
+        private void AfterInvoke(ITunnel tunnel, IMessage message, Exception cause)
+        {
+            var controller = invokeContext.Controller;
+            if (controller != null)
+            {
+                LOGGER.LogDebug("Controller [{}] 执行AfterPlugins", Name);
+                controller.AfterInvoke(tunnel, message, this.invokeContext);
+                LOGGER.LogDebug("Controller [{}] 处理Message完成!", Name);
+            }
+            this.FireDone(cause);
+        }
+
         // /// <summary>
         // /// 身份认证
         // /// </summary>
@@ -242,9 +254,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                 body = commandResult.Body;
             }
             // 执行调用后插件
-            LOGGER.LogDebug("Controller [{Name}] 执行AfterPlugins", Name);
-            controller.AfterInvoke(tunnel, message, invokeContext);
-            FireDone(cause);
+            AfterInvoke(tunnel, message, cause);
 
             MessageContent content = null;
             if (message.Mode == MessageMode.Request || (message.Mode == MessageMode.Push && body != null))

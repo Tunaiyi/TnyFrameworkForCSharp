@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
@@ -15,7 +16,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
-    public class RpcConsumerInvocationContext : RpcInvocationContext, IRpcConsumerContext
+    public class RpcExitInvocationContext : RpcTransactionContext, IRpcConsumerContext
     {
         private readonly MessageContent content;
 
@@ -23,7 +24,8 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private readonly IEndpoint endpoint;
 
-        public RpcConsumerInvocationContext(IEndpoint endpoint, MessageContent content, RpcMonitor rpcMonitor)
+        public RpcExitInvocationContext(IEndpoint endpoint, MessageContent content, bool async, RpcMonitor rpcMonitor)
+            : base(async)
         {
             this.endpoint = endpoint;
             this.content = content;
@@ -32,11 +34,18 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public override IMessageSubject MessageSubject => content;
 
-        public override RpcInvocationMode InvocationMode => RpcInvocationMode.Exit;
+        public override RpcTransactionMode Mode => RpcTransactionMode.Exit;
+
+        public override INetMessager Messager => endpoint;
+
+        public override bool Valid => true;
 
         public override IEndpoint GetEndpoint() => endpoint;
 
-        public override bool IsEmpty() => false;
+        public bool Invoke(string operationName)
+        {
+            return Prepare(operationName);
+        }
 
         public override bool Complete()
         {

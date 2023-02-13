@@ -17,21 +17,11 @@ namespace TnyFramework.Net.Rpc
     [JsonObject(MemberSerialization.OptIn)]
     public class RpcAccessIdentify : IRpcServicerPoint, IMessager
     {
-        private const long RPC_MAX_INDEX = 0xFF;
+        private const long RPC_SERVER_INDEX_SIZE = 10000;
 
-        private const long RPC_MAX_INDEX_MASK = 0xFF;
+        private const long RPC_SERVICE_ID_SIZE = 100000000000L;
 
-        private const long RPC_SERVER_ID_INDEX = 0x7FFFFFFF;
-
-        private const int RPC_SERVER_ID_INDEX_SHIFT_SIZE = 8;
-
-        private static readonly long RPC_SERVER_ID_INDEX_MASK = RPC_SERVER_ID_INDEX << RPC_SERVER_ID_INDEX_SHIFT_SIZE;
-
-        private const long RPC_MAX_SERVER_TYPE = 0x7FFFF;
-
-        private const int RPC_SERVICE_TYPE_MASK_SIZE = RPC_SERVER_ID_INDEX_SHIFT_SIZE + 32;
-
-        private static readonly long RPC_SERVICE_TYPE_MASK = RPC_MAX_SERVER_TYPE << RPC_SERVICE_TYPE_MASK_SIZE;
+        private const long RPC_SERVICE_TYPE_SIZE = RPC_SERVER_INDEX_SIZE * RPC_SERVICE_ID_SIZE;
 
         private long id;
 
@@ -66,29 +56,29 @@ namespace TnyFramework.Net.Rpc
 
         public static long FormatId(RpcServiceType serviceType, int serverId, int index)
         {
-            return ((long) serviceType.Id << RPC_SERVICE_TYPE_MASK_SIZE) | ((long) serverId << RPC_SERVER_ID_INDEX_SHIFT_SIZE) | (uint) index;
+            return serviceType.Id * RPC_SERVICE_TYPE_SIZE + serverId * RPC_SERVER_INDEX_SIZE + index;
         }
 
         private static int ParseIndex(long id)
         {
-            return (int) (id & RPC_MAX_INDEX_MASK);
+            return (int) (id % RPC_SERVER_INDEX_SIZE);
         }
 
         public static int ParseServerId(long id)
         {
-            return (int) ((id & RPC_SERVER_ID_INDEX_MASK) >> RPC_SERVER_ID_INDEX_SHIFT_SIZE);
+            return (int) (id % RPC_SERVICE_TYPE_SIZE / RPC_SERVER_INDEX_SIZE);
         }
 
         private static RpcServiceType ParseServiceType(long id)
         {
-            return RpcServiceType.ForId((int) ((id & RPC_SERVICE_TYPE_MASK) >> RPC_SERVICE_TYPE_MASK_SIZE));
+            return RpcServiceType.ForId((int) (id / RPC_SERVICE_TYPE_SIZE));
         }
 
         private void CheckIndex(int index)
         {
-            if (index > RPC_MAX_INDEX)
+            if (index >= RPC_SERVER_INDEX_SIZE)
             {
-                throw new IllegalArgumentException($"index {index} 必须 <= {RPC_MAX_INDEX}");
+                throw new IllegalArgumentException($"index {index} 必须 <= {RPC_SERVER_INDEX_SIZE}");
             }
         }
 
@@ -123,7 +113,7 @@ namespace TnyFramework.Net.Rpc
 
         public override string ToString()
         {
-            return $"{nameof(ServiceType)}: {ServiceType}, {nameof(ServerId)}: {ServerId}, {nameof(Id)}: {Id}";
+            return $"{nameof(ServiceType)}:{ServiceType},{nameof(ServerId)}:{ServerId},{nameof(Id)}:{Id}";
         }
     }
 

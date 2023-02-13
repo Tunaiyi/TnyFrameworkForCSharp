@@ -7,7 +7,9 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TnyFramework.Common.Attribute;
 
 namespace TnyFramework.Net.Message
@@ -15,6 +17,7 @@ namespace TnyFramework.Net.Message
 
     public abstract class AbstractNetMessage : INetMessage
     {
+
         private readonly INetMessageHead head;
 
         private readonly AttributesContext attributes = new AttributesContext();
@@ -114,6 +117,32 @@ namespace TnyFramework.Net.Message
                 return (T) body;
             }
             throw new InvalidCastException($"{body.GetType()} can not convert to {type}");
+        }
+
+        public override string ToString()
+        {
+            return $"[id={Id},mode={Mode},protocol={ProtocolId},to={ToMessage},date={new DateTime(Time):o},code={Code},body={Format(Body)}]";
+        }
+
+        private static string Format(object value)
+        {
+            switch (value)
+            {
+                case MessageParamList: return value.ToString();
+                case IList list:
+                    var values = new object[list.Count];
+                    for (var i = 0; i < values.Length; i++)
+                    {
+                        values[i] = list[i];
+                    }
+                    return $"[{string.Join(", ", values)}]";
+                case IDictionary dictionary:
+                    var kv = (from object key in dictionary.Keys select $"{key}={dictionary[key]}").ToList();
+                    return "{" + string.Join(", ", kv) + "}";
+                default:
+                    return value?.ToString();
+            }
+
         }
     }
 

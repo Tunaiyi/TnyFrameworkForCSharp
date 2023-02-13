@@ -39,13 +39,13 @@ namespace TnyFramework.Net.Message
 
         public int Count => paramList.Count;
 
-        public bool IsSynchronized => paramList.IsSynchronized;
+        public bool IsSynchronized => ((IList) paramList).IsSynchronized;
 
-        public object SyncRoot => paramList.SyncRoot;
+        public object SyncRoot => ((IList) paramList).SyncRoot;
 
         public int Add(object value)
         {
-            return paramList.Add(value);
+            return ((IList) paramList).Add(value);
         }
 
         public void Clear()
@@ -108,6 +108,16 @@ namespace TnyFramework.Net.Message
             }
             value = (T) param;
             return true;
+        }
+
+        public override string ToString()
+        {
+            var values = new object[paramList.Count];
+            for (var i = 0; i < values.Length; i++)
+            {
+                values[i] = paramList[i];
+            }
+            return $"[{string.Join(", ", values)}]";
         }
     }
 

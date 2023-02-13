@@ -31,6 +31,9 @@ namespace TnyFramework.Net.Rpc.Remote
 
         public object RouteValue { get; internal set; }
 
+        
+        public bool Forward { get; internal set; }
+        
         public IResultCode Code { get; internal set; } = ResultCode.SUCCESS;
 
         private readonly IDictionary<string, MessageHeader> headerMap = new Dictionary<string, MessageHeader>();
@@ -42,19 +45,21 @@ namespace TnyFramework.Net.Rpc.Remote
             Params = new object[size];
         }
 
-        public IList<MessageHeader> GetAllHeaders()
+        public IEnumerable<MessageHeader> GetAllHeaders()
         {
-            if (headerMap.ContainsKey(MessageHeaderConstants.RPC_FORWARD_HEADER_KEY))
-                return headerMap.Values.ToImmutableList();
-            if (To.IsNull() && !From.IsNull() && Receiver.IsNull() && Sender.IsNull())
-                return headerMap.Values.ToImmutableList();
+            if (!Forward) 
+                return headerMap.Values;
+            if (headerMap.ContainsKey(MessageHeaderConstants.RPC_FORWARD_HEADER_KEY)) 
+                return headerMap.Values;
+            if (!To.IsNotNull() && !From.IsNotNull() && !Receiver.IsNotNull() && !Sender.IsNotNull()) 
+                return headerMap.Values;
             var forwardHeader = new RpcForwardHeader()
                 .SetFrom(From)
                 .SetTo(To)
                 .SetSender(Sender)
                 .SetReceiver(Receiver);
-            headerMap.Add(forwardHeader.Key, forwardHeader);
-            return headerMap.Values.ToImmutableList();
+            headerMap.Put(forwardHeader.Key, forwardHeader);
+            return headerMap.Values;
         }
 
         internal void SetParams(int index, object value)

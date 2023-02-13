@@ -14,7 +14,7 @@ namespace TnyFramework.Net.Command.Auth
 
     public interface IMessagerAuthenticator
     {
-        void Authenticate(MessageDispatcherContext dispatcherContext, IRpcProviderContext rpcContext, Type type);
+        void Authenticate(MessageDispatcherContext dispatcherContext, IRpcEnterContext rpcContext, Type type);
     }
 
 }

@@ -124,7 +124,7 @@ namespace TnyFramework.Net.Transport
             endpoint = value;
         }
 
-        public bool Receive(IRpcProviderContext context)
+        public bool Receive(IRpcEnterContext context)
         {
             endpointLock.EnterReadLock();
             try

@@ -6,30 +6,14 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Threading.Tasks;
+using TnyFramework.Net.Message;
+using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
-    public class NoopCommand : ICommand
+    public interface IMessageReceiver : INetMessager, IReceiver
     {
-        public static ICommand Command { get; } = new NoopCommand();
-
-        private NoopCommand()
-        {
-        }
-
-        public Task Execute()
-        {
-            return Task.CompletedTask;
-        }
-
-        public bool IsDone()
-        {
-            return true;
-        }
-
-        public string Name => nameof(NoopCommand);
     }
 
 }

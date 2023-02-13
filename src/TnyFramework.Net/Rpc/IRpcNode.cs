@@ -6,6 +6,8 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using TnyFramework.Net.Base;
+
 namespace TnyFramework.Net.Rpc
 {
 
@@ -19,7 +21,7 @@ namespace TnyFramework.Net.Rpc
         /// <summary>
         /// 服务类型
         /// </summary>
-        IRpcServiceType ServiceType { get; }
+        IMessagerType ServiceType { get; }
     }
 
 }

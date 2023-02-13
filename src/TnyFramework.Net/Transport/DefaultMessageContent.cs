@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using TnyFramework.Common.Result;
@@ -19,8 +18,6 @@ namespace TnyFramework.Net.Transport
 
     public class DefaultMessageContent : RequestContent, IMessageWritableContext
     {
-        private readonly IDictionary<string, MessageHeader> headers = new Dictionary<string, MessageHeader>();
-
         public override IResultCode ResultCode { get; }
 
         public override int ProtocolId { get; }
@@ -35,12 +32,11 @@ namespace TnyFramework.Net.Transport
 
         public override object Body { get; protected set; }
 
-
         public override MessageContent WithHeader(MessageHeader header)
         {
             if (header == null)
                 return this;
-            headers.Add(header.Key, header);
+            PutHeader(header);
             return this;
         }
 
@@ -48,7 +44,7 @@ namespace TnyFramework.Net.Transport
         {
             var header = new TH();
             action?.Invoke(header);
-            headers.Add(header.Key, header);
+            PutHeader(header);
             return this;
         }
 
@@ -58,7 +54,7 @@ namespace TnyFramework.Net.Transport
             {
                 if (header == null)
                     continue;
-                headers.Add(header.Key, header);
+                PutHeader(header);
             }
             return this;
         }

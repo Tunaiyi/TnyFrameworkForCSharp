@@ -34,7 +34,7 @@ namespace TnyFramework.Net.Rpc.Auth
         {
             var serviceType = RpcServiceType.ForService(setting.ServiceName());
             var token = rpcAuthService.CreateToken(serviceType, id);
-            LOGGER.LogInformation("接受 << [{id}] 认证成功", id);
+            LOGGER.LogInformation("Rpc执行 << [{id}] 认证成功", id);
             return RpcResults.Success(token);
         }
 
@@ -42,7 +42,7 @@ namespace TnyFramework.Net.Rpc.Auth
         [AuthenticationRequired(typeof(RpcTokenValidator))]
         public void Authenticated([UserId] RpcAccessIdentify id)
         {
-            LOGGER.LogInformation("连接 >> [{id}] 认证完成", id);
+            LOGGER.LogInformation("Rpc响应 >> [{id}] 认证完成", id);
         }
     }
 

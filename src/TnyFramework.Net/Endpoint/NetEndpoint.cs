@@ -143,7 +143,7 @@ namespace TnyFramework.Net.Endpoint
 
         public MessageHandleFilter ReceiveFilter { get; set; }
 
-        public bool Receive(IRpcProviderContext rpcContext)
+        public bool Receive(IRpcEnterContext rpcContext)
         {
             RpcRejectReceiveException cause;
             var result = MessageHandleStrategy.Handle;

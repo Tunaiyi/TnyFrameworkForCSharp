@@ -90,7 +90,7 @@ namespace TnyFramework.Net.Rpc.Remote
                 service = rpcService.ForwardService;
             }
             var serviceType = RpcServiceType.ForService(service);
-            var remoteServicer = rpcInvokeNode.LoadOrCreate(serviceType);
+            var remoteServicer = rpcInvokeNode.LoadInvokeNodeSet(serviceType);
             var instance = new RpcRemoteInstance(rpcType, setting, remoteServicer);
 
             IDictionary<MethodInfo, IRpcRemoteInvoker> invokerMap = new Dictionary<MethodInfo, IRpcRemoteInvoker>();

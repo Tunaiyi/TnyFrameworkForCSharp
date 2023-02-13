@@ -30,16 +30,16 @@ namespace TnyFramework.Net.Command.Dispatcher
         string Name { get; }
     }
 
-    public abstract class BaseCommand : ICommand
+    public abstract class Command : ICommand
     {
         private bool done;
 
-        protected BaseCommand()
+        protected Command()
         {
             Name = GetType().Name;
         }
 
-        protected BaseCommand(string name)
+        protected Command(string name)
         {
             Name = name;
         }

@@ -24,7 +24,7 @@ namespace TnyFramework.Net.Command.Auth
             this.endpointKeeperManager = endpointKeeperManager;
         }
 
-        public void Authenticate(MessageDispatcherContext dispatcherContext, IRpcProviderContext context, Type type)
+        public void Authenticate(MessageDispatcherContext dispatcherContext, IRpcEnterContext context, Type type)
         {
             var tunnel = context.NetTunnel;
             var message = context.NetMessage;

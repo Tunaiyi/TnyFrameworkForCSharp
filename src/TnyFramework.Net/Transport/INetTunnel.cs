@@ -9,6 +9,7 @@
 using TnyFramework.Common.Event;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport.Event;
@@ -16,7 +17,7 @@ using TnyFramework.Net.Transport.Event;
 namespace TnyFramework.Net.Transport
 {
 
-    public interface INetTunnel : ITunnel, ITransport, IReceiver, ISender
+    public interface INetTunnel : ITunnel, ITransport, IMessageReceiver, IMessageSender
     {
         /// <summary>
         /// 访问 id

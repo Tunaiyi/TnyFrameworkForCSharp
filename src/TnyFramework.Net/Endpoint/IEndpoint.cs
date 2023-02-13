@@ -7,12 +7,13 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Coroutines.Async;
+using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Endpoint
 {
 
-    public interface IEndpoint : ICommunicator, IConnection, ISender, IAsyncExecutor
+    public interface IEndpoint : ICommunicator, IMessageSender, IAsyncExecutor
     {
         long Id { get; }
 

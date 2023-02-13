@@ -41,6 +41,11 @@ namespace TnyFramework.Common.Attribute
             throw new NotImplementedException();
         }
 
+        public T Load<T>(AttrKey<T> key, Func<T> supplier)
+        {
+            throw new NotImplementedException();
+        }
+
         public T Remove<T>(AttrKey<T> key)
         {
             throw new NotImplementedException();

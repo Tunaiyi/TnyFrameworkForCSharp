@@ -12,6 +12,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using TnyFramework.Common.Extensions;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.Endpoint;
 
 namespace TnyFramework.Net.Rpc
@@ -33,7 +34,7 @@ namespace TnyFramework.Net.Rpc
 
         public int NodeId => ServerId;
 
-        public IRpcServiceType ServiceType { get; }
+        public IMessagerType ServiceType => service.ServiceType;
 
         private void ReadLock() => rwLock.EnterReadLock();
 
@@ -46,7 +47,6 @@ namespace TnyFramework.Net.Rpc
         public RpcServiceNode(int serverId, RpcServiceSet service)
         {
             this.service = service;
-            ServiceType = service.ServiceType;
             ServerId = serverId;
         }
 

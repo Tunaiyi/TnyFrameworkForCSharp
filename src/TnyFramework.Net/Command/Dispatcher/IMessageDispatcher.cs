@@ -19,7 +19,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// </summary>
         /// <param name="rpcContext">rpc上下文</param>
         /// <returns>命令</returns>
-        ICommand Dispatch(IRpcProviderContext rpcContext);
+        ICommand Dispatch(IRpcEnterContext rpcContext);
 
         /// <summary>
         /// 判断是否可以分发
