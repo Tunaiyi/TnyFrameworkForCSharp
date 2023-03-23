@@ -123,7 +123,7 @@ namespace TnyFramework.Net.Endpoint
             monitor?.Put(messageId, source);
         }
 
-        private TaskResponseSource PollSource(IMessageSchema message)
+        private TaskResponseSource PollSource(IMessage message)
         {
             var monitor = sourceMonitor;
             if (monitor == null)
@@ -147,19 +147,11 @@ namespace TnyFramework.Net.Endpoint
         {
             RpcRejectReceiveException cause;
             var result = MessageHandleStrategy.Handle;
+            var message = rpcContext.NetMessage;
             try
             {
                 var filter = ReceiveFilter;
                 var rcTunnel = rpcContext.NetTunnel;
-                var message = rpcContext.NetMessage;
-                var source = PollSource(message);
-                if (source != null)
-                {
-                    CommandTaskBox.AsyncExec(() => {
-                        source.SetResult(message);
-                        return source.Task as Task;
-                    });
-                }
                 if (filter != null)
                 {
                     result = filter(this, message);
@@ -174,6 +166,16 @@ namespace TnyFramework.Net.Endpoint
                 LOGGER.LogError(e, "");
                 rpcContext.Complete(e);
                 throw new NetException(NetResultCode.SERVER_ERROR, e);
+            } finally
+            {
+                var source = PollSource(message);
+                if (source != null)
+                {
+                    CommandTaskBox.AsyncExec(() => {
+                        source.SetResult(message);
+                        return source.Task as Task;
+                    });
+                }
             }
             LOGGER.LogError(cause, "");
             rpcContext.Complete(cause);

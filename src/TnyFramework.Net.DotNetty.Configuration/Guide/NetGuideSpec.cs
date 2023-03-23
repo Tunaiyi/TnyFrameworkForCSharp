@@ -10,6 +10,7 @@ using System;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
+using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Transport;
@@ -87,6 +88,12 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         public TSpec ChannelMakerConfigure(Action<UnitSpec<IChannelMaker, INetGuideUnitContext>> action)
         {
             action(context.ChannelMakerSpec);
+            return Self();
+        }
+
+        public TSpec RpcMonitorConfigure(Action<UnitSpec<RpcMonitor, INetGuideUnitContext<TUserId>>> action)
+        {
+            action(context.RpcMonitorSpec);
             return Self();
         }
     }

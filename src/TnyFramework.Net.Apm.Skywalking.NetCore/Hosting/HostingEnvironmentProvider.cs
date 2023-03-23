@@ -6,15 +6,20 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
-using TnyFramework.Net.Message;
+using Microsoft.Extensions.Hosting;
+using SkyApm;
 
-namespace TnyFramework.Net.Command.Dispatcher.Monitor
+namespace TnyFramework.Net.Apm.Skywalking.NetCore.Hosting
 {
 
-    public interface IRpcMonitorAfterInvokeHandler : IRpcMonitorHandler
+    internal class HostingEnvironmentProvider : IEnvironmentProvider
     {
-        void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject result, Exception exception);
+        public string EnvironmentName { get; }
+
+        public HostingEnvironmentProvider(IHostEnvironment hostingEnvironment)
+        {
+            EnvironmentName = hostingEnvironment.EnvironmentName;
+        }
     }
 
 }

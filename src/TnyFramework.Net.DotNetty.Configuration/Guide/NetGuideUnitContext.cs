@@ -10,7 +10,6 @@ using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
-using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
@@ -45,9 +44,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         public UnitSpec<IMessageCodec, INetGuideUnitContext<TUserId>> MessageCodecSpec { get; }
 
         public UnitSpec<ICertificateFactory<TUserId>, INetGuideUnitContext<TUserId>> CertificateFactorySpec { get; }
-
-        
-        public UnitCollectionSpec<IRpcMonitorHandler, INetGuideUnitContext<TUserId>> RpcMonitorListenerSpecs { get; }
 
         public DataPacketV1ChannelMakerSpec ChannelMakerSpec { get; }
 
@@ -92,15 +88,13 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
             // ChannelMaker 
             ChannelMakerSpec = new DataPacketV1ChannelMakerSpec(UnitContainer);
-            
-            // RpcMonitorListener
-            RpcMonitorListenerSpecs = UnitCollectionSpec.Units<IRpcMonitorHandler, INetGuideUnitContext<TUserId>>();
+
 
         }
 
         private RpcMonitor DefaultRpcMonitor(INetGuideUnitContext<TUserId> context)
         {
-            return new RpcMonitor(RpcMonitorListenerSpecs.Load(context, UnitContainer));
+            return new RpcMonitor();
         }
 
         public void SetName(string name)

@@ -22,8 +22,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
     public abstract class RpcTransactionContext : AttributesContext, IRpcTransactionContext
     {
-        protected const int CLOSE = 0;
-        protected const int OPEN = 1;
+        private const int INIT = 0;
+        private const int OPEN = 1;
+        private const int CLOSE = 2;
 
         public static IRpcEnterContext CreateEnter(INetTunnel tunnel, INetMessage message, bool async = true)
         {
@@ -65,9 +66,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return $"error[{message.ProtocolId}@{message.Mode.Mark()}]";
         }
 
-        private int completed = CLOSE;
-
-        private int init = CLOSE;
+        private int status = INIT;
 
         protected RpcTransactionContext(bool async, IAttributes attributes = null) : base(attributes)
         {
@@ -82,7 +81,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public IAsyncExecutor Executor => GetEndpoint();
 
-        public bool Completed => completed == OPEN;
+        public bool Completed => status == CLOSE;
 
         public abstract IMessageSubject MessageSubject { get; }
 
@@ -100,7 +99,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         {
             if (!Valid)
                 return false;
-            if (init == OPEN)
+            if (status != INIT)
             {
                 return false;
             }
@@ -114,7 +113,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     OperationName = ErrorOperation(MessageSubject);
                 }
             }
-            if (Interlocked.CompareExchange(ref init, CLOSE, OPEN) != CLOSE)
+            if (Interlocked.CompareExchange(ref status, OPEN, INIT) != INIT)
                 return false;
             action?.Invoke();
             OnPrepare();
@@ -133,10 +132,13 @@ namespace TnyFramework.Net.Command.Dispatcher
         {
             if (!Valid)
                 return false;
-            if (Interlocked.CompareExchange(ref completed, CLOSE, OPEN) != CLOSE)
+            if (status == INIT)
+            {
+                Prepare(null);
+            }
+            if (Interlocked.CompareExchange(ref status, CLOSE, OPEN) != OPEN)
                 return false;
             Cause = error;
-            Prepare(null);
             return true;
         }
 

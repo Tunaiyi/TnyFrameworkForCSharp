@@ -7,26 +7,23 @@
 // See the Mulan PSL v2 for more details.
 
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Message.Extensions;
 
 namespace TnyFramework.Net.Transport
 {
 
     public static class RpcMessageAide
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger(nameof(RpcMessageAide));
-
         /// <summary>
-     /// 发送响应消息, 如果 code 为 Error, 则发送完后断开连接
-     /// </summary>
-     /// <param name="context">rpc上下文</param>
-     /// <param name="code">消息码</param>
-     /// <param name="body">消息体</param>
-     /// <return>发送回执l</return>
+        /// 发送响应消息, 如果 code 为 Error, 则发送完后断开连接
+        /// </summary>
+        /// <param name="context">rpc上下文</param>
+        /// <param name="code">消息码</param>
+        /// <param name="body">消息体</param>
+        /// <return>发送回执l</return>
         public static MessageContent ToMessage(IRpcEnterContext context, IResultCode code, object body)
         {
             var request = context.NetMessage;
@@ -34,12 +31,12 @@ namespace TnyFramework.Net.Transport
         }
 
         /// <summary>
-     /// 发送响应消息, 如果 code 为 Error, 则发送完后断开连接
-     /// </summary>
-     /// <param name="request">请求</param>
-     /// <param name="code">消息码</param>
-     /// <param name="body">消息体</param>
-     /// <return>发送回执l</return>
+        /// 发送响应消息, 如果 code 为 Error, 则发送完后断开连接
+        /// </summary>
+        /// <param name="request">请求</param>
+        /// <param name="code">消息码</param>
+        /// <param name="body">消息体</param>
+        /// <return>发送回执l</return>
         public static MessageContent ToMessage(IMessage request, IResultCode code, object body)
         {
             return request.Mode == MessageMode.Request ? Response(request, code, body) : Push(request, code, body);
@@ -54,15 +51,9 @@ namespace TnyFramework.Net.Transport
         /// <returns>发送回执</returns>>
         private static MessageContent Response(IMessage request, IResultCode code, object body)
         {
-            var toMessage = request.Id;
-            var idHeader = request.GetHeader(MessageHeaderConstants.RPC_ORIGINAL_MESSAGE_ID);
-            if (idHeader != null)
-            {
-                toMessage = idHeader.MessageId;
-            }
             var forwardHeader = request.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
             var backForward = CreateBackForwardHeader(forwardHeader);
-            return PutTransitiveHeaders(request, MessageContents.Respond(request, code, body, toMessage))
+            return PutTransitiveHeaders(request, MessageContents.Respond(request, code, body, request.GetOriginalId()))
                 .WithHeader(backForward);
             // Send(tunnel, context, backForward == null);
         }

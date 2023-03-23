@@ -21,6 +21,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
     public class RpcEnterInvocationContext : CompletableRpcTransactionContext, IRpcEnterContext
     {
+        private const int OPEN = 0;
+        private const int CLOSE = 1;
+        
         private readonly INetTunnel tunnel;
 
         private readonly RpcMonitor rpcMonitor;

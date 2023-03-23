@@ -6,15 +6,20 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
-using TnyFramework.Net.Message;
+using SkyApm.Utilities.DependencyInjection;
+using TnyFramework.DI.Extensions;
+using TnyFramework.Net.Apm.Skywalking.NetCore.Handler;
 
-namespace TnyFramework.Net.Command.Dispatcher.Monitor
+namespace TnyFramework.Net.Apm.Skywalking.NetCore.Extensions
 {
 
-    public interface IRpcMonitorAfterInvokeHandler : IRpcMonitorHandler
+    public static class NetSkyWalkingBuilderExtensions
     {
-        void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject result, Exception exception);
+        public static SkyApmExtensions AddTnyRpc(this SkyApmExtensions extensions)
+        {
+            extensions.Services.BindSingleton<SkywalkingRpcMonitorHandler>();
+            return extensions;
+        }
     }
 
 }

@@ -83,6 +83,22 @@ namespace TnyFramework.Net.Message
         {
             return self.ToString().ToLower();
         }
+
+        public static NetworkWay GetWay(this MessageMode self)
+        {
+            switch (self)
+            {
+                case MessageMode.Request:
+                case MessageMode.Response:
+                case MessageMode.Push:
+                    return NetworkWay.MESSAGE;
+                case MessageMode.Ping:
+                case MessageMode.Pong:
+                    return NetworkWay.HEARTBEAT;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(self), self, null);
+            }
+        }
     }
 
 }

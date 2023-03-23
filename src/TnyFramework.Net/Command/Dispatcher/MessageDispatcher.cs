@@ -56,10 +56,12 @@ namespace TnyFramework.Net.Command.Dispatcher
                 var handleContext = new RpcInvokeContext(controller, rpcContext, context.AppContext);
                 return new RpcInvokeCommand(context, handleContext, messagerAuthenticator);
             }
-            if (message.Mode != MessageMode.Request)
-                return new RpcNoopCommand(rpcContext);
-            LOGGER.LogWarning("{Mode} controller [{Name}] not exist", message.Mode, message.ProtocolId);
-            return new RpcRespondCommand(rpcContext, NetResultCode.SERVER_NO_SUCH_PROTOCOL, null);
+            if (message.Mode == MessageMode.Request)
+            {
+                LOGGER.LogWarning("{Mode} controller [{Name}] not exist", message.Mode, message.ProtocolId);
+                return new RpcRespondCommand(rpcContext, NetResultCode.SERVER_NO_SUCH_PROTOCOL, null);
+            }
+            return new RpcNoopCommand(rpcContext);
         }
 
         /// <summary>

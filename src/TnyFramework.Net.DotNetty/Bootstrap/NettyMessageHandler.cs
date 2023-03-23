@@ -86,8 +86,8 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                         if (tunnel != null)
                         {
                             var rpcContext = RpcTransactionContext.CreateEnter(tunnel, message);
-                            tunnel.Receive(rpcContext);
                             rpcMonitor.OnReceive(rpcContext);
+                            tunnel.Receive(rpcContext);
                         }
                     } catch (Exception ex)
                     {

@@ -6,15 +6,16 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
-using TnyFramework.Net.Message;
-
-namespace TnyFramework.Net.Command.Dispatcher.Monitor
+namespace TnyFramework.Net.Message.Extensions
 {
 
-    public interface IRpcMonitorAfterInvokeHandler : IRpcMonitorHandler
+    public static class MessageExtensions
     {
-        void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject result, Exception exception);
+        public static long GetOriginalId(this IMessage subject)
+        {
+            var idHeader = subject.GetHeader(MessageHeaderConstants.RPC_ORIGINAL_MESSAGE_ID);
+            return idHeader?.MessageId ?? subject.Id;
+        }
     }
 
 }

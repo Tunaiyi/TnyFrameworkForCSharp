@@ -6,8 +6,6 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Collections.Generic;
-
 namespace TnyFramework.Net.Message
 {
 
@@ -27,6 +25,11 @@ namespace TnyFramework.Net.Message
         /// 获取消息体
         /// </summary>
         object Body { get; }
+
+        // /// <summary>
+        // /// 获取真实原始响应消息 id
+        // /// </summary>
+        // long OriginalToMessage { get; }
 
         /// <summary>
         /// 获取消息体

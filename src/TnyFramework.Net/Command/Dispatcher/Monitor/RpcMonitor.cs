@@ -29,42 +29,49 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
         private readonly IList<IRpcMonitorSendHandler> sendHandlers = new List<IRpcMonitorSendHandler>();
         private readonly IList<IRpcMonitorTransferHandler> transferHandlers = new List<IRpcMonitorTransferHandler>();
 
-        public RpcMonitor(IList<IRpcMonitorHandler> listeners)
+        public RpcMonitor()
         {
-            foreach (var handler in listeners)
+        }
+
+        public RpcMonitor(IList<IRpcMonitorHandler> handlers)
+        {
+            AddHandlers(handlers);
+        }
+
+        public RpcMonitor AddHandler(IRpcMonitorHandler handler)
+        {
+            if (handler is IRpcMonitorBeforeInvokeHandler bih)
+                beforeInvokeHandlers.Add(bih);
+            if (handler is IRpcMonitorAfterInvokeHandler aih)
+                afterInvokeHandlers.Add(aih);
+            if (handler is IRpcMonitorReceiveHandler rh)
+                receiveHandlers.Add(rh);
+            if (handler is IRpcMonitorSendHandler sh)
+                sendHandlers.Add(sh);
+            if (handler is IRpcMonitorTransferHandler th)
+                transferHandlers.Add(th);
+            if (handler is IRpcMonitorResumeExecuteHandler reh)
+                resumeExecuteHandlers.Add(reh);
+            if (handler is IRpcMonitorSuspendExecuteHandler seh)
+                suspendExecuteHandlers.Add(seh);
+            return this;
+        }
+
+        public RpcMonitor AddHandlers(IEnumerable<IRpcMonitorHandler> handlers)
+        {
+            foreach (var handler in handlers)
             {
-                switch (handler)
-                {
-                    case IRpcMonitorBeforeInvokeHandler bih:
-                        beforeInvokeHandlers.Add(bih);
-                        break;
-                    case IRpcMonitorAfterInvokeHandler aih:
-                        afterInvokeHandlers.Add(aih);
-                        break;
-                    case IRpcMonitorReceiveHandler rh:
-                        receiveHandlers.Add(rh);
-                        break;
-                    case IRpcMonitorSendHandler sh:
-                        sendHandlers.Add(sh);
-                        break;
-                    case IRpcMonitorTransferHandler sh:
-                        transferHandlers.Add(sh);
-                        break;
-                    case IRpcMonitorResumeExecuteHandler reh:
-                        resumeExecuteHandlers.Add(reh);
-                        break;
-                    case IRpcMonitorSuspendExecuteHandler seh:
-                        suspendExecuteHandlers.Add(seh);
-                        break;
-                }
+                AddHandler(handler);
             }
+            return this;
+
         }
 
         public void OnReceive(IRpcEnterContext rpcContext)
         {
             var tunnel = rpcContext.NetTunnel;
             var message = rpcContext.NetMessage;
-            if (sendHandlers.Count > 0)
+            if (receiveHandlers.Count > 0)
             {
                 foreach (var handler in receiveHandlers)
                 {
@@ -97,7 +104,7 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
             }
         }
 
-        public void OnBeforeInvoke(IRpcContext rpcContext)
+        public void OnBeforeInvoke(IRpcTransactionContext rpcContext)
         {
             if (beforeInvokeHandlers.Count <= 0)
                 return;
@@ -113,7 +120,7 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
             }
         }
 
-        public void OnAfterInvoke(IRpcContext rpcContext, IMessageSubject result, Exception exception)
+        public void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject result, Exception exception)
         {
             if (afterInvokeHandlers.Count <= 0)
                 return;

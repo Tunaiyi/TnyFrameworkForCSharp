@@ -12,7 +12,7 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
     public interface IRpcMonitorBeforeInvokeHandler : IRpcMonitorHandler
     {
         
-        void OnBeforeInvoke(IRpcContext invokeContext);
+        void OnBeforeInvoke(IRpcTransactionContext rpcContext);
 
     }
 

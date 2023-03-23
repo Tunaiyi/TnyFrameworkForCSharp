@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command.Dispatcher;
+using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Bootstrap;
 
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
@@ -58,6 +59,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             if (registered)
                 return;
             var controllers = serviceProvider.GetServices<IController>();
+
             var dispatcher = serviceProvider.GetService<IMessageDispatcher>();
             if (dispatcher == null)
             {
@@ -66,6 +68,12 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             foreach (var controller in controllers)
             {
                 dispatcher.AddController(controller);
+            }
+            var handlers = serviceProvider.GetServices<IRpcMonitorHandler>().ToList();
+            var monitors = serviceProvider.GetServices<RpcMonitor>();
+            foreach (var monitor in monitors)
+            {
+                monitor.AddHandlers(handlers);
             }
             registered = true;
         }

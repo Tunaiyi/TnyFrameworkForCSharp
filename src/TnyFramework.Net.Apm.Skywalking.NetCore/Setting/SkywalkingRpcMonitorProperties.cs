@@ -6,15 +6,18 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
-using TnyFramework.Net.Message;
-
-namespace TnyFramework.Net.Command.Dispatcher.Monitor
+namespace TnyFramework.Net.Apm.Skywalking.NetCore.Setting
 {
 
-    public interface IRpcMonitorAfterInvokeHandler : IRpcMonitorHandler
+    public class SkywalkingRpcMonitorProperties
     {
-        void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject result, Exception exception);
+        public bool Enable { get; set; } = true;
+
+        public bool Disable => !Enable;
+
+        public bool EnableCollectArguments { get; set; } = true;
+
+        public int CollectArgumentsMaxLength { get; set; } = 125;
     }
 
 }

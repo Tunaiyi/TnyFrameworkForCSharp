@@ -48,11 +48,11 @@ namespace TnyFramework.Net.Base
 
         private readonly ILogger[] sendLoggers;
 
-        private static readonly Func<string, string, ILogger> MESSAGE_RECEIVE_LOGGER_NAME_FACTORY =
-            (service, mode) => LogFactory.Logger($"com.tny.game.net.message.receive.{service.ToLower()}.{mode.ToLower()}");
+        private static readonly Func<NetworkWay, string, string, ILogger> MESSAGE_RECEIVE_LOGGER_NAME_FACTORY =
+            (way, service, mode) => LogFactory.Logger($"com.tny.game.net.rpc.{way.Value}.receive.{service.ToLower()}.{mode.ToLower()}");
 
-        private static readonly Func<string, string, ILogger> MESSAGE_SEND_LOGGER_NAME_FACTORY =
-            (service, mode) => LogFactory.Logger($"com.tny.game.net.message.send.{service.ToLower()}.{mode.ToLower()}");
+        private static readonly Func<NetworkWay, string, string, ILogger> MESSAGE_SEND_LOGGER_NAME_FACTORY =
+            (way, service, mode) => LogFactory.Logger($"com.tny.game.net.roc.{way.Value}.send.{service.ToLower()}.{mode.ToLower()}");
 
         private static readonly ConcurrentDictionary<string, NetLoggerGroup> NET_LOGGER_GROUP_MAP =
             new ConcurrentDictionary<string, NetLoggerGroup>();
@@ -69,17 +69,19 @@ namespace TnyFramework.Net.Base
             return NET_LOGGER_GROUP_MAP.GetOrAdd($"Rpc:{userType}", logger);
         }
 
-        private NetLoggerGroup(string service, Func<string, string, ILogger> receiveLoggerFactory, Func<string, string, ILogger> sendLoggerFactory)
+        private NetLoggerGroup(string service,
+            Func<NetworkWay, string, string, ILogger> receiveLoggerFactory,
+            Func<NetworkWay, string, string, ILogger> sendLoggerFactory)
         {
             var enumSet = Enum.GetValues(typeof(MessageMode));
             receiveLoggers = new ILogger[enumSet.Length];
             sendLoggers = new ILogger[enumSet.Length];
             foreach (var value in enumSet)
             {
-                if (!(value is MessageMode mode))
+                if (value is not MessageMode mode)
                     continue;
-                receiveLoggers[mode.GetIndex()] = receiveLoggerFactory(service, $"{mode}");
-                sendLoggers[mode.GetIndex()] = sendLoggerFactory(service, $"{mode}");
+                receiveLoggers[mode.GetIndex()] = receiveLoggerFactory(mode.GetWay(), service, $"{mode}");
+                sendLoggers[mode.GetIndex()] = sendLoggerFactory(mode.GetWay(), service, $"{mode}");
             }
         }
 

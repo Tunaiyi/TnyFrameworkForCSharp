@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using System.Collections.Generic;
+using System.Linq;
 using ProtoBuf;
 using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.ProtobufNet.Attributes;
@@ -21,11 +22,16 @@ namespace TnyFramework.Net.Message
     public class RpcTracingHeader : MessageHeader<RpcTracingHeader>
     {
         [ProtoMember(1, IsPacked = true, OverwriteList = true)]
-        private Dictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
+        public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
 
         public override string Key => MessageHeaderConstants.RPC_TRACING_TYPE_PROTO_KEY;
 
         public override bool IsTransitive => true;
+
+        public override string ToString()
+        {
+            return $"{nameof(Attributes)}: [{string.Join(",", Attributes.Select(kv => kv.Key + "=" + kv.Value).ToArray())}]";
+        }
     }
 
 }
