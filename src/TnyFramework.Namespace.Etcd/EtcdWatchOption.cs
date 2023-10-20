@@ -11,7 +11,7 @@ namespace TnyFramework.Namespace.Etcd
 
     public class EtcdWatchOption
     {
-        public string EndKey { get; set; }
+        public string? EndKey { get; set; } = null;
 
         public long Revision { get; set; } = 0L;
 

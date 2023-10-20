@@ -68,7 +68,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player, savePlayer);
 
             playerNode = await explorer.Get(PLAYER_NODE_1_KEY, MINE_TYPE);
-            var getPlayer = playerNode.Value;
+            var getPlayer = playerNode?.Value;
             Assert.AreEqual(player, getPlayer);
         }
 
@@ -502,7 +502,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsNull(nameNode);
 
             nameNode = await explorer.Get(PLAYER_NODE_1_KEY, MINE_TYPE);
-            Assert.AreEqual(player1, nameNode.Value);
+            Assert.AreEqual(player1, nameNode?.Value);
 
             await explorer.Remove(PLAYER_NODE_1_KEY);
 
@@ -739,7 +739,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsNull(nameNode);
 
             nameNode = await explorer.Get(PLAYER_NODE_1_KEY, MINE_TYPE);
-            Assert.AreEqual(player1, nameNode.Value);
+            Assert.AreEqual(player1, nameNode?.Value);
 
             await explorer.Remove(PLAYER_NODE_1_KEY);
             nameNode = await explorer.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
@@ -1059,7 +1059,7 @@ namespace TnyFramework.Namespace.Etcd.Test
 
             await SaveToVersion(PLAYER_NODE_1_KEY, player1, 2);
             nameNode = await explorer.Get(PLAYER_NODE_1_KEY, MINE_TYPE);
-            var id = nameNode.Id;
+            var id = nameNode!.Id;
 
             nameNode = await explorer.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, MINE_TYPE);
             Assert.IsNull(nameNode);
@@ -1166,12 +1166,12 @@ namespace TnyFramework.Namespace.Etcd.Test
 
         private static async Task<NameNode<Player>> SaveToVersion(string path, Player player, int version)
         {
-            NameNode<Player> node = null;
+            NameNode<Player>? node = null;
             for (var i = 0; i < version; i++)
             {
                 node = await explorer.Save(path, MINE_TYPE, player);
             }
-            return node;
+            return node!;
         }
         
         
@@ -1204,9 +1204,9 @@ namespace TnyFramework.Namespace.Etcd.Test
 
     public class Player
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
-        public int Age { get; set; }
+        public int Age { get; set; } = 0;
 
         public Player()
         {
@@ -1223,7 +1223,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             return Name == other.Name && Age == other.Age;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

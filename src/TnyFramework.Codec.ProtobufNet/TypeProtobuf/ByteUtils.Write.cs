@@ -235,7 +235,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
 
         public static int WriteBytes(ArraySegment<byte> source, byte[] bytes, int index)
         {
-            return WriteBytes(source.Array, source.Offset, source.Count, bytes, index);
+            return source.Array != null ? WriteBytes(source.Array, source.Offset, source.Count, bytes, index) : 0;
         }
     }
 

@@ -28,7 +28,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         protected override IObjectCodec Create(Type type)
         {
             var makeGenericType = typeof(TypeProtobufObjectCodec<>).MakeGenericType(type);
-            return (IObjectCodec) Activator.CreateInstance(makeGenericType);
+            return (IObjectCodec) Activator.CreateInstance(makeGenericType)!;
         }
     }
 

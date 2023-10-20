@@ -15,12 +15,12 @@ namespace TnyFramework.Common.Extensions
 
     public static class DictionaryExtensions
     {
-        public static bool IsEmpty<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
+        public static bool IsEmpty<TKey, TValue>(this IDictionary<TKey, TValue>? dictionary)
         {
             return dictionary == null || dictionary.Count == 0;
         }
 
-        public static TValue Get<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+        public static TValue? Get<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
         {
             dictionary.TryGetValue(key, out var value);
             return value;
@@ -55,11 +55,11 @@ namespace TnyFramework.Common.Extensions
             }
         }
 
-        public static TValue Put<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value)
+        public static TValue? Put<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value) where TKey : notnull
         {
             if (dictionary is ConcurrentDictionary<TKey, TValue> conDic)
             {
-                return conDic.AddOrUpdate(key, value, (k, v) => value);
+                return conDic.AddOrUpdate(key, value, (_, _) => value);
             }
             if (dictionary.ContainsKey(key))
             {
@@ -71,31 +71,30 @@ namespace TnyFramework.Common.Extensions
             return default;
         }
 
-        public static TValue PutIfAbsent<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key,
-            TValue value)
+        public static TValue? PutIfAbsent<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue value) where TKey : notnull
         {
             if (dictionary is ConcurrentDictionary<TKey, TValue> conDic)
             {
                 return conDic.TryAdd(key, value) ? default : dictionary.Get(key);
             }
-            if (dictionary.ContainsKey(key))
+            if (dictionary.TryGetValue(key, out var absent))
             {
-                return dictionary[key];
+                return absent;
             }
             dictionary.Add(key, value);
             return default;
         }
 
-        public static TValue ComputeIfAbsent<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key,
-            Func<TKey, TValue> func)
+        public static TValue ComputeIfAbsent<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, Func<TKey, TValue> func)
+            where TKey : notnull
         {
             if (dictionary is ConcurrentDictionary<TKey, TValue> conDic)
             {
                 return conDic.GetOrAdd(key, func);
             }
-            if (dictionary.ContainsKey(key))
+            if (dictionary.TryGetValue(key, out var absent))
             {
-                return dictionary[key];
+                return absent;
             }
             var value = func(key);
             dictionary.Add(key, value);

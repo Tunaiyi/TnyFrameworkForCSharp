@@ -75,14 +75,14 @@ namespace TnyFramework.Common.Attribute
             return Name == other.Name;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return ReferenceEquals(this, obj) || obj is AttrKey<T> other && Equals(other);
         }
 
         public override int GetHashCode()
         {
-            return (Name != null ? Name.GetHashCode() : 0);
+            return Name.GetHashCode();
         }
     }
 

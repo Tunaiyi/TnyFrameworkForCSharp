@@ -13,7 +13,7 @@ namespace TnyFramework.Namespace
 {
 
     public delegate Task<NameNode<TValue>> Publishing<TValue>(
-        INamespaceExplorer explorer, string path, TValue value, ObjectMimeType<TValue> mineType, ILessee lessee);
+        INamespaceExplorer explorer, string path, TValue value, ObjectMimeType<TValue> mineType, ILessee? lessee);
 
     public interface IHashingPublisher<in TKey, TValue>
     {

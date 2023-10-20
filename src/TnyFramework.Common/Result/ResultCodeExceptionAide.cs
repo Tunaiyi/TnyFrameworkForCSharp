@@ -14,7 +14,7 @@ namespace TnyFramework.Common.Result
 
     public static class ResultCodeExceptionAide
     {
-        public static IResultCode CodeOf(Exception cause, IResultCode defaultCode = default)
+        public static IResultCode CodeOf(Exception cause, IResultCode defaultCode)
         {
             if (cause is ResultCodeException exception)
             {

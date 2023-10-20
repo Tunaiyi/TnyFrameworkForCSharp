@@ -25,7 +25,7 @@ namespace TnyFramework.Common.Assemblies
             return CheckAssignableFromGeneric(type, generic);
         }
 
-        private static bool CheckAssignableFromGeneric(Type type, Type generic, Func<Type, bool> tester = null)
+        private static bool CheckAssignableFromGeneric(Type type, Type generic, Func<Type, bool>? tester = null)
         {
             if (type == null)
                 throw new ArgumentNullException(nameof(type));

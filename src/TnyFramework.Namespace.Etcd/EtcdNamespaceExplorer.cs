@@ -41,7 +41,7 @@ namespace TnyFramework.Namespace.Etcd
         {
         }
 
-        public async Task<NameNode<TValue>> Get<TValue>(string path, ObjectMimeType<TValue> type)
+        public async Task<NameNode<TValue>?> Get<TValue>(string path, ObjectMimeType<TValue> type)
         {
             var response = await accessor.GetAsync(path);
             return response.Count == 0 ? null : DecodeKeyValue(response.Kvs, type);
@@ -50,10 +50,10 @@ namespace TnyFramework.Namespace.Etcd
         public async Task<IList<NameNode<TValue>>> FindAll<TValue>(string path, ObjectMimeType<TValue> type)
         {
             var response = await accessor.GetRangeAsync(path);
-            return response.Count == 0 ? null : DecodeAllKeyValues(response.Kvs, type);
+            return response.Count == 0 ? Array.Empty<NameNode<TValue>>() : DecodeAllKeyValues(response.Kvs, type);
         }
 
-        public async Task<List<NameNode<TValue>>> FindAll<TValue>(string from, string to, ObjectMimeType<TValue> type)
+        public async Task<IList<NameNode<TValue>>> FindAll<TValue>(string from, string to, ObjectMimeType<TValue> type)
         {
             var rangeEnd = EtcdClient.GetRangeEnd(to);
             var request = new RangeRequest {
@@ -61,7 +61,7 @@ namespace TnyFramework.Namespace.Etcd
                 RangeEnd = EndKey(rangeEnd)
             };
             var response = await accessor.GetAsync(request);
-            return response.Count == 0 ? null : DecodeAllKeyValues(response.Kvs, type);
+            return response.Count == 0 ? Array.Empty<NameNode<TValue>>() : DecodeAllKeyValues(response.Kvs, type);
         }
 
         public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, HashingOptions<TNode> options) where TNode : IShardingNode
@@ -69,7 +69,7 @@ namespace TnyFramework.Namespace.Etcd
             return NodeHashing(rootPath, null, options);
         }
 
-        public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, INodeHashingFactory factory, HashingOptions<TNode> options)
+        public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, INodeHashingFactory? factory, HashingOptions<TNode> options)
             where TNode : IShardingNode
         {
             if (rootPath.IsBlank())
@@ -102,7 +102,8 @@ namespace TnyFramework.Namespace.Etcd
         }
 
         public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
-            IHasher<IPartitionSlot<TNode>> nodeHasher, INodeHashingFactory factory, Action<HashingOptions<TNode>> custom) where TNode : IShardingNode
+            IHasher<IPartitionSlot<TNode>> nodeHasher, INodeHashingFactory? factory, Action<HashingOptions<TNode>>? custom)
+            where TNode : IShardingNode
         {
             var options = HashingOptions(maxSlotSize, keyHasher, nodeHasher);
             custom?.Invoke(options);
@@ -187,7 +188,7 @@ namespace TnyFramework.Namespace.Etcd
             return DoAdd(path, type, value, true);
         }
 
-        public Task<NameNode<TValue>> GetOrAdd<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee lessee)
+        public Task<NameNode<TValue>> GetOrAdd<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee? lessee)
         {
             return DoAdd(path, type, value, true, lessee);
         }
@@ -197,7 +198,7 @@ namespace TnyFramework.Namespace.Etcd
             return DoAdd(path, type, value, false);
         }
 
-        public Task<NameNode<TValue>> Add<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee lessee)
+        public Task<NameNode<TValue>> Add<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee? lessee)
         {
             return DoAdd(path, type, value, false, lessee);
         }
@@ -207,29 +208,29 @@ namespace TnyFramework.Namespace.Etcd
             return DoSave(path, type, value);
         }
 
-        public Task<NameNode<TValue>> Save<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee lessee)
+        public Task<NameNode<TValue>> Save<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee? lessee)
         {
             return DoSave(path, type, value, lessee);
         }
 
         public Task<NameNode<TValue>> Update<TValue>(string path, ObjectMimeType<TValue> type, TValue value)
         {
-            return DoUpdate(path, type, value, null, null, default, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoUpdate(path, type, value, null, null, default, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
-        public Task<NameNode<TValue>> Update<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee lessee)
+        public Task<NameNode<TValue>> Update<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee? lessee)
         {
-            return DoUpdate(path, type, value, lessee, null, default, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoUpdate(path, type, value, lessee, null, default, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
         public Task<NameNode<TValue>> UpdateIf<TValue>(string path, ObjectMimeType<TValue> type, TValue expect, TValue value)
         {
-            return DoUpdate(path, type, value, null, null, expect, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoUpdate(path, type, value, null, null, expect, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
-        public Task<NameNode<TValue>> UpdateIf<TValue>(string path, ObjectMimeType<TValue> type, TValue expect, TValue value, ILessee lessee)
+        public Task<NameNode<TValue>> UpdateIf<TValue>(string path, ObjectMimeType<TValue> type, TValue expect, TValue value, ILessee? lessee)
         {
-            return DoUpdate(path, type, value, lessee, null, expect, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoUpdate(path, type, value, lessee, null, expect, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
         public Task<NameNode<TValue>> UpdateIfVersion<TValue>(string path, long version, ObjectMimeType<TValue> type, TValue value)
@@ -237,7 +238,7 @@ namespace TnyFramework.Namespace.Etcd
             return DoUpdate(path, type, value, null, null, default, VersionCompare, version, RangeBorder.Close, version, RangeBorder.Close);
         }
 
-        public Task<NameNode<TValue>> UpdateIfVersion<TValue>(string path, long version, ObjectMimeType<TValue> type, TValue value, ILessee lessee)
+        public Task<NameNode<TValue>> UpdateIfVersion<TValue>(string path, long version, ObjectMimeType<TValue> type, TValue value, ILessee? lessee)
         {
             return DoUpdate(path, type, value, lessee, null, default, VersionCompare, version, RangeBorder.Close, version, RangeBorder.Close);
         }
@@ -252,7 +253,7 @@ namespace TnyFramework.Namespace.Etcd
         public Task<NameNode<TValue>> UpdateIfVersion<TValue>(string path, long minVersion, RangeBorder minBorder, long maxVersion,
             RangeBorder maxBorder,
             ObjectMimeType<TValue> type, TValue value,
-            ILessee lessee)
+            ILessee? lessee)
         {
             return DoUpdate(path, type, value, lessee, null, default, VersionCompare, minVersion, minBorder, maxVersion, maxBorder);
         }
@@ -262,7 +263,7 @@ namespace TnyFramework.Namespace.Etcd
             return DoUpdate(path, type, value, null, null, default, RevisionCompare, revision, RangeBorder.Close, revision, RangeBorder.Close);
         }
 
-        public Task<NameNode<TValue>> UpdateIfRevision<TValue>(string path, long revision, ObjectMimeType<TValue> type, TValue value, ILessee lessee)
+        public Task<NameNode<TValue>> UpdateIfRevision<TValue>(string path, long revision, ObjectMimeType<TValue> type, TValue value, ILessee? lessee)
         {
             return DoUpdate(path, type, value, lessee, null, default, RevisionCompare, revision, RangeBorder.Close, revision, RangeBorder.Close);
         }
@@ -276,30 +277,30 @@ namespace TnyFramework.Namespace.Etcd
 
         public Task<NameNode<TValue>> UpdateIfRevision<TValue>(string path, long minRevision, RangeBorder minBorder, long maxRevision,
             RangeBorder maxBorder, ObjectMimeType<TValue> type,
-            TValue value, ILessee lessee)
+            TValue value, ILessee? lessee)
         {
             return DoUpdate(path, type, value, lessee, null, default, RevisionCompare, minRevision, minBorder, maxRevision, maxBorder);
         }
 
         public Task<NameNode<TValue>> UpdateById<TValue>(string path, long id, ObjectMimeType<TValue> type, TValue value)
         {
-            return DoUpdate(path, type, value, null, id, default, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoUpdate(path, type, value, null, id, default, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
-        public Task<NameNode<TValue>> UpdateById<TValue>(string path, long id, ObjectMimeType<TValue> type, TValue value, ILessee lessee)
+        public Task<NameNode<TValue>> UpdateById<TValue>(string path, long id, ObjectMimeType<TValue> type, TValue value, ILessee? lessee)
         {
-            return DoUpdate(path, type, value, lessee, id, default, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoUpdate(path, type, value, lessee, id, default, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
         public Task<NameNode<TValue>> UpdateByIdAndIf<TValue>(string path, long id, ObjectMimeType<TValue> type, TValue expect, TValue value)
         {
-            return DoUpdate(path, type, value, null, id, expect, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoUpdate(path, type, value, null, id, expect, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
         public Task<NameNode<TValue>> UpdateByIdAndIf<TValue>(string path, long id, ObjectMimeType<TValue> type, TValue expect, TValue value,
-            ILessee lessee)
+            ILessee? lessee)
         {
-            return DoUpdate(path, type, value, lessee, id, expect, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoUpdate(path, type, value, lessee, id, expect, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
         public Task<NameNode<TValue>> UpdateByIdAndIfVersion<TValue>(string path, long id, long version, ObjectMimeType<TValue> type, TValue value)
@@ -308,7 +309,7 @@ namespace TnyFramework.Namespace.Etcd
         }
 
         public Task<NameNode<TValue>> UpdateByIdAndIfVersion<TValue>(string path, long id, long version, ObjectMimeType<TValue> type, TValue value,
-            ILessee lessee)
+            ILessee? lessee)
         {
             return DoUpdate(path, type, value, lessee, id, default, VersionCompare, version, RangeBorder.Close, version, RangeBorder.Close);
         }
@@ -320,7 +321,8 @@ namespace TnyFramework.Namespace.Etcd
         }
 
         public Task<NameNode<TValue>> UpdateByIdAndIfVersion<TValue>(string path, long id,
-            long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder, ObjectMimeType<TValue> type, TValue value, ILessee lessee)
+            long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder, ObjectMimeType<TValue> type, TValue value,
+            ILessee? lessee)
         {
             return DoUpdate(path, type, value, lessee, id, default, VersionCompare, minVersion, minBorder, maxVersion, maxBorder);
         }
@@ -332,7 +334,7 @@ namespace TnyFramework.Namespace.Etcd
         }
 
         public Task<NameNode<TValue>> UpdateByIdAndIfRevision<TValue>(string path, long id,
-            long revision, ObjectMimeType<TValue> type, TValue value, ILessee lessee)
+            long revision, ObjectMimeType<TValue> type, TValue value, ILessee? lessee)
         {
             return DoUpdate(path, type, value, lessee, id, default, RevisionCompare, revision, RangeBorder.Close, revision, RangeBorder.Close);
         }
@@ -345,7 +347,7 @@ namespace TnyFramework.Namespace.Etcd
 
         public Task<NameNode<TValue>> UpdateByIdAndIfRevision<TValue>(string path, long id,
             long minRevision, RangeBorder minBorder, long maxRevision, RangeBorder maxBorder, ObjectMimeType<TValue> type, TValue value,
-            ILessee lessee)
+            ILessee? lessee)
         {
             return DoUpdate(path, type, value, lessee, id, default, RevisionCompare, minRevision, minBorder, maxRevision, maxBorder);
         }
@@ -367,7 +369,7 @@ namespace TnyFramework.Namespace.Etcd
 
         public Task<NameNode<TValue>> RemoveAndGet<TValue>(string path, ObjectMimeType<TValue> type)
         {
-            return DoDelete(path, type, null, default, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoDelete(path, type, null, default, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
         public async Task<List<NameNode<TValue>>> RemoveAllAndGet<TValue>(string path, ObjectMimeType<TValue> type)
@@ -382,15 +384,16 @@ namespace TnyFramework.Namespace.Etcd
 
         public Task<NameNode<TValue>> RemoveIf<TValue>(string path, ObjectMimeType<TValue> type, TValue expect)
         {
-            return DoDelete(path, type, null, expect, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoDelete(path, type, null, expect, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
         public Task<NameNode<TValue>> RemoveIfVersion<TValue>(string path, long version, ObjectMimeType<TValue> type)
         {
-            return DoDelete(path, type, null, default, VersionCompare,version, RangeBorder.Close, version, RangeBorder.Close);
+            return DoDelete(path, type, null, default, VersionCompare, version, RangeBorder.Close, version, RangeBorder.Close);
         }
 
-        public Task<NameNode<TValue>> RemoveIfVersion<TValue>(string path, long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder,
+        public Task<NameNode<TValue>> RemoveIfVersion<TValue>(string path, long minVersion, RangeBorder minBorder, long maxVersion,
+            RangeBorder maxBorder,
             ObjectMimeType<TValue> type)
         {
             return DoDelete(path, type, null, default, VersionCompare, minVersion, minBorder, maxVersion, maxBorder);
@@ -398,22 +401,23 @@ namespace TnyFramework.Namespace.Etcd
 
         public Task<NameNode<TValue>> RemoveIfRevision<TValue>(string path, long revision, ObjectMimeType<TValue> type)
         {
-            return DoDelete(path, type, null, default, RevisionCompare,revision, RangeBorder.Close, revision, RangeBorder.Close);
+            return DoDelete(path, type, null, default, RevisionCompare, revision, RangeBorder.Close, revision, RangeBorder.Close);
         }
 
-        public Task<NameNode<TValue>> RemoveIfRevision<TValue>(string path, long minRevision, RangeBorder minBorder, long maxRevision, RangeBorder maxBorder, ObjectMimeType<TValue> type)
+        public Task<NameNode<TValue>> RemoveIfRevision<TValue>(string path, long minRevision, RangeBorder minBorder, long maxRevision,
+            RangeBorder maxBorder, ObjectMimeType<TValue> type)
         {
             return DoDelete(path, type, null, default, RevisionCompare, minRevision, minBorder, maxRevision, maxBorder);
         }
 
         public Task<NameNode<TValue>> RemoveById<TValue>(string path, long id, ObjectMimeType<TValue> type)
         {
-            return DoDelete(path, type, id, default, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoDelete(path, type, id, default, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
         public Task<NameNode<TValue>> RemoveByIdAndIf<TValue>(string path, long id, ObjectMimeType<TValue> type, TValue expect)
         {
-            return DoDelete(path, type, id, expect, null, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
+            return DoDelete(path, type, id, expect, null!, 0L, RangeBorder.Unlimited, 0L, RangeBorder.Unlimited);
         }
 
         public Task<NameNode<TValue>> RemoveByIdAndIfVersion<TValue>(string path, long id, long version, ObjectMimeType<TValue> type)
@@ -433,7 +437,8 @@ namespace TnyFramework.Namespace.Etcd
             return DoDelete(path, type, id, default, RevisionCompare, revision, RangeBorder.Close, revision, RangeBorder.Close);
         }
 
-        public Task<NameNode<TValue>> RemoveByIdAndIfRevision<TValue>(string path, long id, long minRevision, RangeBorder minBorder, long maxRevision, RangeBorder maxBorder,
+        public Task<NameNode<TValue>> RemoveByIdAndIfRevision<TValue>(string path, long id, long minRevision, RangeBorder minBorder, long maxRevision,
+            RangeBorder maxBorder,
             ObjectMimeType<TValue> type)
         {
             return DoDelete(path, type, id, default, RevisionCompare, minRevision, minBorder, maxRevision, maxBorder);
@@ -465,7 +470,7 @@ namespace TnyFramework.Namespace.Etcd
         }
 
         private async Task<NameNode<TValue>> DoAdd<TValue>(string path, ObjectMimeType<TValue> type, TValue value, bool loadIfExist,
-            ILessee lessee = null)
+            ILessee? lessee = null)
         {
             var response = await InTxn(txn => {
                 var key = Key(path);
@@ -483,7 +488,7 @@ namespace TnyFramework.Namespace.Etcd
             return DecodeGetRangeFirstKeyValue(type, response);
         }
 
-        private async Task<NameNode<TValue>> DoSave<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee lessee = null)
+        private async Task<NameNode<TValue>> DoSave<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee? lessee = null)
         {
             var key = Key(path);
             var valueBytes = Encode(value, type);
@@ -496,8 +501,8 @@ namespace TnyFramework.Namespace.Etcd
             return DecodeGetRangeFirstKeyValue(type, response);
         }
 
-        private async Task<NameNode<TValue>> DoUpdate<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee lessee, long? id,
-            TValue expect,
+        private async Task<NameNode<TValue>> DoUpdate<TValue>(
+            string path, ObjectMimeType<TValue> type, TValue value, ILessee? lessee, long? id, TValue? expect,
             Func<ByteString, long, Compare.Types.CompareResult, Compare> verCompare,
             long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder)
         {
@@ -514,7 +519,7 @@ namespace TnyFramework.Namespace.Etcd
             return DecodeGetRangeFirstKeyValue(type, response);
         }
 
-        private async Task<NameNode<TValue>> DoDelete<TValue>(string path, ObjectMimeType<TValue> type, long? id, TValue expect,
+        private async Task<NameNode<TValue>> DoDelete<TValue>(string path, ObjectMimeType<TValue> type, long? id, TValue? expect,
             Func<ByteString, long, Compare.Types.CompareResult, Compare> verCompare,
             long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder)
         {
@@ -527,7 +532,7 @@ namespace TnyFramework.Namespace.Etcd
             return DecodeDeletePrevFirstKeyValue(type, response);
         }
 
-        private static void CreateCompareList(ICollection<Compare> compares, long? id, ByteString expect, ByteString key,
+        private static void CreateCompareList(ICollection<Compare> compares, long? id, ByteString? expect, ByteString key,
             Func<ByteString, long, Compare.Types.CompareResult, Compare> verCompare,
             long minVersion, RangeBorder minBorder, long maxVersion, RangeBorder maxBorder)
         {
@@ -625,7 +630,7 @@ namespace TnyFramework.Namespace.Etcd
                     let response = txnToResponse(responseOp)
                     where response != null
                     select DecodeKeyValue(keyValueFunc(response), type))
-                .FirstOrDefault();
+                .FirstOrDefault()!;
         }
 
         private void HandLessee(ILessee source, Exception exception)

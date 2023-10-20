@@ -14,7 +14,7 @@ namespace TnyFramework.Common.Logger
 
     internal class WarpLogger : ILogger
     {
-        private volatile ILogger logger;
+        private volatile ILogger? logger;
 
         private readonly string name;
 
@@ -23,9 +23,24 @@ namespace TnyFramework.Common.Logger
             this.name = name;
         }
 
-        private ILogger Logger => logger ?? (logger = LogFactory.DefaultFactory.CreateLogger(name));
+        private ILogger Logger {
+            get {
+                if (logger != null)
+                {
+                    return logger;
+                }
+                lock (this)
+                {
+                    if (logger != null)
+                    {
+                        return logger;
+                    }
+                    return logger = LogFactory.DefaultFactory.CreateLogger(name);
+                }
+            }
+        }
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             Logger.Log(logLevel, eventId, state, exception, formatter);
         }
@@ -35,7 +50,7 @@ namespace TnyFramework.Common.Logger
             return Logger.IsEnabled(logLevel);
         }
 
-        public IDisposable BeginScope<TState>(TState state)
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
         {
             return Logger.BeginScope(state);
         }

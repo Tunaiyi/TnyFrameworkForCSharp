@@ -16,7 +16,7 @@ namespace TnyFramework.Common.Logger
 
     public static class LogFactory
     {
-        private static ILoggerFactory _DEFAULT_FACTORY;
+        private static ILoggerFactory? _DEFAULT_FACTORY;
 
         public static ILoggerFactory DefaultFactory {
             get {
@@ -24,7 +24,7 @@ namespace TnyFramework.Common.Logger
                 if (current != null)
                     return current;
                 current = CreateNoopFactory();
-                var old = Interlocked.CompareExchange(ref _DEFAULT_FACTORY, current, (ILoggerFactory) null);
+                var old = Interlocked.CompareExchange(ref _DEFAULT_FACTORY, current, null);
                 return old ?? current;
             }
             set => Write(ref _DEFAULT_FACTORY, value);
@@ -47,7 +47,7 @@ namespace TnyFramework.Common.Logger
         /// </summary>
         /// <param name="type">type where logger is used</param>
         /// <returns>logger instance</returns>
-        public static ILogger Logger(Type type) => Logger(type.FullName);
+        public static ILogger Logger(Type type) => Logger(type.FullName ?? "Default");
 
         /// <summary>
         ///     Creates a new logger instance with the specified name.

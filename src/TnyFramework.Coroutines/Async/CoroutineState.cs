@@ -17,7 +17,7 @@ namespace TnyFramework.Coroutines.Async
 
         public static CoroutineState<T> GoOn()
         {
-            return new CoroutineState<T>(default, true);
+            return new CoroutineState<T>(default!, true);
         }
 
         public static CoroutineState<T> Done(T result)

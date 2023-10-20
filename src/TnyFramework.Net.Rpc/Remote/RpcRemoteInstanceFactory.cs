@@ -84,7 +84,7 @@ namespace TnyFramework.Net.Rpc.Remote
         {
             var methods = RpcRemoteMethod.MethodsOf(rpcType);
             var rpcService = rpcType.GetCustomAttribute<RpcRemoteServiceAttribute>();
-            var service = rpcService.Service;
+            var service = rpcService!.Service;
             if (!rpcService.ForwardService.IsNullOrEmpty())
             {
                 service = rpcService.ForwardService;

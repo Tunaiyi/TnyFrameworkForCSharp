@@ -14,18 +14,17 @@ namespace TnyFramework.Common.Logger
 
     public class NoopLogger : ILogger
     {
-        public static readonly NoopLogger INSTANCE = new NoopLogger();
+        public static readonly NoopLogger INSTANCE = new();
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception, string> formatter)
         {
             if (!IsEnabled(logLevel))
                 return;
             if (formatter == null)
                 throw new ArgumentNullException(nameof(formatter));
-            var message = (object) formatter(state, exception) ?? state;
+            var message = (object) formatter(state, exception!);
             message = FormatMessage(logLevel, message);
-            if (message != null)
-                Console.WriteLine(message);
+            Console.WriteLine(message);
             if (exception != null)
                 Console.WriteLine(exception);
         }
@@ -40,9 +39,9 @@ namespace TnyFramework.Common.Logger
             return msg;
         }
 
-        public IDisposable BeginScope<TState>(TState state)
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull
         {
-            throw new NotImplementedException();
+            return null;
         }
     }
 

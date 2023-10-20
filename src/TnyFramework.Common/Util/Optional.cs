@@ -48,11 +48,11 @@ namespace TnyFramework.Common.Util
     {
         public static Optional<TValue> Empty => new Optional<TValue>();
 
-        private readonly TValue value;
+        private readonly TValue? value;
 
         private Optional()
         {
-            value = default;
+            value = default!;
         }
 
         internal Optional(TValue value)
@@ -155,12 +155,12 @@ namespace TnyFramework.Common.Util
             {
                 return this;
             }
-            return predicate(value) ? this : Empty;
+            return predicate(value!) ? this : Empty;
         }
 
         public Optional<TOther> Map<TOther>(Func<TValue, TOther> mapper)
         {
-            return !IsPresent() ? GetEmpty<TOther>() : OfNullable(mapper(value));
+            return !IsPresent() ? GetEmpty<TOther>() : OfNullable(mapper(value!));
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace TnyFramework.Common.Util
             {
                 return Optional<TOther>.Empty;
             }
-            var other = mapper(value);
+            var other = mapper(value!);
             if (other == null)
             {
                 throw new NullReferenceException("FlatMap value is null");
@@ -232,7 +232,7 @@ namespace TnyFramework.Common.Util
         /// @return the optional value as a {@code Stream}
         public IEnumerable<TValue> ToEnumerable()
         {
-            return !IsPresent() ? ImmutableList<TValue>.Empty : ImmutableList.Create(value);
+            return !IsPresent() ? ImmutableList<TValue>.Empty : ImmutableList.Create(value!);
         }
 
         /// <summary>
@@ -301,22 +301,21 @@ namespace TnyFramework.Common.Util
             throw exceptionSupplier();
         }
 
-        private bool Equals(Optional<TValue> other)
+        private bool Equals(Optional<TValue>? other)
         {
-            return EqualityComparer<TValue>.Default.Equals(value, other.value);
+            return EqualityComparer<TValue>.Default.Equals(value!, other!.value!);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Optional<TValue>) obj);
+            return obj.GetType() == GetType() && Equals((Optional<TValue>) obj);
         }
 
         public override int GetHashCode()
         {
-            return EqualityComparer<TValue>.Default.GetHashCode(value);
+            return EqualityComparer<TValue>.Default.GetHashCode(value!);
         }
 
         public override string ToString()

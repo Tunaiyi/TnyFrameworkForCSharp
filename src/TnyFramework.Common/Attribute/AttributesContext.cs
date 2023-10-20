@@ -11,13 +11,13 @@ namespace TnyFramework.Common.Attribute
 
     public class AttributesContext
     {
-        private volatile IAttributes attributes;
+        private volatile IAttributes? attributes;
 
         public AttributesContext()
         {
         }
 
-        public AttributesContext(IAttributes attributes = null)
+        public AttributesContext(IAttributes? attributes = null)
         {
             this.attributes = attributes;
         }

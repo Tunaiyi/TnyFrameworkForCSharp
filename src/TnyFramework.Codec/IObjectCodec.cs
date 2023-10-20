@@ -17,13 +17,13 @@ namespace TnyFramework.Codec
 
         void Encode(object value, Stream output);
 
-        object Decode(byte[] bytes);
+        object? Decode(byte[] bytes);
 
-        object Decode(Stream input);
+        object? Decode(Stream input);
 
-        string Format(object value);
+        string? Format(object value);
 
-        object Parse(string data);
+        object? Parse(string data);
     }
 
     public interface IObjectCodec<T> : IObjectCodec
@@ -32,13 +32,13 @@ namespace TnyFramework.Codec
 
         void Encode(T value, Stream output);
 
-        new T Decode(byte[] bytes);
+        new T? Decode(byte[] bytes);
 
-        new T Decode(Stream input);
+        new T? Decode(Stream input);
 
-        string Format(T value);
+        string? Format(T value);
 
-        new T Parse(string data);
+        new T? Parse(string data);
     }
 
 }

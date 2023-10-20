@@ -13,6 +13,8 @@ namespace TnyFramework.Codec
 
     public class ObjectMimeType
     {
+        protected IMimeType? mimeType;
+
         public static ObjectMimeType<T> Of<T>()
         {
             return new ObjectMimeType<T>(null);
@@ -23,22 +25,22 @@ namespace TnyFramework.Codec
             return new ObjectMimeType<T>(mimeType);
         }
 
-        public IMimeType MimeType { get; }
+        public IMimeType MimeType => mimeType!;
 
         public Type ObjectType { get; }
 
-        public ObjectMimeType(IMimeType mimeType, Type objectType)
+        public ObjectMimeType(IMimeType? mimeType, Type objectType)
         {
-            MimeType = mimeType;
+            this.mimeType = mimeType;
             ObjectType = objectType;
         }
     }
 
     public class ObjectMimeType<TObject> : ObjectMimeType
     {
-        public bool HasMimeType() => MimeType != null;
+        public bool HasMimeType() => mimeType != null;
 
-        internal ObjectMimeType(IMimeType mimeType) : base(mimeType, typeof(TObject))
+        internal ObjectMimeType(IMimeType? mimeType) : base(mimeType, typeof(TObject))
         {
         }
 

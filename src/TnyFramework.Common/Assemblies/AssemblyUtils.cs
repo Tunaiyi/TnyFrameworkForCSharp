@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using Castle.Core.Internal;
 using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Common.Assemblies
@@ -19,7 +18,7 @@ namespace TnyFramework.Common.Assemblies
 
     public static class AssemblyUtils
     {
-        private static volatile IList<Assembly> _ALL_ASSEMBLIES;
+        private static volatile IList<Assembly>? _ALL_ASSEMBLIES;
 
         public static IEnumerable<Assembly> AllAssemblies => _ALL_ASSEMBLIES ?? ImmutableList<Assembly>.Empty;
 
@@ -28,11 +27,11 @@ namespace TnyFramework.Common.Assemblies
             return LoadAllAssemblies(ab => startWiths.IsNullOrEmpty() || (
                 from assemblyFilter in startWiths
                 let name = ab.GetName()
-                where name.Name.StartsWith(assemblyFilter)
+                where name.Name!.StartsWith(assemblyFilter)
                 select assemblyFilter).Any());
         }
 
-        public static IList<Assembly> LoadAllAssemblies(Func<Assembly, bool> filter = null)
+        public static IList<Assembly> LoadAllAssemblies(Func<Assembly, bool>? filter = null)
         {
             if (_ALL_ASSEMBLIES != null)
             {
@@ -44,12 +43,11 @@ namespace TnyFramework.Common.Assemblies
                 {
                     return _ALL_ASSEMBLIES;
                 }
-                _ALL_ASSEMBLIES = LoadAllAssemblies(AppDomain.CurrentDomain.GetAssemblies(), filter);
+                return _ALL_ASSEMBLIES = LoadAllAssemblies(AppDomain.CurrentDomain.GetAssemblies(), filter);
             }
-            return _ALL_ASSEMBLIES;
         }
 
-        public static IList<Assembly> LoadAllAssemblies(IEnumerable<Assembly> assemblies, Func<Assembly, bool> filter = null)
+        public static IList<Assembly> LoadAllAssemblies(IEnumerable<Assembly> assemblies, Func<Assembly, bool>? filter = null)
         {
             var all = new HashSet<Assembly>();
             foreach (var root in assemblies)
@@ -59,7 +57,7 @@ namespace TnyFramework.Common.Assemblies
             return all.ToImmutableList();
         }
 
-        private static void DoLoadAllAssemblies(Assembly root, ICollection<Assembly> all, Func<Assembly, bool> filter)
+        private static void DoLoadAllAssemblies(Assembly root, ICollection<Assembly> all, Func<Assembly, bool>? filter)
         {
             foreach (var referencedAssembly in root.GetReferencedAssemblies())
             {
@@ -77,12 +75,12 @@ namespace TnyFramework.Common.Assemblies
             DoAddAssembly(root, all, filter);
         }
 
-        private static bool Filter(Assembly assembly, Func<Assembly, bool> filter)
+        private static bool Filter(Assembly assembly, Func<Assembly, bool>? filter)
         {
             return filter == null || filter.Invoke(assembly);
         }
 
-        private static void DoAddAssembly(Assembly assembly, ICollection<Assembly> all, Func<Assembly, bool> filter)
+        private static void DoAddAssembly(Assembly assembly, ICollection<Assembly> all, Func<Assembly, bool>? filter)
         {
             if (!Filter(assembly, filter))
             {

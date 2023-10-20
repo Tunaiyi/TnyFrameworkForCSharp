@@ -28,7 +28,7 @@ namespace TnyFramework.Common.Scanner
 
         private ConcurrentDictionary<Thread, ISet<Type>> mapClass = new ConcurrentDictionary<Thread, ISet<Type>>();
 
-        private ITypeSelectedHandler handler;
+        private ITypeSelectedHandler? handler;
 
         public static TypeSelector Create()
         {
@@ -70,7 +70,7 @@ namespace TnyFramework.Common.Scanner
             try
             {
                 var current = Thread.CurrentThread;
-                mapClass.GetOrAdd(current, thread => new HashSet<Type>())
+                mapClass.GetOrAdd(current, _ => new HashSet<Type>())
                     .Add(type);
                 return true;
             } catch (Exception e)
@@ -97,7 +97,7 @@ namespace TnyFramework.Common.Scanner
             }
             Types = classes.Distinct().ToImmutableList();
             mapClass.Clear();
-            mapClass = null;
+            mapClass = null!;
             handler?.Handle(Types);
         }
 

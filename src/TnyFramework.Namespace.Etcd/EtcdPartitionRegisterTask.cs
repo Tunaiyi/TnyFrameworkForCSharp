@@ -41,7 +41,7 @@ namespace TnyFramework.Namespace.Etcd
 
         private readonly EtcdNodeHashing<TNode> hashing;
 
-        private volatile TaskCompletionSource<ShardingPartition<TNode>> source;
+        private volatile TaskCompletionSource<ShardingPartition<TNode>>? source;
 
         internal EtcdPartitionRegisterTask(EtcdNodeHashing<TNode> hashing, PartitionSlot<TNode> partition, bool rehash)
         {
@@ -68,7 +68,7 @@ namespace TnyFramework.Namespace.Etcd
                 {
                     if (current != null)
                     {
-                        return await source.Task;
+                        return await current.Task;
                     }
                     current = new TaskCompletionSource<ShardingPartition<TNode>>();
                     current.SetCanceled();
@@ -80,12 +80,12 @@ namespace TnyFramework.Namespace.Etcd
                 }
                 sync = true;
                 var taskSource = source;
-                if (source == null)
+                if (taskSource == null)
                 {
                     source = new TaskCompletionSource<ShardingPartition<TNode>>();
-                    taskSource = new TaskCompletionSource<ShardingPartition<TNode>>();
+                    taskSource = source;
                 }
-                await DoRegister(source, false);
+                await DoRegister(taskSource, false);
                 return await taskSource.Task;
             });
         }
@@ -142,7 +142,7 @@ namespace TnyFramework.Namespace.Etcd
                             TryAgain(currentSource);
                         } else
                         {
-                            currentSource.SetResult(null);
+                            currentSource.SetResult(null!);
                         }
                         return;
                 }

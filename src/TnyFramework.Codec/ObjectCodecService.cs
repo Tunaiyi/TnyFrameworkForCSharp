@@ -70,17 +70,17 @@ namespace TnyFramework.Codec
 
         public T DecodeByBytes<T>(byte[] data)
         {
-            return objectCodecAdapter.DecodeByBytes<T>(data);
+            return objectCodecAdapter.DecodeByBytes<T>(data)!;
         }
 
         public T DecodeByBytes<T>(ObjectMimeType<T> mimeType, byte[] data)
         {
-            return objectCodecAdapter.DecodeByBytes(mimeType, data);
+            return objectCodecAdapter.DecodeByBytes(mimeType, data)!;
         }
 
         public T DecodeByBytes<T>(IMimeType mimeType, byte[] data)
         {
-            return objectCodecAdapter.DecodeByBytes<T>(mimeType, data);
+            return objectCodecAdapter.DecodeByBytes<T>(mimeType, data)!;
         }
     }
 

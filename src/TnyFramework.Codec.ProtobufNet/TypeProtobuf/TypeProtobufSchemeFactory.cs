@@ -103,7 +103,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
                 scheme = info;
                 return true;
             }
-            scheme = null;
+            scheme = null!;
             return false;
         }
     }

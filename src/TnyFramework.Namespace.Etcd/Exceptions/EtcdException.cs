@@ -33,7 +33,7 @@ namespace TnyFramework.Namespace.Etcd.Exceptions
             Code = code;
         }
 
-        public EtcdException(StatusCode code, string message, Exception innerException) : base(message, innerException)
+        public EtcdException(StatusCode code, string message, Exception? innerException) : base(message, innerException)
         {
             Code = code;
         }

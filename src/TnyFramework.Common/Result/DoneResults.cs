@@ -37,11 +37,20 @@ namespace TnyFramework.Common.Result
         /// <summary>
         /// 返回一个成功的结果, value 为 默认值
         /// </summary>
+        /// <returns></returns>
+        public static IDoneResult Success()
+        {
+            return new DoneResult<object>(ResultCode.SUCCESS, default!, "");
+        }
+
+        /// <summary>
+        /// 返回一个成功的结果, value 为 默认值
+        /// </summary>
         /// <typeparam name="TM"></typeparam>
         /// <returns></returns>
         public static IDoneResult<TM> Success<TM>()
         {
-            return new DoneResult<TM>(ResultCode.SUCCESS, default, null);
+            return new DoneResult<TM>(ResultCode.SUCCESS, default!, "");
         }
 
         /**
@@ -54,7 +63,7 @@ namespace TnyFramework.Common.Result
         {
             if (value == null)
                 throw new NullReferenceException();
-            return new DoneResult<TM>(ResultCode.SUCCESS, value, null);
+            return new DoneResult<TM>(ResultCode.SUCCESS, value, "");
         }
 
         /**
@@ -65,7 +74,7 @@ namespace TnyFramework.Common.Result
          */
         public static IDoneResult<TM> SuccessNullable<TM>(TM value)
         {
-            return new DoneResult<TM>(ResultCode.SUCCESS, value, null);
+            return new DoneResult<TM>(ResultCode.SUCCESS, value, "");
         }
 
         /**
@@ -87,9 +96,21 @@ namespace TnyFramework.Common.Result
          * @param code  结果码
          * @return 返回结果
          */
+        public static IDoneResult Done(IResultCode code)
+        {
+            return new DoneResult<object>(code, null!, null!);
+        }
+
+        /**
+         * 返回一个结果 可成功或失败, 由code决定
+         *
+         * @param value 结果值
+         * @param code  结果码
+         * @return 返回结果
+         */
         public static IDoneResult<TM> Done<TM>(IResultCode code, TM value)
         {
-            return new DoneResult<TM>(code, value, null);
+            return new DoneResult<TM>(code, value, null!);
         }
 
         /**
@@ -108,12 +129,26 @@ namespace TnyFramework.Common.Result
         /**
          * 返回结果
          *
-         * @param <M>
          * @return
          */
         public static IDoneResult<TM> Failure<TM>()
         {
-            return new DoneResult<TM>(ResultCode.FAILURE, default, null);
+            return new DoneResult<TM>(ResultCode.FAILURE, default!, null!);
+        }
+
+        /**
+         * 返回一个以code为结果码的失败结果, 并设置 message
+         *
+         * @param code 结果码
+         * @return 返回结果
+         */
+        public static IDoneResult Failure(IResultCode code, string message = "")
+        {
+            if (code.IsSuccess())
+            {
+                throw new IllegalArgumentException($"code [{code}] is success");
+            }
+            return new DoneResult<object>(code, default!, null!);
         }
 
         /**
@@ -128,7 +163,7 @@ namespace TnyFramework.Common.Result
             {
                 throw new IllegalArgumentException($"code [{code}] is success");
             }
-            return new DoneResult<TM>(code, default, null);
+            return new DoneResult<TM>(code, default!, null!);
         }
 
         /**
@@ -137,13 +172,13 @@ namespace TnyFramework.Common.Result
          * @param result 失败结果
          * @return 返回结果
          */
-        public static IDoneResult<TM> Failure<TM>(IDoneResult result, string message = null)
+        public static IDoneResult<TM> Failure<TM>(IDoneResult result, string? message = null)
         {
             if (result.IsSuccess())
             {
                 throw new IllegalArgumentException($"code [{result.Code}] is success");
             }
-            return message == null ? new DoneResult<TM>(result.Code, default, result.Message) : new DoneResult<TM>(result.Code, default, message);
+            return message == null ? new DoneResult<TM>(result.Code, default!, result.Message) : new DoneResult<TM>(result.Code, default!, message);
 
         }
 
@@ -164,7 +199,6 @@ namespace TnyFramework.Common.Result
          *
          * @param result 失败结果
          * @param mapper 返回值的mapper函数
-         * @param <M>    返回类型
          * @return DoneResults
          */
         public static IDoneResult<T> Map<TM, T>(this IDoneResult<TM> result, Func<IResultCode, TM, T> mapper)

@@ -14,7 +14,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Codec;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
+using TnyFramework.Common.Tasks;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Namespace.Exceptions;
 using TnyFramework.Namespace.Listener;
@@ -224,9 +226,9 @@ namespace TnyFramework.Namespace.Etcd
 
         private readonly EtcdHashingSubscriber<TValue> parent;
 
-        private readonly ShardingRange shardingRange;
+        private readonly ShardingRange? shardingRange;
 
-        private readonly TaskCompletionSource<object> watchTaskSource;
+        private readonly ITaskCompletionSource watchTaskSource;
 
         private readonly ICoroutine coroutine;
 
@@ -234,17 +236,17 @@ namespace TnyFramework.Namespace.Etcd
 
         private int retryTimes;
 
-        private List<INameNodesWatcher<TValue>> watchers;
+        private List<INameNodesWatcher<TValue>>? watchers;
 
-        internal RangeWatcher(EtcdHashingSubscriber<TValue> parent, ShardingRange shardingRange, ICoroutine coroutine)
+        internal RangeWatcher(EtcdHashingSubscriber<TValue> parent, ShardingRange? shardingRange, ICoroutine coroutine)
         {
             this.parent = parent;
             this.shardingRange = shardingRange;
             this.coroutine = coroutine;
-            watchTaskSource = new TaskCompletionSource<object>();
+            watchTaskSource = new NoneTaskCompletionSource();
         }
 
-        public Task WatchTask => watchTaskSource?.Task;
+        public Task WatchTask => watchTaskSource.Task;
 
         internal void Watch()
         {
@@ -300,7 +302,7 @@ namespace TnyFramework.Namespace.Etcd
                     {
                         await wTask;
                     }
-                    watchTaskSource.SetResult(null);
+                    watchTaskSource.SetResult();
                 } catch (Exception e)
                 {
                     LOGGER.LogError(e, "");
@@ -326,7 +328,7 @@ namespace TnyFramework.Namespace.Etcd
                             return;
                         }
                         var result = await watcher.Watch();
-                        if (result != null)
+                        if (result.IsNull())
                         {
                             retryTimes = 0;
                             success = true;
@@ -350,8 +352,8 @@ namespace TnyFramework.Namespace.Etcd
                     return Task.CompletedTask;
                 }
                 start = false;
-                watchers.ForEach(watcher => watcher.Unwatch());
-                watchers.Clear();
+                watchers?.ForEach(watcher => watcher.Unwatch());
+                watchers?.Clear();
                 return Task.CompletedTask;
             });
         }

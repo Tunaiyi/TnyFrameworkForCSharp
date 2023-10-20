@@ -26,7 +26,7 @@ namespace TnyFramework.Common.Exceptions
         {
         }
 
-        public CommonException(Exception innerException, string message) : base(message, innerException)
+        public CommonException(Exception? innerException, string message) : base(message, innerException)
         {
         }
     }

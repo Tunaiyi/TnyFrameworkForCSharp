@@ -32,7 +32,7 @@ namespace TnyFramework.Common.Enum
         private static readonly Dictionary<string, T> NAME_ENUM_MAP = new Dictionary<string, T>();
         private static readonly List<T> ENUMS = new List<T>();
 
-        private string name;
+        private string name = "";
         private int id = int.MinValue;
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace TnyFramework.Common.Enum
             }
         }
 
-        protected static TS E<TS>(int id, TS item, Action<TS> builder = null) where TS : T
+        protected static TS E<TS>(int id, TS item, Action<TS>? builder = null) where TS : T
         {
             item.Id = id;
             builder?.Invoke(item);
@@ -75,7 +75,7 @@ namespace TnyFramework.Common.Enum
             return item;
         }
 
-        protected static T E(int id, Action<T> builder = null)
+        protected static T E(int id, Action<T>? builder = null)
         {
             var item = new T {
                 Id = id,
@@ -101,7 +101,7 @@ namespace TnyFramework.Common.Enum
         /// <returns></returns>
         public static T ForId(int id)
         {
-            return GetById(id);
+            return GetById(id)!;
         }
 
         /// <summary>
@@ -111,7 +111,49 @@ namespace TnyFramework.Common.Enum
         /// <returns></returns>
         public static T ForName(string name)
         {
-            return GetByName(name);
+            return GetByName(name)!;
+        }
+
+        /// <summary>
+        /// 通过ID获得枚举
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static T? GetById(int id)
+        {
+            return GetById(id, false);
+        }
+
+        /// <summary>
+        /// 通过名称获得枚举
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public static T? GetByName(string name)
+        {
+            return GetByName(name, false);
+        }
+
+        /// <summary>
+        /// 通过ID获得枚举
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        public static T GetById(int id, T defaultValue)
+        {
+            return GetById(id, false) ?? defaultValue;
+        }
+
+        /// <summary>
+        /// 通过名称获得枚举
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
+        public static T GetByName(string name, T defaultValue)
+        {
+            return GetByName(name, false) ?? defaultValue;
         }
 
         /// <summary>
@@ -120,7 +162,7 @@ namespace TnyFramework.Common.Enum
         /// <param name="id"></param>
         /// <param name="throwOnNull"></param>
         /// <returns></returns>
-        protected static T GetById(int id, bool throwOnNull = true)
+        protected static T? GetById(int id, bool throwOnNull = true)
         {
             CheckAndUpdateNames();
             if (ID_ENUM_MAP.TryGetValue(id, out var result))
@@ -138,7 +180,7 @@ namespace TnyFramework.Common.Enum
         /// <param name="name"></param>
         /// <param name="throwOnNull"></param>
         /// <returns></returns>
-        protected static T GetByName(string name, bool throwOnNull = true)
+        protected static T? GetByName(string name, bool throwOnNull = true)
         {
             CheckAndUpdateNames();
             if (NAME_ENUM_MAP.TryGetValue(name, out var result))
@@ -209,7 +251,7 @@ namespace TnyFramework.Common.Enum
                 {
                     foreach (var field in fields)
                     {
-                        object item = null;
+                        object? item = null;
                         try
                         {
                             if (!type.IsAssignableFrom(field.FieldType) && !field.FieldType.IsAssignableFrom(type))
@@ -254,7 +296,7 @@ namespace TnyFramework.Common.Enum
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (!(obj is T baseEnum))
                 return false;
@@ -287,7 +329,7 @@ namespace TnyFramework.Common.Enum
         {
             if (type is T value)
                 return value;
-            return null;
+            return null!;
         }
     }
 

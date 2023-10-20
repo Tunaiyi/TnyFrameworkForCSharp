@@ -43,7 +43,7 @@ namespace TnyFramework.Common.Result
 
         public object GetValue()
         {
-            return Value;
+            return Value!;
         }
     }
 

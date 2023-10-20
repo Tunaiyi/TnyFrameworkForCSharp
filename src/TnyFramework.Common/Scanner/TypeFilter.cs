@@ -13,8 +13,8 @@ namespace TnyFramework.Common.Scanner
 
     public class TypeFilter : ITypeFilter
     {
-        private readonly Func<Type, bool> include;
-        private readonly Func<Type, bool> exclude;
+        private readonly Func<Type, bool>? include;
+        private readonly Func<Type, bool>? exclude;
 
         public static ITypeFilter Exclude(Func<Type, bool> tester)
         {
@@ -26,7 +26,7 @@ namespace TnyFramework.Common.Scanner
             return new TypeFilter(include: tester);
         }
 
-        internal TypeFilter(Func<Type, bool> include = null, Func<Type, bool> exclude = null)
+        internal TypeFilter(Func<Type, bool>? include = null, Func<Type, bool>? exclude = null)
         {
             this.include = include;
             this.exclude = exclude;

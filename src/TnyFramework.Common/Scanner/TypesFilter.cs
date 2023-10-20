@@ -9,7 +9,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Castle.Core.Internal;
 using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Common.Scanner
@@ -67,8 +66,8 @@ namespace TnyFramework.Common.Scanner
         public static ITypeFilter Of(IEnumerable<Type> includes, IEnumerable<Type> excludes)
         {
             return new TFilter {
-                includes = includes?.ToImmutableHashSet(),
-                excludes = excludes?.ToImmutableHashSet()
+                includes = includes.ToImmutableHashSet(),
+                excludes = excludes.ToImmutableHashSet()
             };
         }
 

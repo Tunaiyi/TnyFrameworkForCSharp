@@ -50,7 +50,7 @@ namespace TnyFramework.Common.Result
         /// </summary>
         public static readonly IResultCode FAILURE = Of(ResultConstants.FAILURE_CODE, "Failure");
 
-        private static IResultCode Of(int id, string message, ResultLevel level = ResultLevel.General, Action<ResultCode> builder = null)
+        private static IResultCode Of(int id, string message, ResultLevel level = ResultLevel.General, Action<ResultCode>? builder = null)
         {
             return E(id, it => {
                 it.Message = message;
@@ -67,7 +67,7 @@ namespace TnyFramework.Common.Result
         /// <summary>
         /// 错误描述 
         /// </summary>
-        public string Message { get; protected set; }
+        public string Message { get; protected set; } = "";
 
         /// <summary>
         /// 结果等级
@@ -101,7 +101,7 @@ namespace TnyFramework.Common.Result
 
     public abstract class ResultCode<T> : ResultCode where T : ResultCode<T>, new()
     {
-        protected static T Of(int id, string message, ResultLevel level = ResultLevel.General, Action<T> builder = null)
+        protected static T Of(int id, string message, ResultLevel level = ResultLevel.General, Action<T>? builder = null)
         {
             return E(id, new T {
                 Message = message,

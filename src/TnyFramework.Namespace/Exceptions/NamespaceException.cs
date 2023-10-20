@@ -26,7 +26,7 @@ namespace TnyFramework.Namespace.Exceptions
         {
         }
 
-        public NamespaceException(string message, Exception innerException) : base(message, innerException)
+        public NamespaceException(string message, Exception? innerException) : base(message, innerException)
         {
         }
     }

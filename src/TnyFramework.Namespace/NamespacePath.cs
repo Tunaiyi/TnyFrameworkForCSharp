@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
 using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Namespace
@@ -17,22 +18,22 @@ namespace TnyFramework.Namespace
 
         private const string EMPTY_NODE = "";
 
-        private static readonly NamespacePath ROOT = new NamespacePath();
+        private static readonly NamespacePath ROOT = new();
 
         public string Node { get; }
 
         public string Pathname { get; }
 
-        public NamespacePath Parent { get; }
+        public NamespacePath? Parent { get; }
 
-        public string ParentPathname => Parent?.Pathname;
+        public string ParentPathname => Parent?.Pathname!;
 
         public static NamespacePath Root()
         {
             return ROOT;
         }
 
-        public static NamespacePath Path(NamespacePath parent, string node)
+        public static NamespacePath Path(NamespacePath? parent, string node)
         {
             if (parent == null)
             {
@@ -48,7 +49,7 @@ namespace TnyFramework.Namespace
             Parent = null;
         }
 
-        private NamespacePath(NamespacePath parent, string node)
+        private NamespacePath(NamespacePath? parent, string node)
         {
             Node = node;
             Parent = parent;
@@ -63,6 +64,10 @@ namespace TnyFramework.Namespace
         public NamespacePath Contact(object node)
         {
             var nodeValue = node.ToString();
+            if (nodeValue == null)
+            {
+                throw new NullReferenceException();
+            }
             return Path(this, nodeValue);
         }
 

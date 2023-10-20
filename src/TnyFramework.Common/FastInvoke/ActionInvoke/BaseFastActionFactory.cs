@@ -19,7 +19,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
         : IFastActionFactory
         where TFastInvoker : BaseFastAction<TInvoker>, new()
     {
-        private readonly Type invokerType;
+        private readonly Type invokerType = null!;
 
         private readonly Type[] paramTypes;
 
@@ -99,7 +99,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
             {
                 case PropertyInfo property:
                     memberType = property.PropertyType;
-                    memberExpr = Expression.Property(property.GetMethod.IsStatic ? null : invokerExpr, property);
+                    memberExpr = Expression.Property(property.GetMethod!.IsStatic ? null : invokerExpr, property);
                     break;
                 case FieldInfo field:
                     memberType = field.FieldType;
@@ -110,7 +110,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
             }
             var valueExpr = Expression.Parameter(paramTypes[0], "value");
             var paramExprList = new List<ParameterExpression> {valueExpr};
-            Expression bodyExpr = null;
+            Expression? bodyExpr = null;
             if (memberType == paramTypes[0])
             {
                 bodyExpr = Expression.Assign(memberExpr, valueExpr);

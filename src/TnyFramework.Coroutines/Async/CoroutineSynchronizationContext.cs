@@ -46,9 +46,9 @@ namespace TnyFramework.Coroutines.Async
             this.coroutine = coroutine;
         }
 
-        private int Id => coroutine.Id;
-
-        private string Name => coroutine.Name;
+        // private int Id => coroutine.Id;
+        //
+        // private string Name => coroutine.Name;
 
         public override SynchronizationContext CreateCopy()
         {
@@ -65,12 +65,12 @@ namespace TnyFramework.Coroutines.Async
             coroutine.Tracked();
         }
 
-        public override void Post(SendOrPostCallback callback, object state)
+        public override void Post(SendOrPostCallback callback, object? state)
         {
             coroutine.AsyncExec(new CoroutineSynchronizationContextWork(callback, this, state));
         }
 
-        public override void Send(SendOrPostCallback callback, object state)
+        public override void Send(SendOrPostCallback callback, object? state)
         {
             if (coroutine.InThread)
             {
@@ -95,7 +95,7 @@ namespace TnyFramework.Coroutines.Async
 
         private readonly SendOrPostCallback callback;
 
-        private readonly object state;
+        private readonly object? state;
 
 #if NETSTANDARD2_1
         private readonly TaskCompletionSource<object> completion;
@@ -105,7 +105,7 @@ namespace TnyFramework.Coroutines.Async
 
         private readonly SynchronizationContext context;
 
-        public CoroutineSynchronizationContextWork(SendOrPostCallback callback, SynchronizationContext context, object state)
+        public CoroutineSynchronizationContextWork(SendOrPostCallback callback, SynchronizationContext context, object? state)
         {
             this.context = context;
             this.callback = callback;

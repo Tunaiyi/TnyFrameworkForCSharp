@@ -14,17 +14,17 @@ namespace TnyFramework.Codec
 
     public abstract class ObjectCodec<T> : IObjectCodec<T>
     {
-        public abstract byte[] Encode(T value);
+        public abstract byte[] Encode(T? value);
 
-        public abstract void Encode(T value, Stream output);
+        public abstract void Encode(T? value, Stream output);
 
-        public abstract T Decode(byte[] bytes);
+        public abstract T? Decode(byte[]? bytes);
 
-        public abstract T Decode(Stream input);
+        public abstract T? Decode(Stream input);
 
-        public abstract string Format(T value);
+        public abstract string? Format(T? value);
 
-        public abstract T Parse(string data);
+        public abstract T? Parse(string? data);
 
         public byte[] Encode(object value)
         {
@@ -48,17 +48,17 @@ namespace TnyFramework.Codec
             }
         }
 
-        object IObjectCodec.Decode(byte[] bytes)
+        object? IObjectCodec.Decode(byte[] bytes)
         {
             return Decode(bytes);
         }
 
-        object IObjectCodec.Decode(Stream input)
+        object? IObjectCodec.Decode(Stream input)
         {
             return Decode(input);
         }
 
-        public string Format(object value)
+        public string? Format(object value)
         {
             if (value is T data)
             {
@@ -69,7 +69,7 @@ namespace TnyFramework.Codec
             }
         }
 
-        object IObjectCodec.Parse(string data)
+        object? IObjectCodec.Parse(string data)
         {
             return Parse(data);
         }

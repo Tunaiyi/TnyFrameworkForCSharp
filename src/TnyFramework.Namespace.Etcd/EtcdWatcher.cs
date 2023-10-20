@@ -15,6 +15,7 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
+using TnyFramework.Common.Tasks;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Namespace.Etcd.Exceptions;
 using TnyFramework.Namespace.Etcd.Listener;
@@ -36,9 +37,9 @@ namespace TnyFramework.Namespace.Etcd
 
         private readonly EtcdWatchOption option;
 
-        private volatile TaskCompletionSource<object> watchSource;
+        private volatile ITaskCompletionSource? watchSource;
 
-        private volatile CancellationTokenSource watchCancel;
+        private volatile CancellationTokenSource? watchCancel;
 
         private volatile bool started;
 
@@ -134,7 +135,7 @@ namespace TnyFramework.Namespace.Etcd
                     var watchRequest = new WatchRequest {
                         CreateRequest = createRequest
                     };
-                    watchSource = new TaskCompletionSource<object>();
+                    watchSource = new NoneTaskCompletionSource();
                     watchCancel = new CancellationTokenSource();
                     var _ = client.Watch(watchRequest, HandleWatch, null, null, watchCancel.Token);
                     await watchSource.Task;
@@ -186,7 +187,7 @@ namespace TnyFramework.Namespace.Etcd
                     }
                     revision = Math.Max(revision, response.Header.Revision);
                     id = response.WatchId;
-                    watchSource.SetResult(null);
+                    watchSource?.SetResult();
                     watchEvent.Notify();
                 } else if (response.Canceled)
                 {
@@ -201,7 +202,7 @@ namespace TnyFramework.Namespace.Etcd
                             "etcdserver: mvcc: required revision is a future revision");
                     } else
                     {
-                        error = EtcdExceptionFactory.NewEtcdException(StatusCode.FailedPrecondition, reason);
+                        error = EtcdExceptionFactory.NewEtcdException(StatusCode.FailedPrecondition, reason ?? "");
                     }
                     HandleError(EtcdExceptionFactory.ToEtcdException(error), false);
                 } else if (IsProgressNotify(response))

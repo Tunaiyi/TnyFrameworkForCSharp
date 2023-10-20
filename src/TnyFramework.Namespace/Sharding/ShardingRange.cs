@@ -14,7 +14,7 @@ namespace TnyFramework.Namespace.Sharding
 
     public class ShardingRange
     {
-        private List<SlotRange> ranges;
+        private List<SlotRange>? ranges;
 
         public long FromSlot { get; }
 

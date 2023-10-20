@@ -23,7 +23,7 @@ namespace TnyFramework.Common.Attribute
             lock (this)
             {
                 if (!attributeMap.TryGetValue(key, out var value))
-                    return default;
+                    return default!;
                 return (T) value;
             }
         }
@@ -42,12 +42,12 @@ namespace TnyFramework.Common.Attribute
         public bool TryAdd<T>(AttrKey<T> key, T value)
         {
             CheckNotNull(key, "TryAdd Attributes key is null");
-            CheckNotNull(value, "TryAdd Attributes value is null");
+            CheckNotNull(value!, "TryAdd Attributes value is null");
             lock (this)
             {
                 if (attributeMap.ContainsKey(key))
                     return false;
-                attributeMap.Add(key, value);
+                attributeMap.Add(key, value!);
                 return true;
             }
         }
@@ -62,7 +62,7 @@ namespace TnyFramework.Common.Attribute
                     return false;
                 var value = supplier.Invoke();
                 CheckNotNull(value, "TryAdd Attributes supplier return value is null");
-                attributeMap[key] = value;
+                attributeMap[key] = value!;
                 return true;
             }
         }
@@ -77,7 +77,7 @@ namespace TnyFramework.Common.Attribute
                     return (T) exist;
                 var value = supplier.Invoke();
                 CheckNotNull(value, "TryAdd Attributes supplier return value is null");
-                attributeMap[key] = value;
+                attributeMap[key] = value!;
                 return value;
             }
         }
@@ -88,7 +88,7 @@ namespace TnyFramework.Common.Attribute
             lock (this)
             {
                 if (!attributeMap.TryGetValue(key, out var exist))
-                    return default;
+                    return default!;
                 attributeMap.Remove(key);
                 return (T) exist;
             }
@@ -100,7 +100,7 @@ namespace TnyFramework.Common.Attribute
             CheckNotNull(value, "Set Attributes supplier is null");
             lock (this)
             {
-                attributeMap[key] = value;
+                attributeMap[key] = value!;
             }
         }
 
@@ -170,7 +170,7 @@ namespace TnyFramework.Common.Attribute
             }
         }
 
-        private static void CheckNotNull(object value, string massage)
+        private static void CheckNotNull(object? value, string massage)
         {
             if (value == null)
             {

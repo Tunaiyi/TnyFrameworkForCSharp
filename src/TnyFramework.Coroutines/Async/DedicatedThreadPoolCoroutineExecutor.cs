@@ -8,7 +8,6 @@
 
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.ThreadPools;
@@ -24,33 +23,33 @@ namespace TnyFramework.Coroutines.Async
         private static readonly ILogger LOGGER = LogFactory.Logger<DedicatedThreadPoolCoroutineExecutor>();
 
         private static readonly Action<Exception> DEFAULT_EXCEPTION_HANDLER = exception => {
-            LOGGER.LogWarning(exception, "CoroutineExecutor[{TheadName}] execute exception", Thread.CurrentThread.Name);
+            LOGGER.LogWarning(exception, $"CoroutineExecutor[{Thread.CurrentThread.Name}] execute exception");
         };
 
         private readonly DedicatedThreadPool threadPool;
 
-        protected DedicatedThreadPoolCoroutineExecutor(string name)
+        protected DedicatedThreadPoolCoroutineExecutor(string? name)
             : this(Environment.ProcessorCount, name, null, ApartmentState.Unknown, DEFAULT_EXCEPTION_HANDLER)
         {
 
         }
 
-        public DedicatedThreadPoolCoroutineExecutor(int threads, string name, Action<Exception> exceptionHandler = null,
+        public DedicatedThreadPoolCoroutineExecutor(int threads, string? name, Action<Exception>? exceptionHandler = null!,
             int threadMaxStackSize = 0)
             : this(threads, name, null, ApartmentState.Unknown, exceptionHandler, threadMaxStackSize)
         {
 
         }
 
-        public DedicatedThreadPoolCoroutineExecutor(int threads, string name, TimeSpan? deadlockTimeout = null,
-            Action<Exception> exceptionHandler = null, int threadMaxStackSize = 0)
+        public DedicatedThreadPoolCoroutineExecutor(int threads, string? name, TimeSpan? deadlockTimeout = null,
+            Action<Exception>? exceptionHandler = null!, int threadMaxStackSize = 0)
             : this(threads, name, deadlockTimeout, ApartmentState.Unknown, exceptionHandler, threadMaxStackSize)
         {
 
         }
 
-        public DedicatedThreadPoolCoroutineExecutor(int threads, string name, TimeSpan? deadlockTimeout = null,
-            ApartmentState state = ApartmentState.Unknown, Action<Exception> exceptionHandler = null, int threadMaxStackSize = 0)
+        public DedicatedThreadPoolCoroutineExecutor(int threads, string? name, TimeSpan? deadlockTimeout = null,
+            ApartmentState state = ApartmentState.Unknown, Action<Exception>? exceptionHandler = null, int threadMaxStackSize = 0)
         {
             var setting = new DedicatedThreadPoolSettings(threads, name, deadlockTimeout, state, exceptionHandler, threadMaxStackSize);
             threadPool = new DedicatedThreadPool(setting);

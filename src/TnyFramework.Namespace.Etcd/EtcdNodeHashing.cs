@@ -73,14 +73,13 @@ namespace TnyFramework.Namespace.Etcd
         private readonly long ttl;
 
         // 租客
-        private volatile ILessee lessee;
+        private volatile ILessee? lessee;
 
         // 分区监控器
-        private volatile INameNodesWatcher<PartitionSlot<TNode>> partitionWatcher;
+        private volatile INameNodesWatcher<PartitionSlot<TNode>>? partitionWatcher;
 
         // 本地节点
-        private readonly ConcurrentDictionary<string, List<EtcdPartitionRegisterTask<TNode>>> nodePartitionTaskMap =
-            new ConcurrentDictionary<string, List<EtcdPartitionRegisterTask<TNode>>>();
+        private readonly ConcurrentDictionary<string, List<EtcdPartitionRegisterTask<TNode>>> nodePartitionTaskMap = new();
 
         // 状态
         private volatile int status = INIT;
@@ -104,13 +103,13 @@ namespace TnyFramework.Namespace.Etcd
 
         public abstract List<ShardingRange<TNode>> GetAllRanges();
 
-        public abstract IPartition<TNode> PrevPartition(long slot);
+        public abstract IPartition<TNode>? PrevPartition(long slot);
 
-        public abstract IPartition<TNode> NextPartition(long slot);
+        public abstract IPartition<TNode>? NextPartition(long slot);
 
         public abstract List<IPartition<TNode>> GetAllPartitions();
 
-        public abstract IPartition<TNode> Locate(string key);
+        public abstract IPartition<TNode>? Locate(string key);
 
         public abstract List<IPartition<TNode>> Locate(string key, int count);
 
@@ -213,7 +212,7 @@ namespace TnyFramework.Namespace.Etcd
                 DoShutdown();
                 foreach (var pair in nodePartitionTaskMap)
                 {
-                    pair.Value.ForEach(task => task?.Close());
+                    pair.Value.ForEach(task => _ = task.Close());
                 }
                 nodePartitionTaskMap.Clear();
                 if (lessee == null)
@@ -273,7 +272,7 @@ namespace TnyFramework.Namespace.Etcd
                 try
                 {
                     var partition = await task;
-                    if (partition != null)
+                    if (partition.IsNotNull())
                     {
                         successList.Add(partition);
                     }
@@ -319,10 +318,6 @@ namespace TnyFramework.Namespace.Etcd
                 return;
             }
             var result = await explorer.Lease(Name, ttl);
-            if (result == null)
-            {
-                return;
-            }
             lessee = result;
             lessee.LeaseEvent.Add(LesseeOnAction);
             lessee.CompletedEvent.Add(LesseeOnAction);
@@ -412,13 +407,13 @@ namespace TnyFramework.Namespace.Etcd
         internal async Task<int> RegisterPartition(EtcdPartitionRegisterTask<TNode> task)
         {
             var partition = task.Partition;
-            if (!lessee.IsLive())
+            if (lessee != null && !lessee.IsLive())
             {
                 return lessee.IsShutdown() ? EtcdPartitionRegisterTask.REGISTER_RESULT_CANCEL : EtcdPartitionRegisterTask.REGISTER_RESULT_RETRY;
             }
             var slotPath = NamespacePathNames.NodePath(Path, NumberFormatAide.AlignDigits(partition.Slot, MaxSlots));
             var result = await explorer.Add(PartitionPath(slotPath, partition), partitionMineType, partition, lessee);
-            return result != null ? EtcdPartitionRegisterTask.REGISTER_RESULT_SUCCESS : EtcdPartitionRegisterTask.REGISTER_RESULT_FAILED;
+            return result.IsNotNull() ? EtcdPartitionRegisterTask.REGISTER_RESULT_SUCCESS : EtcdPartitionRegisterTask.REGISTER_RESULT_FAILED;
         }
     }
 

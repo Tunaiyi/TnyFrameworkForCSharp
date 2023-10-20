@@ -26,7 +26,7 @@ namespace TnyFramework.Codec
     {
         private static readonly ConcurrentDictionary<string, MimeType> MIME_TYPE_MAP = new ConcurrentDictionary<string, MimeType>();
 
-        public string MetaType { get; protected set; }
+        public string MetaType { get; protected set; } = "";
 
         protected override void OnCheck()
         {
@@ -63,7 +63,7 @@ namespace TnyFramework.Codec
 
     public abstract class MimeType<T> : MimeType where T : MimeType<T>, new()
     {
-        protected static T Of(int id, string metaType, Action<T> builder = null)
+        protected static T Of(int id, string metaType, Action<T>? builder = null)
         {
             return E(id, new T {
                 MetaType = metaType

@@ -20,10 +20,10 @@ namespace TnyFramework.Namespace.Etcd
     internal class PartitionComparer<TNode> : IComparer<IPartition<TNode>>
         where TNode : IShardingNode
     {
-        public int Compare(IPartition<TNode> x, IPartition<TNode> y)
+        public int Compare(IPartition<TNode>? x, IPartition<TNode>? y)
         {
             var nodeKey = string.Compare(x?.NodeKey, y?.NodeKey, StringComparison.Ordinal);
-            return nodeKey != 0 ? nodeKey : x.Slot.CompareTo(y.Slot);
+            return nodeKey != 0 ? nodeKey : x!.Slot.CompareTo(y!.Slot);
         }
     };
 
@@ -35,7 +35,7 @@ namespace TnyFramework.Namespace.Etcd
 
         private readonly Dictionary<string, IPartition<TNode>> partitionMap = new Dictionary<string, IPartition<TNode>>();
 
-        private volatile List<ShardingRange<TNode>> ranges;
+        private volatile List<ShardingRange<TNode>>? ranges;
 
         private static readonly PartitionComparer<TNode> PARTITION_COMPARER = new PartitionComparer<TNode>();
 
@@ -145,21 +145,26 @@ namespace TnyFramework.Namespace.Etcd
             return partitions.Add(partition);
         }
 
-        private IPartition<TNode> DoRemovePartition(IPartition<TNode> partition)
+        private IPartition<TNode>? DoRemovePartition(IPartition<TNode> partition)
         {
             if (!partitionMap.TryGetValue(partition.Key, out var exist))
             {
-                return null;
+                return default;
             }
             partitionMap.Remove(partition.Key);
             GetPartitionSet(partition.Slot)?.Remove(exist);
             return exist;
         }
 
-        private SortedSet<IPartition<TNode>> GetPartitionSet(long slot)
+        private SortedSet<IPartition<TNode>>? GetPartitionSet(long slot)
         {
-            slotPartitionsMap.TryGetValue(slot, out var partitions);
-            return partitions;
+            if (slotPartitionsMap.TryGetValue(slot, out var partitions))
+            {
+                return partitions;
+            } else
+            {
+                return null;
+            }
         }
 
         private SortedSet<IPartition<TNode>> PartitionSet(long slot)
@@ -228,7 +233,6 @@ namespace TnyFramework.Namespace.Etcd
         public override List<ShardingRange<TNode>> GetAllRanges()
         {
             ReaderUpgradeableLock();
-            ;
             try
             {
                 var value = ranges;
@@ -259,12 +263,12 @@ namespace TnyFramework.Namespace.Etcd
 
         }
 
-        public override IPartition<TNode> PrevPartition(long slot)
+        public override IPartition<TNode>? PrevPartition(long slot)
         {
             return LocateBySlot(slot);
         }
 
-        public override IPartition<TNode> NextPartition(long slot)
+        public override IPartition<TNode>? NextPartition(long slot)
         {
             return LocateBySlot(slot);
         }
@@ -281,7 +285,7 @@ namespace TnyFramework.Namespace.Etcd
             }
         }
 
-        public override IPartition<TNode> Locate(string key)
+        public override IPartition<TNode>? Locate(string key)
         {
             return LocateBySlot(KeyHash(key));
         }
@@ -310,7 +314,7 @@ namespace TnyFramework.Namespace.Etcd
             }
         }
 
-        private IPartition<TNode> LocateBySlot(long slot)
+        private IPartition<TNode>? LocateBySlot(long slot)
         {
             ReaderLock();
             try

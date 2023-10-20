@@ -25,7 +25,7 @@ namespace TnyFramework.Common.Exceptions
         {
         }
 
-        public ResultCodeException(IResultCode code, Exception innerException, string message = "") :
+        public ResultCodeException(IResultCode code, Exception? innerException, string message = "") :
             base(innerException, message)
         {
             Code = code;

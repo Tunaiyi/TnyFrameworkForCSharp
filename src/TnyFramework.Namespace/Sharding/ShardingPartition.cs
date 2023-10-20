@@ -16,17 +16,13 @@ namespace TnyFramework.Namespace.Sharding
     {
         public string Key { get; set; }
 
-        public string NodeKey => Node?.Key;
+        public string NodeKey => Node.Key;
 
         public int Index { get; set; }
 
         public TNode Node { get; set; }
 
         public long Slot { get; set; }
-
-        protected ShardingPartition()
-        {
-        }
 
         protected ShardingPartition(int index, TNode node)
         {
@@ -67,7 +63,7 @@ namespace TnyFramework.Namespace.Sharding
             return Key == other.Key && Index == other.Index;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

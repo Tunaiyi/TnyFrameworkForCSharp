@@ -52,14 +52,14 @@ namespace TnyFramework.Namespace.Sharding
         /// </summary>
         /// <param name="slot">指定槽位</param>
         /// <returns>返回前一个分区</returns>
-        IPartition<TNode> PrevPartition(long slot);
+        IPartition<TNode>? PrevPartition(long slot);
 
         /// <summary>
         /// 获取指定槽位的后一个分区(不包含 slot 分区)
         /// </summary>
         /// <param name="slot">指定槽位</param>
         /// <returns>返回后一个分区</returns>
-        IPartition<TNode> NextPartition(long slot);
+        IPartition<TNode>? NextPartition(long slot);
 
         /// <summary>
         /// @return 获取所有分区
@@ -71,7 +71,7 @@ namespace TnyFramework.Namespace.Sharding
         /// </summary>
         /// <param name="key">定位的 key</param>
         /// <returns>返回节点</returns>
-        IPartition<TNode> Locate(string key);
+        IPartition<TNode>? Locate(string key);
 
         /// <summary>
         /// 更具 Key 定位返回指定数量的节点

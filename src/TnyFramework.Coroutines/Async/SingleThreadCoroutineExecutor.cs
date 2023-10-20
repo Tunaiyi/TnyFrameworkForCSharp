@@ -37,19 +37,19 @@ namespace TnyFramework.Coroutines.Async
         {
         }
 
-        public SingleThreadCoroutineExecutor(string name, Action<Exception> exceptionHandler = null, int threadMaxStackSize = 0)
+        public SingleThreadCoroutineExecutor(string name, Action<Exception>? exceptionHandler = null, int threadMaxStackSize = 0)
             : base(1, name, exceptionHandler, threadMaxStackSize)
         {
         }
 
         public SingleThreadCoroutineExecutor(string name, TimeSpan? deadlockTimeout = null,
-            Action<Exception> exceptionHandler = null, int threadMaxStackSize = 0)
+            Action<Exception>? exceptionHandler = null, int threadMaxStackSize = 0)
             : base(1, name, deadlockTimeout, exceptionHandler, threadMaxStackSize)
         {
         }
 
         public SingleThreadCoroutineExecutor(string name, TimeSpan? deadlockTimeout = null,
-            ApartmentState state = ApartmentState.Unknown, Action<Exception> exceptionHandler = null, int threadMaxStackSize = 0)
+            ApartmentState state = ApartmentState.Unknown, Action<Exception>? exceptionHandler = null, int threadMaxStackSize = 0)
             : base(1, name, deadlockTimeout, state, exceptionHandler, threadMaxStackSize)
         {
         }

@@ -18,12 +18,12 @@ namespace TnyFramework.Namespace.Sharding
 
         public static HashAlgorithmHasher<TValue> Hasher<TValue>(IHashAlgorithm algorithm)
         {
-            return Hasher<TValue>(o => o.ToString(), algorithm);
+            return Hasher<TValue>(o => o?.ToString()!, algorithm);
         }
 
         public static HashAlgorithmHasher<TValue> Hasher<TValue>(long maxSlots, IHashAlgorithm algorithm)
         {
-            return Hasher<TValue>(o => o.ToString(), maxSlots, algorithm);
+            return Hasher<TValue>(o => o?.ToString()!, maxSlots, algorithm);
         }
 
         public static HashAlgorithmHasher<TValue> Hasher<TValue>(Func<TValue, string> toKey, IHashAlgorithm algorithm)

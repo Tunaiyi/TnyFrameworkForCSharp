@@ -35,7 +35,7 @@ namespace TnyFramework.Common.Attribute
 
         IAttrKey IAttrPair.Key => Key;
 
-        object IAttrPair.Value => Value;
+        object IAttrPair.Value => Value!;
     }
 
 }

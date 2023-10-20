@@ -12,13 +12,13 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Castle.Core.Internal;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Assemblies;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Scanner.Attributes;
 using TnyFramework.Common.Scanner.Exceptions;
+using TnyFramework.Common.Tasks;
 
 namespace TnyFramework.Common.Scanner
 {
@@ -91,7 +91,7 @@ namespace TnyFramework.Common.Scanner
         private bool Filter(Assembly assembly, IEnumerable<string> assemblyNames)
         {
             var enumerable = assemblyNames as string[] ?? assemblyNames.ToArray();
-            return enumerable.IsNullOrEmpty() || enumerable.Any(name => assembly.GetName().Name.StartsWith(name));
+            return enumerable.IsNullOrEmpty() || enumerable.Any(name => assembly.GetName().Name!.StartsWith(name));
         }
 
         private void DoSelect(Type type)
@@ -132,14 +132,14 @@ namespace TnyFramework.Common.Scanner
         private async Task DoScan(IEnumerable<string> assemblyNames)
         {
             var names = assemblyNames as string[] ?? assemblyNames.ToArray();
-            var tasks = new List<TaskCompletionSource<object>>();
+            var tasks = new List<ITaskCompletionSource>();
             foreach (var assembly in AssemblyUtils.AllAssemblies)
             {
                 if (!Filter(assembly, names))
                 {
                     continue;
                 }
-                var source = new TaskCompletionSource<object>();
+                var source = new NoneTaskCompletionSource();
                 ThreadPool.QueueUserWorkItem(_ => {
                     try
                     {
@@ -147,7 +147,7 @@ namespace TnyFramework.Common.Scanner
                         {
                             DoSelect(type);
                         }
-                        source.SetResult(null);
+                        source.SetResult();
                     } catch (Exception e)
                     {
                         LOGGER.LogError(e, "扫描 {assembly} Assembly 异常", assembly);

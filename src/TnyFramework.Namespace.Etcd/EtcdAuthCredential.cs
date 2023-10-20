@@ -21,7 +21,7 @@ namespace TnyFramework.Namespace.Etcd
 
         private readonly EtcdConfig config;
 
-        private volatile Metadata.Entry tokenEntry;
+        private volatile Metadata.Entry? tokenEntry;
 
         public bool NeedAuthenticate { get; }
 
@@ -32,7 +32,7 @@ namespace TnyFramework.Namespace.Etcd
             NeedAuthenticate = config.User.IsNotBlank() && config.Password.IsNotBlank();
         }
 
-        public async Task<Metadata.Entry> ApplyToken()
+        public async Task<Metadata.Entry?> ApplyToken()
         {
             if (!NeedAuthenticate)
             {

@@ -71,7 +71,7 @@ namespace TnyFramework.Namespace.Etcd
     {
         private readonly string key;
 
-        private readonly string endKey;
+        private readonly string? endKey;
 
         private readonly ICoroutine coroutine;
 
@@ -85,7 +85,7 @@ namespace TnyFramework.Namespace.Etcd
 
         private readonly IEventBus<OnNodeDelete<TValue>> deleteEvent = EventBuses.Create<OnNodeDelete<TValue>>();
 
-        private IEtcdWatcher watcher;
+        private IEtcdWatcher? watcher;
 
         public EtcdNameNodesWatcher(string watchPath, bool match, EtcdAccessor client, ObjectMimeType<TValue> valueType,
             ObjectCodecAdapter objectCodecAdapter)
@@ -94,7 +94,7 @@ namespace TnyFramework.Namespace.Etcd
             coroutine = DefaultCoroutineFactory.Default.Create("EtcdNameNodeWatcher");
         }
 
-        public EtcdNameNodesWatcher(string watchPath, string endPath, bool match, EtcdAccessor accessor, ObjectMimeType<TValue> valueType,
+        public EtcdNameNodesWatcher(string watchPath, string? endPath, bool match, EtcdAccessor accessor, ObjectMimeType<TValue> valueType,
             ObjectCodecAdapter objectCodecAdapter)
             : base(watchPath, match, accessor, objectCodecAdapter)
         {

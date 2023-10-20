@@ -24,7 +24,7 @@ namespace TnyFramework.Net.Rpc.Remote
 
     public interface IRpcRemoteInvoker
     {
-        object Invoke(object[] arguments);
+        object? Invoke(object[] arguments);
     }
 
     public class RpcRemoteInvoker : IRpcRemoteInvoker
@@ -54,12 +54,12 @@ namespace TnyFramework.Net.Rpc.Remote
         /// <summary>
         /// 异步调用 CompleteSource 生成器
         /// </summary>
-        private readonly Func<IRpcCompleteSource> completeSourceFactory;
+        private readonly Func<IRpcCompleteSource>? completeSourceFactory;
 
         /// <summary>
         /// 异步调用 CompleteSource 生成器
         /// </summary>
-        private readonly Func<IMessage, object> returnValueFormatter;
+        private readonly Func<IMessage, object>? returnValueFormatter;
 
         /// <summary>
         /// 监视器
@@ -77,10 +77,10 @@ namespace TnyFramework.Net.Rpc.Remote
                 return;
             returnValueFormatter = CreateMessageToReturnValue(); // 创建 Message转返回值转化器
             var sourceFactory = RpcInvokerFastInvokers.SourceFactory(method.BodyType); // 创建RpcCompleteSource构造调用器
-            completeSourceFactory = () => (IRpcCompleteSource) sourceFactory.Invoke(null, returnValueFormatter);
+            completeSourceFactory = () => (IRpcCompleteSource) sourceFactory.Invoke(null!, returnValueFormatter);
         }
 
-        public object Invoke(params object[] parameters)
+        public object? Invoke(params object[] parameters)
         {
             try
             {
@@ -230,7 +230,7 @@ namespace TnyFramework.Net.Rpc.Remote
             }
         }
 
-        private object HandleRequestException(Exception e)
+        private object? HandleRequestException(Exception e)
         {
             if (method.Silently)
             {

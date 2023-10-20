@@ -19,9 +19,9 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
 
         public Type Type { get; }
 
-        private readonly Func<object> creator;
+        private readonly Func<object>? creator;
 
-        public TypeProtobufScheme(int id, Type type, Func<object> creator = null)
+        public TypeProtobufScheme(int id, Type type, Func<object>? creator = null)
         {
             Id = id;
             Type = type;
@@ -36,7 +36,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
                 }
                 var invoker = FastFuncFactory.Invoker(constructor) ??
                               throw new ArgumentNullException($"{type} 创建 FastFuncFactory.Invoker(constructor) 失败");
-                this.creator = () => invoker.Invoke(null);
+                this.creator = () => invoker.Invoke(null!);
             } else
             {
                 this.creator = creator;
@@ -45,7 +45,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
 
         public object Create()
         {
-            return creator();
+            return creator?.Invoke()!;
         }
 
         private bool Equals(TypeProtobufScheme other)
@@ -53,7 +53,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return Id == other.Id && Type == other.Type;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -65,7 +65,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         {
             unchecked
             {
-                return (Id * 397) ^ (Type != null ? Type.GetHashCode() : 0);
+                return (Id * 397) ^ Type.GetHashCode();
             }
         }
     }

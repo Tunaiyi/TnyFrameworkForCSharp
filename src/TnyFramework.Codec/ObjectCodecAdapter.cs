@@ -96,7 +96,7 @@ namespace TnyFramework.Codec
                 return codec.Encode(value);
             } catch (Exception e)
             {
-                throw new ObjectCodecException($"encode {value.GetType()} to default format {codec} exception", e);
+                throw new ObjectCodecException($"encode {value?.GetType()} to default format {codec} exception", e);
             }
         }
 
@@ -112,18 +112,18 @@ namespace TnyFramework.Codec
             }
         }
 
-        public T DecodeByBytes<T>(byte[] data)
+        public T? DecodeByBytes<T>(byte[] data)
         {
             var codec = Codec<T>();
             try
             {
                 var value = codec.Decode(data);
-                if (value.IsNull())
+                if (value == null)
                 {
                     return default;
                 }
                 return value switch {
-                    { } => value,
+                    not null => value,
                     _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
                 };
             } catch (IOException e)
@@ -132,18 +132,18 @@ namespace TnyFramework.Codec
             }
         }
 
-        public T DecodeByBytes<T>(ObjectMimeType<T> mimeType, byte[] data)
+        public T? DecodeByBytes<T>(ObjectMimeType<T> mimeType, byte[] data)
         {
             var codec = Codec(mimeType);
             try
             {
                 var value = codec.Decode(data);
-                if (value.IsNull())
+                if (value == null)
                 {
                     return default;
                 }
                 return value switch {
-                    { } => value,
+                    not null => value,
                     _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
                 };
             } catch (IOException e)
@@ -152,13 +152,13 @@ namespace TnyFramework.Codec
             }
         }
 
-        public T DecodeByBytes<T>(IMimeType mimeType, byte[] data)
+        public T? DecodeByBytes<T>(IMimeType mimeType, byte[] data)
         {
             var codec = Codec<T>(mimeType);
             try
             {
                 var value = codec.Decode(data);
-                if (value.IsNull())
+                if (value == null)
                 {
                     return default;
                 }
@@ -211,9 +211,13 @@ namespace TnyFramework.Codec
                 Type = type;
                 var attribute = type.GetCustomAttribute<CodableAttribute>();
                 var defaultType = attribute?.Mime;
-                if (!defaultType.IsNotBlank())
+                if (defaultType.IsBlank())
+                {
+                    DefaultFormat = null!;
+                    DefaultCodec = null!;
                     return;
-                DefaultFormat = MimeType.ForMimeType(defaultType);
+                }
+                DefaultFormat = MimeType.ForMimeType(defaultType!);
                 DefaultCodec = factory(DefaultFormat, type);
                 AddCodec(DefaultFormat, DefaultCodec);
             }

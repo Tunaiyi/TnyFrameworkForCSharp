@@ -27,31 +27,31 @@ namespace TnyFramework.Common.Event
 
         private static readonly Func<EventBus<THandler>, THandler> NOTIFIER_FACTORY;
 
-        private THandler eventHandler;
+        private THandler? eventHandler;
 
-        private readonly EventBus<THandler> parent;
+        private readonly EventBus<THandler>? parent;
 
         public THandler Notify { get; }
 
-        public THandler Handler => eventHandler;
+        public THandler? Handler => eventHandler;
 
-        public IEventBox<THandler> Parent => parent;
+        public IEventBox<THandler>? Parent => parent;
 
-        public THandler ParentNotify => parent?.Notify;
+        public THandler? ParentNotify => parent?.Notify;
 
         static EventBus()
         {
 
             var handlerType = typeof(THandler);
             var handlerMethod = handlerType.GetMethod("Invoke");
-            HANDLER_INVOKER_METHOD = handlerMethod;
+            HANDLER_INVOKER_METHOD = handlerMethod!;
 
             var types = handlerMethod?.GetParameters().Select(t => t.ParameterType).ToList() ?? new List<Type>();
             HANDLER_METHOD_PARAMETER_TYPES = types.ToImmutableList();
 
             var busType = typeof(EventBus<THandler>);
-            HANDLER_PROPERTY = busType.GetRuntimeProperty(nameof(Handler));
-            PARENT_NOTIFY_PROPERTY = busType.GetRuntimeProperty(nameof(ParentNotify));
+            HANDLER_PROPERTY = busType.GetRuntimeProperty(nameof(Handler))!;
+            PARENT_NOTIFY_PROPERTY = busType.GetRuntimeProperty(nameof(ParentNotify))!;
             NOTIFIER_FACTORY = CreateNotifierFactory();
         }
 
@@ -149,7 +149,7 @@ namespace TnyFramework.Common.Event
             while (true)
             {
                 var check = current;
-                var removed = (THandler) Delegate.Remove(check, handler);
+                var removed = (THandler) Delegate.Remove(check, handler)!;
                 current = Interlocked.CompareExchange(ref eventHandler, removed, check);
                 if (current == check)
                 {

@@ -31,7 +31,7 @@ namespace TnyFramework.Namespace.Etcd.NetCore.Extensions
                 services.BindProperties<EtcdConfig>(hostBuilder.Configuration, section);
                 services.AddSingleton<ObjectCodecAdapter>();
                 services.BindSingleton<EtcdNamespaceExplorerFactory>();
-                services.BindSingleton((p) => p.GetService<EtcdNamespaceExplorerFactory>()?.Create());
+                services.BindSingleton(p => p.GetService<EtcdNamespaceExplorerFactory>()!.Create());
             });
 
         }

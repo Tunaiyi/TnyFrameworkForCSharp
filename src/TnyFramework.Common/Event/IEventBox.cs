@@ -60,7 +60,7 @@ namespace TnyFramework.Common.Event
         /// <summary>
         /// 获取父事件盒
         /// </summary>
-        IEventBox<THandler> Parent { get; }
+        IEventBox<THandler>? Parent { get; }
     }
 
 }

@@ -15,7 +15,7 @@ namespace TnyFramework.Namespace
     public class HashingOptions<TNode>
         where TNode : IShardingNode
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         public long Ttl { get; set; } = 3000L;
 
@@ -25,13 +25,9 @@ namespace TnyFramework.Namespace
 
         public Encoding Encoding { get; set; } = Encoding.UTF8;
 
-        public IHasher<string> KeyHasher { get; set; }
+        public IHasher<string> KeyHasher { get; set; } = null!;
 
-        public IHasher<IPartitionSlot<TNode>> NodeHasher { get; set; }
-
-        public HashingOptions()
-        {
-        }
+        public IHasher<IPartitionSlot<TNode>> NodeHasher { get; set; } = null!;
     }
 
 }

@@ -17,7 +17,7 @@ namespace TnyFramework.Codec.Newtonsoft.Json
     /// </summary>
     public class JsonObjectCodecFactory : ObjectCodecFactory
     {
-        private readonly JsonSerializerSettings formatting;
+        private readonly JsonSerializerSettings? formatting;
 
         public JsonObjectCodecFactory() : base(JsonMimeType.JSON)
         {
@@ -37,7 +37,7 @@ namespace TnyFramework.Codec.Newtonsoft.Json
         protected override IObjectCodec Create(Type type)
         {
             var makeGenericType = typeof(JsonObjectCodec<>).MakeGenericType(type);
-            return (IObjectCodec) Activator.CreateInstance(makeGenericType, formatting);
+            return (IObjectCodec) Activator.CreateInstance(makeGenericType, formatting)!;
         }
     }
 

@@ -19,11 +19,11 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
         : IFastFuncFactory
         where TFastInvoker : BaseFastFunc<TInvoker>, new()
     {
-        private readonly Type invokerType;
-
         private readonly Type[] paramTypes;
 
-        private readonly Type returnType;
+        private readonly Type invokerType = null!;
+
+        private readonly Type returnType = null!;
 
         protected BaseFastFuncFactory()
         {
@@ -106,7 +106,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
             {
                 case PropertyInfo property:
                     memberType = property.PropertyType;
-                    memberExpr = Expression.Property(property.GetMethod.IsStatic ? null : invokerExpr, property);
+                    memberExpr = Expression.Property(property.GetMethod!.IsStatic ? null : invokerExpr, property);
                     break;
                 case FieldInfo field:
                     memberType = field.FieldType;
@@ -156,7 +156,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
                 invokeParamExprList.Add(paramCastExpr);
             }
             var bodyExpr = Expression.New(constructor, invokeParamExprList);
-            return new FastFuncExpression(null, paramExprList, bodyExpr);
+            return new FastFuncExpression(null!, paramExprList, bodyExpr);
         }
 
         private FastFuncExpression CreateMethodFuncExpression(MethodInfo method)

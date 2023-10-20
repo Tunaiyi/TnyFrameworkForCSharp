@@ -18,14 +18,14 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
 
         public Expression BodyExpression { get; }
 
-        public FastFuncExpression(ParameterExpression invoker, IReadOnlyList<ParameterExpression> paramExpressions,
+        public FastFuncExpression(ParameterExpression? invoker, IReadOnlyList<ParameterExpression> paramExpressions,
             Expression bodyExpression)
         {
             var hasInvoker = invoker != null ? 1 : 0;
             ParameterExpressions = new ParameterExpression[paramExpressions.Count + hasInvoker];
             if (hasInvoker == 1)
             {
-                ParameterExpressions[0] = invoker;
+                ParameterExpressions[0] = invoker!;
             }
             for (var index = 0; index < paramExpressions.Count; index++)
             {

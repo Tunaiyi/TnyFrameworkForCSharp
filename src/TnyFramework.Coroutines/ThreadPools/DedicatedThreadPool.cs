@@ -1,11 +1,3 @@
-// Copyright (c) 2020 Tunaiyi
-// Tny Framework For CSharp is licensed under Mulan PSL v2.
-// You can use this software according to the terms and conditions of the Mulan PSL v2.
-// You may obtain a copy of Mulan PSL v2 at:
-//          http://license.coscl.org.cn/MulanPSL2
-// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-// See the Mulan PSL v2 for more details.
-
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -14,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Coroutines.ThreadPools
 {
@@ -35,24 +28,24 @@ namespace TnyFramework.Coroutines.ThreadPools
         /// <summary>
         /// Background threads are the default thread type
         /// </summary>
-        public const ThreadType DefaultThreadType = ThreadType.Background;
+        private const ThreadType DEFAULT_THREAD_TYPE = ThreadType.Background;
 
         public DedicatedThreadPoolSettings(int numThreads,
-            string name = null,
+            string? name = null!,
             TimeSpan? deadlockTimeout = null,
             ApartmentState apartmentState = ApartmentState.Unknown,
-            Action<Exception> exceptionHandler = null,
+            Action<Exception>? exceptionHandler = null!,
             int threadMaxStackSize = 0)
-            : this(numThreads, DefaultThreadType, name, deadlockTimeout, apartmentState, exceptionHandler, threadMaxStackSize)
+            : this(numThreads, DEFAULT_THREAD_TYPE, name, deadlockTimeout, apartmentState, exceptionHandler, threadMaxStackSize)
         {
         }
 
         public DedicatedThreadPoolSettings(int numThreads,
             ThreadType threadType,
-            string name = null,
+            string? name = null!,
             TimeSpan? deadlockTimeout = null,
             ApartmentState apartmentState = ApartmentState.Unknown,
-            Action<Exception> exceptionHandler = null,
+            Action<Exception>? exceptionHandler = null!,
             int threadMaxStackSize = 0)
         {
             Name = name ?? ("DedicatedThreadPool-" + Guid.NewGuid());
@@ -60,14 +53,14 @@ namespace TnyFramework.Coroutines.ThreadPools
             NumThreads = numThreads;
             DeadlockTimeout = deadlockTimeout;
             ApartmentState = apartmentState;
-            ExceptionHandler = exceptionHandler ?? (ex => { });
+            ExceptionHandler = exceptionHandler ?? (_ => { });
             ThreadMaxStackSize = threadMaxStackSize;
 
             if (deadlockTimeout.HasValue && deadlockTimeout.Value.TotalMilliseconds <= 0)
-                throw new ArgumentOutOfRangeException("deadlockTimeout",
-                    string.Format("deadlockTimeout must be null or at least 1ms. Was {0}.", deadlockTimeout));
+                throw new ArgumentOutOfRangeException(nameof(deadlockTimeout),
+                    $"deadlockTimeout must be null or at least 1ms. Was {deadlockTimeout}.");
             if (numThreads <= 0)
-                throw new ArgumentOutOfRangeException("numThreads", string.Format("numThreads must be at least 1. Was {0}", numThreads));
+                throw new ArgumentOutOfRangeException(nameof(numThreads), $"numThreads must be at least 1. Was {numThreads}");
         }
 
         /// <summary>
@@ -110,27 +103,27 @@ namespace TnyFramework.Coroutines.ThreadPools
     {
         // Indicates whether the current thread is processing work items.
         [ThreadStatic]
-        private static bool _currentThreadIsRunningTasks;
+        private static bool _CURRENT_THREAD_IS_RUNNING_TASKS;
 
         /// <summary>
         /// Number of tasks currently running
         /// </summary>
-        private volatile int _parallelWorkers = 0;
+        private volatile int parallelWorkers = 0;
 
-        private readonly LinkedList<Task> _tasks = new LinkedList<Task>();
+        private readonly LinkedList<Task> tasks = new LinkedList<Task>();
 
-        private readonly DedicatedThreadPool _pool;
+        private readonly DedicatedThreadPool pool;
 
         public DedicatedThreadPoolTaskScheduler(DedicatedThreadPool pool)
         {
-            _pool = pool;
+            this.pool = pool;
         }
 
         protected override void QueueTask(Task task)
         {
-            lock (_tasks)
+            lock (tasks)
             {
-                _tasks.AddLast(task);
+                tasks.AddLast(task);
             }
 
             EnsureWorkerRequested();
@@ -139,7 +132,7 @@ namespace TnyFramework.Coroutines.ThreadPools
         protected override bool TryExecuteTaskInline(Task task, bool taskWasPreviouslyQueued)
         {
             //current thread isn't running any tasks, can't execute inline
-            if (!_currentThreadIsRunningTasks) return false;
+            if (!_CURRENT_THREAD_IS_RUNNING_TASKS) return false;
 
             //remove the task from the queue if it was previously added
             if (taskWasPreviouslyQueued)
@@ -152,7 +145,7 @@ namespace TnyFramework.Coroutines.ThreadPools
 
         protected override bool TryDequeue(Task task)
         {
-            lock (_tasks) return _tasks.Remove(task);
+            lock (tasks) return tasks.Remove(task);
         }
 
         /// <summary>
@@ -160,7 +153,7 @@ namespace TnyFramework.Coroutines.ThreadPools
         /// in the <see cref="DedicatedThreadPool"/>.
         /// </summary>
         public override int MaximumConcurrencyLevel {
-            get { return _pool.Settings.NumThreads; }
+            get { return pool.Settings.NumThreads; }
         }
 
         protected override IEnumerable<Task> GetScheduledTasks()
@@ -168,23 +161,23 @@ namespace TnyFramework.Coroutines.ThreadPools
             var lockTaken = false;
             try
             {
-                Monitor.TryEnter(_tasks, ref lockTaken);
+                Monitor.TryEnter(tasks, ref lockTaken);
 
                 //should this be immutable?
-                if (lockTaken) return _tasks;
+                if (lockTaken) return tasks;
                 else throw new NotSupportedException();
             } finally
             {
-                if (lockTaken) Monitor.Exit(_tasks);
+                if (lockTaken) Monitor.Exit(tasks);
             }
         }
 
         private void EnsureWorkerRequested()
         {
-            var count = _parallelWorkers;
-            while (count < _pool.Settings.NumThreads)
+            var count = parallelWorkers;
+            while (count < pool.Settings.NumThreads)
             {
-                var prev = Interlocked.CompareExchange(ref _parallelWorkers, count + 1, count);
+                var prev = Interlocked.CompareExchange(ref parallelWorkers, count + 1, count);
                 if (prev == count)
                 {
                     RequestWorker();
@@ -196,10 +189,10 @@ namespace TnyFramework.Coroutines.ThreadPools
 
         private void ReleaseWorker()
         {
-            var count = _parallelWorkers;
+            var count = parallelWorkers;
             while (count > 0)
             {
-                var prev = Interlocked.CompareExchange(ref _parallelWorkers, count - 1, count);
+                var prev = Interlocked.CompareExchange(ref parallelWorkers, count - 1, count);
                 if (prev == count)
                 {
                     break;
@@ -210,37 +203,37 @@ namespace TnyFramework.Coroutines.ThreadPools
 
         private void RequestWorker()
         {
-            _pool.QueueUserWorkItem(() => {
+            pool.QueueUserWorkItem(() => {
                 // this thread is now available for inlining
-                _currentThreadIsRunningTasks = true;
+                _CURRENT_THREAD_IS_RUNNING_TASKS = true;
                 try
                 {
-                    // Process all available items in the queue. 
+                    // Process all available items in the queue.
                     while (true)
                     {
                         Task item;
-                        lock (_tasks)
+                        lock (tasks)
                         {
                             // done processing
-                            if (_tasks.Count == 0)
+                            if (tasks.Count == 0)
                             {
                                 ReleaseWorker();
                                 break;
                             }
 
                             // Get the next item from the queue
-                            item = _tasks.First.Value;
-                            _tasks.RemoveFirst();
+                            item = tasks.First?.Value!;
+                            tasks.RemoveFirst();
                         }
 
-                        // Execute the task we pulled out of the queue 
+                        // Execute the task we pulled out of the queue
                         TryExecuteTask(item);
                     }
                 }
-                // We're done processing items on the current thread 
+                // We're done processing items on the current thread
                 finally
                 {
-                    _currentThreadIsRunningTasks = false;
+                    _CURRENT_THREAD_IS_RUNNING_TASKS = false;
                 }
             });
         }
@@ -253,9 +246,9 @@ namespace TnyFramework.Coroutines.ThreadPools
     {
         public DedicatedThreadPool(DedicatedThreadPoolSettings settings)
         {
-            _workQueue = new ThreadPoolWorkQueue();
+            workQueue = new ThreadPoolWorkQueue();
             Settings = settings;
-            _workers = Enumerable.Range(1, settings.NumThreads).Select(workerId => new PoolWorker(this, workerId)).ToArray();
+            workers = Enumerable.Range(1, settings.NumThreads).Select(workerId => new PoolWorker(this, workerId)).ToArray();
 
             // Note:
             // The DedicatedThreadPoolSupervisor was removed because aborting thread could lead to unexpected behavior
@@ -265,20 +258,20 @@ namespace TnyFramework.Coroutines.ThreadPools
 
         public DedicatedThreadPoolSettings Settings { get; private set; }
 
-        private readonly ThreadPoolWorkQueue _workQueue;
-        private readonly PoolWorker[] _workers;
+        private readonly ThreadPoolWorkQueue workQueue;
+        private readonly PoolWorker[] workers;
 
         public bool QueueUserWorkItem(Action work)
         {
             if (work == null)
                 throw new ArgumentNullException("work");
 
-            return _workQueue.TryAdd(work);
+            return workQueue.TryAdd(work);
         }
 
         public void Dispose()
         {
-            _workQueue.CompleteAdding();
+            workQueue.CompleteAdding();
         }
 
         public void WaitForThreadsExit()
@@ -288,7 +281,7 @@ namespace TnyFramework.Coroutines.ThreadPools
 
         public void WaitForThreadsExit(TimeSpan timeout)
         {
-            Task.WaitAll(_workers.Select(worker => worker.ThreadExit).ToArray(), timeout);
+            Task.WaitAll(workers.Select(worker => worker.ThreadExit).ToArray(), timeout);
         }
 
         private class PoolWorker
@@ -308,11 +301,15 @@ namespace TnyFramework.Coroutines.ThreadPools
 
                 thread.IsBackground = pool.Settings.ThreadType == ThreadType.Background;
 
-                if (pool.Settings.Name != null)
-                    thread.Name = string.Format("{0}_{1}", pool.Settings.Name, workerId);
-
-                if (pool.Settings.ApartmentState != ApartmentState.Unknown)
-                    thread.SetApartmentState(pool.Settings.ApartmentState);
+                if (pool.Settings.Name.IsNotBlank())
+                    thread.Name = $"{pool.Settings.Name}_{workerId}";
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    if (pool.Settings.ApartmentState != ApartmentState.Unknown)
+#pragma warning disable CA1416
+                        thread.SetApartmentState(pool.Settings.ApartmentState);
+#pragma warning restore CA1416
+                }
 
                 thread.Start();
             }
@@ -321,7 +318,7 @@ namespace TnyFramework.Coroutines.ThreadPools
             {
                 try
                 {
-                    foreach (var action in pool._workQueue.GetConsumingEnumerable())
+                    foreach (var action in pool.workQueue.GetConsumingEnumerable())
                     {
                         try
                         {
@@ -333,23 +330,23 @@ namespace TnyFramework.Coroutines.ThreadPools
                     }
                 } finally
                 {
-                    threadExit.TrySetResult(null);
+                    threadExit.TrySetResult(null!);
                 }
             }
         }
 
         private class ThreadPoolWorkQueue
         {
-            private static readonly int ProcessorCount = Environment.ProcessorCount;
-            private const int CompletedState = 1;
+            private static readonly int PROCESSOR_COUNT = Environment.ProcessorCount;
+            private const int COMPLETED_STATE = 1;
 
-            private readonly ConcurrentQueue<Action> _queue = new ConcurrentQueue<Action>();
-            private readonly UnfairSemaphore _semaphore = new UnfairSemaphore();
-            private int _outstandingRequests;
-            private int _isAddingCompleted;
+            private readonly ConcurrentQueue<Action> queue = new ConcurrentQueue<Action>();
+            private readonly UnfairSemaphore semaphore = new UnfairSemaphore();
+            private int outstandingRequests;
+            private int isAddingCompleted;
 
             public bool IsAddingCompleted {
-                get { return Volatile.Read(ref _isAddingCompleted) == CompletedState; }
+                get { return Volatile.Read(ref isAddingCompleted) == COMPLETED_STATE; }
             }
 
             public bool TryAdd(Action work)
@@ -360,7 +357,7 @@ namespace TnyFramework.Coroutines.ThreadPools
                 if (IsAddingCompleted)
                     return false;
 
-                _queue.Enqueue(work);
+                queue.Enqueue(work);
                 EnsureThreadRequested();
 
                 return true;
@@ -370,19 +367,18 @@ namespace TnyFramework.Coroutines.ThreadPools
             {
                 while (true)
                 {
-                    Action work;
-                    if (_queue.TryDequeue(out work))
+                    if (queue.TryDequeue(out var work))
                     {
                         yield return work;
                     } else if (IsAddingCompleted)
                     {
-                        while (_queue.TryDequeue(out work))
+                        while (queue.TryDequeue(out work))
                             yield return work;
 
                         break;
                     } else
                     {
-                        _semaphore.Wait();
+                        semaphore.Wait();
                         MarkThreadRequestSatisfied();
                     }
                 }
@@ -390,9 +386,9 @@ namespace TnyFramework.Coroutines.ThreadPools
 
             public void CompleteAdding()
             {
-                var previousCompleted = Interlocked.Exchange(ref _isAddingCompleted, CompletedState);
+                var previousCompleted = Interlocked.Exchange(ref isAddingCompleted, COMPLETED_STATE);
 
-                if (previousCompleted == CompletedState)
+                if (previousCompleted == COMPLETED_STATE)
                     return;
 
                 // When CompleteAdding() is called, we fill up the _outstandingRequests and the semaphore
@@ -401,14 +397,14 @@ namespace TnyFramework.Coroutines.ThreadPools
 
                 while (true)
                 {
-                    var count = Volatile.Read(ref _outstandingRequests);
-                    var countToRelease = UnfairSemaphore.MaxWorker - count;
+                    var count = Volatile.Read(ref outstandingRequests);
+                    var countToRelease = UnfairSemaphore.MAX_WORKER - count;
 
-                    var prev = Interlocked.CompareExchange(ref _outstandingRequests, UnfairSemaphore.MaxWorker, count);
+                    var prev = Interlocked.CompareExchange(ref outstandingRequests, UnfairSemaphore.MAX_WORKER, count);
 
                     if (prev == count)
                     {
-                        _semaphore.Release((short) countToRelease);
+                        semaphore.Release((short) countToRelease);
                         break;
                     }
                 }
@@ -429,13 +425,13 @@ namespace TnyFramework.Coroutines.ThreadPools
                 // This trick is borrowed from the .Net ThreadPool
                 // https://github.com/dotnet/coreclr/blob/bc146608854d1db9cdbcc0b08029a87754e12b49/src/mscorlib/src/System/Threading/ThreadPool.cs#L568
 
-                var count = Volatile.Read(ref _outstandingRequests);
-                while (count < ProcessorCount)
+                var count = Volatile.Read(ref outstandingRequests);
+                while (count < PROCESSOR_COUNT)
                 {
-                    var prev = Interlocked.CompareExchange(ref _outstandingRequests, count + 1, count);
+                    var prev = Interlocked.CompareExchange(ref outstandingRequests, count + 1, count);
                     if (prev == count)
                     {
-                        _semaphore.Release();
+                        semaphore.Release();
                         break;
                     }
                     count = prev;
@@ -444,10 +440,10 @@ namespace TnyFramework.Coroutines.ThreadPools
 
             private void MarkThreadRequestSatisfied()
             {
-                var count = Volatile.Read(ref _outstandingRequests);
+                var count = Volatile.Read(ref outstandingRequests);
                 while (count > 0)
                 {
-                    var prev = Interlocked.CompareExchange(ref _outstandingRequests, count - 1, count);
+                    var prev = Interlocked.CompareExchange(ref outstandingRequests, count - 1, count);
                     if (prev == count)
                     {
                         break;
@@ -470,9 +466,9 @@ namespace TnyFramework.Coroutines.ThreadPools
         [StructLayout(LayoutKind.Sequential)]
         private sealed class UnfairSemaphore
         {
-            public const int MaxWorker = 0x7FFF;
+            public const int MAX_WORKER = 0x7FFF;
 
-            // We track everything we care about in A 64-bit struct to allow us to 
+            // We track everything we care about in A 64-bit struct to allow us to
             // do CompareExchanges on this for atomic updates.
             [StructLayout(LayoutKind.Explicit)]
             private struct SemaphoreState
@@ -544,7 +540,7 @@ namespace TnyFramework.Coroutines.ThreadPools
                 }
 
                 //
-                // Now we're a spinner.  
+                // Now we're a spinner.
                 //
                 var numSpins = 0;
                 const int spinLimitPerProcessor = 50;
@@ -653,15 +649,15 @@ namespace TnyFramework.Coroutines.ThreadPools
             {
                 if (Interlocked.CompareExchange(ref m_state.RawData, newState.RawData, currentState.RawData) == currentState.RawData)
                 {
-                    Debug.Assert(newState.CountForSpinners <= MaxWorker, "CountForSpinners is greater than MaxWorker");
+                    Debug.Assert(newState.CountForSpinners <= MAX_WORKER, "CountForSpinners is greater than MaxWorker");
                     Debug.Assert(newState.CountForSpinners >= 0, "CountForSpinners is lower than zero");
-                    Debug.Assert(newState.Spinners <= MaxWorker, "Spinners is greater than MaxWorker");
+                    Debug.Assert(newState.Spinners <= MAX_WORKER, "Spinners is greater than MaxWorker");
                     Debug.Assert(newState.Spinners >= 0, "Spinners is lower than zero");
-                    Debug.Assert(newState.CountForWaiters <= MaxWorker, "CountForWaiters is greater than MaxWorker");
+                    Debug.Assert(newState.CountForWaiters <= MAX_WORKER, "CountForWaiters is greater than MaxWorker");
                     Debug.Assert(newState.CountForWaiters >= 0, "CountForWaiters is lower than zero");
-                    Debug.Assert(newState.Waiters <= MaxWorker, "Waiters is greater than MaxWorker");
+                    Debug.Assert(newState.Waiters <= MAX_WORKER, "Waiters is greater than MaxWorker");
                     Debug.Assert(newState.Waiters >= 0, "Waiters is lower than zero");
-                    Debug.Assert(newState.CountForSpinners + newState.CountForWaiters <= MaxWorker,
+                    Debug.Assert(newState.CountForSpinners + newState.CountForWaiters <= MAX_WORKER,
                         "CountForSpinners + CountForWaiters is greater than MaxWorker");
 
                     return true;

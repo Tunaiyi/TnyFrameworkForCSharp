@@ -15,7 +15,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker);
+            return Func!.Invoke((TInvoker) invoker)!;
         }
     }
 
@@ -24,7 +24,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker, (TP1) parameters[0]);
+            return Func!.Invoke((TInvoker) invoker, (TP1) parameters[0])!;
         }
     }
 
@@ -33,9 +33,9 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
-                (TP2) parameters[1]);
+                (TP2) parameters[1])!;
         }
     }
 
@@ -44,10 +44,10 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
-                (TP3) parameters[2]);
+                (TP3) parameters[2])!;
         }
     }
 
@@ -56,11 +56,11 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
-                (TP4) parameters[3]);
+                (TP4) parameters[3])!;
         }
     }
 
@@ -69,12 +69,12 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
                 (TP4) parameters[3],
-                (TP5) parameters[4]);
+                (TP5) parameters[4])!;
         }
     }
 
@@ -83,13 +83,13 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
                 (TP4) parameters[3],
                 (TP5) parameters[4],
-                (TP6) parameters[5]);
+                (TP6) parameters[5])!;
         }
     }
 
@@ -98,14 +98,14 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
                 (TP4) parameters[3],
                 (TP5) parameters[4],
                 (TP6) parameters[5],
-                (TP7) parameters[6]);
+                (TP7) parameters[6])!;
         }
     }
 
@@ -114,7 +114,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -122,7 +122,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
                 (TP5) parameters[4],
                 (TP6) parameters[5],
                 (TP7) parameters[6],
-                (TP8) parameters[7]);
+                (TP8) parameters[7])!;
         }
     }
 
@@ -131,7 +131,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -140,7 +140,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
                 (TP6) parameters[5],
                 (TP7) parameters[6],
                 (TP8) parameters[7],
-                (TP9) parameters[8]);
+                (TP9) parameters[8])!;
         }
     }
 
@@ -149,7 +149,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -159,7 +159,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
                 (TP7) parameters[6],
                 (TP8) parameters[7],
                 (TP9) parameters[8],
-                (TP10) parameters[9]);
+                (TP10) parameters[9])!;
         }
     }
 
@@ -168,7 +168,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -179,7 +179,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
                 (TP8) parameters[7],
                 (TP9) parameters[8],
                 (TP10) parameters[9],
-                (TP11) parameters[10]);
+                (TP11) parameters[10])!;
         }
     }
 
@@ -188,7 +188,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -200,7 +200,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
                 (TP9) parameters[8],
                 (TP10) parameters[9],
                 (TP11) parameters[10],
-                (TP12) parameters[11]);
+                (TP12) parameters[11])!;
         }
     }
 
@@ -209,7 +209,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -222,7 +222,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
                 (TP10) parameters[9],
                 (TP11) parameters[10],
                 (TP12) parameters[11],
-                (TP13) parameters[12]);
+                (TP13) parameters[12])!;
         }
     }
 
@@ -231,7 +231,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -245,7 +245,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
                 (TP11) parameters[10],
                 (TP12) parameters[11],
                 (TP13) parameters[12],
-                (TP14) parameters[13]);
+                (TP14) parameters[13])!;
         }
     }
 
@@ -254,7 +254,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
     {
         public override object Invoke(object invoker, params object[] parameters)
         {
-            return Func.Invoke((TInvoker) invoker,
+            return Func!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -269,7 +269,7 @@ namespace TnyFramework.Common.FastInvoke.FuncInvoke
                 (TP12) parameters[11],
                 (TP13) parameters[12],
                 (TP14) parameters[13],
-                (TP15) parameters[14]);
+                (TP15) parameters[14])!;
         }
     }
 

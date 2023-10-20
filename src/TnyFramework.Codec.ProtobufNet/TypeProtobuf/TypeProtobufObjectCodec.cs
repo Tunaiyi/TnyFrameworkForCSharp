@@ -10,6 +10,7 @@ using System;
 using System.IO;
 using ProtoBuf;
 using TnyFramework.Codec.Execptions;
+using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
 {
@@ -28,14 +29,14 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             this.factory = factory;
         }
 
-        public override byte[] Encode(T value)
+        public override byte[] Encode(T? value)
         {
             if (value == null)
             {
                 return Array.Empty<byte>();
             }
             var scheme = factory.Load(value.GetType());
-            if (scheme == null)
+            if (scheme.IsNull())
             {
                 return Array.Empty<byte>();
             }
@@ -45,20 +46,20 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return stream.ToArray();
         }
 
-        public override void Encode(T value, Stream output)
+        public override void Encode(T? value, Stream output)
         {
             if (value == null)
             {
                 return;
             }
             var scheme = factory.Load(value.GetType());
-            if (scheme == null)
+            if (scheme.IsNull())
                 return;
             ByteUtils.WriteFixed32(scheme.Id, output);
             Serializer.Serialize(output, value);
         }
 
-        public override T Decode(byte[] bytes)
+        public override T? Decode(byte[]? bytes)
         {
             if (bytes == null || bytes.Length == 0)
             {
@@ -73,9 +74,9 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             throw new ObjectCodecException($"Unknown ${id} TypeProtobufScheme");
         }
 
-        public override T Decode(Stream input)
+        public override T? Decode(Stream input)
         {
-            if (input == null || input.Length == 0)
+            if (input.IsNull() || input.Length == 0)
             {
                 return default;
             }

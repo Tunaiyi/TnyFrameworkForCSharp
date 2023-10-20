@@ -51,7 +51,7 @@ namespace TnyFramework.Net.Rpc.Remote
     {
         void SetException(Exception cause);
 
-        void SetResult(IMessage message);
+        void SetResult(IMessage? message);
 
         Task Task { get; }
     }

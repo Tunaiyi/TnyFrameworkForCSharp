@@ -23,12 +23,12 @@ namespace TnyFramework.Common.Attribute
 
         public T Get<T>(AttrKey<T> key)
         {
-            return default;
+            return default!;
         }
 
         public T Get<T>(AttrKey<T> key, T defaultValue)
         {
-            return default;
+            return default!;
         }
 
         public bool TryAdd<T>(AttrKey<T> key, T value)

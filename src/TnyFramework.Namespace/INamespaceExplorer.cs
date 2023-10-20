@@ -27,7 +27,7 @@ namespace TnyFramework.Namespace
         /// <param name="type">值类型</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回获取的节点 Task, 如果没有会Task返回值为 null</returns>
-        Task<NameNode<TValue>> Get<TValue>(string path, ObjectMimeType<TValue> type);
+        Task<NameNode<TValue>?> Get<TValue>(string path, ObjectMimeType<TValue> type);
 
         /// <summary>
         /// 匹配路径查找指定节点列表
@@ -46,7 +46,7 @@ namespace TnyFramework.Namespace
         /// <param name="type">值MineType</param>
         /// <typeparam name="TValue">值类型</typeparam>
         /// <returns>返回获取的节点List的 Task, 如果没有会Task返回值为 空List</returns>
-        Task<List<NameNode<TValue>>> FindAll<TValue>(string from, string to, ObjectMimeType<TValue> type);
+        Task<IList<NameNode<TValue>>> FindAll<TValue>(string from, string to, ObjectMimeType<TValue> type);
 
         /// <summary>
         /// 创建 hash 节点存储器

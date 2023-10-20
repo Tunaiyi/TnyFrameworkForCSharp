@@ -15,28 +15,28 @@ namespace TnyFramework.Common.Extensions
 
     public static class TaskExtensions
     {
-        public static async Task<bool> ForTimeout(this Task task, int timeout, Action onTimeout = null)
+        public static async Task<bool> ForTimeout(this Task task, int timeout, Action? onTimeout = null)
         {
             return await task.ForTimeout(Task.Delay(timeout), onTimeout);
         }
 
-        public static async Task<bool> ForTimeout(this Task task, int timeout, CancellationToken cancellationToken, Action onTimeout = null)
+        public static async Task<bool> ForTimeout(this Task task, int timeout, CancellationToken cancellationToken, Action? onTimeout = null)
         {
             return await task.ForTimeout(Task.Delay(timeout, cancellationToken), onTimeout);
         }
 
-        public static async Task<bool> ForTimeout(this Task task, TimeSpan timeout, Action onTimeout = null)
+        public static async Task<bool> ForTimeout(this Task task, TimeSpan timeout, Action? onTimeout = null)
         {
             return await task.ForTimeout(Task.Delay(timeout), onTimeout);
         }
 
-        public static async Task<bool> ForTimeout(this Task task, TimeSpan timeout, CancellationToken cancellationToken, Action onTimeout = null)
+        public static async Task<bool> ForTimeout(this Task task, TimeSpan timeout, CancellationToken cancellationToken, Action? onTimeout = null)
         {
 
             return await task.ForTimeout(Task.Delay(timeout, cancellationToken), onTimeout);
         }
 
-        public static async Task<bool> ForTimeout(this Task task, Task timeoutTask, Action onTimeout = null)
+        public static async Task<bool> ForTimeout(this Task task, Task timeoutTask, Action? onTimeout = null)
         {
             if (await Task.WhenAny(task, timeoutTask) != task)
                 return false;
@@ -44,33 +44,33 @@ namespace TnyFramework.Common.Extensions
             return true;
         }
 
-        public static async Task<TimeoutWait<TResult>> ForTimeout<TResult>(this Task<TResult> task, int timeout, Action onTimeout = null)
+        public static async Task<TimeoutWait<TResult>> ForTimeout<TResult>(this Task<TResult> task, int timeout, Action? onTimeout = null)
         {
             return await task.ForTimeout(Task.Delay(timeout), onTimeout);
         }
 
         public static async Task<TimeoutWait<TResult>> ForTimeout<TResult>(this Task<TResult> task, int timeout, CancellationToken cancellationToken,
-            Action onTimeout = null)
+            Action? onTimeout = null)
         {
             return await task.ForTimeout(Task.Delay(timeout, cancellationToken), onTimeout);
         }
 
-        public static async Task<TimeoutWait<TResult>> ForTimeout<TResult>(this Task<TResult> task, TimeSpan timeout, Action onTimeout = null)
+        public static async Task<TimeoutWait<TResult>> ForTimeout<TResult>(this Task<TResult> task, TimeSpan timeout, Action? onTimeout = null)
         {
             return await task.ForTimeout(Task.Delay(timeout), onTimeout);
         }
 
         public static async Task<TimeoutWait<TResult>> ForTimeout<TResult>(this Task<TResult> task, TimeSpan timeout,
-            CancellationToken cancellationToken, Action onTimeout = null)
+            CancellationToken cancellationToken, Action? onTimeout = null)
         {
             return await task.ForTimeout(Task.Delay(timeout, cancellationToken), onTimeout);
         }
 
-        public static async Task<TimeoutWait<TResult>> ForTimeout<TResult>(this Task<TResult> task, Task timeoutTask, Action onTimeout = null)
+        public static async Task<TimeoutWait<TResult>> ForTimeout<TResult>(this Task<TResult> task, Task timeoutTask, Action? onTimeout = null)
         {
             if (await Task.WhenAny(task, timeoutTask) != task)
             {
-                return new TimeoutWait<TResult>(false, default);
+                return new TimeoutWait<TResult>(false, default!);
             }
             onTimeout?.Invoke();
             return new TimeoutWait<TResult>(true, task.Result);

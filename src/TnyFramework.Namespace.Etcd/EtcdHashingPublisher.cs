@@ -9,6 +9,7 @@
 using System;
 using System.Threading.Tasks;
 using TnyFramework.Codec;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Namespace.Sharding;
 
@@ -17,9 +18,9 @@ namespace TnyFramework.Namespace.Etcd
 
     public class EtcdHashingPublisher<TKey, TValue> : EtcdHashing<TValue>, IHashingPublisher<TKey, TValue>
     {
-        private volatile TaskCompletionSource<ILessee> lesseeSource;
+        private volatile TaskCompletionSource<ILessee>? lesseeSource;
 
-        private volatile ILessee lessee;
+        private volatile ILessee? lessee;
 
         private readonly IHasher<TValue> valueHasher;
 
@@ -55,7 +56,7 @@ namespace TnyFramework.Namespace.Etcd
                 try
                 {
                     var result = await Explorer.Lease("Publisher#" + Path, ttl);
-                    if (result != null)
+                    if (result.IsNotNull())
                     {
                         lessee = result;
                     }
@@ -74,7 +75,7 @@ namespace TnyFramework.Namespace.Etcd
         public string PathOf(TKey key, TValue value)
         {
             var hashValue = ValueHash(value);
-            return NamespacePathNames.NodePath(Path, SlotName(hashValue), key);
+            return NamespacePathNames.NodePath(Path, SlotName(hashValue), key!);
         }
 
         public Task<NameNode<TValue>> Publish(TKey key, TValue value)

@@ -54,7 +54,7 @@ namespace TnyFramework.Namespace.Etcd
             }
         }
 
-        public NameNode<TValue> DecodeKeyValue<TValue>(RepeatedField<KeyValue> pairs, ObjectMimeType<TValue> type)
+        public NameNode<TValue>? DecodeKeyValue<TValue>(RepeatedField<KeyValue> pairs, ObjectMimeType<TValue> type)
         {
             if (pairs.IsEmpty())
             {
@@ -89,7 +89,7 @@ namespace TnyFramework.Namespace.Etcd
             {
                 var value = codec.Decode(kvValue.ToByteArray());
                 var delete = kv.Version == 0;
-                return new NameNode<TValue>(path, createRevision, value, version, kv.ModRevision, delete);
+                return new NameNode<TValue>(path, createRevision, value!, version, kv.ModRevision, delete);
             } catch (IOException e)
             {
                 throw new NamespaceNodeCodecException($"decode value {path} exception", e);
@@ -102,7 +102,7 @@ namespace TnyFramework.Namespace.Etcd
             return ByteString.CopyFromUtf8(key);
         }
 
-        internal static ByteString EndKey(string key)
+        internal static ByteString EndKey(string? key)
         {
             var rangeEnd = EtcdClient.GetRangeEnd(key);
             return EtcdClient.GetStringByteForRangeRequests(rangeEnd);
@@ -137,7 +137,7 @@ namespace TnyFramework.Namespace.Etcd
             };
         }
 
-        internal static RequestOp PutOperation(ByteString path, ByteString value, ILessee lessee = null)
+        internal static RequestOp PutOperation(ByteString path, ByteString value, ILessee? lessee = null)
         {
 
             return new RequestOp {

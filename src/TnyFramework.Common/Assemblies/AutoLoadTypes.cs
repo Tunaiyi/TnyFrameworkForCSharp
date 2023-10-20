@@ -12,7 +12,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
-using Castle.Core.Internal;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Assemblies.Attributes;
 using TnyFramework.Common.Extensions;
@@ -31,7 +30,7 @@ namespace TnyFramework.Common.Assemblies
 
         private static readonly IList<string> ASSEMBLY_FILTERS = new List<string>();
 
-        private static IList<string> AssemblyFilters { get; set; }
+        private static IList<string> AssemblyFilters { get; set; } = ImmutableList<string>.Empty;
 
         public static void NameFilter(params string[] assemblyFilters)
         {
@@ -47,7 +46,7 @@ namespace TnyFramework.Common.Assemblies
             return AssemblyFilters.IsNullOrEmpty() || (
                 from assemblyFilter in AssemblyFilters
                 let name = ab.GetName()
-                where name.Name.StartsWith(assemblyFilter)
+                where name.Name!.StartsWith(assemblyFilter)
                 select assemblyFilter).Any();
         }
 
@@ -79,7 +78,11 @@ namespace TnyFramework.Common.Assemblies
                         var types = dictionary.GetOrAdd(attribute.GetType(), _ => new HashSet<Type>());
                         foreach (var attributeLoadClass in attribute.LoadClasses)
                         {
-                            types.Add(assembly.GetType(attributeLoadClass));
+                            var type = assembly.GetType(attributeLoadClass);
+                            if (type != null)
+                            {
+                                types.Add(type);
+                            }
                         }
                     }
                 }

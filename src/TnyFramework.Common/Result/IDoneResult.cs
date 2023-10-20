@@ -29,8 +29,8 @@ namespace TnyFramework.Common.Result
         /// </summary>
         /// <param name="done">完成对象</param>
         /// <param name="run">执行方法</param>
-        /// <typeparam name="M"></typeparam>
-        public static void IfFailure<M>(this IDoneResult<M> done, Action<IResultCode, M> run)
+        /// <typeparam name="TM"></typeparam>
+        public static void IfFailure<TM>(this IDoneResult<TM> done, Action<IResultCode, TM> run)
         {
             if (done.IsFailure())
             {
@@ -43,7 +43,7 @@ namespace TnyFramework.Common.Result
         /// </summary>
         /// <param name="done">完成对象</param>
         /// <param name="run">运行</param>
-        public static void Then<M>(this IDoneResult<M> done, Action<IResultCode, M> run)
+        public static void Then<TM>(this IDoneResult<TM> done, Action<IResultCode, TM> run)
         {
             run(done.Code, done.Value);
         }
@@ -53,15 +53,15 @@ namespace TnyFramework.Common.Result
         /// </summary>
         /// <param name="done">完成对象</param>
         /// <param name="mapper">转换</param>
-        /// <typeparam name="M"></typeparam>
+        /// <typeparam name="TM"></typeparam>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public static IDoneResult<T> MapOnSuccess<M, T>(this IDoneResult<M> done, Func<M, T> mapper)
+        public static IDoneResult<T> MapOnSuccess<TM, T>(this IDoneResult<TM> done, Func<TM, T> mapper)
         {
-            return done.IsSuccess() ? DoneResults.Success<T>(mapper(done.Value)) : DoneResults.Failure<M, T>(done);
+            return done.IsSuccess() ? DoneResults.Success(mapper(done.Value)) : DoneResults.Failure<TM, T>(done);
         }
 
-        public static IDoneResult<T> MapOnFailed<M, T>(this IDoneResult<M> done, Func<IResultCode, string, T> mapper)
+        public static IDoneResult<T> MapOnFailed<TM, T>(this IDoneResult<TM> done, Func<IResultCode, string, T> mapper)
         {
             return done.IsFailure() ? DoneResults.Map(done, mapper(done.Code, done.Message)) : DoneResults.Success<T>();
         }
@@ -73,11 +73,11 @@ namespace TnyFramework.Common.Result
         //            return DoneResults.success();
         //        }
         //    }
-        public static IDoneResult<T> MapIfPresent<M, T>(this IDoneResult<M> done, Func<M, IResultCode, T> mapper)
+        public static IDoneResult<T> MapIfPresent<TM, T>(this IDoneResult<TM> done, Func<TM, IResultCode, T> mapper)
         {
             var value = done.Value;
             if (value == null)
-                return DoneResults.Map(done, default(T));
+                return DoneResults.Map(done, default(T)!);
             var returnValue = mapper(value, done.Code);
             return DoneResults.Map(done, returnValue);
         }

@@ -19,7 +19,7 @@ namespace TnyFramework.Namespace.Etcd.Exceptions
             return new EtcdException(code, message, null);
         }
 
-        public static EtcdException NewEtcdException(StatusCode code, string message, Exception cause)
+        public static EtcdException NewEtcdException(StatusCode code, string message, Exception? cause)
         {
             return new EtcdException(code, message, cause);
         }

@@ -15,7 +15,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker);
+            Action!.Invoke((TInvoker) invoker);
         }
     }
 
@@ -24,7 +24,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker, (TP1) parameters[0]);
+            Action!.Invoke((TInvoker) invoker, (TP1) parameters[0]);
         }
     }
 
@@ -33,7 +33,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1]);
         }
@@ -44,7 +44,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2]);
@@ -56,7 +56,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -69,7 +69,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -83,7 +83,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -98,7 +98,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -114,7 +114,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -131,7 +131,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -149,7 +149,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -168,7 +168,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -188,7 +188,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -209,7 +209,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -231,7 +231,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],
@@ -254,7 +254,7 @@ namespace TnyFramework.Common.FastInvoke.ActionInvoke
     {
         protected override void DoInvoke(object invoker, params object[] parameters)
         {
-            Action.Invoke((TInvoker) invoker,
+            Action!.Invoke((TInvoker) invoker,
                 (TP1) parameters[0],
                 (TP2) parameters[1],
                 (TP3) parameters[2],

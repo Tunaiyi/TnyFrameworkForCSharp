@@ -13,13 +13,13 @@ namespace TnyFramework.Namespace.Etcd
 
     public class EtcdNamespaceExplorerFactory : INamespaceExplorerFactory
     {
-        private EtcdAccessor accessor;
+        private EtcdAccessor? accessor;
 
         private readonly EtcdConfig config;
 
         private readonly ObjectCodecAdapter objectCodecAdapter;
 
-        private volatile EtcdNamespaceExplorer namespaceExplorer;
+        private volatile EtcdNamespaceExplorer? namespaceExplorer;
 
         public EtcdNamespaceExplorerFactory(EtcdConfig config, ObjectCodecAdapter objectCodecAdapter)
         {
@@ -51,11 +51,11 @@ namespace TnyFramework.Namespace.Etcd
     {
         public string Encoding { get; set; } = "utf-8";
 
-        public string Endpoints { get; set; }
+        public string Endpoints { get; set; } = "";
 
-        public string User { get; set; }
+        public string User { get; set; } = "";
 
-        public string Password { get; set; }
+        public string Password { get; set; } = "";
     }
 
 }

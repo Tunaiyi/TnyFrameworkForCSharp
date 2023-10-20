@@ -41,7 +41,7 @@ namespace TnyFramework.Namespace.Etcd
 
         private readonly EtcdAccessor client;
 
-        private CancellationTokenSource keepAliveSource;
+        private CancellationTokenSource? keepAliveSource;
 
         private readonly ICoroutine coroutine;
 
