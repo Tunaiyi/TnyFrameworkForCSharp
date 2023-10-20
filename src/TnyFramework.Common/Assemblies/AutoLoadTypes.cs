@@ -15,6 +15,7 @@ using System.Reflection;
 using Castle.Core.Internal;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Assemblies.Attributes;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 
 namespace TnyFramework.Common.Assemblies

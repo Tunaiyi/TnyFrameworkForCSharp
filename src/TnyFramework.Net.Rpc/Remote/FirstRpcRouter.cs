@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Castle.Core.Internal;
+using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Net.Rpc.Remote
 {

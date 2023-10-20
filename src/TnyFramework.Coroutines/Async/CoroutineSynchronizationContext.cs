@@ -8,6 +8,7 @@
 
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 
@@ -66,12 +67,20 @@ namespace TnyFramework.Coroutines.Async
 
         public override void Post(SendOrPostCallback callback, object state)
         {
-            coroutine.Post(this, callback, state);
+            coroutine.AsyncExec(new CoroutineSynchronizationContextWork(callback, this, state));
         }
 
         public override void Send(SendOrPostCallback callback, object state)
         {
-            coroutine.Send(this, callback, state);
+            if (coroutine.InThread)
+            {
+                callback(state);
+            } else
+            {
+                var work = new CoroutineSynchronizationContextWork(callback, this, state);
+                coroutine.AsyncExec(work);
+                work.AwaitTask.Wait();
+            }
         }
 
         public override string ToString()
@@ -80,48 +89,58 @@ namespace TnyFramework.Coroutines.Async
         }
     }
 
-    public class CoroutineWork
+    public class CoroutineSynchronizationContextWork : ICoroutineWork
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<CoroutineWork>();
+        private static readonly ILogger LOGGER = LogFactory.Logger<CoroutineSynchronizationContextWork>();
 
         private readonly SendOrPostCallback callback;
 
         private readonly object state;
 
-        private readonly ManualResetEvent awaitHandler;
+#if NETSTANDARD2_1
+        private readonly TaskCompletionSource<object> completion;
+#else
+        private readonly TaskCompletionSource completion;
+#endif
 
-        private readonly Exception exception;
+        private readonly SynchronizationContext context;
 
-        public CoroutineWork(SendOrPostCallback callback, SynchronizationContext context, object state, ManualResetEvent awaitHandler)
-            : this(callback, context, state, null, awaitHandler)
+        public CoroutineSynchronizationContextWork(SendOrPostCallback callback, SynchronizationContext context, object state)
         {
-        }
-
-        public CoroutineWork(SendOrPostCallback callback, SynchronizationContext context, object state,
-            Exception exception = null, ManualResetEvent awaitHandler = null)
-        {
-            Context = context;
+            this.context = context;
             this.callback = callback;
             this.state = state;
-            this.awaitHandler = awaitHandler;
-            this.exception = exception;
+#if NETSTANDARD2_1
+            completion = new TaskCompletionSource<object>();
+#else
+            completion = new TaskCompletionSource();
+#endif
         }
 
-        internal SynchronizationContext Context { get; }
+        public Task AwaitTask => completion.Task;
 
-        public void Invoke()
+        Task ICoroutineWork.Invoke()
         {
+            var currentContext = SynchronizationContext.Current;
             try
             {
+                SynchronizationContext.SetSynchronizationContext(context);
                 callback(state);
+#if NETSTANDARD2_1
+                completion.SetResult(null!);
+#else
+                completion.SetResult();
+#endif
             } catch (Exception e)
             {
+                completion.SetException(e);
                 var thread = Thread.CurrentThread;
                 LOGGER.LogError(e, "ThreadName {TName} - {TId} Run exception", thread.Name, thread.ManagedThreadId);
             } finally
             {
-                awaitHandler?.Set();
+                SynchronizationContext.SetSynchronizationContext(currentContext);
             }
+            return Task.CompletedTask;
         }
     }
 

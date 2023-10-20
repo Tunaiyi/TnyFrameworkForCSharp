@@ -276,7 +276,7 @@ namespace TnyFramework.Common.Enum
         /// <returns></returns>
         public override string ToString()
         {
-            return Name;
+            return $"{GetType().Name} {name}({id})";
         }
 
         public static implicit operator int(BaseEnum<T> type) => type.Id;

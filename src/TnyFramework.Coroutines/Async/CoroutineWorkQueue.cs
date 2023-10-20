@@ -16,15 +16,15 @@ namespace TnyFramework.Coroutines.Async
     /// </summary>
     public class CoroutineWorkQueue
     {
-        private volatile ConcurrentQueue<CoroutineWork> workQueue = new ConcurrentQueue<CoroutineWork>();
+        private volatile ConcurrentQueue<ICoroutineWork> workQueue = new();
 
-        private volatile ConcurrentQueue<CoroutineWork> currentFrameQueue = new ConcurrentQueue<CoroutineWork>();
+        private volatile ConcurrentQueue<ICoroutineWork> currentFrameQueue = new();
 
         public int WorkCount => workQueue.Count;
 
         public bool IsWorkEmpty => workQueue.IsEmpty;
 
-        internal void Enqueue(CoroutineWork request)
+        internal void Enqueue(ICoroutineWork request)
         {
             workQueue.Enqueue(request);
         }
@@ -33,7 +33,7 @@ namespace TnyFramework.Coroutines.Async
         /// 获取当前帧队列
         /// </summary>
         /// <returns></returns>
-        internal ConcurrentQueue<CoroutineWork> CurrentFrameQueue {
+        internal ConcurrentQueue<ICoroutineWork> CurrentFrameQueue {
             get {
                 if (!currentFrameQueue.IsEmpty || workQueue.IsEmpty)
                 {

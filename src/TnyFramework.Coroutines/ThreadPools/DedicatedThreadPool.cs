@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TnyFramework.Coroutines.Concurrency
+namespace TnyFramework.Coroutines.ThreadPools
 {
 
     /// <summary>

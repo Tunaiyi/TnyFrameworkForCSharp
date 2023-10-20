@@ -17,7 +17,6 @@ using TnyFramework.Coroutines.Async;
 
 namespace TnyFramework.Namespace.Etcd.Test
 {
-
     public class AsyncLocalTest
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<AsyncLocalTest>();
@@ -33,16 +32,16 @@ namespace TnyFramework.Namespace.Etcd.Test
         {
             var coroutine = DefaultCoroutineFactory.Default.Create("TestAwaitSelf");
             await coroutine.AsyncExec(async () => {
-                Console.WriteLine("2 - 1 " + Coroutine.Current.Name + Thread.CurrentThread.ManagedThreadId);
+                Console.WriteLine("2 - 1 " + Coroutine.CurrentCoroutine.Name + Thread.CurrentThread.ManagedThreadId);
                 await coroutine.AsyncExec(async () => {
-                    Console.WriteLine("1 - 1 " + Coroutine.Current.Name + Thread.CurrentThread.ManagedThreadId);
+                    Console.WriteLine("1 - 1 " + Coroutine.CurrentCoroutine.Name + Thread.CurrentThread.ManagedThreadId);
                     await coroutine.AsyncExec(async () => {
-                        Console.WriteLine("Delay " + Coroutine.Current.Name + Thread.CurrentThread.ManagedThreadId);
+                        Console.WriteLine("Delay " + Coroutine.CurrentCoroutine.Name + Thread.CurrentThread.ManagedThreadId);
                         await Task.Delay(200);
                     });
-                    Console.WriteLine("1 - 2 " + Coroutine.Current.Name + Thread.CurrentThread.ManagedThreadId);
+                    Console.WriteLine("1 - 2 " + Coroutine.CurrentCoroutine.Name + Thread.CurrentThread.ManagedThreadId);
                 });
-                Console.WriteLine("2 - 2 " + Coroutine.Current.Name + Thread.CurrentThread.ManagedThreadId);
+                Console.WriteLine("2 - 2 " + Coroutine.CurrentCoroutine.Name + Thread.CurrentThread.ManagedThreadId);
             });
         }
 

@@ -32,23 +32,16 @@ namespace TnyFramework.Net.Cloud.Nacos.Extensions
         }
 
         public static IHostBuilder UseNacosConfiguration(this IHostBuilder builder, string section = "nacos",
-            Action<NacosV2ConfigurationSource> action = null, Action<ILoggingBuilder> logAction = null)
+            Action<NacosV2ConfigurationSource> action = null, Action<ILoggingBuilder> logBuilder = null)
         {
-            return builder.ConfigureAppConfiguration((context, configBuilder) => {
+            return builder.ConfigureAppConfiguration((_, configBuilder) => {
                 var root = configBuilder.Build();
-                var nacos = root.GetSection(section);
-                if (nacos != null)
-                {
-                    configBuilder.AddNacosV2Configuration(source => {
-                        nacos.Bind(source);
-                        if (logAction != null)
-                        {
-                            source.LoggingBuilder = logAction;
-                        }
-                        source.NacosConfigurationParser = JsonConfigurationStringParser.instance;
-                        action?.Invoke(source);
-                    });
-                }
+                var nacosConfiguration = root.GetSection(section);
+                configBuilder.AddNacosV2Configuration(source => {
+                    nacosConfiguration.Bind(source);
+                    source.NacosConfigurationParser = JsonConfigurationStringParser.instance;
+                    action?.Invoke(source);
+                }, logAction: logBuilder);
             });
         }
 

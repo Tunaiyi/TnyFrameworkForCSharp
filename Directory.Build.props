@@ -46,7 +46,7 @@
 
     <Target Name="LoaclInstallDebugPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug' And '$(OutputType)' == 'Library'">
         <MakeDir Directories="$(NugetDebugOutputDirectory)"/>
-        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetDebugOutputDirectory)"/>
+<!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetDebugOutputDirectory)"/>-->
     </Target>
 
     <Target Name="LoaclInstallPublishPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">

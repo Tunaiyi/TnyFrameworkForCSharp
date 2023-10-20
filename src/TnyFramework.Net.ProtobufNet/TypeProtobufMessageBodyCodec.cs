@@ -398,9 +398,9 @@ namespace TnyFramework.Net.ProtobufNet
             {
                 return "";
             }
-            var stream = Stream(bodyLength);
-            buffer.ReadBytes(stream, bodyLength);
-            return Encoding.UTF8.GetString(stream.GetBuffer(), 0, bodyLength);
+            var bodyBuffer = buffer.Slice(buffer.ReaderIndex, bodyLength);
+            var bodySegment = bodyBuffer.GetIoBuffer();
+            return Encoding.UTF8.GetString(bodySegment.Array, bodySegment.Offset, bodyLength);
         }
     }
 
@@ -437,11 +437,9 @@ namespace TnyFramework.Net.ProtobufNet
         {
             var codec = factory.CreateCodec(typeof(object));
             ByteBufferUtils.ReadVariant(buffer, out int bodyLength);
-            var body = buffer.ReadBytes(bodyLength);
-            using (var stream = new ReadOnlyByteBufferStream(body, true))
-            {
-                return codec.Decode(stream);
-            }
+            var body = buffer.Slice(buffer.ReaderIndex, bodyLength);
+            using var stream = new ReadOnlyByteBufferStream(body, true);
+            return codec.Decode(stream);
         }
     }
 

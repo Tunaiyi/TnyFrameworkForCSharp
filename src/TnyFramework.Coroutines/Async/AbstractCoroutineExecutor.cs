@@ -6,28 +6,22 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TnyFramework.Coroutines.Async
 {
 
-    public interface IAsyncExecutor
+    public abstract class AbstractCoroutineExecutor : ICoroutineExecutor
     {
+        protected void DoSummit(Action action, TaskScheduler scheduler)
+        {
+            Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, scheduler);
+        }
 
-        /// <summary>
-        /// 在协程上运行一个返回 task 的任务
-        /// </summary>
-        /// <param name="handle">运行任务</param>
-        /// <returns>task</returns>
-        Task AsyncExec(AsyncHandle handle);
+        public abstract void Summit(Action action);
 
-        /// <summary>
-        /// <![CDATA[在协程上运行一个返回 task<T> 的任务]]>
-        /// </summary>
-        /// <param name="function">任务</param>
-        /// <typeparam name="T">类型</typeparam>
-        /// <returns>等待的任务</returns>
-        Task<T> AsyncExec<T>(AsyncHandle<T> function);
     }
 
 }

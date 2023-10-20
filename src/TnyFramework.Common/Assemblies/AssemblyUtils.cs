@@ -12,6 +12,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using Castle.Core.Internal;
+using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Common.Assemblies
 {

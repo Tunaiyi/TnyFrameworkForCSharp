@@ -14,20 +14,22 @@ using TnyFramework.Common.Logger;
 namespace TnyFramework.Coroutines.Async
 {
 
-    internal interface ICoroutineTask
+    public interface ICoroutineWork
     {
         Task Invoke();
+
+        Task AwaitTask { get; }
     }
 
-    internal abstract class CoroutineTask<T> : ICoroutineTask
+    internal abstract class AbstractCoroutineWork<T> : ICoroutineWork
     {
-        protected readonly ILogger LOGGER = LogFactory.Logger<ICoroutineTask>();
+        private readonly ILogger logger = LogFactory.Logger<ICoroutineWork>();
 
-        private Coroutine Coroutine { get; }
+        private Coroutine? Coroutine { get; }
 
-        protected TaskCompletionSource<T> Source { get; }
+        protected TaskCompletionSource<T>? Source { get; }
 
-        protected CoroutineTask(bool createSource = true)
+        protected AbstractCoroutineWork(bool createSource = true)
         {
             Source = createSource ? new TaskCompletionSource<T>() : null;
             Coroutine = null;
@@ -36,21 +38,23 @@ namespace TnyFramework.Coroutines.Async
 
         protected void HandleException(Exception cause)
         {
-            var name = Coroutine.Current.Name;
-            var id = Coroutine.Current.Id;
-            LOGGER.LogWarning(cause, "Coroutine {Name} [{Id}] Invoke exception", name, id);
+            var name = Coroutine.CurrentCoroutine.Name;
+            var id = Coroutine.CurrentCoroutine.Id;
+            logger.LogWarning(cause, "Coroutine {Name} [{Id}] Invoke exception", name, id);
         }
 
         public abstract Task Invoke();
+
+        public abstract Task AwaitTask { get; }
     }
 
-    internal class CoroutineActionTask : CoroutineTask<int>
+    internal class CoroutineActionWork : AbstractCoroutineWork<int>
     {
         private readonly AsyncHandle handle;
 
-        public Task SourceTask => Source?.Task;
+        public override Task AwaitTask => Source?.Task!;
 
-        public CoroutineActionTask(AsyncHandle handle, bool createSource = true)
+        public CoroutineActionWork(AsyncHandle handle, bool createSource = true)
             : base(createSource)
         {
             this.handle = handle;
@@ -70,17 +74,19 @@ namespace TnyFramework.Coroutines.Async
         }
     }
 
-    internal class CoroutineFuncTask<T> : CoroutineTask<T>
+    internal class CoroutineFuncWork<T> : AbstractCoroutineWork<T>
     {
         private readonly AsyncHandle<T> function;
 
-        public CoroutineFuncTask(AsyncHandle<T> function, bool needSource = true)
+        public CoroutineFuncWork(AsyncHandle<T> function, bool needSource = true)
             : base(needSource)
         {
             this.function = function;
         }
 
-        public Task<T> SourceTask => Source?.Task;
+        public override Task AwaitTask => Source?.Task!;
+
+        public Task<T> AwaitTypeTask => Source?.Task!;
 
         public override async Task Invoke()
         {
@@ -96,16 +102,16 @@ namespace TnyFramework.Coroutines.Async
         }
     }
 
-    internal class ActionTask : CoroutineTask<int>
+    internal class ActionWork : AbstractCoroutineWork<int>
     {
         private readonly Action action;
 
-        public ActionTask(Action action)
+        public ActionWork(Action action)
         {
             this.action = action;
         }
 
-        public Task SourceTask => Source?.Task;
+        public override Task AwaitTask => Source?.Task!;
 
         public override Task Invoke()
         {
@@ -122,16 +128,16 @@ namespace TnyFramework.Coroutines.Async
         }
     }
 
-    internal class FuncTask<T> : CoroutineTask<T>
+    internal class FuncWork<T> : AbstractCoroutineWork<T>
     {
         private readonly Func<T> func;
 
-        public FuncTask(Func<T> func)
+        public FuncWork(Func<T> func)
         {
             this.func = func;
         }
 
-        public Task<T> SourceTask => Source?.Task;
+        public override Task AwaitTask => Source?.Task!;
 
         public override Task Invoke()
         {

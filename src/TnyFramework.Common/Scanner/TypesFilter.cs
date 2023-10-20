@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Castle.Core.Internal;
+using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Common.Scanner
 {

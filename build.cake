@@ -25,18 +25,18 @@ public void BuildProjectSolution(string buildMode)
 {
     NuGetRestore(projectSln, new NuGetRestoreSettings { NoCache = true });
     Information($"Build : {projectSln} By {buildMode}");
-    MSBuild($"{projectSln}", new MSBuildSettings {
-        Verbosity = Verbosity.Minimal,
+    DotNetBuild(projectSln, new DotNetBuildSettings {
+        Verbosity = DotNetVerbosity.Minimal,
         Configuration = buildMode
     });
 }
 
-Task("TnyFramework.Build.Publish")
+Task("Build.Publish")
     .Does(() => {
         BuildProjectSolution("Publish");
     });
 
-Task("TnyFramework.Build.Release")
+Task("Build.Release")
     .Does(() => {
         BuildProjectSolution("Release");
     });

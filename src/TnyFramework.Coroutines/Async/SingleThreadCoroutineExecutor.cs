@@ -17,7 +17,7 @@ namespace TnyFramework.Coroutines.Async
     /// </summary>
     public class SingleThreadCoroutineExecutor : DedicatedThreadPoolCoroutineExecutor
     {
-        private static volatile ICoroutineExecutor _INSTANCE;
+        private static volatile ICoroutineExecutor? _INSTANCE;
 
         public static ICoroutineExecutor Default {
             get {

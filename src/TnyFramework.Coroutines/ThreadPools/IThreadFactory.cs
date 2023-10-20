@@ -6,28 +6,16 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
 using System.Threading;
-using System.Threading.Tasks;
 
-namespace TnyFramework.Coroutines.Async
+namespace TnyFramework.Coroutines.ThreadPools
 {
 
-    /// <summary>
-    /// 线程池协程运行器
-    /// </summary>
-    public class ThreadPoolCoroutineExecutor : ICoroutineExecutor
+    public interface IThreadFactory
     {
-        private ThreadPoolCoroutineExecutor()
-        {
-        }
+        Thread Create(int index, ThreadStart start);
 
-        public static ICoroutineExecutor Default { get; } = new ThreadPoolCoroutineExecutor();
-
-        public void Summit(Action action)
-        {
-            Task.Run(action);
-        }
+        Thread Create(int index, ParameterizedThreadStart start);
     }
 
 }

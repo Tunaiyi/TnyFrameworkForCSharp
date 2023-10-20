@@ -23,7 +23,8 @@ namespace TnyFramework.Namespace.Algorithm.XXHash3
 
         protected override long CountHash(string key, int seed)
         {
-            return (long) XXHash3NET.XXHash3.Hash64(new ReadOnlySpan<byte>(DEFAULT_ENCODING.GetBytes(key)), seed);
+            var span = new ReadOnlySpan<byte>(DEFAULT_ENCODING.GetBytes(key));
+            return (long) XXHash3NET.XXHash3.Hash64(span, (ulong)seed);
         }
     }
 

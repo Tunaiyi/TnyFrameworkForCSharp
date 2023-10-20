@@ -21,7 +21,7 @@ namespace TnyFramework.Coroutines.Async
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<Coroutine>();
 
-        private static readonly ThreadLocal<Coroutine> CURRENT_COROUTINE = new ThreadLocal<Coroutine>();
+        private static readonly ThreadLocal<Coroutine> CURRENT_COROUTINE = new();
 
         // 提交状态值 空闲
         private const int SUBMIT_STATUS_IDLE = 0;
@@ -45,12 +45,88 @@ namespace TnyFramework.Coroutines.Async
         private int trackedCount;
 
         // 当前运行线程(运行任务时非空)空闲为 null
-        private volatile Thread execThread;
+        private volatile Thread? execThread;
 
         // 关闭任务
-        private volatile Task<bool> shuttingTask = null;
+        private volatile Task<bool>? shuttingTask = null;
 
-        public static Coroutine Current => CURRENT_COROUTINE.Value;
+        private SpinLock locker;
+
+        private volatile SynchronizationContext? synchronizationContext;
+
+        private volatile TaskScheduler? taskScheduler;
+
+        public Coroutine() : this(ThreadPoolCoroutineExecutor.Default)
+        {
+
+        }
+
+        /// <summary>
+        /// 协程构建器
+        /// </summary>
+        /// <param name="executor">协程执行器</param>
+        /// <param name="name">协程名字</param>
+        public Coroutine(ICoroutineExecutor executor, string? name = null)
+        {
+            Id = Interlocked.Increment(ref _ID_COUNTER);
+            Name = name ?? $"Coroutine-{Id}";
+            Queue = new CoroutineWorkQueue();
+            this.executor = executor;
+        }
+
+        private TaskScheduler TaskScheduler {
+            get {
+                if (taskScheduler != null)
+                {
+                    return taskScheduler;
+                }
+                var locked = false;
+                locker.Enter(ref locked);
+                try
+                {
+                    if (taskScheduler != null)
+                    {
+                        return taskScheduler;
+                    }
+                    taskScheduler = new CoroutineTaskScheduler(this);
+                    return taskScheduler;
+                } finally
+                {
+                    if (locked)
+                    {
+                        locker.Exit(true);
+                    }
+                }
+            }
+        }
+
+        private SynchronizationContext SynchronizationContext {
+            get {
+                if (synchronizationContext != null)
+                {
+                    return synchronizationContext;
+                }
+                var locked = false;
+                locker.Enter(ref locked);
+                try
+                {
+                    if (synchronizationContext != null)
+                    {
+                        return synchronizationContext;
+                    }
+                    synchronizationContext = new CoroutineSynchronizationContext(this);
+                    return synchronizationContext;
+                } finally
+                {
+                    if (locked)
+                    {
+                        locker.Exit(true);
+                    }
+                }
+            }
+        }
+
+        public static Coroutine CurrentCoroutine => CURRENT_COROUTINE.Value!;
 
         internal static void InitializeSynchronizationContext()
         {
@@ -58,7 +134,7 @@ namespace TnyFramework.Coroutines.Async
             if (current is CoroutineSynchronizationContext)
                 return;
             var coroutine = new Coroutine();
-            SynchronizationContext.SetSynchronizationContext(coroutine.Context);
+            SynchronizationContext.SetSynchronizationContext(coroutine.SynchronizationContext);
             CURRENT_COROUTINE.Value = coroutine;
         }
 
@@ -69,26 +145,8 @@ namespace TnyFramework.Coroutines.Async
                 return;
             if (!(coroutine is Coroutine value))
                 return;
-            SynchronizationContext.SetSynchronizationContext(value.Context);
+            SynchronizationContext.SetSynchronizationContext(value.SynchronizationContext);
             CURRENT_COROUTINE.Value = value;
-        }
-
-        public Coroutine() : this(ThreadPoolCoroutineExecutor.Default)
-        {
-        }
-
-        /// <summary>
-        /// 协程构建器
-        /// </summary>
-        /// <param name="executor">协程执行器</param>
-        /// <param name="name">协程名字</param>
-        public Coroutine(ICoroutineExecutor executor, string name = null)
-        {
-            Id = Interlocked.Increment(ref _ID_COUNTER);
-            Name = name ?? $"Coroutine-{Id}";
-            Queue = new CoroutineWorkQueue();
-            Context = new CoroutineSynchronizationContext(this);
-            this.executor = executor;
         }
 
         public int Id { get; }
@@ -97,7 +155,7 @@ namespace TnyFramework.Coroutines.Async
 
         private CoroutineWorkQueue Queue { get; }
 
-        internal CoroutineSynchronizationContext Context { get; }
+        // private CoroutineSynchronizationContext Context { get; }
 
         private bool PendingTasks => Queue.WorkCount != 0 || trackedCount != 0;
 
@@ -111,44 +169,9 @@ namespace TnyFramework.Coroutines.Async
             Interlocked.Decrement(ref trackedCount);
         }
 
-        public void Post(CoroutineSynchronizationContext context, SendOrPostCallback callback, object state)
-        {
-            Enqueue(new CoroutineWork(callback, context, state));
-        }
+        internal bool InCoroutine => this == CURRENT_COROUTINE.Value;
 
-        public void Send(CoroutineSynchronizationContext context, SendOrPostCallback callback, object state)
-        {
-            if (execThread == Thread.CurrentThread)
-            {
-                callback(state);
-            } else
-            {
-                var handle = new ManualResetEvent(false);
-                try
-                {
-                    Enqueue(new CoroutineWork(callback, context, state, handle));
-                    handle.WaitOne();
-                } finally
-                {
-                    handle.Dispose();
-                }
-            }
-        }
-
-        private void Enqueue(CoroutineWork request)
-        {
-            Queue.Enqueue(request);
-            TrySummit();
-        }
-
-        private void TrySummit()
-        {
-            var current = submit;
-            if (current == SUBMIT_STATUS_IDLE && Interlocked.CompareExchange(ref submit, SUBMIT_STATUS_SUBMIT, SUBMIT_STATUS_IDLE) == current)
-            {
-                executor.Summit(ExecuteTasks);
-            }
-        }
+        internal bool InThread => execThread == Thread.CurrentThread;
 
         public Task<bool> Shutdown(long millisecondsTimeout)
         {
@@ -162,9 +185,9 @@ namespace TnyFramework.Coroutines.Async
                 }
                 if (Interlocked.CompareExchange(ref status, (int) CoroutineStatus.Shutting, current) != current)
                     continue;
-                var task = new CoroutineFuncTask<bool>(() => DoShutdown(millisecondsTimeout));
-                Context.Post((state) => ((ICoroutineTask) state).Invoke(), task);
-                return task.SourceTask;
+                var task = new CoroutineFuncWork<bool>(() => DoShutdown(millisecondsTimeout));
+                AsyncExec(task);
+                return task.AwaitTypeTask;
             }
         }
 
@@ -276,36 +299,44 @@ namespace TnyFramework.Coroutines.Async
         }
 
         // Exec will execute tasks off the task list
-        private void ExecuteTasks()
+        private void ExecuteAllWorks()
         {
-            var currentContext = SynchronizationContext.Current;
+            DoTransaction(() => Task.Factory.StartNew(DoExecuteWorks, CancellationToken.None, TaskCreationOptions.None, TaskScheduler));
+        }
+
+        private void DoTransaction(Action action)
+        {
             var currentCoroutine = CURRENT_COROUTINE.Value;
             try
             {
-                var queue = Queue.CurrentFrameQueue;
-                if (queue.IsEmpty)
-                {
-                    return;
-                }
                 execThread = Thread.CurrentThread;
                 CURRENT_COROUTINE.Value = this;
-                while (queue.TryDequeue(out var request))
-                {
-                    var context = request.Context;
-                    SynchronizationContext.SetSynchronizationContext(context);
-                    request.Invoke();
-                }
+                action();
             } finally
             {
-                execThread = null;
-                CURRENT_COROUTINE.Value = currentCoroutine;
-                SynchronizationContext.SetSynchronizationContext(currentContext);
+                execThread = null!;
+                CURRENT_COROUTINE.Value = currentCoroutine ?? null!;
                 Interlocked.Exchange(ref submit, SUBMIT_STATUS_IDLE);
                 if (!Queue.IsWorkEmpty)
                 {
                     TrySummit();
                 }
             }
+        }
+
+        private void DoExecuteWorks()
+        {
+            DoTransaction(() => {
+                var queue = Queue.CurrentFrameQueue;
+                if (queue.IsEmpty)
+                {
+                    return;
+                }
+                while (queue.TryDequeue(out var work))
+                {
+                    work.Invoke();
+                }
+            });
         }
 
         public CoroutineStatus Status => (CoroutineStatus) status;
@@ -350,25 +381,44 @@ namespace TnyFramework.Coroutines.Async
             }
         }
 
+        internal Task AsyncExec(ICoroutineWork work)
+        {
+            var task = work.AwaitTask;
+            Enqueue(work);
+            return task;
+        }
+
         private Task DoRun(AsyncHandle handle)
         {
-            var task = new CoroutineActionTask(handle);
-            Context.Post(Invoke, task);
-            return task.SourceTask;
+            var task = new CoroutineActionWork(handle);
+            return AsyncExec(task);
         }
 
         private Task<T> DoExec<T>(AsyncHandle<T> function)
         {
-            var task = new CoroutineFuncTask<T>(function);
-            Context.Post(Invoke, task);
-            return task.SourceTask;
+            var task = new CoroutineFuncWork<T>(function);
+            AsyncExec(task);
+            return task.AwaitTypeTask;
         }
 
-        private static async void Invoke(object value)
+        private void Enqueue(ICoroutineWork request)
         {
-            if (value is ICoroutineTask task)
+            if (InCoroutine || InThread)
             {
-                await task.Invoke();
+                request.Invoke();
+            } else
+            {
+                Queue.Enqueue(request);
+                TrySummit();
+            }
+        }
+
+        private void TrySummit()
+        {
+            var current = submit;
+            if (current == SUBMIT_STATUS_IDLE && Interlocked.CompareExchange(ref submit, SUBMIT_STATUS_SUBMIT, SUBMIT_STATUS_IDLE) == current)
+            {
+                executor.Summit(ExecuteAllWorks);
             }
         }
     }

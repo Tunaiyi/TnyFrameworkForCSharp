@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Castle.Core.Internal;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Assemblies;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Scanner.Attributes;
 using TnyFramework.Common.Scanner.Exceptions;

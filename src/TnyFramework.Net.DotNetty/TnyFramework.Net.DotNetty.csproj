@@ -11,7 +11,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
+        <TargetFrameworks>net6.0;net7.0;net8.0;netstandard2.1</TargetFrameworks>
         <Configurations>Debug;Release;Publish</Configurations>
         <Platforms>AnyCPU</Platforms>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -28,12 +28,12 @@
         <None Remove="Bootstrap\" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="DotNetty.Buffers" Version="0.7.0" />
-        <PackageReference Include="DotNetty.Codecs" Version="0.7.0" />
-        <PackageReference Include="DotNetty.Common" Version="0.7.0" />
-        <PackageReference Include="DotNetty.Transport" Version="0.7.0" />
-        <PackageReference Include="DotNetty.Handlers" Version="0.7.0" />
-        <PackageReference Include="DotNetty.Transport.Libuv" Version="0.7.0" />
+        <PackageReference Include="DotNetty.Buffers" Version="0.7.5" />
+        <PackageReference Include="DotNetty.Codecs" Version="0.7.5" />
+        <PackageReference Include="DotNetty.Common" Version="0.7.5" />
+        <PackageReference Include="DotNetty.Transport" Version="0.7.5" />
+        <PackageReference Include="DotNetty.Handlers" Version="0.7.5" />
+        <PackageReference Include="DotNetty.Transport.Libuv" Version="0.7.5" />
     </ItemGroup>
     <ItemGroup>
         <Folder Include="Bootstrap\" />

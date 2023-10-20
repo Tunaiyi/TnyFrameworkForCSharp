@@ -729,56 +729,56 @@ namespace TnyFramework.Namespace.Etcd
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.Watch(request, method, headers, deadline, cancellationToken);
+            await Client.WatchAsync(request, method, headers, deadline, cancellationToken);
         }
 
         public async Task Watch(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.Watch(request, methods, headers, deadline, cancellationToken);
+            await Client.WatchAsync(request, methods, headers, deadline, cancellationToken);
         }
 
         public async Task Watch(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.Watch(request, method, headers, deadline, cancellationToken);
+            await Client.WatchAsync(request, method, headers, deadline, cancellationToken);
         }
 
         public async Task Watch(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.Watch(request, methods, headers, deadline, cancellationToken);
+            await Client.WatchAsync(request, methods, headers, deadline, cancellationToken);
         }
 
         public async Task Watch(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.Watch(requests, method, headers, deadline, cancellationToken);
+            await Client.WatchAsync(requests, method, headers, deadline, cancellationToken);
         }
 
         public async Task Watch(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.Watch(requests, methods, headers, deadline, cancellationToken);
+            await Client.WatchAsync(requests, methods, headers, deadline, cancellationToken);
         }
 
         public async Task Watch(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.Watch(requests, method, headers, deadline, cancellationToken);
+            await Client.WatchAsync(requests, method, headers, deadline, cancellationToken);
         }
 
         public async Task Watch(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.Watch(requests, methods, headers, deadline, cancellationToken);
+            await Client.WatchAsync(requests, methods, headers, deadline, cancellationToken);
         }
 
         public void Watch(string key, Action<WatchResponse> method, Metadata headers = null, DateTime? deadline = null,
@@ -833,104 +833,104 @@ namespace TnyFramework.Namespace.Etcd
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.WatchRange(request, method, headers, deadline, cancellationToken);
+            await Client.WatchAsync(request, method, headers, deadline, cancellationToken);
         }
 
         public async Task WatchRange(WatchRequest request, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.WatchRange(request, methods, headers, deadline, cancellationToken);
+            await Client.WatchAsync(request, methods, headers, deadline, cancellationToken);
         }
 
         public async Task WatchRange(WatchRequest request, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.WatchRange(request, method, headers, deadline, cancellationToken);
+            await Client.WatchAsync(request, method, headers, deadline, cancellationToken);
         }
 
         public async Task WatchRange(WatchRequest request, Action<WatchEvent[]>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.WatchRange(request, methods, headers, deadline, cancellationToken);
+            await Client.WatchAsync(request, methods, headers, deadline, cancellationToken);
         }
 
         public async Task WatchRange(WatchRequest[] requests, Action<WatchResponse> method, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.WatchRange(requests, method, headers, deadline, cancellationToken);
+            await Client.WatchAsync(requests, method, headers, deadline, cancellationToken);
         }
 
         public async Task WatchRange(WatchRequest[] requests, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.WatchRange(requests, methods, headers, deadline, cancellationToken);
+            await Client.WatchAsync(requests, methods, headers, deadline, cancellationToken);
         }
 
         public async Task WatchRange(WatchRequest[] requests, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.WatchRange(requests, method, headers, deadline, cancellationToken);
+            await Client.WatchAsync(requests, method, headers, deadline, cancellationToken);
         }
 
         public async Task WatchRange(WatchRequest[] requests, Action<WatchEvent[]>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
             headers = await AuthHeaderAsync(headers);
-            await Client.WatchRange(requests, methods, headers, deadline, cancellationToken);
+            await Client.WatchAsync(requests, methods, headers, deadline, cancellationToken);
         }
 
         public void WatchRange(string path, Action<WatchResponse> method, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            Client.WatchRange(path, method, AuthHeader(headers), deadline, cancellationToken);
+            Client.WatchAsync(path, method, AuthHeader(headers), deadline, cancellationToken);
         }
 
         public void WatchRange(string path, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            Client.WatchRange(path, methods, AuthHeader(headers), deadline, cancellationToken);
+            Client.WatchAsync(path, methods, AuthHeader(headers), deadline, cancellationToken);
         }
 
         public void WatchRange(string path, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            Client.WatchRange(path, method, AuthHeader(headers), deadline, cancellationToken);
+            Client.WatchAsync(path, method, AuthHeader(headers), deadline, cancellationToken);
         }
 
         public void WatchRange(string path, Action<WatchEvent[]>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            Client.WatchRange(path, methods, AuthHeader(headers), deadline, cancellationToken);
+            Client.WatchAsync(path, methods, AuthHeader(headers), deadline, cancellationToken);
         }
 
         public void WatchRange(string[] paths, Action<WatchResponse> method, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            Client.WatchRange(paths, method, AuthHeader(headers), deadline, cancellationToken);
+            Client.WatchAsync(paths, method, AuthHeader(headers), deadline, cancellationToken);
         }
 
         public void WatchRange(string[] paths, Action<WatchResponse>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            Client.WatchRange(paths, methods, AuthHeader(headers), deadline, cancellationToken);
+            Client.WatchAsync(paths, methods, AuthHeader(headers), deadline, cancellationToken);
         }
 
         public void WatchRange(string[] paths, Action<WatchEvent[]> method, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            Client.WatchRange(paths, method, AuthHeader(headers), deadline, cancellationToken);
+            Client.WatchAsync(paths, method, AuthHeader(headers), deadline, cancellationToken);
         }
 
         public void WatchRange(string[] paths, Action<WatchEvent[]>[] methods, Metadata headers = null, DateTime? deadline = null,
             CancellationToken cancellationToken = new CancellationToken())
         {
-            Client.WatchRange(paths, methods, AuthHeader(headers), deadline, cancellationToken);
+            Client.WatchAsync(paths, methods, AuthHeader(headers), deadline, cancellationToken);
         }
     }
 
