@@ -54,7 +54,7 @@ namespace TnyFramework.Net.Transport
         /// <param name="code">消息结果码</param>
         /// <param name="body">消息体</param>
         /// <returns>创建的消息上下文</returns>
-        public static MessageContent Push(IProtocol protocol, IResultCode code, object body)
+        public static MessageContent Push(IProtocol protocol, IResultCode code, object? body)
         {
             return new DefaultMessageContent(MessageMode.Push, protocol, code)
                 .WithBody(body);
@@ -116,7 +116,7 @@ namespace TnyFramework.Net.Transport
         /// <param name="body">消息体</param>
         /// <param name="toMessage">响应的请求消息Id</param>
         /// <returns>创建的消息上下文</returns>
-        public static MessageContent Respond(IProtocol protocol, IResultCode code, object body, long toMessage)
+        public static MessageContent Respond(IProtocol protocol, IResultCode code, object? body, long toMessage)
         {
 
             return new DefaultMessageContent(MessageMode.Response, protocol, code, toMessage)

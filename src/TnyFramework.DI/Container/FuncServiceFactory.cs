@@ -22,7 +22,7 @@ namespace TnyFramework.DI.Container
 
         public object Create(IServiceProvider provider)
         {
-            return factory(provider);
+            return factory(provider)!;
         }
     }
 

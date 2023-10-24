@@ -13,9 +13,9 @@ namespace TnyFramework.Net.Base
 
     public class ServerSetting : IServerSetting
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
-        public string ServeName { get; set; }
+        public string ServeName { get; set; } = "";
 
         /// <summary>
         /// 是否使用 libuv
@@ -40,7 +40,7 @@ namespace TnyFramework.Net.Base
         /// <summary>
         /// 上报绑定域名
         /// </summary>
-        public string ServeHost { get; set; }
+        public string ServeHost { get; set; } = "";
 
         /// <summary>
         /// 上报绑定端口
@@ -50,7 +50,7 @@ namespace TnyFramework.Net.Base
         /// <summary>
         /// 信息
         /// </summary>
-        public IDictionary<string, string> Metadata { get; set; }
+        public IDictionary<string, string>? Metadata { get; set; }
     }
 
 }

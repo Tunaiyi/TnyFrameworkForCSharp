@@ -64,12 +64,12 @@ namespace TnyFramework.Namespace.Etcd
             return response.Count == 0 ? Array.Empty<NameNode<TValue>>() : DecodeAllKeyValues(response.Kvs, type);
         }
 
-        public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, HashingOptions<TNode> options) where TNode : IShardingNode
+        public INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, HashingOptions<TNode> options) where TNode : IShardingNode
         {
             return NodeHashing(rootPath, null, options);
         }
 
-        public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, INodeHashingFactory? factory, HashingOptions<TNode> options)
+        public INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, INodeHashingFactory? factory, HashingOptions<TNode> options)
             where TNode : IShardingNode
         {
             if (rootPath.IsBlank())
@@ -83,25 +83,25 @@ namespace TnyFramework.Namespace.Etcd
             return factory.Create(rootPath, options, this, this.objectCodecAdapter);
         }
 
-        public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+        public INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
             IHasher<IPartitionSlot<TNode>> nodeHasher) where TNode : IShardingNode
         {
             return NodeHashing(rootPath, maxSlotSize, keyHasher, nodeHasher, null, null);
         }
 
-        public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+        public INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
             IHasher<IPartitionSlot<TNode>> nodeHasher, INodeHashingFactory factory) where TNode : IShardingNode
         {
             return NodeHashing(rootPath, maxSlotSize, keyHasher, nodeHasher, factory, null);
         }
 
-        public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+        public INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
             IHasher<IPartitionSlot<TNode>> nodeHasher, Action<HashingOptions<TNode>> custom) where TNode : IShardingNode
         {
             return NodeHashing(rootPath, maxSlotSize, keyHasher, nodeHasher, null, custom);
         }
 
-        public INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+        public INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
             IHasher<IPartitionSlot<TNode>> nodeHasher, INodeHashingFactory? factory, Action<HashingOptions<TNode>>? custom)
             where TNode : IShardingNode
         {

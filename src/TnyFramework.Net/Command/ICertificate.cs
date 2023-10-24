@@ -34,7 +34,7 @@ namespace TnyFramework.Net.Command
 
     public static class CertificateExtensions
     {
-        public static bool IsNewerThan<TUserId>(this ICertificate one, ICertificate other)
+        public static bool IsNewerThan(this ICertificate one, ICertificate other)
         {
             if (one.IsAuthenticated() && !other.IsAuthenticated())
             {

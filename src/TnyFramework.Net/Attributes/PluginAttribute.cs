@@ -21,7 +21,7 @@ namespace TnyFramework.Net.Attributes
         /// </summary>
         /// <param name="pluginType">插件类型, pluginType 必须 实现 ICommandPlugin</param>
         /// <param name="attribute">参数</param>
-        public PluginAttribute(Type pluginType, object attribute = default)
+        public PluginAttribute(Type pluginType, object? attribute = default)
         {
             if (!typeof(ICommandPlugin).IsAssignableFrom(pluginType))
             {
@@ -39,7 +39,7 @@ namespace TnyFramework.Net.Attributes
         /// <summary>
         /// 参数
         /// </summary>
-        public object Attribute { get; }
+        public object? Attribute { get; }
 
         public abstract bool IsBefore();
 

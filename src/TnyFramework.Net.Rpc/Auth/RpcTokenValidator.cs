@@ -32,6 +32,10 @@ namespace TnyFramework.Net.Rpc.Auth
             ICertificateFactory<RpcAccessIdentify> factory)
         {
             var token = message.BodyAs<string>();
+            if (token == null)
+            {
+                throw new AuthFailedException("Token is null");
+            }
             try
             {
                 var result = rpcAuthService.VerifyToken(token);

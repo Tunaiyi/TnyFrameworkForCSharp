@@ -18,7 +18,7 @@ namespace TnyFramework.Namespace.Etcd
 
         public static INodeHashingFactory Default => FACTORY;
 
-        public INodeHashing<TNode> Create<TNode>(string rootPath, HashingOptions<TNode> option, INamespaceExplorer explorer,
+        public INodeHashing<TNode>? Create<TNode>(string rootPath, HashingOptions<TNode> option, INamespaceExplorer explorer,
             ObjectCodecAdapter adapter) where TNode : IShardingNode
         {
             if (explorer is EtcdNamespaceExplorer etcdExplorer)

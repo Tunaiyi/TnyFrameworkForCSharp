@@ -25,7 +25,7 @@ namespace TnyFramework.Net.Demo.DTO
         public long id;
 
         [ProtoMember(2)]
-        public string name;
+        public string name = "";
 
         [ProtoMember(3)]
         public int age;

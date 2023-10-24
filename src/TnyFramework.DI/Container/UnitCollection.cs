@@ -89,7 +89,7 @@ namespace TnyFramework.DI.Container
 
         public bool TryGetValue(string key, out TUnit value)
         {
-            return UnitMap.TryGetValue(key, out value);
+            return UnitMap.TryGetValue(key, out value!);
         }
 
         public TUnit this[string key] {

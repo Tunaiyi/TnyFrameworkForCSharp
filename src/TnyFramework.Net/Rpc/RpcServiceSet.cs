@@ -42,12 +42,12 @@ namespace TnyFramework.Net.Rpc
             return orderRemoteNodes;
         }
 
-        public IRpcInvokeNode FindInvokeNode(int nodeId)
+        public IRpcInvokeNode? FindInvokeNode(int nodeId)
         {
             return remoteNodeMap[nodeId];
         }
 
-        public IRpcAccess FindInvokeAccess(int nodeId, long accessId)
+        public IRpcAccess? FindInvokeAccess(int nodeId, long accessId)
         {
             var node = remoteNodeMap[nodeId];
             return node?.GetAccess(accessId);

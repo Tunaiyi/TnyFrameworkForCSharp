@@ -6,10 +6,10 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Dispatcher;
@@ -55,7 +55,6 @@ namespace TnyFramework.Net.Transport
 
         public long AccessId { get; private set; }
 
-
         // public NetAccessMode AccessMode { get; }
 
         public TunnelStatus Status {
@@ -64,7 +63,7 @@ namespace TnyFramework.Net.Transport
             protected set => status = value.Value();
         }
 
-        public override ICertificate<TUserId> Certificate => Endpoint?.Certificate;
+        public override ICertificate<TUserId> Certificate => endpoint.IsNull() ? null! : endpoint.Certificate;
 
         public INetworkContext Context { get; }
 
@@ -84,7 +83,6 @@ namespace TnyFramework.Net.Transport
 
         IEndpoint<TUserId> ITunnel<TUserId>.Endpoint => Endpoint;
 
-
         public bool IsOpen() => Status == TunnelStatus.Open;
 
         public override bool IsClosed() => Status == TunnelStatus.Closed;
@@ -103,6 +101,7 @@ namespace TnyFramework.Net.Transport
         {
             Id = id;
             Context = context;
+            endpoint = default!;
             AccessMode = accessMode;
             activateEvent = NetTunnel.ACTIVATE_EVENT_BUS.ForkChild();
             unactivatedEvent = NetTunnel.UNACTIVATED_EVENT_BUS.ForkChild();
@@ -158,7 +157,7 @@ namespace TnyFramework.Net.Transport
 
         public bool Bind(INetEndpoint newEndpoint)
         {
-            if (newEndpoint == null)
+            if (newEndpoint.IsNull())
             {
                 return false;
             }
@@ -173,7 +172,7 @@ namespace TnyFramework.Net.Transport
                 {
                     return true;
                 }
-                if (endpoint == null)
+                if (endpoint.IsNull())
                 {
                     endpoint = (TEndpoint) newEndpoint;
                     return true;
@@ -214,7 +213,7 @@ namespace TnyFramework.Net.Transport
                     return false;
                 }
                 status = TunnelStatus.Open.Value();
-                activateEvent?.Notify(this);
+                activateEvent.Notify(this);
                 OnOpened();
             }
             return true;
@@ -231,7 +230,7 @@ namespace TnyFramework.Net.Transport
 
         public void Disconnect()
         {
-            TEndpoint netEndpoint;
+            TEndpoint? netEndpoint;
             lock (this)
             {
                 var current = Status;
@@ -244,9 +243,8 @@ namespace TnyFramework.Net.Transport
                 netEndpoint = endpoint;
                 OnDisconnected();
             }
-            netEndpoint?.OnUnactivated(this);
-            unactivatedEvent?.Notify(this);
-
+            netEndpoint.OnUnactivated(this);
+            unactivatedEvent.Notify(this);
         }
 
         protected virtual void OnDisconnected()
@@ -266,7 +264,7 @@ namespace TnyFramework.Net.Transport
             {
                 return false;
             }
-            TEndpoint netEndpoint;
+            TEndpoint? netEndpoint;
             lock (this)
             {
                 current = Status;
@@ -280,8 +278,8 @@ namespace TnyFramework.Net.Transport
                 netEndpoint = endpoint;
                 OnClosed();
             }
-            netEndpoint?.OnUnactivated(this);
-            closeEvent?.Notify(this);
+            netEndpoint.OnUnactivated(this);
+            closeEvent.Notify(this);
             return true;
         }
 

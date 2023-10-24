@@ -13,7 +13,7 @@ namespace TnyFramework.DI.Container
 
     public class SingletonServiceInstance : BaseServiceInstance
     {
-        private volatile object instance;
+        private volatile object? instance;
 
         public SingletonServiceInstance(IServiceFactory factory) : base(factory)
         {

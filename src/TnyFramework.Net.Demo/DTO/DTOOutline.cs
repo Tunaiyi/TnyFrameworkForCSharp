@@ -25,7 +25,7 @@ namespace TnyFramework.Net.Demo.DTO
             {
                 if (filed.FieldType != typeof(Action) || !filed.Name.StartsWith("Register", StringComparison.Ordinal))
                     continue;
-                var action = (Action) filed.GetValue(type);
+                var action = (Action?) filed.GetValue(type);
                 action?.Invoke();
             }
         }

@@ -42,7 +42,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             return new SessionKeeperSettingSpec(init);
         }
 
-        public SessionKeeperSettingSpec(Action<SessionKeeperSettingSpec> init = null) : base()
+        public SessionKeeperSettingSpec(Action<SessionKeeperSettingSpec>? init = null)
         {
             Default(_ => setting);
             init?.Invoke(this);

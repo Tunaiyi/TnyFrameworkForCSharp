@@ -52,7 +52,7 @@ namespace TnyFramework.Net.Cloud.Nacos
 
         public async Task RegisterInstance(INetApplication netApplication, INetServer server)
         {
-            Exception exception = null;
+            Exception? exception = null;
             var instance = CreateInstance(netApplication, server);
             for (var i = 0; i < 3; i++)
             {
@@ -76,7 +76,7 @@ namespace TnyFramework.Net.Cloud.Nacos
         public async Task DeregisterInstance(INetServer server)
         {
 
-            Exception exception = null;
+            Exception? exception = null;
             var setting = server.Setting;
             for (var i = 0; i < 3; i++)
             {

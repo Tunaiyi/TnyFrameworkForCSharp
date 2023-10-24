@@ -17,7 +17,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
     public class RpcInvokeContext : IRpcInvokeContext
     {
-        private readonly RpcForwardHeader forward;
+        private readonly RpcForwardHeader? forward;
 
         private readonly INetAppContext appContext;
 
@@ -51,13 +51,13 @@ namespace TnyFramework.Net.Command.Dispatcher
             }
         }
 
-        public object Result { get; private set; }
+        public object? Result { get; private set; }
 
-        public Exception Cause { get; private set; }
+        public Exception? Cause { get; private set; }
 
         public bool Done { get; private set; }
 
-        public void Complete(object result = null)
+        public void Complete(object? result = null)
         {
             if (Done)
             {

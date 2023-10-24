@@ -13,9 +13,9 @@ namespace TnyFramework.Codec
 
     public interface IObjectCodec
     {
-        byte[] Encode(object value);
+        byte[] Encode(object? value);
 
-        void Encode(object value, Stream output);
+        void Encode(object? value, Stream output);
 
         object? Decode(byte[] bytes);
 
@@ -28,9 +28,9 @@ namespace TnyFramework.Codec
 
     public interface IObjectCodec<T> : IObjectCodec
     {
-        byte[] Encode(T value);
+        byte[] Encode(T? value);
 
-        void Encode(T value, Stream output);
+        void Encode(T? value, Stream output);
 
         new T? Decode(byte[] bytes);
 

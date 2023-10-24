@@ -26,7 +26,7 @@ namespace TnyFramework.Codec
 
         public abstract T? Parse(string? data);
 
-        public byte[] Encode(object value)
+        public byte[] Encode(object? value)
         {
             if (value is T data)
             {
@@ -37,7 +37,7 @@ namespace TnyFramework.Codec
             }
         }
 
-        public void Encode(object value, Stream output)
+        public void Encode(object? value, Stream output)
         {
             if (value is T data)
             {

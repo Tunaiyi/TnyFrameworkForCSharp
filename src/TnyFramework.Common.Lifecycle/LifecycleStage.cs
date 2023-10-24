@@ -37,7 +37,7 @@ namespace TnyFramework.Common.Lifecycle
 
         public new static void LoadAll() => LoadAll(typeof(LifecycleStage));
 
-        public Type LifecycleType { get; protected set; }
+        public Type LifecycleType { get; protected set; } = null!;
 
         protected override void OnCheck()
         {

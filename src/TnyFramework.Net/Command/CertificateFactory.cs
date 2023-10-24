@@ -13,7 +13,7 @@ namespace TnyFramework.Net.Command
 
     public class CertificateFactory<TUserId> : ICertificateFactory<TUserId>
     {
-        private readonly TUserId anonymousUserId;
+        private readonly TUserId? anonymousUserId;
 
         public CertificateFactory()
         {

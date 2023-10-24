@@ -31,7 +31,7 @@ namespace TnyFramework.Net.Rpc
             return Endpoint.Send(content);
         }
 
-        public int CompareTo(IRpcRemoteAccessPoint other)
+        public int CompareTo(IRpcRemoteAccessPoint? other)
         {
             if (ReferenceEquals(this, other)) return 0;
             return ReferenceEquals(null, other) ? 1 : AccessId.CompareTo(other.AccessId);

@@ -601,7 +601,7 @@ namespace TnyFramework.Net.DotNetty.Common
             ReadVariant(buffer, false, out int len);
             if (len == 0)
             {
-                value = null;
+                value = null!;
                 return;
             } else
             {

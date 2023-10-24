@@ -88,7 +88,7 @@ namespace TnyFramework.DI.Container
 
         public static IServiceCollection AddSingletonUnit<TInstance>(this IServiceCollection services, string name, TInstance instance)
         {
-            var serviceInstance = new SingletonServiceInstance(new ObjectServiceFactory(instance));
+            var serviceInstance = new SingletonServiceInstance(new ObjectServiceFactory(instance!));
             return services.RegisterSingletonUnit(name, serviceInstance, typeof(TInstance));
         }
 

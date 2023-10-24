@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command.Auth;
@@ -23,25 +24,25 @@ namespace TnyFramework.Net.Command.Dispatcher
         private static readonly IEventBus<CommandExecute> COMMAND_EXECUTE_EVENT_BUS = EventBuses.Create<CommandExecute>();
         private static readonly IEventBus<CommandDone> COMMAND_DONE_EVENT_BUS = EventBuses.Create<CommandDone>();
 
-        /// <summary>
-        /// 激活事件总线, 可监听到所有 Command 的事件
-        /// </summary>
-        public static IEventBox<CommandExecute> CommandExecuteEventBox => COMMAND_EXECUTE_EVENT_BUS;
+        // private static readonly ILogger LOGGER = LogFactory.Logger<MessageDispatcherContext>();
+
+        // /// <summary>
+        // /// 激活事件总线, 可监听到所有 Command 的事件
+        // /// </summary>
+        // public static IEventBox<CommandExecute> CommandExecuteEventBox => COMMAND_EXECUTE_EVENT_BUS;
 
         /// <summary>
         /// 断线事件总线, 可监听到所有 Command 的事件
         /// </summary>
         public static IEventBox<CommandDone> CommandDoneEventBox => COMMAND_DONE_EVENT_BUS;
 
-        private static readonly ILogger LOGGER = LogFactory.Logger<MessageDispatcherContext>();
-
         private readonly IDictionary<object, IAuthenticationValidator> authenticationValidators = new Dictionary<object, IAuthenticationValidator>();
 
-        private readonly IEventBus<CommandExecute> commandExecuteEvent;
+        // private readonly IEventBus<CommandExecute> commandExecuteEvent;
 
         private readonly IEventBus<CommandDone> commandDoneEvent;
 
-        public IEventBox<CommandExecute> CommandExecuteEvent => commandExecuteEvent;
+        // public IEventBox<CommandExecute> CommandExecuteEvent => commandExecuteEvent;
 
         public IEventBox<CommandDone> CommandDoneEvent => commandDoneEvent;
 
@@ -56,14 +57,14 @@ namespace TnyFramework.Net.Command.Dispatcher
             {
                 this.authenticationValidators.Add(authenticateValidator.GetType(), authenticateValidator);
                 var limit = authenticateValidator.AuthProtocolLimit;
-                if (limit == null)
+                if (limit.IsEmpty())
                     continue;
                 foreach (var protocol in limit)
                 {
                     this.authenticationValidators.Add(protocol, authenticateValidator);
                 }
             }
-            commandExecuteEvent = COMMAND_EXECUTE_EVENT_BUS.ForkChild();
+            // commandExecuteEvent = COMMAND_EXECUTE_EVENT_BUS.ForkChild();
             commandDoneEvent = COMMAND_DONE_EVENT_BUS.ForkChild();
 
         }
@@ -75,24 +76,24 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// </summary>
         public INetAppContext AppContext { get; }
 
-        public IAuthenticationValidator Validator(Type type)
+        public IAuthenticationValidator? Validator(Type? type)
         {
             if (type == null)
                 return null;
             return authenticationValidators.TryGetValue(type, out var validator) ? validator : null;
         }
 
-        public IAuthenticationValidator Validator(int protocolId)
+        public IAuthenticationValidator? Validator(int protocolId)
         {
             return authenticationValidators.TryGetValue(protocolId, out var validator) ? validator : null;
         }
 
-        internal void FireExecute(RpcHandleCommand rpcHandleCommand)
-        {
-            commandExecuteEvent.Notify(rpcHandleCommand);
-        }
+        // internal void FireExecute(RpcHandleCommand rpcHandleCommand)
+        // {
+        //     commandExecuteEvent.Notify(rpcHandleCommand);
+        // }
 
-        internal void FireDone(RpcHandleCommand rpcHandleCommand, Exception cause)
+        internal void FireDone(RpcHandleCommand rpcHandleCommand, Exception? cause)
         {
             commandDoneEvent.Notify(rpcHandleCommand, cause);
         }

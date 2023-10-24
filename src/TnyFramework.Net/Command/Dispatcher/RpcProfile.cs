@@ -35,7 +35,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             Mode = mode;
         }
 
-        public static RpcProfile OneOf(MethodInfo method)
+        public static RpcProfile? OneOf(MethodInfo method)
         {
             var rpcRequest = method.GetCustomAttribute<RpcRequestAttribute>();
             if (rpcRequest != null)

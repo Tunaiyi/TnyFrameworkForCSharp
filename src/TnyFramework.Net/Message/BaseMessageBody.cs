@@ -18,7 +18,7 @@ namespace TnyFramework.Net.Message
 
         private int released = UNRELEASED;
 
-        private T body;
+        private T? body;
 
         public BaseMessageBody(T body, bool relay)
         {
@@ -28,9 +28,9 @@ namespace TnyFramework.Net.Message
 
         public bool Relay { get; }
 
-        public T Body => body;
+        public T? Body => body;
 
-        object IOctetMessageBody.Body => body;
+        object? IOctetMessageBody.Body => body;
 
         public void Release()
         {

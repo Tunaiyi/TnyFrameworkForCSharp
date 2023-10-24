@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Message;
 
@@ -30,9 +31,9 @@ namespace TnyFramework.Net.Transport
 
         public override MessageType Type => Mode.GetMessageType();
 
-        public override object Body { get; protected set; }
+        public override object? Body { get; protected set; }
 
-        public override MessageContent WithHeader(MessageHeader header)
+        public override MessageContent WithHeader(MessageHeader? header)
         {
             if (header == null)
                 return this;
@@ -40,7 +41,7 @@ namespace TnyFramework.Net.Transport
             return this;
         }
 
-        public override MessageContent WithHeader<TH>(Action<TH> action)
+        public override MessageContent WithHeader<TH>(Action<TH>? action)
         {
             var header = new TH();
             action?.Invoke(header);
@@ -52,21 +53,24 @@ namespace TnyFramework.Net.Transport
         {
             foreach (var header in values)
             {
-                if (header == null)
+                if (header.IsNull())
                     continue;
                 PutHeader(header);
             }
             return this;
         }
 
-        public TaskResponseSource ResponseSource { get; private set; }
+        public TaskResponseSource? ResponseSource { get; private set; }
 
-        public Task WrittenTask { get; private set; }
+        public Task? WrittenTask { get; private set; }
 
         public DefaultMessageContent(MessageMode mode, IProtocol protocol, IResultCode resultCode,
             long toMessage = MessageConstants.EMPTY_MESSAGE_ID)
         {
             ResultCode = resultCode;
+            Body = null;
+            ResponseSource = null!;
+            WrittenTask = null!;
             ToMessage = toMessage;
             Mode = mode;
             ProtocolId = protocol.ProtocolId;
@@ -77,12 +81,12 @@ namespace TnyFramework.Net.Transport
 
         public override T BodyAs<T>()
         {
-            if (Body == null)
-                return default;
-            return (T) Body;
+            if (Body is T body)
+                return body;
+            return default!;
         }
 
-        public override MessageContent WithBody(object messageBody)
+        public override MessageContent WithBody(object? messageBody)
         {
             if (Body == null)
             {
@@ -111,7 +115,7 @@ namespace TnyFramework.Net.Transport
 
         public override Task<IMessage> Respond()
         {
-            return ResponseSource?.Task;
+            return ResponseSource?.Task ?? Task.FromResult<IMessage>(null!);
         }
 
         public override bool IsRespondAwaitable()

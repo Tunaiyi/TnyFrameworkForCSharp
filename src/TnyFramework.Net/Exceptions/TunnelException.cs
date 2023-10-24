@@ -19,18 +19,18 @@ namespace TnyFramework.Net.Exceptions
         {
         }
 
-        public TunnelException(IResultCode code = null, object body = null, string message = "") : base(code, body,
-            message)
+        public TunnelException(IResultCode? code = null, object? body = null, string message = "")
+            : base(code, body, message)
         {
         }
 
-        public TunnelException(Exception innerException, IResultCode code = null, object body = null,
-            string message = "") : base(innerException, code, body, message)
+        public TunnelException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+            : base(innerException, code, body, message)
         {
         }
 
-        public TunnelException(SerializationInfo info, StreamingContext context, IResultCode code = null,
-            object body = null) : base(info, context, code, body)
+        public TunnelException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
+            : base(info, context, code, body)
         {
         }
     }

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.DI.Container;
 using TnyFramework.DI.Extensions;
@@ -23,7 +24,6 @@ using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.Plugin;
-using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Rpc.Auth;
 
 namespace TnyFramework.Net.DotNetty.Configuration
@@ -31,7 +31,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
     public class NettyServerConfiguration : INettyServerConfiguration
     {
-        private static ILogger _LOGGER;
+        private static ILogger? _LOGGER;
 
         private static ILogger Logger => _LOGGER ??= LogFactory.Logger<NettyServerConfiguration>();
 
@@ -224,7 +224,10 @@ namespace TnyFramework.Net.DotNetty.Configuration
         {
             if (initialized)
                 return this;
-            NetUnitContext?.Load();
+            if (NetUnitContext.IsNotNull())
+            {
+                NetUnitContext.Load();
+            }
             foreach (var customServerConfigurator in configurators)
             {
                 customServerConfigurator.Configure(this);

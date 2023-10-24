@@ -20,7 +20,7 @@ namespace TnyFramework.DI.Extensions
 
     public static class ServiceCollectionComponentExtensions
     {
-        private static ILogger _LOGGER;
+        private static ILogger? _LOGGER;
 
         private static ILogger Logger => _LOGGER ??= LogFactory.Logger(typeof(ServiceCollectionComponentExtensions));
 

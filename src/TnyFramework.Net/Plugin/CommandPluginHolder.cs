@@ -24,14 +24,14 @@ namespace TnyFramework.Net.Plugin
 
         private readonly ControllerHolder controller;
 
-        private readonly object attributes;
+        private readonly object? attributes;
 
         public CommandPluginHolder(ControllerHolder controller, ICommandPlugin plugin, PluginAttribute attributes)
             : this(controller, plugin, attributes.Attribute)
         {
         }
 
-        private CommandPluginHolder(ControllerHolder controller, ICommandPlugin plugin, object attributes)
+        private CommandPluginHolder(ControllerHolder controller, ICommandPlugin plugin, object? attributes)
         {
             this.plugin = plugin;
             this.controller = controller;

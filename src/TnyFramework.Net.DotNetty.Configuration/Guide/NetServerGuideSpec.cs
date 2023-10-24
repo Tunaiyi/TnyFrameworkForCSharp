@@ -23,7 +23,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
                 INetServerGuideSpec<TUserId>>,
             INetServerGuideSpec<TUserId>, INetServerGuideBuilder
     {
-        public INettyServerGuide Guide { get; private set; }
+        public INettyServerGuide? Guide { get; private set; }
 
         internal IServiceCollection UnitContainer { get; }
 

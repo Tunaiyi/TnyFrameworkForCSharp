@@ -28,7 +28,7 @@ namespace TnyFramework.Net.Message
         /// <param name="head">消息头</param>
         /// <param name="body">消息体</param>
         /// <returns>创建消息</returns>
-        INetMessage Create(INetMessageHead head, object body);
+        INetMessage Create(INetMessageHead head, object? body);
     }
 
 }

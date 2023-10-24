@@ -25,9 +25,10 @@ namespace TnyFramework.Net.Message
         protected AbstractNetMessage(INetMessageHead head)
         {
             this.head = head;
+            Body = null!;
         }
 
-        protected AbstractNetMessage(INetMessageHead head, object body)
+        protected AbstractNetMessage(INetMessageHead head, object? body)
         {
             this.head = head;
             Body = body;
@@ -51,23 +52,23 @@ namespace TnyFramework.Net.Message
 
         public IMessageHead Head => head;
 
-        public object Body { get; }
+        public object? Body { get; }
 
         public IAttributes Attribute => attributes.Attributes;
 
         public bool ExistBody => Body != null;
 
-        public T GetHeader<T>(string key) where T : MessageHeader => head.GetHeader<T>(key);
+        public T? GetHeader<T>(string key) where T : MessageHeader => head.GetHeader<T>(key);
 
-        public MessageHeader GetHeader(string key, Type type) => head.GetHeader(key, type);
+        public MessageHeader? GetHeader(string key, Type type) => head.GetHeader(key, type);
 
-        public MessageHeader GetHeader(string key) => head.GetHeader(key);
+        public MessageHeader? GetHeader(string key) => head.GetHeader(key);
 
         public IList<T> GetHeaders<T>() where T : MessageHeader => head.GetHeaders<T>();
 
         public IList<MessageHeader> GetHeaders(Type type) => head.GetHeaders(type);
 
-        public T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.GetHeader(key);
+        public T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.GetHeader(key);
 
         bool IMessageHeaderContainer.IsHasHeaders() => head.IsHasHeaders();
 
@@ -75,7 +76,7 @@ namespace TnyFramework.Net.Message
 
         public bool IsForward() => head.IsForward();
 
-        public RpcForwardHeader ForwardHeader => head.ForwardHeader;
+        public RpcForwardHeader? ForwardHeader => head.ForwardHeader;
 
         public IList<MessageHeader> GetAllHeaders() => head.GetAllHeaders();
 
@@ -87,9 +88,9 @@ namespace TnyFramework.Net.Message
 
         public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.ExistHeader(key);
 
-        public T PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T> => head.PutHeader(header);
+        public T? PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T> => head.PutHeader(header);
 
-        public T PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T> =>
+        public T? PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T> =>
             head.PutHeaderIfAbsent(header);
 
         public bool RemoveHeader<T>(string key) => head.RemoveHeader<T>(key);
@@ -106,7 +107,7 @@ namespace TnyFramework.Net.Message
 
         public int GetCode() => Code;
 
-        public T BodyAs<T>()
+        public T? BodyAs<T>()
         {
             var type = typeof(T);
             var body = Body;
@@ -124,7 +125,7 @@ namespace TnyFramework.Net.Message
             return $"[id={Id},mode={Mode},protocol={ProtocolId},to={ToMessage},date={new DateTime(Time):o},code={Code},body={Format(Body)}]";
         }
 
-        private static string Format(object value)
+        private static string? Format(object? value)
         {
             switch (value)
             {
@@ -133,7 +134,7 @@ namespace TnyFramework.Net.Message
                     var values = new object[list.Count];
                     for (var i = 0; i < values.Length; i++)
                     {
-                        values[i] = list[i];
+                        values[i] = list[i]!;
                     }
                     return $"[{string.Join(", ", values)}]";
                 case IDictionary dictionary:

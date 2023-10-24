@@ -51,7 +51,7 @@ namespace TnyFramework.Net.ProtobufNet
             Register(new StringCoder());
         }
 
-        public void Encode(object body, IByteBuffer buffer)
+        public void Encode(object? body, IByteBuffer buffer)
         {
             switch (body)
             {
@@ -70,9 +70,9 @@ namespace TnyFramework.Net.ProtobufNet
             }
         }
 
-        private void DoEncode(object body, IByteBuffer buffer, bool paramList)
+        private void DoEncode(object? body, IByteBuffer buffer, bool paramList)
         {
-            DataCoder coder = nullCoder;
+            DataCoder? coder = nullCoder;
             if (body != null)
             {
                 var type = body.GetType();
@@ -85,10 +85,10 @@ namespace TnyFramework.Net.ProtobufNet
             coder.Encode(body, buffer, option);
         }
 
-        public object Decode(IByteBuffer buffer)
+        public object? Decode(IByteBuffer buffer)
         {
-            object body = null;
-            IList listValue = null;
+            object? body = null;
+            IList? listValue = null;
             while (buffer.ReadableBytes > 0)
             {
                 var option = buffer.ReadByte();
@@ -113,10 +113,10 @@ namespace TnyFramework.Net.ProtobufNet
             return body;
         }
 
-        private object DoDecode(byte rawTypeValue, IByteBuffer buffer)
+        private object? DoDecode(byte rawTypeValue, IByteBuffer buffer)
         {
             var rawType = (ProtobufRawType) rawTypeValue;
-            DataCoder coder = nullCoder;
+            DataCoder? coder = nullCoder;
             if (rawType == ProtobufRawType.Null)
                 return coder.Decode(buffer);
             if (!rawTypeCoders.TryGetValue(rawType, out coder))
@@ -195,7 +195,7 @@ namespace TnyFramework.Net.ProtobufNet
         /// <param name="value"></param>
         /// <param name="buffer"></param>
         /// <param name="option"></param>
-        public void Encode(object value, IByteBuffer buffer, byte option)
+        public void Encode(object? value, IByteBuffer buffer, byte option)
         {
             var temp = option | (byte) RawType;
             buffer.WriteByte((byte) temp);
@@ -207,7 +207,7 @@ namespace TnyFramework.Net.ProtobufNet
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        public object Decode(IByteBuffer buffer)
+        public object? Decode(IByteBuffer buffer)
         {
             return DoDecode(buffer);
         }
@@ -217,14 +217,14 @@ namespace TnyFramework.Net.ProtobufNet
         /// </summary>
         /// <param name="value"></param>
         /// <param name="buffer"></param>
-        protected abstract void DoEncode(object value, IByteBuffer buffer);
+        protected abstract void DoEncode(object? value, IByteBuffer buffer);
 
         /// <summary>
         /// 子类实现
         /// </summary>
         /// <param name="buffer"></param>
         /// <returns></returns>
-        protected abstract object DoDecode(IByteBuffer buffer);
+        protected abstract object? DoDecode(IByteBuffer buffer);
     }
 
     internal class NullCoder : DataCoder
@@ -233,11 +233,11 @@ namespace TnyFramework.Net.ProtobufNet
         {
         }
 
-        protected override void DoEncode(object value, IByteBuffer buffer)
+        protected override void DoEncode(object? value, IByteBuffer buffer)
         {
         }
 
-        protected override object DoDecode(IByteBuffer buffer) => null;
+        protected override object? DoDecode(IByteBuffer buffer) => null;
     }
 
     internal class ByteCoder : DataCoder
@@ -246,7 +246,7 @@ namespace TnyFramework.Net.ProtobufNet
         {
         }
 
-        protected override void DoEncode(object value, IByteBuffer buffer)
+        protected override void DoEncode(object? value, IByteBuffer buffer)
         {
             switch (value)
             {
@@ -268,9 +268,12 @@ namespace TnyFramework.Net.ProtobufNet
         {
         }
 
-        protected override void DoEncode(object value, IByteBuffer buffer)
+        protected override void DoEncode(object? value, IByteBuffer buffer)
         {
-            ByteBufferUtils.WriteVariant((int) value, buffer);
+            if (value is int v)
+            {
+                ByteBufferUtils.WriteVariant(v, buffer);
+            }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
@@ -286,9 +289,12 @@ namespace TnyFramework.Net.ProtobufNet
         {
         }
 
-        protected override void DoEncode(object value, IByteBuffer buffer)
+        protected override void DoEncode(object? value, IByteBuffer buffer)
         {
-            ByteBufferUtils.WriteVariant((int) value, buffer);
+            if (value is int v)
+            {
+                ByteBufferUtils.WriteVariant(v, buffer);
+            }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
@@ -304,9 +310,12 @@ namespace TnyFramework.Net.ProtobufNet
         {
         }
 
-        protected override void DoEncode(object value, IByteBuffer buffer)
+        protected override void DoEncode(object? value, IByteBuffer buffer)
         {
-            ByteBufferUtils.WriteVariant((long) value, buffer);
+            if (value is long v)
+            {
+                ByteBufferUtils.WriteVariant(v, buffer);
+            }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
@@ -322,9 +331,12 @@ namespace TnyFramework.Net.ProtobufNet
         {
         }
 
-        protected override void DoEncode(object value, IByteBuffer buffer)
+        protected override void DoEncode(object? value, IByteBuffer buffer)
         {
-            ByteBufferUtils.WriteVariant((float) value, buffer);
+            if (value is float v)
+            {
+                ByteBufferUtils.WriteVariant(v, buffer);
+            }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
@@ -340,9 +352,13 @@ namespace TnyFramework.Net.ProtobufNet
         {
         }
 
-        protected override void DoEncode(object value, IByteBuffer buffer)
+        protected override void DoEncode(object? value, IByteBuffer buffer)
         {
-            ByteBufferUtils.WriteVariant((double) value, buffer);
+
+            if (value is double v)
+            {
+                ByteBufferUtils.WriteVariant(v, buffer);
+            }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
@@ -358,7 +374,13 @@ namespace TnyFramework.Net.ProtobufNet
         {
         }
 
-        protected override void DoEncode(object value, IByteBuffer buffer) => buffer.WriteByte((byte) ((bool) value ? 1 : 0));
+        protected override void DoEncode(object? value, IByteBuffer buffer)
+        {
+            if (value is bool v)
+            {
+                buffer.WriteByte((byte) (v ? 1 : 0));
+            }
+        }
 
         protected override object DoDecode(IByteBuffer buffer) => buffer.ReadByte() > 0;
     }
@@ -369,7 +391,7 @@ namespace TnyFramework.Net.ProtobufNet
         {
         }
 
-        protected override void DoEncode(object value, IByteBuffer buffer)
+        protected override void DoEncode(object? value, IByteBuffer buffer)
         {
             switch (value)
             {
@@ -391,7 +413,7 @@ namespace TnyFramework.Net.ProtobufNet
             }
         }
 
-        protected override object DoDecode(IByteBuffer buffer)
+        protected override object? DoDecode(IByteBuffer buffer)
         {
             ByteBufferUtils.ReadVariant(buffer, out int bodyLength);
             if (bodyLength == 0)
@@ -400,7 +422,11 @@ namespace TnyFramework.Net.ProtobufNet
             }
             var bodyBuffer = buffer.Slice(buffer.ReaderIndex, bodyLength);
             var bodySegment = bodyBuffer.GetIoBuffer();
-            return Encoding.UTF8.GetString(bodySegment.Array, bodySegment.Offset, bodyLength);
+            if (bodySegment.Array != null)
+            {
+                return Encoding.UTF8.GetString(bodySegment.Array, bodySegment.Offset, bodyLength);
+            }
+            return null;
         }
     }
 
@@ -413,10 +439,10 @@ namespace TnyFramework.Net.ProtobufNet
             factory = new TypeProtobufObjectCodecFactory();
         }
 
-        protected override void DoEncode(object value, IByteBuffer buffer)
+        protected override void DoEncode(object? value, IByteBuffer buffer)
         {
-            var type = value.GetType();
-            var codec = factory.CreateCodec(type);
+            var type = value?.GetType();
+            var codec = type == null ? null : factory.CreateCodec(type);
             if (codec == null)
                 throw new Exception($"不存在该DTO:{type}");
             var stream = Stream();
@@ -433,7 +459,7 @@ namespace TnyFramework.Net.ProtobufNet
             }
         }
 
-        protected override object DoDecode(IByteBuffer buffer)
+        protected override object? DoDecode(IByteBuffer buffer)
         {
             var codec = factory.CreateCodec(typeof(object));
             ByteBufferUtils.ReadVariant(buffer, out int bodyLength);

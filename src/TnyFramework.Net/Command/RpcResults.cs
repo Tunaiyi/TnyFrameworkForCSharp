@@ -15,26 +15,26 @@ namespace TnyFramework.Net.Command
     //TODO Protocol 设置
     internal class DefaultRpcResult<TBody> : IRpcResult<TBody>
     {
-        public TBody Body { get; }
+        public TBody? Body { get; }
 
-        public IMessage Message { get; }
+        public IMessage? Message { get; }
 
         public IResultCode ResultCode { get; }
 
         public string Description { get; }
 
-        public DefaultRpcResult(IResultCode resultCode, IMessage message)
+        public DefaultRpcResult(IResultCode resultCode, TBody? body)
         {
-            Body = message.BodyAs<TBody>();
-            Message = message;
+            Body = body;
+            Message = null;
             ResultCode = resultCode;
             Description = resultCode.Message;
         }
 
-        public DefaultRpcResult(IResultCode resultCode, TBody body)
+        public DefaultRpcResult(IResultCode resultCode, IMessage message)
         {
-            Body = body;
-            Message = null;
+            Body = message.BodyAs<TBody>();
+            Message = message;
             ResultCode = resultCode;
             Description = resultCode.Message;
         }
@@ -45,7 +45,7 @@ namespace TnyFramework.Net.Command
             Description = resultCode.Message;
         }
 
-        object IRpcResult.Body => Body;
+        object? IRpcResult.Body => Body;
 
         public bool IsSuccess() => ResultCode.IsSuccess();
 
@@ -54,7 +54,7 @@ namespace TnyFramework.Net.Command
 
     public static class RpcResults
     {
-        private static readonly IRpcResult SUCCESS = new DefaultRpcResult<object>(ResultCode.SUCCESS, null);
+        private static readonly IRpcResult SUCCESS = new DefaultRpcResult<object>(ResultCode.SUCCESS, (object)null!);
 
         /// <summary>
         /// 创建成功响应结果

@@ -29,7 +29,7 @@ namespace TnyFramework.Net.Base
         /// <summary>
         /// 应用名字
         /// </summary>
-        public string AppName { get; protected set; }
+        public string AppName { get; protected set; } = "";
 
         protected override void OnCheck()
         {
@@ -67,7 +67,7 @@ namespace TnyFramework.Net.Base
 
     public abstract class AppType<T> : AppType where T : AppType<T>, new()
     {
-        protected static T Of(int id, string appName, Action<T> builder = null)
+        protected static T Of(int id, string appName, Action<T>? builder = null)
         {
             return E(id, new T {
                 AppName = appName

@@ -22,19 +22,17 @@ namespace TnyFramework.Net.Exceptions
         {
         }
 
-        public EndpointException(IResultCode code = null, object body = null, string message = "")
+        public EndpointException(IResultCode? code = null, object? body = null, string message = "")
             : base(code ?? CODE, body, message)
         {
         }
 
-        public EndpointException(Exception innerException, IResultCode code = null, object body = null,
-            string message = "")
+        public EndpointException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
             : base(innerException, code ?? CODE, body, message)
         {
         }
 
-        public EndpointException(SerializationInfo info, StreamingContext context, IResultCode code = null,
-            object body = null)
+        public EndpointException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
             : base(info, context, code ?? CODE, body)
         {
         }

@@ -13,15 +13,15 @@ using TnyFramework.Common.Result;
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
-    public class RpcRespondCommand : Command, ICommand
+    public class RpcRespondCommand : Command
     {
-        private IRpcEnterContext rpcContext;
+        private readonly IRpcEnterContext rpcContext;
 
         private readonly IResultCode code;
 
-        private readonly object body;
+        private readonly object? body;
 
-        public RpcRespondCommand(IRpcEnterContext rpcContext, IResultCode code, object body)
+        public RpcRespondCommand(IRpcEnterContext rpcContext, IResultCode code, object? body)
         {
             this.rpcContext = rpcContext;
             this.code = code;

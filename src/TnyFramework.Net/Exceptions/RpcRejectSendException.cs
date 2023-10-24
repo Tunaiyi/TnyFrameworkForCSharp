@@ -22,19 +22,17 @@ namespace TnyFramework.Net.Exceptions
         {
         }
 
-        public RpcRejectSendException(IResultCode code = null, object body = null, string message = "") :
+        public RpcRejectSendException(IResultCode? code = null, object? body = null, string message = "") :
             base(code ?? CODE, body, message)
         {
         }
 
-        public RpcRejectSendException(Exception innerException, IResultCode code = null, object body = null,
-            string message = "")
+        public RpcRejectSendException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
             : base(innerException, code ?? CODE, body, message)
         {
         }
 
-        public RpcRejectSendException(SerializationInfo info, StreamingContext context, IResultCode code = null,
-            object body = null)
+        public RpcRejectSendException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
             : base(info, context, code ?? CODE, body)
         {
         }

@@ -15,22 +15,23 @@ namespace TnyFramework.Net.Exceptions
 
     public class RpcInvokeTimeoutException : RpcInvokeException
     {
-        public RpcInvokeTimeoutException(string message = "") : base(message)
+        public RpcInvokeTimeoutException(string message = "")
+            : base(message)
         {
         }
 
-        public RpcInvokeTimeoutException(IResultCode code = null, object body = null, string message = "") : base(code,
-            body, message)
+        public RpcInvokeTimeoutException(IResultCode? code = null, object? body = null, string message = "")
+            : base(code, body, message)
         {
         }
 
-        public RpcInvokeTimeoutException(Exception innerException, IResultCode code = null, object body = null,
-            string message = "") : base(innerException, code, body, message)
+        public RpcInvokeTimeoutException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+            : base(innerException, code, body, message)
         {
         }
 
-        public RpcInvokeTimeoutException(SerializationInfo info, StreamingContext context, IResultCode code = null,
-            object body = null) : base(info, context, code, body)
+        public RpcInvokeTimeoutException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
+            : base(info, context, code, body)
         {
         }
     }

@@ -43,10 +43,10 @@ namespace TnyFramework.Net.Command.Auth
                 return;
             var endpointKeeper = endpointKeeperManager
                 .LoadKeeper(certificate.MessagerType, tunnel.AccessMode);
-            endpointKeeper.Online(certificate, tunnel);
+            endpointKeeper?.Online(certificate, tunnel);
         }
 
-        private IAuthenticationValidator GetValidator(MessageDispatcherContext dispatcherContext, Type validatorClass)
+        private IAuthenticationValidator? GetValidator(MessageDispatcherContext dispatcherContext, Type validatorClass)
         {
             return dispatcherContext.Validator(validatorClass);
         }

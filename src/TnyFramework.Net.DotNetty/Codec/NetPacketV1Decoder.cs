@@ -41,7 +41,7 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         public byte[] MagicsBuffer => MAGICS_LOCAL.Value ?? (MAGICS_LOCAL.Value = new byte[CodecConstants.MAGICS_SIZE]);
 
-        public object DecodeObject(IChannelHandlerContext ctx, IByteBuffer inBuffer, NetPacketDecodeMarker marker)
+        public object? DecodeObject(IChannelHandlerContext ctx, IByteBuffer inBuffer, NetPacketDecodeMarker marker)
         {
             var channel = ctx.Channel;
             byte option;
@@ -104,7 +104,7 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         private IMessage ReadPayload(IAttributeMap channel, IByteBuffer inBuffer, byte option, int payloadLength)
         {
-            IByteBuffer bodyBuffer = null;
+            IByteBuffer? bodyBuffer = null;
             try
             {
                 var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).Get();

@@ -36,7 +36,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private readonly IMessagerAuthenticator messagerAuthenticator;
 
-        public IEventBox<CommandExecute> CommandExecuteEvent => context.CommandExecuteEvent;
+        // public IEventBox<CommandExecute> CommandExecuteEvent => context.CommandExecuteEvent;
 
         public IEventBox<CommandDone> CommandDoneEvent => context.CommandDoneEvent;
 
@@ -74,7 +74,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return SelectController(head.ProtocolId, head.Mode) != null;
         }
 
-        private MethodControllerHolder SelectController(int protocol, MessageMode mode)
+        private MethodControllerHolder? SelectController(int protocol, MessageMode mode)
         {
             // 获取方法持有器
             if (!methodHolder.TryGetValue(protocol, out var controllerMap))

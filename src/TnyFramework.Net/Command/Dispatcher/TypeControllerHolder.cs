@@ -76,8 +76,8 @@ namespace TnyFramework.Net.Command.Dispatcher
         public override TAttribute GetTypeAttribute<TAttribute>()
         {
             var attributes = GetTypeAttributes<TAttribute>();
-            var value = (attributes.Count > 0 ? attributes[0] : default);
-            return value;
+            var value = attributes.Count > 0 ? attributes[0] : default;
+            return value!;
         }
 
         public override IList<TAttribute> GetTypeAttributes<TAttribute>()

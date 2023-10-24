@@ -19,7 +19,7 @@ namespace TnyFramework.Net.Message
 
         public static readonly NetworkWay HEARTBEAT = Of(2, "heartbeat");
 
-        public string Value { get; private set; }
+        public string Value { get; private set; } = "";
 
         private static NetworkWay Of(int id, string value)
         {

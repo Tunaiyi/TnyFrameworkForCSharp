@@ -36,7 +36,7 @@ namespace TnyFramework.Net.Rpc.Remote
             set => invokerMap = value.ToImmutableDictionary();
         }
 
-        public IRpcRemoteInvoker Invoker(MethodInfo method)
+        public IRpcRemoteInvoker? Invoker(MethodInfo method)
         {
             return invokerMap.TryGetValue(method, out var invoker) ? invoker : null;
         }

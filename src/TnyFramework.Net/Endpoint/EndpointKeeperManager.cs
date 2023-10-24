@@ -22,10 +22,9 @@ namespace TnyFramework.Net.Endpoint
 
     public class EndpointKeeperManager : IEndpointKeeperManager
     {
-        private const string DEFAULT_KEY = "default";
+        // private const string DEFAULT_KEY = "default";
 
-        private readonly ConcurrentDictionary<IMessagerType, IEndpointKeeper> endpointKeeperMap =
-            new ConcurrentDictionary<IMessagerType, IEndpointKeeper>();
+        private readonly ConcurrentDictionary<IMessagerType, IEndpointKeeper?> endpointKeeperMap = new();
 
         private readonly ISessionKeeperSetting defaultSessionKeeperSetting;
 
@@ -54,10 +53,8 @@ namespace TnyFramework.Net.Endpoint
             createEventBus = CREATE_EVENT_BUS.ForkChild();
         }
 
-        private IEndpointKeeper Create(IMessagerType messagerType, NetAccessMode accessMode)
+        private IEndpointKeeper Create(IMessagerType messagerType)
         {
-            if (!Equals(accessMode, NetAccessMode.Server))
-                return null;
             if (!sessionKeeperSettingMap.TryGetValue(messagerType, out var setting))
             {
                 setting = defaultSessionKeeperSetting;
@@ -67,20 +64,24 @@ namespace TnyFramework.Net.Endpoint
             return factory.CreateKeeper(messagerType, setting);
         }
 
-        public IEndpoint Online(ICertificate certificate, INetTunnel tunnel)
+        public IEndpoint? Online(ICertificate certificate, INetTunnel tunnel)
         {
             var keeper = LoadKeeper(certificate.MessagerType, tunnel.AccessMode);
-            return keeper.Online(certificate, tunnel);
+            return keeper?.Online(certificate, tunnel);
         }
 
-        public IEndpointKeeper LoadKeeper(IMessagerType messagerType, NetAccessMode accessMode)
+        public IEndpointKeeper? LoadKeeper(IMessagerType messagerType, NetAccessMode accessMode)
         {
             var keeper = FindKeeper(messagerType);
             if (keeper != null)
             {
                 return keeper;
             }
-            var newOne = Create(messagerType, accessMode);
+            // if (!Equals(accessMode, NetAccessMode.Server))
+            // {
+            //     throw new ArgumentException();
+            // }
+            var newOne = Create(messagerType);
             if (!endpointKeeperMap.TryAdd(messagerType, newOne))
                 return endpointKeeperMap[messagerType];
             newOne.Start();
@@ -88,7 +89,7 @@ namespace TnyFramework.Net.Endpoint
             return newOne;
         }
 
-        public IEndpointKeeper FindKeeper(IMessagerType messagerType)
+        public IEndpointKeeper? FindKeeper(IMessagerType messagerType)
         {
             return endpointKeeperMap.TryGetValue(messagerType, out var keeper) ? keeper : default;
         }

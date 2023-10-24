@@ -55,8 +55,8 @@ namespace TnyFramework.Net.DotNetty.Transport
 
         public Task Write(MessageAllocator maker, IMessageFactory factory, MessageContent content)
         {
-            return channel.EventLoop.SubmitAsync<object>(() => {
-                IMessage message = null;
+            return channel.EventLoop.SubmitAsync<object?>(() => {
+                IMessage? message = null;
                 try
                 {
                     message = maker(factory, content);

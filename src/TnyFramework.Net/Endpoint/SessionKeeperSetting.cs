@@ -15,7 +15,7 @@ namespace TnyFramework.Net.Endpoint
     {
         private readonly SessionSetting sessionSetting = new SessionSetting();
 
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         public string KeeperFactory { get; set; } = Unit.DefaultName<SessionKeeperFactory<object>>();
 

@@ -13,10 +13,10 @@ namespace TnyFramework.FreeRedis.NetCore.Configurations
 
     public class FreeRedisProperties
     {
-        public FreeRedisSetting Default { get; set; }
+        public FreeRedisSetting? Default { get; set; }
 
-        public Dictionary<string, FreeRedisSetting> DataSources { get; set; } = new Dictionary<string, FreeRedisSetting>();
-        
+        public Dictionary<string, FreeRedisSetting> DataSources { get; set; } = new();
+
     }
 
 }

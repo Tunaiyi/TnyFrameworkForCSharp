@@ -5,7 +5,7 @@ namespace TnyFramework.Namespace.Etcd.Test
 
     public class TestShadingNode : IShardingNode
     {
-        public string Key { get; set; }
+        public string Key { get; set; } = null!;
 
         public TestShadingNode()
         {
@@ -21,7 +21,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             return Key == other.Key;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

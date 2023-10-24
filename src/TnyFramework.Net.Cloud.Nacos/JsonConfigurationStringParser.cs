@@ -32,6 +32,8 @@ namespace TnyFramework.Net.Cloud.Nacos
 
         private JsonConfigurationStringParser()
         {
+            currentPath = null!;
+            reader = null!;
         }
 
         public IDictionary<string, string> Parse(string input) => new JsonConfigurationStringParser().ParseString(input);
@@ -67,10 +69,10 @@ namespace TnyFramework.Net.Cloud.Nacos
             switch (token.Type)
             {
                 case JTokenType.Object:
-                    VisitJObject(token.Value<JObject>());
+                    VisitJObject(token.Value<JObject>()!);
                     break;
                 case JTokenType.Array:
-                    VisitArray(token.Value<JArray>());
+                    VisitArray(token.Value<JArray>()!);
                     break;
                 case JTokenType.Integer:
                 case JTokenType.Float:
@@ -79,7 +81,7 @@ namespace TnyFramework.Net.Cloud.Nacos
                 case JTokenType.Null:
                 case JTokenType.Raw:
                 case JTokenType.Bytes:
-                    VisitPrimitive(token.Value<JValue>());
+                    VisitPrimitive(token.Value<JValue>()!);
                     break;
                 default:
                     throw new FormatException(string.Format("Unsupported JSON token '{0}' was found. Path '{1}', line {2} position {3}.",
@@ -100,10 +102,10 @@ namespace TnyFramework.Net.Cloud.Nacos
 
         private void VisitPrimitive(JValue data)
         {
-            var currentPath = this.currentPath;
-            if (this.data.ContainsKey(currentPath))
-                throw new FormatException("A duplicate key '" + currentPath + "' was found.");
-            this.data[currentPath] = data.ToString(CultureInfo.InvariantCulture);
+            var path = this.currentPath;
+            if (this.data.ContainsKey(path))
+                throw new FormatException("A duplicate key '" + path + "' was found.");
+            this.data[path] = data.ToString(CultureInfo.InvariantCulture);
         }
 
         private void EnterContext(string context)

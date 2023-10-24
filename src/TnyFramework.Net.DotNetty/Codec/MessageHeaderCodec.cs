@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
 using System.IO;
 using DotNetty.Buffers;
 using DotNetty.Common;
@@ -35,23 +36,21 @@ namespace TnyFramework.Net.DotNetty.Codec
             codecFactory = new TypeProtobufObjectCodecFactory();
         }
 
-        public MessageHeader Decode(IByteBuffer buffer)
+        public MessageHeader? Decode(IByteBuffer buffer)
         {
             var codec = codecFactory.CreateCodec(typeof(object));
             ByteBufferUtils.ReadVariant(buffer, out int bodyLength);
             var body = buffer.ReadBytes(bodyLength);
-            using (var stream = new ReadOnlyByteBufferStream(body, true))
-            {
-                return (MessageHeader) codec.Decode(stream);
-            }
+            using var stream = new ReadOnlyByteBufferStream(body, true);
+            return (MessageHeader?) codec.Decode(stream);
         }
 
-        public void Encode(MessageHeader body, IByteBuffer buffer)
+        public void Encode(MessageHeader? body, IByteBuffer buffer)
         {
-            var type = body.GetType();
-            var codec = codecFactory.CreateCodec(type);
+            var type = body?.GetType();
+            var codec = type == null ? null : codecFactory.CreateCodec(type);
             if (codec == null)
-                throw new System.Exception($"不存在该DTO:{type}");
+                throw new Exception($"不存在该DTO:{type}");
             var stream = Stream();
             try
             {
@@ -66,13 +65,13 @@ namespace TnyFramework.Net.DotNetty.Codec
             }
         }
 
-        public void Encode(object body, IByteBuffer buffer)
+        public void Encode(object? body, IByteBuffer buffer)
         {
             if (body is MessageHeader header)
                 Encode(header, buffer);
         }
 
-        object INetContentCodec.Decode(IByteBuffer buffer)
+        object? INetContentCodec.Decode(IByteBuffer buffer)
         {
             return Decode(buffer);
         }

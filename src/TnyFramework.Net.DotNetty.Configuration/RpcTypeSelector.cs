@@ -18,9 +18,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
     public class RpcTypeSelector : TypeSelectorDefinition
     {
-        internal static IList<Type> Controllers { get; private set; }
+        internal static IList<Type> Controllers { get; private set; } = ImmutableList<Type>.Empty;
 
-        internal static IList<Type> RemoteService { get; private set; }
+        internal static IList<Type> RemoteService { get; private set; } = ImmutableList<Type>.Empty;
 
         public RpcTypeSelector()
         {

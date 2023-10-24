@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using ProtoBuf;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Rpc;
 
@@ -18,7 +19,7 @@ namespace TnyFramework.Net.Message
     {
         private int serviceTypeId;
 
-        private IRpcServiceType serviceType;
+        private IRpcServiceType? serviceType;
 
         [ProtoMember(1)]
         public int ServiceTypeId {
@@ -33,11 +34,11 @@ namespace TnyFramework.Net.Message
         public IRpcServiceType ServiceType => GetServiceType();
 
         [ProtoMember(2)]
-        public RpcAccessId AccessId { get; }
+        public RpcAccessId? AccessId { get; }
 
         public int ServerId => AccessId?.ServiceId ?? -1;
 
-        public long Id => AccessId.Id;
+        public long Id => AccessId?.Id ?? -1;
 
         public long MessagerId => AccessId?.Id ?? -1;
 
@@ -45,6 +46,7 @@ namespace TnyFramework.Net.Message
 
         public ForwardPoint()
         {
+            serviceType = null!;
         }
 
         public ForwardPoint(IRpcServiceType serviceType)
@@ -81,10 +83,10 @@ namespace TnyFramework.Net.Message
 
         public bool IsAppointed()
         {
-            return AccessId != null;
+            return AccessId.IsNotNull();
         }
 
-        public int CompareTo(IRpcAccessPoint other)
+        public int CompareTo(IRpcAccessPoint? other)
         {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;

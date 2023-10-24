@@ -10,6 +10,7 @@ using System;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Endpoint;
@@ -34,16 +35,20 @@ namespace TnyFramework.Net.Transport
         protected BaseNetTunnel(long id, TTransporter transporter, NetAccessMode accessMode, INetworkContext context)
             : base(id, accessMode, context)
         {
-            if (transporter == null)
-                return;
-            Transporter = transporter;
-            Transporter.Bind(this);
+            if (transporter.IsNotNull())
+            {
+                Transporter = transporter;
+                Transporter.Bind(this);
+            } else
+            {
+                Transporter = default!;
+            }
         }
 
         public override bool IsActive()
         {
             var transporter = Transporter;
-            return Status == TunnelStatus.Open && transporter != null && transporter.IsActive();
+            return Status == TunnelStatus.Open && transporter.IsNotNull() && transporter.IsActive();
         }
 
         public override void Reset()
@@ -85,7 +90,7 @@ namespace TnyFramework.Net.Transport
         protected override void DoDisconnect()
         {
             var transporter = Transporter;
-            if (transporter == null || !transporter.IsActive())
+            if (transporter.IsNull() || !transporter.IsActive())
                 return;
             try
             {
@@ -96,11 +101,11 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-        private bool CheckAvailable(MessageContent content, out Task task)
+        private bool CheckAvailable(MessageContent? content, out Task task)
         {
             if (IsActive())
             {
-                task = null;
+                task = null!;
                 return true;
             }
             OnWriteUnavailable();

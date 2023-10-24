@@ -48,7 +48,7 @@ namespace TnyFramework.Net.Demo
                 var paramList = message.BodyAs<IList>();
                 if (paramList == null)
                     return;
-                var uid = (long) paramList[1];
+                var uid = (long) paramList[1]!;
                 var dto = new LoginDTO {
                     userId = uid,
                     certId = 2000011
@@ -157,9 +157,9 @@ namespace TnyFramework.Net.Demo
         private static async Task Main(string[] args)
         {
             var rcpResultStringCreator = RpcInvokerFastInvokers.RcpResultCreator(typeof(IRpcResult<string>));
-            var rpcResultString = rcpResultStringCreator.Invoke(null, ResultCode.SUCCESS, "abc");
+            var rpcResultString = rcpResultStringCreator.Invoke(null!, ResultCode.SUCCESS, "abc");
             var rcpResultCreator = RpcInvokerFastInvokers.RcpResultCreator(typeof(IRpcResult));
-            var rpcResult = rcpResultCreator.Invoke(null, ResultCode.SUCCESS, null);
+            var rpcResult = rcpResultCreator.Invoke(null!, ResultCode.SUCCESS, null!);
 
             NetMessagerType.GetValues();
             var test = new ServiceCollection();
@@ -167,17 +167,17 @@ namespace TnyFramework.Net.Demo
                 .AddSingletonUnit<MyClass>("MyClass")
                 .AddSingletonUnit<MyTester>("MyTester");
             var testProvider = test.BuildServiceProvider();
-            var testInterfaces = testProvider.GetService<IUnitCollection<ITestInterface>>();
+            var testInterfaces = testProvider.GetService<IUnitCollection<ITestInterface>>()!;
             var myTester = testProvider.GetService<MyTester>();
             var myInterfaces = testProvider.GetService<IUnitCollection<MyTester>>();
 
-            Console.WriteLine($"{testProvider.GetService<MyClass>() == testInterfaces["MyClass"]}");
+            Console.WriteLine($"{testProvider.GetService<MyClass>() == testInterfaces?["MyClass"]}");
 
-            foreach (var (key, value) in testInterfaces)
+            foreach (var (key, value) in testInterfaces!)
             {
                 Console.WriteLine($"{key} : {value.GetType()}");
             }
-            foreach (var (key, value) in myInterfaces)
+            foreach (var (key, value) in myInterfaces!)
             {
                 Console.WriteLine($"{key} : {value.GetType()}");
             }

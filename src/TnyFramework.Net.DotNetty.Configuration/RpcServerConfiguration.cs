@@ -47,7 +47,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
                 .Default<AutoIncrementIdGenerator>();
         }
 
-        public RpcServerConfiguration RpcServer(ServerSetting setting, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
+        public RpcServerConfiguration RpcServer(ServerSetting setting, Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
         {
             Server<RpcAccessIdentify>(setting.Name, spec => {
                 spec.Server(setting);
@@ -57,7 +57,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-        public RpcServerConfiguration RpcServer(string name, int port, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
+        public RpcServerConfiguration RpcServer(string name, int port, Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
         {
             Server<RpcAccessIdentify>(name, spec => {
                 spec.Server(port);
@@ -67,7 +67,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-        public RpcServerConfiguration RpcServer(string name, string host, int port, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
+        public RpcServerConfiguration RpcServer(string name, string host, int port, Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
         {
             Server<RpcAccessIdentify>(name, spec => {
                 spec.Server(host, port);
@@ -78,7 +78,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
         public RpcServerConfiguration RpcServer(string name, string host, int port, bool libuv,
-            Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
+            Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
         {
             Server<RpcAccessIdentify>(name, spec => {
                 spec.Server(host, port, libuv);
@@ -89,7 +89,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
         public RpcServerConfiguration RpcServer(string name, string serveName, string host, int port,
-            Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
+            Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
         {
             Server<RpcAccessIdentify>(name, spec => {
                 spec.Server(serveName, host, port);
@@ -100,7 +100,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
         public RpcServerConfiguration RpcServer(string name, string serveName, string host, int port, bool libuv,
-            Action<INetServerGuideSpec<RpcAccessIdentify>> action = null)
+            Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
         {
             Server<RpcAccessIdentify>(name, spec => {
                 spec.Server(serveName, host, port, libuv);

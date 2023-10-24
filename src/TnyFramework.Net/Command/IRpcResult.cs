@@ -14,9 +14,9 @@ namespace TnyFramework.Net.Command
 
     public interface IRpcResult
     {
-        object Body { get; }
+        object? Body { get; }
 
-        IMessage Message { get; }
+        IMessage? Message { get; }
 
         IResultCode ResultCode { get; }
 
@@ -29,7 +29,7 @@ namespace TnyFramework.Net.Command
 
     public interface IRpcResult<out TBody> : IRpcResult
     {
-        new TBody Body { get; }
+        new TBody? Body { get; }
     }
 
 }

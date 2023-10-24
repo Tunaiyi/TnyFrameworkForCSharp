@@ -120,7 +120,7 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
             }
         }
 
-        public void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject result, Exception exception)
+        public void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject? result, Exception? exception)
         {
             if (afterInvokeHandlers.Count <= 0)
                 return;
@@ -184,7 +184,7 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
             }
         }
 
-        public void OnTransfered(IRpcTransferContext rpcContext, IMessageSubject result, Exception exception)
+        public void OnTransferred(IRpcTransferContext rpcContext, IMessageSubject? result, Exception? exception)
         {
             if (transferHandlers.Count <= 0)
                 return;
@@ -192,7 +192,7 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
             {
                 try
                 {
-                    handler.OnTransfered(rpcContext, result, exception);
+                    handler.OnTransferred(rpcContext, result, exception);
                 } catch (Exception e)
                 {
                     LOGGER.LogError(e, "RpcMonitor.OnTransfered");

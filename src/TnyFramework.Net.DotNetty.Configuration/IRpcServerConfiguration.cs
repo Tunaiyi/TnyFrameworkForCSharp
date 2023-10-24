@@ -19,20 +19,20 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
     public interface IRpcServerConfiguration : INettyServerConfiguration
     {
-        RpcServerConfiguration RpcServer(ServerSetting setting, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null);
+        RpcServerConfiguration RpcServer(ServerSetting setting, Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null);
 
-        RpcServerConfiguration RpcServer(string name, int port, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null);
+        RpcServerConfiguration RpcServer(string name, int port, Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null);
 
-        RpcServerConfiguration RpcServer(string name, string host, int port, Action<INetServerGuideSpec<RpcAccessIdentify>> action = null);
+        RpcServerConfiguration RpcServer(string name, string host, int port, Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null);
 
         RpcServerConfiguration RpcServer(string name, string host, int port, bool libuv,
-            Action<INetServerGuideSpec<RpcAccessIdentify>> action = null);
+            Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null);
 
         RpcServerConfiguration RpcServer(string name, string serveName, string host, int port,
-            Action<INetServerGuideSpec<RpcAccessIdentify>> action = null);
+            Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null);
 
         RpcServerConfiguration RpcServer(string name, string serveName, string host, int port, bool libuv,
-            Action<INetServerGuideSpec<RpcAccessIdentify>> action = null);
+            Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null);
 
         RpcServerConfiguration RpcAuthServiceSpecConfigure(Action<RpcAuthServiceSpec> action);
 

@@ -38,7 +38,7 @@ namespace TnyFramework.Net.Endpoint
 
         private readonly object[] locks;
 
-        private ICoroutine coroutine;
+        private ICoroutine? coroutine;
 
         private int start;
 
@@ -48,6 +48,7 @@ namespace TnyFramework.Net.Endpoint
         {
             this.factory = factory;
             this.setting = setting;
+            coroutine = null!;
             locks = new object[1024];
             for (var i = locks.Length - 1; i >= 0; i--)
             {
@@ -86,6 +87,10 @@ namespace TnyFramework.Net.Endpoint
                     $"cert {certificate} userType is {certificate.UserGroup}, not {MessagerType}");
             }
             var uid = certificate.GetUserId();
+            if (uid == null)
+            {
+                throw new NullReferenceException("uid is null");
+            }
             var index = Math.Abs(uid.GetHashCode()) % locks.Length;
             lock (locks[index])
             {
@@ -95,7 +100,13 @@ namespace TnyFramework.Net.Endpoint
 
         private IEndpoint DoAcceptTunnel(ICertificate certificate, INetTunnel newTunnel)
         {
-            var existSession = FindEndpoint(certificate.GetUserId());
+            var userId = certificate.GetUserId();
+            if (userId == null)
+            {
+                Logger.LogWarning("新session userId is null");
+                throw new AuthFailedException(NetResultCode.SESSION_LOSS_ERROR);
+            }
+            var existSession = FindEndpoint(userId);
             if (existSession == null)
             {
                 // 旧 session 失效
@@ -118,7 +129,13 @@ namespace TnyFramework.Net.Endpoint
         private IEndpoint NewSession(ICertificate certificate, INetTunnel newTunnel)
         {
 
-            var oldSession = FindEndpoint(certificate.GetUserId());
+            var userId = certificate.GetUserId();
+            if (userId == null)
+            {
+                Logger.LogWarning("新session userId is null");
+                throw new AuthFailedException(NetResultCode.SESSION_LOSS_ERROR);
+            }
+            var oldSession = FindEndpoint(userId);
             if (oldSession != null)
             {
                 // 如果旧 session 存在
@@ -170,7 +187,7 @@ namespace TnyFramework.Net.Endpoint
             {
                 try
                 {
-                    ISession closeSession = null;
+                    ISession? closeSession = null;
                     if (session.IsClosed())
                     {
                         logger.LogInformation("移除已关闭的 OfflineSession userId : {User}", session.GetUserId());

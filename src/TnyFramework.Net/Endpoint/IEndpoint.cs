@@ -17,9 +17,9 @@ namespace TnyFramework.Net.Endpoint
     {
         long Id { get; }
 
-        MessageHandleFilter SendFilter { get; set; }
+        MessageHandleFilter? SendFilter { get; set; }
 
-        MessageHandleFilter ReceiveFilter { get; set; }
+        MessageHandleFilter? ReceiveFilter { get; set; }
 
         void Heartbeat();
 

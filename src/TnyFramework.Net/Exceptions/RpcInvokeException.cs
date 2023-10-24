@@ -19,18 +19,18 @@ namespace TnyFramework.Net.Exceptions
         {
         }
 
-        public RpcInvokeException(IResultCode code = null, object body = null, string message = "") : base(code, body,
-            message)
+        public RpcInvokeException(IResultCode? code = null, object? body = null, string message = "")
+            : base(code, body, message)
         {
         }
 
-        public RpcInvokeException(Exception innerException, IResultCode code = null, object body = null,
-            string message = "") : base(innerException, code, body, message)
+        public RpcInvokeException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+            : base(innerException, code, body, message)
         {
         }
 
-        public RpcInvokeException(SerializationInfo info, StreamingContext context, IResultCode code = null,
-            object body = null) : base(info, context, code, body)
+        public RpcInvokeException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
+            : base(info, context, code, body)
         {
         }
     }

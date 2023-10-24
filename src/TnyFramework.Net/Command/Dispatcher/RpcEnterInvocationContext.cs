@@ -9,6 +9,7 @@
 using System;
 using System.Threading;
 using TnyFramework.Common.Attribute;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Endpoint;
@@ -23,7 +24,7 @@ namespace TnyFramework.Net.Command.Dispatcher
     {
         private const int OPEN = 0;
         private const int CLOSE = 1;
-        
+
         private readonly INetTunnel tunnel;
 
         private readonly RpcMonitor rpcMonitor;
@@ -50,17 +51,24 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public INetMessage NetMessage => message;
 
-        public override bool Valid => tunnel != null && Message != null;
+        public override bool Valid => tunnel.IsNull() && Message.IsNull();
 
         public INetMessager From => tunnel;
 
         public INetMessager To => to;
 
-        public RpcEnterInvocationContext(INetTunnel tunnel, INetMessage message, bool async, IAttributes attributes = null)
+        public RpcEnterInvocationContext(INetTunnel tunnel, INetMessage message, bool async, IAttributes? attributes = null)
             : base(message, async, attributes)
         {
             this.tunnel = tunnel;
-            rpcMonitor = tunnel?.Context.RpcMonitor;
+            to = null!;
+            if (tunnel.IsNotNull())
+            {
+                rpcMonitor = tunnel.Context.RpcMonitor;
+            } else
+            {
+                rpcMonitor = null!;
+            }
         }
 
         public bool Invoke(string operationName)
@@ -111,11 +119,11 @@ namespace TnyFramework.Net.Command.Dispatcher
             }
         }
 
-        protected override void OnComplete(MessageContent result, Exception exception)
+        protected override void OnComplete(MessageContent? result, Exception? exception)
         {
             if (forward)
             {
-                rpcMonitor.OnTransfered(this, result, exception);
+                rpcMonitor.OnTransferred(this, result, exception);
             } else
             {
                 rpcMonitor.OnAfterInvoke(this, result, exception);

@@ -62,7 +62,7 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         private void WritePayload(DataPackageContext writePkgContext, IMessage message, IByteBuffer outBuffer)
         {
-            IByteBuffer bodyBuffer = null;
+            IByteBuffer? bodyBuffer = null;
             var counter = Counter();
             var allotSize = -1;
             var actualSize = 0;

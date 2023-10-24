@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.Extensions.DependencyInjection;
+using TnyFramework.Common.Extensions;
 using TnyFramework.DI.Extensions;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Rpc.Remote;
@@ -31,8 +32,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Rpc
                 .Default<RpcRemoteSetting>();
             unitContainer.BindSingleton<RpcRemoteInstanceFactory>();
             unitContainer.BindSingleton(provider => {
-                IRpcRouter defaultRpcRouter = null;
-                if (DefaultRpcRemoteRouterSpec != null)
+                IRpcRouter? defaultRpcRouter = null;
+                if (DefaultRpcRemoteRouterSpec.IsNotNull())
                 {
                     defaultRpcRouter = DefaultRpcRemoteRouterSpec.Load(this, UnitContainer);
                 }

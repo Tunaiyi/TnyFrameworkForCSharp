@@ -17,7 +17,7 @@ namespace TnyFramework.DI.Extensions
 
     public class ComponentTypeSelector : TypeSelectorDefinition
     {
-        public static IList<Type> Types { get; private set; }
+        public static IList<Type> Types { get; private set; } = ImmutableList<Type>.Empty;
 
         public ComponentTypeSelector()
         {

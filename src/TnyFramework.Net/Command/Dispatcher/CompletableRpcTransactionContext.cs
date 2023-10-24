@@ -26,13 +26,13 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public override IMessageSubject MessageSubject => message;
 
-        public CompletableRpcTransactionContext(INetMessage message, bool async, IAttributes attributes = null)
+        public CompletableRpcTransactionContext(INetMessage message, bool async, IAttributes? attributes = null)
             : base(async, attributes)
         {
             this.message = message;
         }
 
-        public bool CompleteSilently(Exception error = null)
+        public bool CompleteSilently(Exception? error = null)
         {
             if (!TryCompleted(error))
                 return false;
@@ -41,7 +41,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return true;
         }
 
-        public bool CompleteSilently(IResultCode code, object body = null)
+        public bool CompleteSilently(IResultCode code, object? body = null)
         {
             if (!TryCompleted())
                 return false;
@@ -63,7 +63,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return true;
         }
 
-        public bool Complete(IResultCode code, object body, Exception error = null)
+        public bool Complete(IResultCode code, object? body, Exception? error = null)
         {
             if (!TryCompleted(error))
                 return false;
@@ -71,7 +71,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return true;
         }
 
-        public bool Complete(MessageContent content, Exception error)
+        public bool Complete(MessageContent? content, Exception? error)
         {
             if (!TryCompleted(error))
                 return false;
@@ -83,10 +83,10 @@ namespace TnyFramework.Net.Command.Dispatcher
         {
             if (silently)
             {
-                OnComplete(null);
+                OnComplete(null!);
                 return;
             }
-            object body = null;
+            object body = null!;
             var code = NetResultCode.SERVER_ERROR;
             var cause = Cause;
             switch (cause)
@@ -104,14 +104,14 @@ namespace TnyFramework.Net.Command.Dispatcher
             OnComplete(code, body);
         }
 
-        private void OnComplete(IResultCode code, object body)
+        private void OnComplete(IResultCode code, object? body)
         {
             if (silently)
             {
                 OnComplete(null);
                 return;
             }
-            MessageContent content = null;
+            MessageContent? content = null;
             switch (message.Mode)
             {
                 case MessageMode.Response:
@@ -128,7 +128,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             OnComplete(content);
         }
 
-        private void OnComplete(MessageContent content)
+        private void OnComplete(MessageContent? content)
         {
             var cause = Cause;
             if (silently)
@@ -142,7 +142,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             }
         }
 
-        protected abstract void OnComplete(MessageContent result, Exception exception);
+        protected abstract void OnComplete(MessageContent? result, Exception? exception);
 
         protected abstract void OnReturn(MessageContent content);
     }

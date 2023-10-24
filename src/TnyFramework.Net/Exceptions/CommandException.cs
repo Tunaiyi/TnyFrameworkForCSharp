@@ -16,7 +16,7 @@ namespace TnyFramework.Net.Exceptions
 
     public class CommandException : ResultCodeException
     {
-        public object Body { get; }
+        public object? Body { get; }
 
         public CommandException(IResultCode code, SerializationInfo info, StreamingContext context) :
             base(code, info, context)

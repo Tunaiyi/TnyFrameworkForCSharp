@@ -11,6 +11,7 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Exceptions;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.FastInvoke;
 using TnyFramework.Common.FastInvoke.FuncInvoke;
 using TnyFramework.Common.Logger;
@@ -61,12 +62,12 @@ namespace TnyFramework.Net.Command.Dispatcher
             await Invoke();
         }
 
-        protected override void OnException(Exception cause)
+        protected override void OnException(Exception? cause)
         {
             invokeContext.Complete(cause);
         }
 
-        protected override void OnDone(Exception cause)
+        protected override void OnDone(Exception? cause)
         {
             HandleResult();
         }
@@ -78,7 +79,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             var message = rpcContext.NetMessage;
             var tunnel = rpcContext.NetTunnel;
             var controller = invokeContext.Controller;
-            if (controller == null)
+            if (controller.IsNull())
             {
                 var head = message.Head;
                 LOGGER.LogWarning("Controller {Mode}[{Protocol}] 没有存在对应Controller ", head.Mode, head.ProtocolId);
@@ -89,7 +90,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             // 检测登录认证
             if (controller.IsHasAuthValidator && !tunnel.IsAuthenticated())
             {
-                messagerAuthenticator.Authenticate(dispatcherContext, rpcContext, controller.AuthValidatorType);
+                messagerAuthenticator.Authenticate(dispatcherContext, rpcContext, controller.AuthValidatorType!);
             }
 
             var appType = invokeContext.AppType;
@@ -171,14 +172,14 @@ namespace TnyFramework.Net.Command.Dispatcher
                 return invoker;
             }
             var property = type.GetProperty(TASK_RESULT_PROPERTY_NAME);
-            var fastInvoker = FastFuncFactory.Invoker(property);
+            var fastInvoker = FastFuncFactory.Invoker(property!);
             return TASK_RESULT_INVOKER.TryAdd(type, fastInvoker) ? fastInvoker : TASK_RESULT_INVOKER[type];
         }
 
-        private void AfterInvoke(ITunnel tunnel, IMessage message, Exception cause)
+        private void AfterInvoke(ITunnel tunnel, IMessage message, Exception? cause)
         {
             var controller = invokeContext.Controller;
-            if (controller != null)
+            if (controller.IsNotNull())
             {
                 LOGGER.LogDebug("Controller [{}] 执行AfterPlugins", Name);
                 controller.AfterInvoke(tunnel, message, this.invokeContext);
@@ -224,11 +225,11 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private void HandleResult()
         {
-            var controller = invokeContext.Controller;
+            // var controller = invokeContext.Controller;
             var message = rpcContext.NetMessage;
             var tunnel = rpcContext.NetTunnel;
             IResultCode code;
-            object body = null;
+            object? body = null;
             var cause = invokeContext.Cause;
             var result = cause != null ? ResultOfException(cause) : invokeContext.Result;
             if (cause == null)
@@ -256,7 +257,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             // 执行调用后插件
             AfterInvoke(tunnel, message, cause);
 
-            MessageContent content = null;
+            MessageContent? content = null;
             if (message.Mode == MessageMode.Request || (message.Mode == MessageMode.Push && body != null))
             {
                 content = RpcMessageAide.ToMessage(invokeContext.RpcContext, code, body);
@@ -285,15 +286,15 @@ namespace TnyFramework.Net.Command.Dispatcher
             }
         }
 
-        private void FireDone(Exception cause)
+        private void FireDone(Exception? cause)
         {
             dispatcherContext.FireDone(this, cause);
         }
 
-        private void FireExecute()
-        {
-            dispatcherContext.FireExecute(this);
-        }
+        // private void FireExecute()
+        // {
+        //     dispatcherContext.FireExecute(this);
+        // }
     }
 
 }

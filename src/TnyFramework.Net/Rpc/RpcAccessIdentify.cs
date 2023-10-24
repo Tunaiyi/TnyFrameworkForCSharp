@@ -84,11 +84,13 @@ namespace TnyFramework.Net.Rpc
 
         public RpcAccessIdentify()
         {
+            ServiceType = null!;
         }
 
         public RpcAccessIdentify(long id)
         {
             Id = id;
+            ServiceType = null!;
         }
 
         public RpcAccessIdentify(RpcServiceType serviceType, int serverId, int index)
@@ -99,7 +101,7 @@ namespace TnyFramework.Net.Rpc
             Id = FormatId(serviceType, serverId, index);
         }
 
-        public int CompareTo(IRpcServicerPoint other)
+        public int CompareTo(IRpcServicerPoint? other)
         {
             if (ReferenceEquals(this, other)) return 0;
             return ReferenceEquals(null, other) ? 1 : Id.CompareTo(other.Id);

@@ -34,11 +34,11 @@ namespace TnyFramework.Net.Endpoint
         int Size { get; }
 
         /// <summary>
-        /// 获取指定userId对应的Session <br>
+        /// 获取指定userId对应的Session <br />
         /// </summary>
         /// <param name="userId">指定的Key</param>
         /// <returns>返回获取的endpoint</returns>
-        IEndpoint GetEndpoint(object userId);
+        IEndpoint? GetEndpoint(object userId);
 
         /// <summary>
         /// 获取所有的endpoints
@@ -51,14 +51,14 @@ namespace TnyFramework.Net.Endpoint
         /// </summary>
         /// <param name="userId">指定userId</param>
         /// <returns>返回关闭endpoint</returns>
-        IEndpoint Close(object userId);
+        IEndpoint? Close(object userId);
 
         /// <summary>
         /// 使指定userId的endpoint下线
         /// </summary>
         /// <param name="userId">指定userId</param>
         /// <returns>返回下线的endpoint</returns>
-        IEndpoint Offline(object userId);
+        IEndpoint? Offline(object userId);
 
         /// <summary>
         /// 发信息给用户
@@ -101,16 +101,13 @@ namespace TnyFramework.Net.Endpoint
         /// <param name="certificate">认证</param>
         /// <param name="tunnel">注册tunnel</param>
         /// <returns>返回注册的 endpoint</returns>
-        IEndpoint Online(ICertificate certificate, INetTunnel tunnel);
+        IEndpoint? Online(ICertificate certificate, INetTunnel tunnel);
 
         /**
-        * <p>
-        * <p>
-        * 获取指定userId对应的Session <br>
-        *
-        * @param userId 指定的Key
-        * @return 返回获取的endpoint, 无endpoint返回null
-        */
+         * 获取指定userId对应的Session
+         * @param userId 指定的Key
+         * @return 返回获取的endpoint, 无endpoint返回null
+         */
         bool IsOnline(object userId);
 
         /// <summary>
@@ -133,11 +130,11 @@ namespace TnyFramework.Net.Endpoint
         where TEndpoint : IEndpoint<TUserId>
     {
         /// <summary>
-        /// 获取指定userId对应的Session <br>
+        /// 获取指定userId对应的Session <br />
         /// </summary>
         /// <param name="userId">指定的Key</param>
         /// <returns>返回获取的endpoint</returns>
-        TEndpoint GetEndpoint(TUserId userId);
+        TEndpoint? GetEndpoint(TUserId userId);
 
         /// <summary>
         /// 获取所有的endpoints
@@ -150,14 +147,14 @@ namespace TnyFramework.Net.Endpoint
         /// </summary>
         /// <param name="userId">指定userId</param>
         /// <returns>返回关闭endpoint</returns>
-        TEndpoint Close(TUserId userId);
+        TEndpoint? Close(TUserId userId);
 
         /// <summary>
         /// 使指定userId的endpoint下线
         /// </summary>
         /// <param name="userId">指定userId</param>
         /// <returns>返回下线的endpoint</returns>
-        TEndpoint Offline(TUserId userId);
+        TEndpoint? Offline(TUserId userId);
 
         /// <summary>
         /// 判断指定用户是否在线

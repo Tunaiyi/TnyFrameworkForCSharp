@@ -16,12 +16,12 @@ namespace TnyFramework.FreeRedis.NetCore.Configurations
     public class FreeRedisParamSetting
     {
         private RedisProtocol? protocol;
-        private string user;
-        private string password;
+        private string user = "";
+        private string password = "";
         private int? database;
-        private string prefix;
-        private string clientName;
-        private string encoding;
+        private string prefix = "";
+        private string clientName = "";
+        private string encoding = "";
         private long? idleTimeout;
         private long? connectTimeout;
         private long? receiveTimeout;

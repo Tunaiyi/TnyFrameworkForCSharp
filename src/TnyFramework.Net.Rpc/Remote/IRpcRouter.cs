@@ -11,7 +11,7 @@ namespace TnyFramework.Net.Rpc.Remote
 
     public interface IRpcRouter
     {
-        IRpcAccess Route(IRpcInvokeNodeSet servicer, RpcRemoteMethod method, RpcRemoteInvokeParams parameters);
+        IRpcAccess? Route(IRpcInvokeNodeSet servicer, RpcRemoteMethod method, RpcRemoteInvokeParams parameters);
     }
 
 }

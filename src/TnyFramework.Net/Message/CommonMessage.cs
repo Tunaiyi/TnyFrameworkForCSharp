@@ -18,7 +18,7 @@ namespace TnyFramework.Net.Message
         {
         }
 
-        public CommonMessage(INetMessageHead head, object body) : base(head, body)
+        public CommonMessage(INetMessageHead head, object? body) : base(head, body)
         {
         }
     }

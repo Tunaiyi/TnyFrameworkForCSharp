@@ -40,7 +40,7 @@ namespace TnyFramework.Net.Rpc
         /// </summary>
         public string Service => Group;
 
-        public AppType AppType { get; protected set; }
+        public AppType AppType { get; protected set; } = null!;
 
         protected override void OnCheck()
         {
@@ -59,21 +59,21 @@ namespace TnyFramework.Net.Rpc
         public new static RpcServiceType ForId(int id)
         {
             var value = GetById(id, false);
-            if (value == null)
+            if (value is RpcServiceType type)
             {
-                throw new ArgumentException($"{typeof(RpcServiceType)} 枚举ID不存在 -> {id}");
+                return type;
             }
-            return value as RpcServiceType;
+            throw new ArgumentException($"{typeof(RpcServiceType)} 枚举ID不存在 -> {id}");
         }
 
         public new static RpcServiceType ForName(string name)
         {
             var value = GetByName(name, false);
-            if (value == null)
+            if (value is RpcServiceType type)
             {
-                throw new ArgumentException($"{typeof(RpcServiceType)} 枚举Name不存在 -> {name}");
+                return type;
             }
-            return value as RpcServiceType;
+            throw new ArgumentException($"{typeof(RpcServiceType)} 枚举Name不存在 -> {name}");
         }
 
         public static RpcServiceType ForService(string service)
@@ -97,7 +97,7 @@ namespace TnyFramework.Net.Rpc
 
     public abstract class RpcServiceType<T> : RpcServiceType where T : RpcServiceType<T>, new()
     {
-        protected static T Of(int id, AppType appType, string service, Action<T> builder = null)
+        protected static T Of(int id, AppType appType, string service, Action<T>? builder = null)
         {
             return E(id, new T {
                 Group = service,

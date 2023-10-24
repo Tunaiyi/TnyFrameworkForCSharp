@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Exceptions;
 
@@ -33,7 +34,7 @@ namespace TnyFramework.Coroutines.Async
         private static volatile int _ID_COUNTER;
 
         // 协程执行器
-        private readonly ICoroutineExecutor executor;
+        private readonly TaskScheduler executeTaskScheduler;
 
         // 提交状态
         private volatile int submit = SUBMIT_STATUS_IDLE;
@@ -52,76 +53,73 @@ namespace TnyFramework.Coroutines.Async
 
         private SpinLock locker;
 
-        private volatile SynchronizationContext? synchronizationContext;
+        private volatile SynchronizationContext? asSynchronizationContext;
 
-        private volatile TaskScheduler? taskScheduler;
+        private volatile TaskScheduler? asTaskScheduler;
 
-        public Coroutine() : this(ThreadPoolCoroutineExecutor.Default)
+        public Coroutine() : this(TaskScheduler.Default)
         {
-
         }
 
         /// <summary>
         /// 协程构建器
         /// </summary>
-        /// <param name="executor">协程执行器</param>
+        /// <param name="executeTaskScheduler">协程执行器</param>
         /// <param name="name">协程名字</param>
-        public Coroutine(ICoroutineExecutor executor, string? name = null)
+        public Coroutine(TaskScheduler executeTaskScheduler, string? name = null)
         {
             Id = Interlocked.Increment(ref _ID_COUNTER);
             Name = name ?? $"Coroutine-{Id}";
             Queue = new CoroutineWorkQueue();
-            this.executor = executor;
+            this.executeTaskScheduler = executeTaskScheduler;
         }
 
-        private TaskScheduler TaskScheduler {
-            get {
-                if (taskScheduler != null)
+        public TaskScheduler AsTaskScheduler()
+        {
+            if (asTaskScheduler != null)
+            {
+                return asTaskScheduler;
+            }
+            var locked = false;
+            locker.Enter(ref locked);
+            try
+            {
+                if (asTaskScheduler != null)
                 {
-                    return taskScheduler;
+                    return asTaskScheduler;
                 }
-                var locked = false;
-                locker.Enter(ref locked);
-                try
+                asTaskScheduler = new CoroutineTaskScheduler(this);
+                return asTaskScheduler;
+            } finally
+            {
+                if (locked)
                 {
-                    if (taskScheduler != null)
-                    {
-                        return taskScheduler;
-                    }
-                    taskScheduler = new CoroutineTaskScheduler(this);
-                    return taskScheduler;
-                } finally
-                {
-                    if (locked)
-                    {
-                        locker.Exit(true);
-                    }
+                    locker.Exit(true);
                 }
             }
         }
 
-        private SynchronizationContext SynchronizationContext {
-            get {
-                if (synchronizationContext != null)
+        public SynchronizationContext AsSynchronizationContext()
+        {
+            if (asSynchronizationContext != null)
+            {
+                return asSynchronizationContext;
+            }
+            var locked = false;
+            locker.Enter(ref locked);
+            try
+            {
+                if (asSynchronizationContext != null)
                 {
-                    return synchronizationContext;
+                    return asSynchronizationContext;
                 }
-                var locked = false;
-                locker.Enter(ref locked);
-                try
+                asSynchronizationContext = new CoroutineSynchronizationContext(this);
+                return asSynchronizationContext;
+            } finally
+            {
+                if (locked)
                 {
-                    if (synchronizationContext != null)
-                    {
-                        return synchronizationContext;
-                    }
-                    synchronizationContext = new CoroutineSynchronizationContext(this);
-                    return synchronizationContext;
-                } finally
-                {
-                    if (locked)
-                    {
-                        locker.Exit(true);
-                    }
+                    locker.Exit(true);
                 }
             }
         }
@@ -134,7 +132,7 @@ namespace TnyFramework.Coroutines.Async
             if (current is CoroutineSynchronizationContext)
                 return;
             var coroutine = new Coroutine();
-            SynchronizationContext.SetSynchronizationContext(coroutine.SynchronizationContext);
+            SynchronizationContext.SetSynchronizationContext(coroutine.AsSynchronizationContext());
             CURRENT_COROUTINE.Value = coroutine;
         }
 
@@ -145,7 +143,7 @@ namespace TnyFramework.Coroutines.Async
                 return;
             if (!(coroutine is Coroutine value))
                 return;
-            SynchronizationContext.SetSynchronizationContext(value.SynchronizationContext);
+            SynchronizationContext.SetSynchronizationContext(value.AsSynchronizationContext());
             CURRENT_COROUTINE.Value = value;
         }
 
@@ -301,7 +299,8 @@ namespace TnyFramework.Coroutines.Async
         // Exec will execute tasks off the task list
         private void ExecuteAllWorks()
         {
-            DoTransaction(() => Task.Factory.StartNew(DoExecuteWorks, CancellationToken.None, TaskCreationOptions.None, TaskScheduler));
+            DoTransaction(() =>
+                Task.Factory.StartNew(DoExecuteWorks, CancellationToken.None, TaskCreationOptions.None, asTaskScheduler ?? AsTaskScheduler()));
         }
 
         private void DoTransaction(Action action)
@@ -418,7 +417,7 @@ namespace TnyFramework.Coroutines.Async
             var current = submit;
             if (current == SUBMIT_STATUS_IDLE && Interlocked.CompareExchange(ref submit, SUBMIT_STATUS_SUBMIT, SUBMIT_STATUS_IDLE) == current)
             {
-                executor.Summit(ExecuteAllWorks);
+                executeTaskScheduler.StartNew(ExecuteAllWorks);
             }
         }
     }

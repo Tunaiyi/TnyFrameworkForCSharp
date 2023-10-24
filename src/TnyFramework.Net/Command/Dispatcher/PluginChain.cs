@@ -20,9 +20,9 @@ namespace TnyFramework.Net.Command.Dispatcher
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<PluginChain>();
 
-        private PluginChain next;
+        private PluginChain? next;
 
-        private readonly CommandPluginHolder plugin;
+        private readonly CommandPluginHolder? plugin;
 
         public PluginChain(CommandPluginHolder plugin)
         {

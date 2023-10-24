@@ -21,7 +21,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// 类型 : 特性列表
         /// </summary>
-        public IDictionary<Type, IList<Attribute>> AttributesMap { get; private set; }
+        public IDictionary<Type, IList<Attribute>> AttributesMap { get; private set; } = null!;
 
         /// <summary>
         /// 类型 : 特性列表
@@ -31,7 +31,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// 所有特性列表
         /// </summary>
-        public IList<Attribute> Attributes { get; private set; }
+        public IList<Attribute> Attributes { get; private set; } = null!;
 
         public bool Empty { get; private set; } = true;
 
@@ -45,7 +45,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             Init(member.GetCustomAttributes());
         }
 
-        public void Init(IEnumerable<Attribute> attributes)
+        private void Init(IEnumerable<Attribute> attributes)
         {
             var map = new Dictionary<Type, IList<Attribute>>();
             if (attributes == null)
@@ -70,17 +70,17 @@ namespace TnyFramework.Net.Command.Dispatcher
             Attributes = ImmutableList.CreateRange(attributeList);
         }
 
-        public Attribute GetAttribute(Type attributeType)
+        public Attribute? GetAttribute(Type attributeType)
         {
             var attributes = AttributesMap[attributeType];
             if (attributes == null || attributes.Count == 0)
             {
                 return null;
             }
-            return (Attribute) attributes[0];
+            return attributes[0];
         }
 
-        public TAttribute GetAttribute<TAttribute>() where TAttribute : Attribute
+        public TAttribute? GetAttribute<TAttribute>() where TAttribute : Attribute
         {
             if (!AttributesMap.TryGetValue(typeof(TAttribute), out var attributes))
             {

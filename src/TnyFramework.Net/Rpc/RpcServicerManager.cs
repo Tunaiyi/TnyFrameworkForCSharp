@@ -20,25 +20,25 @@ namespace TnyFramework.Net.Rpc
         private readonly ConcurrentDictionary<IMessagerType, RpcServiceSet> serviceSetMap =
             new ConcurrentDictionary<IMessagerType, RpcServiceSet>();
 
-        private readonly ConcurrentDictionary<IMessagerType, IRpcInvokeNodeSet> invokeNodeSetMap =
-            new ConcurrentDictionary<IMessagerType, IRpcInvokeNodeSet>();
+        private readonly ConcurrentDictionary<IMessagerType, IRpcInvokeNodeSet?> invokeNodeSetMap =
+            new ConcurrentDictionary<IMessagerType, IRpcInvokeNodeSet?>();
 
         public RpcServicerManager()
         {
             EndpointKeeperManager.CreateEventBox.Add(OnCreate);
         }
 
-        public IRpcInvokeNodeSet LoadInvokeNodeSet(IMessagerType serviceType)
+        public IRpcInvokeNodeSet? LoadInvokeNodeSet(IMessagerType serviceType)
         {
             return DoLoadInvokeNodeSet(serviceType, null);
         }
 
-        public IRpcInvokeNodeSet FindInvokeNodeSet(IMessagerType serviceType)
+        public IRpcInvokeNodeSet? FindInvokeNodeSet(IMessagerType serviceType)
         {
             return serviceSetMap.TryGetValue(serviceType, out var serviceSet) ? serviceSet : null;
         }
 
-        private IRpcInvokeNodeSet DoLoadInvokeNodeSet(IMessagerType messagerType, Action<MessagerNodeSet> createHandler)
+        private IRpcInvokeNodeSet? DoLoadInvokeNodeSet(IMessagerType messagerType, Action<MessagerNodeSet>? createHandler)
         {
             if (messagerType is RpcServiceType serviceType)
             {
@@ -49,7 +49,7 @@ namespace TnyFramework.Net.Rpc
             }
         }
 
-        private IRpcInvokeNodeSet DoLoadRpcServiceSet(IMessagerType messagerType, Action<MessagerNodeSet> createHandler)
+        private IRpcInvokeNodeSet? DoLoadRpcServiceSet(IMessagerType messagerType, Action<MessagerNodeSet>? createHandler)
         {
             var nodeSet = invokeNodeSetMap.Get(messagerType);
             if (nodeSet != null)
@@ -85,7 +85,7 @@ namespace TnyFramework.Net.Rpc
             if (!(endpoint is IEndpoint<RpcAccessIdentify> point))
                 return;
             var servicer = DoLoadRpcServiceSet(point.UserId.ServiceType);
-            servicer?.RemoveEndpoint(point);
+            servicer.RemoveEndpoint(point);
         }
 
         private void OnAddEndpoint(IEndpointKeeper keeper, IEndpoint endpoint)
@@ -93,7 +93,7 @@ namespace TnyFramework.Net.Rpc
             if (!(endpoint is IEndpoint<RpcAccessIdentify> point))
                 return;
             var servicer = DoLoadRpcServiceSet(point.UserId.ServiceType);
-            servicer?.AddEndpoint(point);
+            servicer.AddEndpoint(point);
         }
     }
 

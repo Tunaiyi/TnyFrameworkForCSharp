@@ -12,6 +12,7 @@ using System.Collections.Immutable;
 using System.Reflection;
 using System.Text;
 using TnyFramework.Common.Exceptions;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.FastInvoke;
 using TnyFramework.Common.FastInvoke.ActionInvoke;
 using TnyFramework.Common.FastInvoke.FuncInvoke;
@@ -40,12 +41,12 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// 执行前
         /// </summary>
-        private readonly PluginChain beforeChain;
+        private readonly PluginChain? beforeChain;
 
         /// <summary>
         /// 执行后
         /// </summary>
-        private readonly PluginChain afterChain;
+        private readonly PluginChain? afterChain;
 
         /// <summary>
         /// 类 Controller 信息
@@ -55,7 +56,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// 参数注解
         /// </summary>
-        private readonly IDictionary<Type, IList<Attribute>> indexParamAnnotationsMap;
+        private readonly IDictionary<Type, IList<Attribute?>> indexParamAnnotationsMap;
 
         private readonly RpcProfile rpcProfile;
 
@@ -134,14 +135,14 @@ namespace TnyFramework.Net.Command.Dispatcher
             return paramDescriptions.ToImmutableList();
         }
 
-        private static IDictionary<Type, IList<Attribute>> InitIndexParamAttributes(
+        private static IDictionary<Type, IList<Attribute?>> InitIndexParamAttributes(
             Dictionary<Type, IDictionary<int, Attribute>> paramAnnotationsMap, int index)
         {
 
-            var indexAnnotationsMap = new Dictionary<Type, IList<Attribute>>();
+            var indexAnnotationsMap = new Dictionary<Type, IList<Attribute?>>();
             foreach (var pair in paramAnnotationsMap)
             {
-                var attributes = new List<Attribute>();
+                var attributes = new List<Attribute?>();
                 for (var i = 0; i < index; i++)
                 {
                     attributes.Add(null);
@@ -155,7 +156,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return indexAnnotationsMap.ToImmutableDictionary();
         }
 
-        private static PluginChain AppendPlugin(PluginChain context, CommandPluginHolder plugin)
+        private static PluginChain AppendPlugin(PluginChain? context, CommandPluginHolder plugin)
         {
             if (context == null)
             {
@@ -188,7 +189,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public string SimpleName { get; }
 
-        public int Protocol => rpcProfile?.Protocol ?? -1;
+        public int Protocol => rpcProfile.IsNotNull() ? rpcProfile.Protocol : -1;
 
         /// <summary>
         /// 处理的消息类型
@@ -217,7 +218,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return AuthAttribute != null ? base.IsAuth() : typeController.IsAuth();
         }
 
-        public override Type AuthValidatorType {
+        public override Type? AuthValidatorType {
             get {
                 var auth = AuthAttribute;
                 return auth != null ? base.AuthValidatorType : typeController.AuthValidatorType;
@@ -238,7 +239,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             }
         }
 
-        public object GetParameterValue(int index, INetTunnel tunnel, IMessage message, object body)
+        public object? GetParameterValue(int index, INetTunnel tunnel, IMessage message, object? body)
         {
             if (index >= ParamDescriptions.Count)
             {
@@ -265,7 +266,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return typeController.GetTypeAttributes<TAttribute>();
         }
 
-        public TAttribute GetMethodAttribute<TAttribute>() where TAttribute : Attribute
+        public TAttribute? GetMethodAttribute<TAttribute>() where TAttribute : Attribute
         {
             return MethodAttributeHolder.GetAttribute<TAttribute>();
         }
@@ -275,10 +276,10 @@ namespace TnyFramework.Net.Command.Dispatcher
             return MethodAttributeHolder.GetAttributes<TAttribute>();
         }
 
-        public IList<Attribute> GetParameterAnnotationsByType(Type type)
+        public IList<Attribute?> GetParameterAnnotationsByType(Type type)
         {
             return !indexParamAnnotationsMap.TryGetValue(type, out var attributes)
-                ? ImmutableList.Create<Attribute>()
+                ? ImmutableList.Create<Attribute?>()
                 : attributes;
         }
 
@@ -299,7 +300,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             var body = message.Body;
             for (var index = 0; index < parameters.Length; index++)
             {
-                parameters[index] = GetParameterValue(index, tunnel, message, body);
+                parameters[index] = GetParameterValue(index, tunnel, message, body)!;
             }
             return invoker.Invoke(executor, parameters);
         }

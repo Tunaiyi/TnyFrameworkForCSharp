@@ -18,7 +18,7 @@ namespace TnyFramework.Net.Transport
         /// </summary>
         /// <param name="body"> 消息body</param>
         /// <returns>返回当前 context</returns>
-        public RequestContent WithRequestBody(object body)
+        public RequestContent WithRequestBody(object? body)
         {
             WithBody(body);
             return this;

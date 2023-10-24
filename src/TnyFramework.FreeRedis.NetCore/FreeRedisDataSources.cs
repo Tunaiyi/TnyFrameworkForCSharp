@@ -30,6 +30,9 @@ namespace TnyFramework.FreeRedis.NetCore
             if (properties.Default != null)
             {
                 DefaultClient = CreateClient(properties.Default, codecAdapter);
+            } else
+            {
+                DefaultClient = null!;
             }
             redisClients = properties.DataSources
                 .ToDictionary(pair => pair.Key, pair => CreateClient(pair.Value, codecAdapter))
@@ -39,7 +42,7 @@ namespace TnyFramework.FreeRedis.NetCore
         private RedisClient CreateClient(FreeRedisSetting setting, ObjectCodecAdapter codecAdapter)
         {
             var builders = setting.Connections.Select(connection => connection.ToConnectionBuilder()).ToList();
-            MimeType mimeType = null;
+            MimeType? mimeType = null;
             if (setting.Mime.IsNotBlank())
             {
                 mimeType = MimeType.ForMimeType(setting.Mime);
@@ -63,6 +66,10 @@ namespace TnyFramework.FreeRedis.NetCore
         public RedisClient Client(Type type)
         {
             var scheme = RedisObjectScheme.SchemeOf(type);
+            if (scheme == null)
+            {
+                throw new NullReferenceException($"Could not find the scheme of {type}");
+            }
             if (scheme.Source.IsBlank())
             {
                 if (DefaultClient == null)

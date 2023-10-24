@@ -39,6 +39,11 @@ namespace TnyFramework.Net.Message
         private TickMessageHead(MessageMode mode)
         {
             Mode = mode;
+            Type = Mode switch {
+                MessageMode.Ping => MessageType.Ping,
+                MessageMode.Pong => MessageType.Pong,
+                _ => Type
+            };
             ProtocolId = Protocols.PING_PONG_PROTOCOL_NUM;
             Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         }
@@ -54,17 +59,17 @@ namespace TnyFramework.Net.Message
 
         public long Time { get; }
 
-        public T GetHeader<T>(string key) where T : MessageHeader => default;
+        public T? GetHeader<T>(string key) where T : MessageHeader => default;
 
-        public MessageHeader GetHeader(string key, Type type) => null;
+        public MessageHeader? GetHeader(string key, Type type) => null;
 
         public IList<T> GetHeaders<T>() where T : MessageHeader => ImmutableList<T>.Empty;
 
-        public MessageHeader GetHeader(string key) => null;
+        public MessageHeader? GetHeader(string key) => null;
 
         public IList<MessageHeader> GetHeaders(Type type) => ImmutableList<MessageHeader>.Empty;
 
-        public T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => default;
+        public T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => default;
 
         public bool IsHasHeaders() => false;
 
@@ -72,7 +77,7 @@ namespace TnyFramework.Net.Message
 
         public bool IsForward() => false;
 
-        public RpcForwardHeader ForwardHeader => null;
+        public RpcForwardHeader? ForwardHeader => null;
 
         public IList<MessageHeader> GetAllHeaders() => ImmutableList<MessageHeader>.Empty;
 
@@ -84,9 +89,9 @@ namespace TnyFramework.Net.Message
 
         public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => false;
 
-        public T PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T> => null;
+        public T? PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T> => null;
 
-        public T PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T> => null;
+        public T? PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T> => null;
 
         public bool RemoveHeader<T>(string key) => false;
 

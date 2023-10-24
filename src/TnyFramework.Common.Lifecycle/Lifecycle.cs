@@ -26,9 +26,9 @@ namespace TnyFramework.Common.Lifecycle
 
         public abstract Lifecycle GetTail<T>() where T : Lifecycle;
 
-        public abstract Lifecycle GetPrev<T>() where T : Lifecycle;
+        public abstract Lifecycle? GetPrev<T>() where T : Lifecycle;
 
-        public abstract Lifecycle GetNext<T>() where T : Lifecycle;
+        public abstract Lifecycle? GetNext<T>() where T : Lifecycle;
 
         static Lifecycle()
         {
@@ -52,23 +52,27 @@ namespace TnyFramework.Common.Lifecycle
             return lifecycle;
         }
 
-        internal static TLifecycle GetLifecycle<TLifecycle>(LifecycleStage<TLifecycle> stage, Type type)
+        internal static TLifecycle? GetLifecycle<TLifecycle>(LifecycleStage<TLifecycle> stage, Type type)
             where TLifecycle : Lifecycle
         {
             var dictionary = LIFECYCLES_MAP[stage];
-            return (TLifecycle) dictionary.Get(type);
+            return (TLifecycle?) dictionary.Get(type);
         }
 
-        internal static TLifecycle GetLifecycle<TLifecycle, THandler>(LifecycleStage<TLifecycle> stage)
+        internal static TLifecycle? GetLifecycle<TLifecycle, THandler>(LifecycleStage<TLifecycle> stage)
             where TLifecycle : Lifecycle
             where THandler : ILifecycleHandler
         {
             var dictionary = LIFECYCLES_MAP[stage];
-            return (TLifecycle) dictionary.Get(typeof(THandler));
+            return (TLifecycle?) dictionary.Get(typeof(THandler));
         }
 
-        public int CompareTo(Lifecycle other)
+        public int CompareTo(Lifecycle? other)
         {
+            if (other == null)
+            {
+                return 1;
+            }
             var value = other.Order - Order;
             return value == 0 ? string.Compare(HandlerType.Name, other.HandlerType.Name, StringComparison.Ordinal) : value;
         }
@@ -78,15 +82,15 @@ namespace TnyFramework.Common.Lifecycle
         where TLife : Lifecycle<TLife, THandler>, new()
         where THandler : ILifecycleHandler
     {
-        private Type handlerType;
+        private Type handlerType = null!;
 
-        public Type lifeType;
+        public Type lifeType = null!;
 
-        private ILifecyclePriority Priority { get; set; }
+        private ILifecyclePriority Priority { get; set; } = null!;
 
-        public TLife Next { get; private set; }
+        public TLife? Next { get; private set; }
 
-        public TLife Prev { get; private set; }
+        public TLife? Prev { get; private set; }
 
         public override Type HandlerType => handlerType;
 
@@ -96,7 +100,11 @@ namespace TnyFramework.Common.Lifecycle
             get {
                 if (Prev == null)
                 {
-                    return this as TLife;
+                    if (this is TLife life)
+                    {
+                        return life;
+                    }
+                    return null!;
                 }
                 return Prev.HeadLifecycle;
             }
@@ -106,7 +114,11 @@ namespace TnyFramework.Common.Lifecycle
             get {
                 if (Next == null)
                 {
-                    return this as TLife;
+                    if (this is TLife life)
+                    {
+                        return life;
+                    }
+                    return null!;
                 }
                 return Next.TailLifecycle;
             }
@@ -116,9 +128,9 @@ namespace TnyFramework.Common.Lifecycle
 
         public override Lifecycle GetTail<T>() => TailLifecycle;
 
-        public override Lifecycle GetPrev<T>() => Prev;
+        public override Lifecycle? GetPrev<T>() => Prev;
 
-        public override Lifecycle GetNext<T>() => Next;
+        public override Lifecycle? GetNext<T>() => Next;
 
         public TLife Append(TLife life)
         {
@@ -157,7 +169,7 @@ namespace TnyFramework.Common.Lifecycle
             return handlerType == other.handlerType && lifeType == other.lifeType;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;

@@ -13,7 +13,7 @@ namespace TnyFramework.Net.Base
 
     public class NetAppContext : AttributesContext, INetAppContext
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         public int ServerId { get; set; }
 

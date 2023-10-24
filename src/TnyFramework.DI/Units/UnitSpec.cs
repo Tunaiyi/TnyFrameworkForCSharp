@@ -26,11 +26,11 @@ namespace TnyFramework.DI.Units
     {
         private string unitName;
 
-        private UnitCreator<TUnit, TContext> defaultCreator;
+        private UnitCreator<TUnit, TContext>? defaultCreator;
 
-        private UnitCreator<TUnit, TContext> creator;
+        private UnitCreator<TUnit, TContext>? creator;
 
-        private TUnit unit;
+        private TUnit? unit;
 
         private bool created;
 
@@ -125,17 +125,21 @@ namespace TnyFramework.DI.Units
                 }
                 if (creator != null)
                 {
-                    return unit = creator.Invoke(context);
+                    var newOne =  creator.Invoke(context);;
+                    unit = newOne;
+                    return newOne;
                 }
                 if (defaultCreator != null)
                 {
-                    return unit = defaultCreator.Invoke(context);
+                    var newOne =  defaultCreator.Invoke(context);
+                    unit = newOne;
+                    return newOne;
                 }
             } finally
             {
                 if (!created && unit != null)
                 {
-                    services?.AddSingletonUnit(unitName, unit);
+                    services.AddSingletonUnit(unitName, unit);
                     created = true;
                 }
             }

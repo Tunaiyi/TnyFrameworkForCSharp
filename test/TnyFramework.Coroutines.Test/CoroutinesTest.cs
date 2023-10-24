@@ -66,13 +66,13 @@ namespace TnyFramework.Coroutines.Test
         public async Task TestTaskScheduler()
         {
             // var executor = new WorkStealingThreadPoolCoroutineExecutor(2, "TestTaskScheduler");
-            var executor = SingleThreadCoroutineExecutor.Default;
+            var executor = TaskScheduler.Default;
             var factory = new DefaultCoroutineFactory("Actor", executor);
             var coroutine1 = factory.Create();
             var coroutine2 = factory.Create();
             logger.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [GOGO] 0", Coroutine.CurrentCoroutine,
                 Thread.CurrentThread.ManagedThreadId);
-            await coroutine1.AsyncAction(() => DelayTest("单协程coroutine1测试-开始启动", 3));
+            await coroutine1.AsyncAction(() => _ = DelayTest("单协程coroutine1测试-开始启动", 3));
             logger.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [GOGO] 1", Coroutine.CurrentCoroutine,
                 Thread.CurrentThread.ManagedThreadId);
             // await coroutine2.Exec(TestCount);

@@ -37,9 +37,9 @@ namespace TnyFramework.Net.Rpc.Remote
 
         public static readonly RpcBodyMode BODY = Of<RpcBodyAttribute>(6, typeof(IResultCode));
 
-        public Type BodyAttribute { get; private set; }
+        public Type? BodyAttribute { get; private set; }
 
-        public IList<Type> BodyTypes { get; private set; }
+        public IList<Type> BodyTypes { get; private set; } = null!;
 
         public static RpcBodyMode TypeOf(MethodInfo method, Type returnClass)
         {
@@ -47,7 +47,7 @@ namespace TnyFramework.Net.Rpc.Remote
             {
                 if (rpcBodyType.IsNeedAttribute())
                 {
-                    var attribute = method.GetCustomAttribute(rpcBodyType.BodyAttribute);
+                    var attribute = method.GetCustomAttribute(rpcBodyType.BodyAttribute!);
                     if (attribute == null)
                     {
                         continue;
@@ -64,7 +64,7 @@ namespace TnyFramework.Net.Rpc.Remote
         private static RpcBodyMode Of(int id, params Type[] bodyTypes)
         {
             return E(id, new RpcBodyMode {
-                BodyAttribute = null,
+                BodyAttribute = null!,
                 BodyTypes = bodyTypes.ToImmutableList()
             });
         }

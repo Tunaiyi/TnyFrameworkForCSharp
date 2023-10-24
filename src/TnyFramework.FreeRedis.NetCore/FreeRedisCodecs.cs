@@ -20,11 +20,11 @@ namespace TnyFramework.FreeRedis.NetCore
     {
         private readonly ObjectCodecAdapter objectCodecAdapter;
 
-        private readonly MimeType defaultMimeType;
+        private readonly MimeType? defaultMimeType;
 
         private readonly Encoding encoding;
 
-        public FreeRedisCodecs(ObjectCodecAdapter objectCodecAdapter, MimeType defaultMimeType = null, Encoding encoding = null)
+        public FreeRedisCodecs(ObjectCodecAdapter objectCodecAdapter, MimeType? defaultMimeType = null, Encoding? encoding = null)
         {
             this.objectCodecAdapter = objectCodecAdapter;
             this.defaultMimeType = defaultMimeType;
@@ -43,17 +43,17 @@ namespace TnyFramework.FreeRedis.NetCore
 
         }
 
-        public object Serialize(object value)
+        public object? Serialize(object? value)
         {
             return value == null ? null : Codec(value.GetType()).Encode(value);
         }
 
-        public object Deserialize(string data, Type type)
+        public object? Deserialize(string? data, Type type)
         {
             return data == null ? null : Codec(type).Decode(encoding.GetBytes(data));
         }
 
-        public object DeserializeRaw(byte[] data, Type type)
+        public object? DeserializeRaw(byte[]? data, Type type)
         {
             return data == null ? null : Codec(type).Decode(data);
         }

@@ -8,13 +8,14 @@
 
 using System;
 using FreeRedis;
+using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.FreeRedis.NetCore.Configurations
 {
 
     public class FreeRedisConnectionSetting : FreeRedisParamSetting
     {
-        public string Host { get; set; }
+        public string Host { get; set; } = "";
 
         public bool? Ssl { get; set; }
 
@@ -31,7 +32,7 @@ namespace TnyFramework.FreeRedis.NetCore.Configurations
         internal ConnectionStringBuilder ToConnectionBuilder(FreeRedisConnectionSetting urlSetting, FreeRedisParamSetting setting)
         {
             var builder = new ConnectionStringBuilder();
-            if (urlSetting.Host != null)
+            if (urlSetting.Host.IsNotBlank())
             {
                 builder.Host = urlSetting.Host;
             }
@@ -58,11 +59,11 @@ namespace TnyFramework.FreeRedis.NetCore.Configurations
             {
                 builder.Protocol = setting.Protocol.Value;
             }
-            if (setting.User != null)
+            if (setting.User.IsNotBlank())
             {
                 builder.User = setting.User;
             }
-            if (setting.Password != null)
+            if (setting.Password.IsNotBlank())
             {
                 builder.Password = setting.Password;
             }
@@ -70,15 +71,15 @@ namespace TnyFramework.FreeRedis.NetCore.Configurations
             {
                 builder.Database = setting.Database.Value;
             }
-            if (setting.Prefix != null)
+            if (setting.Prefix.IsNotBlank())
             {
                 builder.Prefix = setting.Prefix;
             }
-            if (setting.ClientName != null)
+            if (setting.ClientName.IsNotBlank())
             {
                 builder.ClientName = setting.ClientName;
             }
-            if (setting.Encoding != null)
+            if (setting.Encoding.IsNotBlank())
             {
                 builder.Encoding = System.Text.Encoding.GetEncoding(setting.Encoding);
             }

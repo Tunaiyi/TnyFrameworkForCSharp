@@ -18,7 +18,7 @@ namespace TnyFramework.Net.Rpc
     {
         private readonly IList<IRpcInvokeNode> remoterList;
 
-        private IEndpointKeeper keeper;
+        private IEndpointKeeper? keeper;
 
         public MessagerNodeSet(IMessagerType messagerType)
         {
@@ -38,7 +38,7 @@ namespace TnyFramework.Net.Rpc
 
         public IRpcInvokeNode FindInvokeNode(int nodeId) => this;
 
-        public IRpcAccess FindInvokeAccess(int nodeId, long accessId) => GetAccess(accessId);
+        public IRpcAccess? FindInvokeAccess(int nodeId, long accessId) => GetAccess(accessId);
 
         public int NodeId => 0;
 
@@ -46,9 +46,9 @@ namespace TnyFramework.Net.Rpc
 
         public IList<IRpcAccess> GetOrderAccesses() => ImmutableList<IRpcAccess>.Empty;
 
-        public IRpcAccess GetAccess(long accessId)
+        public IRpcAccess? GetAccess(long accessId)
         {
-            var endpoint = keeper.GetEndpoint(accessId);
+            var endpoint = keeper?.GetEndpoint(accessId);
             return endpoint != null ? RpcMessagerAccess.Of(endpoint) : null;
         }
 

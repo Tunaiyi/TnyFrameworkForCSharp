@@ -13,7 +13,7 @@ namespace TnyFramework.Net.Rpc
 
     public interface IRpcContext
     {
-        IRpcForwarder RpcForwarder { get; }
+        IRpcForwarder? RpcForwarder { get; }
     }
 
 }

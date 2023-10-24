@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using TnyFramework.Common.Exceptions;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.FastInvoke;
 using TnyFramework.Common.FastInvoke.FuncInvoke;
 using TnyFramework.Common.Result;
@@ -36,7 +37,7 @@ namespace TnyFramework.Net.Rpc.Remote
                 throw new IllegalArgumentException($"{resultType} create RcpResultCreator exception");
             var bodyType = resultType.IsGenericType ? resultType.GenericTypeArguments[0] : typeof(object);
             var resultCodeMethod = RCP_RESULT_CREATE_METHOD.MakeGenericMethod(bodyType);
-            return FastFuncFactory.Invoker(resultCodeMethod, null, null);
+            return FastFuncFactory.Invoker(resultCodeMethod, null!, null!);
         }
 
         public static IFastInvoker SourceFactory(Type bodyType)
@@ -58,7 +59,7 @@ namespace TnyFramework.Net.Rpc.Remote
 
     public class RpcCompleteSource<TBody> : IRpcCompleteSource
     {
-        private readonly TaskCompletionSource<TBody> source = new();
+        private readonly TaskCompletionSource<TBody?> source = new();
 
         private readonly Func<IMessage, object> messageTo;
 
@@ -69,13 +70,13 @@ namespace TnyFramework.Net.Rpc.Remote
 
         public void SetException(Exception cause)
         {
-            var exception = (cause == null ? new RpcInvokeException(NetResultCode.RPC_INVOKE_FAILED) : cause.InnerException) ?? cause;
+            var exception = (cause.IsNull() ? new RpcInvokeException(NetResultCode.RPC_INVOKE_FAILED) : cause.InnerException) ?? cause;
             source.SetException(exception);
         }
 
         public Task Task => source.Task;
 
-        public void SetResult(IMessage message)
+        public void SetResult(IMessage? message)
         {
             if (message == null)
             {

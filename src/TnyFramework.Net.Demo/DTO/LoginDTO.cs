@@ -25,7 +25,7 @@ namespace TnyFramework.Net.Demo.DTO
         public long userId;
 
         [ProtoMember(2)]
-        public string message;
+        public string message = "";
 
         [ProtoMember(3)]
         public long certId;

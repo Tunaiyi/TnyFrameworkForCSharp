@@ -43,7 +43,7 @@ namespace TnyFramework.Net.Rpc.Auth
         public IDoneResult<RpcAccessToken> VerifyToken(string token)
         {
             var rpcToken = JsonConvert.DeserializeObject<RpcAccessToken>(token);
-            return DoneResults.Success(rpcToken);
+            return DoneResults.Success(rpcToken!);
         }
     }
 

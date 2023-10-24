@@ -33,7 +33,7 @@ namespace TnyFramework.Net.Base
         /// <summary>
         /// 用户组 
         /// </summary>
-        public string Group { get; protected set; }
+        public string Group { get; protected set; } = null!;
 
         protected override void OnCheck()
         {
@@ -66,12 +66,11 @@ namespace TnyFramework.Net.Base
         public static implicit operator int(MessagerType type) => type.Id;
 
         public static explicit operator MessagerType(int type) => ForId(type);
-        
     }
 
     public abstract class MessagerType<T> : MessagerType where T : MessagerType<T>, new()
     {
-        protected static T Of(int id, string group, Action<T> builder = null)
+        protected static T Of(int id, string group, Action<T>? builder = null)
         {
             return E(id, new T {
                 Group = group

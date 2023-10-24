@@ -59,7 +59,7 @@ namespace TnyFramework.Net.Rpc.Remote
         /// <summary>
         /// 异步调用 CompleteSource 生成器
         /// </summary>
-        private readonly Func<IMessage, object>? returnValueFormatter;
+        private readonly Func<IMessage, object?>? returnValueFormatter;
 
         /// <summary>
         /// 监视器
@@ -110,12 +110,12 @@ namespace TnyFramework.Net.Rpc.Remote
             return Protocols.Protocol(method.Protocol, method.Line);
         }
 
-        private Func<IMessage, object> CreateMessageToReturnValue()
+        private Func<IMessage, object?> CreateMessageToReturnValue()
         {
             if (Equals(method.BodyMode, RpcBodyMode.RESULT))
             {
                 var resultCreator = RpcInvokerFastInvokers.RcpResultCreator(method.BodyType);
-                return message => resultCreator.Invoke(null, ResultCode.ForId(message.Code), message);
+                return message => resultCreator.Invoke(null!, ResultCode.ForId(message.Code), message);
             }
             if (Equals(method.BodyMode, RpcBodyMode.MESSAGE) || Equals(method.BodyMode, RpcBodyMode.MESSAGE_HEAD))
             {
@@ -127,7 +127,7 @@ namespace TnyFramework.Net.Rpc.Remote
             }
             if (Equals(method.BodyMode, RpcBodyMode.BODY))
             {
-                return message => message.Body;
+                return message => message.Body!;
             }
             if (Equals(method.BodyMode, RpcBodyMode.RESULT_CODE_ID))
             {
@@ -137,33 +137,34 @@ namespace TnyFramework.Net.Rpc.Remote
             {
                 return message => ResultCode.ForId(message.Code);
             }
-            return null;
+            // return null;
+            throw new NullReferenceException();
         }
 
         private Task ToReturnTask(Task<IMessage> messageTask)
         {
-            var source = completeSourceFactory();
+            var source = completeSourceFactory?.Invoke();
             messageTask.ContinueWith(task => {
                 if (task.IsFaulted)
                 {
-                    source.SetException(task.Exception);
+                    source?.SetException(task.Exception!);
                     LOGGER.LogError(task.Exception, $"Invoke Remote method {method.Name} exception");
                 } else
                 {
                     try
                     {
-                        source.SetResult(task.Result);
+                        source?.SetResult(task.Result);
                     } catch (Exception e)
                     {
-                        source.SetException(e);
+                        source?.SetException(e);
                         LOGGER.LogError(e, $"Invoke Remote method {method.Name} exception");
                     }
                 }
             });
-            return source.Task;
+            return source?.Task ?? Task.CompletedTask;
         }
 
-        private object Request(IEndpoint endpoint, long timeout, RpcRemoteInvokeParams invokeParams)
+        private object? Request(IEndpoint endpoint, long timeout, RpcRemoteInvokeParams invokeParams)
         {
             var content = MessageContents.Request(Protocol(), invokeParams.Params);
             content.WillRespondAwaiter(timeout)
@@ -175,7 +176,7 @@ namespace TnyFramework.Net.Rpc.Remote
                 content.Respond().ContinueWith(task => {
                     if (task.IsFaulted)
                     {
-                        invokeContext.Complete(task.Exception);
+                        invokeContext.Complete(task.Exception!);
                     } else
                     {
                         invokeContext.Complete(task.Result);
@@ -188,7 +189,7 @@ namespace TnyFramework.Net.Rpc.Remote
                 }
                 var message = receipt.Respond().Result;
                 invokeContext.Complete(message);
-                return returnValueFormatter(message);
+                return returnValueFormatter?.Invoke(message);
             } catch (Exception e)
             {
                 invokeContext.Complete(e);
@@ -205,9 +206,9 @@ namespace TnyFramework.Net.Rpc.Remote
         //     }
         // }
 
-        private object Push(IEndpoint endpoint, int timeout, RpcRemoteInvokeParams invokeParams)
+        private object? Push(IEndpoint endpoint, int timeout, RpcRemoteInvokeParams invokeParams)
         {
-            var code = invokeParams.Code ?? ResultCode.SUCCESS;
+            var code = invokeParams.Code;
             var content = MessageContents.Push(Protocol(), code)
                 .WithBody(invokeParams.GetBody())
                 .WithHeaders(invokeParams.GetAllHeaders());
@@ -238,9 +239,9 @@ namespace TnyFramework.Net.Rpc.Remote
                 // TODO 根据返回值优雅处理!!
                 if (!method.IsAsync())
                     return null;
-                var source = completeSourceFactory();
-                source.SetResult(null);
-                return source.Task;
+                var source = completeSourceFactory?.Invoke();
+                source?.SetResult(null);
+                return source?.Task ?? Task.CompletedTask;
             }
             var code = ResultCodeExceptionAide.CodeOf(e, NetResultCode.REMOTE_EXCEPTION);
             throw new RpcInvokeException(code, e, $"调用 {this.method} 异常");

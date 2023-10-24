@@ -31,12 +31,12 @@ namespace TnyFramework.Net.Message
                 : new Dictionary<string, MessageHeader>();
         }
 
-        public MessageHeader GetHeader(string key)
+        public MessageHeader? GetHeader(string key)
         {
             return GetHeader<MessageHeader>(key);
         }
 
-        public T GetHeader<T>(string key) where T : MessageHeader
+        public T? GetHeader<T>(string key) where T : MessageHeader
         {
             var value = Headers.Get(key);
             if (value is T header)
@@ -44,7 +44,7 @@ namespace TnyFramework.Net.Message
             return null;
         }
 
-        public MessageHeader GetHeader(string key, Type type)
+        public MessageHeader? GetHeader(string key, Type type)
         {
             var value = GetHeader(key);
             return type.IsInstanceOfType(value) ? value : null;
@@ -60,7 +60,7 @@ namespace TnyFramework.Net.Message
             return Headers.Values.Where(type.IsInstanceOfType).ToList();
         }
 
-        public T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>
+        public T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>
         {
             return GetHeader<T>(key.Key);
         }
@@ -76,7 +76,7 @@ namespace TnyFramework.Net.Message
 
         public bool IsForward() => ExistHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
 
-        public RpcForwardHeader ForwardHeader => GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+        public RpcForwardHeader? ForwardHeader => GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
 
         public bool ExistHeader(string key)
         {
@@ -98,24 +98,24 @@ namespace TnyFramework.Net.Message
             return GetHeader(key) != null;
         }
 
-        public MessageHeader PutHeader(MessageHeader header)
+        public MessageHeader? PutHeader(MessageHeader header)
         {
             return Headers.Put(header.Key, header);
         }
 
-        public MessageHeader PutHeaderIfAbsent(MessageHeader header)
+        public MessageHeader? PutHeaderIfAbsent(MessageHeader header)
         {
             return Headers.PutIfAbsent(header.Key, header);
         }
 
-        public T PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T>
+        public T? PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T>
         {
-            return (T) Headers.Put(header.Key, header);
+            return (T?) Headers.Put(header.Key, header);
         }
 
-        public T PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T>
+        public T? PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T>
         {
-            return (T) Headers.PutIfAbsent(header.Key, header);
+            return (T?) Headers.PutIfAbsent(header.Key, header);
         }
 
         public bool RemoveHeader<T>(string key)

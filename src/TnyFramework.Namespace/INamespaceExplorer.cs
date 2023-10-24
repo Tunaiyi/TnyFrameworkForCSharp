@@ -54,7 +54,7 @@ namespace TnyFramework.Namespace
         /// <param name="rootPath">路径</param>
         /// <param name="options">选项</param>
         /// <returns>返回一致性 hash 环</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, HashingOptions<TNode> options) where TNode : IShardingNode;
+        INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, HashingOptions<TNode> options) where TNode : IShardingNode;
 
         /// <summary>
         /// 创建 hash 节点存储器
@@ -63,7 +63,7 @@ namespace TnyFramework.Namespace
         /// <param name="factory">节点存储器工厂</param>
         /// <param name="options">选项</param>
         /// <returns>返回一致性 hash 环</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, INodeHashingFactory factory, HashingOptions<TNode> options)
+        INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, INodeHashingFactory factory, HashingOptions<TNode> options)
             where TNode : IShardingNode;
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace TnyFramework.Namespace
         /// <param name="keyHasher">key哈希计算器</param>
         /// <param name="nodeHasher">节点哈希计算器</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+        INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
             IHasher<IPartitionSlot<TNode>> nodeHasher)
             where TNode : IShardingNode;
 
@@ -87,7 +87,7 @@ namespace TnyFramework.Namespace
         /// <param name="nodeHasher">节点哈希计算器</param>
         /// <param name="factory">节点存储器工厂</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+        INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
             IHasher<IPartitionSlot<TNode>> nodeHasher,
             INodeHashingFactory factory) where TNode : IShardingNode;
 
@@ -100,7 +100,7 @@ namespace TnyFramework.Namespace
         /// <param name="nodeHasher">节点哈希计算器</param>
         /// <param name="custom">选项自定义</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+        INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
             IHasher<IPartitionSlot<TNode>> nodeHasher,
             Action<HashingOptions<TNode>> custom) where TNode : IShardingNode;
 
@@ -114,7 +114,7 @@ namespace TnyFramework.Namespace
         /// <param name="factory">节点存储器工厂</param>
         /// <param name="custom">选项自定义</param>
         /// <returns>返回 hash 节点存储器</returns>
-        INodeHashing<TNode> NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
+        INodeHashing<TNode>? NodeHashing<TNode>(string rootPath, long maxSlotSize, IHasher<string> keyHasher,
             IHasher<IPartitionSlot<TNode>> nodeHasher,
             INodeHashingFactory factory, Action<HashingOptions<TNode>> custom) where TNode : IShardingNode;
 
@@ -232,7 +232,7 @@ namespace TnyFramework.Namespace
         /// <typeparam name="TValue">值类型</typeparam>
         /// <param name="lessee">租客</param>
         /// <returns>返回插入的节点 Task, 如果没有插入则会Task返回值为 null</returns>
-        Task<NameNode<TValue>> Add<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee lessee);
+        Task<NameNode<TValue>> Add<TValue>(string path, ObjectMimeType<TValue> type, TValue value, ILessee? lessee);
 
         /// <summary>
         /// 向指定 path 保存指定的节点. 无论存在与否都会插入

@@ -29,9 +29,9 @@ namespace TnyFramework.Net.Command
                 authenticateAt);
         }
 
-        public static Certificate<T> CreateUnauthenticated<T>(T anonymityUserId = default)
+        public static Certificate<T> CreateUnauthenticated<T>(T? anonymityUserId = default)
         {
-            return new Certificate<T>(-1, anonymityUserId, ANONYMITY_MESSAGER_ID, NetMessagerType.ANONYMITY, CertificateStatus.Unauthenticated, 0);
+            return new Certificate<T>(-1, anonymityUserId!, ANONYMITY_MESSAGER_ID, NetMessagerType.ANONYMITY, CertificateStatus.Unauthenticated, 0);
         }
     }
 
@@ -71,7 +71,7 @@ namespace TnyFramework.Net.Command
 
         public bool IsAuthenticated() => status.IsAuthenticated();
 
-        public object GetUserId() => UserId;
+        public object GetUserId() => UserId!;
     }
 
 }

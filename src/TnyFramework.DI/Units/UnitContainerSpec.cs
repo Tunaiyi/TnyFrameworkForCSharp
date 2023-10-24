@@ -44,12 +44,12 @@ namespace TnyFramework.DI.Units
         /// <summary>
         /// 实例化 unit 列表
         /// </summary>
-        private IList<TUnit> unitList;
+        private IList<TUnit> unitList = ImmutableList<TUnit>.Empty;
 
         /// <summary>
         /// 实例化 unit Dictionary
         /// </summary>
-        private IDictionary<string, TUnit> unitDictionary;
+        private IDictionary<string, TUnit> unitDictionary = ImmutableDictionary<string, TUnit>.Empty;
 
         /// <summary>
         /// 是否加载
@@ -259,7 +259,7 @@ namespace TnyFramework.DI.Units
                 var name = currentSpec.GetUnitName();
                 if (name.IsBlank())
                 {
-                    name = Unit.DefaultName(unit);
+                    name = Unit.DefaultName(unit!);
                 }
                 dictionary.Add(name, unit);
             }

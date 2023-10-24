@@ -20,7 +20,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         protected readonly IRpcEnterContext rpcContext;
 
-        private Exception cause;
+        private Exception? cause;
 
         private bool Done { get; set; }
 
@@ -48,9 +48,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         protected abstract Task OnRun();
 
-        protected abstract void OnDone(Exception cause);
+        protected abstract void OnDone(Exception? cause);
 
-        protected abstract void OnException(Exception cause);
+        protected abstract void OnException(Exception? cause);
 
         public bool IsDone()
         {

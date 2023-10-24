@@ -68,14 +68,16 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private int status = INIT;
 
-        protected RpcTransactionContext(bool async, IAttributes attributes = null) : base(attributes)
+        protected RpcTransactionContext(bool async,  IAttributes? attributes = null) : base(attributes)
         {
             Async = async;
+            OperationName = null!;
+            Cause = null!;
         }
 
-        public string OperationName { get; private set; }
+        public string? OperationName { get; private set; }
 
-        public Exception Cause { get; private set; }
+        public Exception? Cause { get; private set; }
 
         public bool Async { get; }
 
@@ -95,7 +97,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public abstract IEndpoint GetEndpoint();
 
-        public bool Prepare(string operationName, Action action = null)
+        public bool Prepare(string? operationName, Action? action = null)
         {
             if (!Valid)
                 return false;
@@ -128,7 +130,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return true;
         }
 
-        protected bool TryCompleted(Exception error = null)
+        protected bool TryCompleted(Exception? error = null)
         {
             if (!Valid)
                 return false;

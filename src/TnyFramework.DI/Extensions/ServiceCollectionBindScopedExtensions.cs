@@ -86,7 +86,7 @@ namespace TnyFramework.DI.Extensions
             services.RegisterServiceInstance(checkType, services.ToScopedServiceInstance(factory), force);
         }
 
-        private static void RegisterByType(this IServiceCollection services, Type checkType, Type instanceType = null, bool force = true)
+        private static void RegisterByType(this IServiceCollection services, Type checkType, Type? instanceType = null, bool force = true)
         {
             if (instanceType == null)
             {

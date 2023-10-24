@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using System.Threading;
+using System.Threading.Tasks;
 using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Coroutines.Async
@@ -19,7 +20,7 @@ namespace TnyFramework.Coroutines.Async
     {
         private int index;
 
-        private readonly ICoroutineExecutor executor;
+        private readonly TaskScheduler executor;
 
         public static ICoroutineFactory Default { get; } = new DefaultCoroutineFactory("DefaultCoroutineFactory");
 
@@ -28,10 +29,10 @@ namespace TnyFramework.Coroutines.Async
         /// </summary>
         /// <param name="name">名称</param>
         /// <param name="executor">执行器</param>
-        public DefaultCoroutineFactory(string name, ICoroutineExecutor? executor = null)
+        public DefaultCoroutineFactory(string name, TaskScheduler? executor = null)
         {
             Name = name.IsNullOrEmpty() ? "CoroutineFactory" : name;
-            this.executor = executor ?? ThreadPoolCoroutineExecutor.Default;
+            this.executor = executor ?? TaskScheduler.Default;
         }
 
         private string Name { get; }

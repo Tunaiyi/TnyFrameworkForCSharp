@@ -24,7 +24,7 @@ namespace TnyFramework.Net.Rpc
         /// </summary>
         /// <param name="accessId">AccessId</param>
         /// <returns>返回接入点</returns>
-        IRpcAccess GetAccess(long accessId);
+        IRpcAccess? GetAccess(long accessId);
 
         /// <summary>
         /// 节点是否活跃(存在有存活的接入点)

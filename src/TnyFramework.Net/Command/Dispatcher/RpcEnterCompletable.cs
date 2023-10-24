@@ -20,7 +20,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// </summary>
         /// <param name="error">错误原因</param>
         /// <return>是否完成成功</return>
-        bool CompleteSilently(Exception error = null);
+        bool CompleteSilently(Exception? error = null);
 
         /// <summary>
         /// 静默完成
@@ -28,7 +28,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <param name="code">错误原因</param>
         /// <param name="body">消息体</param>
         /// <return>是否完成成功</return>
-        bool CompleteSilently(IResultCode code, object body = null);
+        bool CompleteSilently(IResultCode code, object? body = null);
 
         /// <summary>
         /// 完成并响应
@@ -41,8 +41,10 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// 完成并响应
         /// </summary>
         /// <param name="code">结果码</param>
+        /// <param name="body"></param>
+        /// <param name="error"></param>
         /// <return>是否完成成功</return>
-        bool Complete(IResultCode code, object body, Exception error = null);
+        bool Complete(IResultCode code, object? body, Exception? error = null);
 
         /// <summary>
         /// 完成并响应
@@ -50,7 +52,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <param name="content">响应消息</param>
         /// <param name="error">错误原因</param>
         /// <return>是否完成成功</return>
-        bool Complete(MessageContent content, Exception error);
+        bool Complete(MessageContent? content, Exception? error);
     }
 
 

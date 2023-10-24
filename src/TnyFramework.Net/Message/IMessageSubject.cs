@@ -24,7 +24,7 @@ namespace TnyFramework.Net.Message
         /// <summary>
         /// 获取消息体
         /// </summary>
-        object Body { get; }
+        object? Body { get; }
 
         // /// <summary>
         // /// 获取真实原始响应消息 id
@@ -36,7 +36,7 @@ namespace TnyFramework.Net.Message
         /// </summary>
         /// <typeparam name="T">消息体类型</typeparam>
         /// <returns></returns>
-        T BodyAs<T>();
+        T? BodyAs<T>();
     }
 
 }

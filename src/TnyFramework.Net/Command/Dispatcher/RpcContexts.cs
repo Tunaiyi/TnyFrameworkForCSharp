@@ -16,7 +16,7 @@ namespace TnyFramework.Net.Command.Dispatcher
     {
         private static readonly AsyncLocal<IRpcEnterContext> LOCAL_CONTEXT = new AsyncLocal<IRpcEnterContext>();
 
-        private static readonly IRpcEnterContext EMPTY = new RpcEnterInvocationContext(null, null, false, EmptyAttributes.GetEmpty());
+        private static readonly IRpcEnterContext EMPTY = new RpcEnterInvocationContext(null!, null!, false, EmptyAttributes.GetEmpty());
 
         public static IRpcContext Current {
             get {

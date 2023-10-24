@@ -26,7 +26,7 @@ namespace TnyFramework.DI.Container
 
         public object Get(IServiceProvider provider)
         {
-            return instance;
+            return instance!;
         }
     }
 

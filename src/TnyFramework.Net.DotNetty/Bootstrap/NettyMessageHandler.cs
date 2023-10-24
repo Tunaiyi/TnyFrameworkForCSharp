@@ -149,7 +149,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             {
                 LOGGER.LogError(cause, "[Tunnel]  ## 通道 {Remote} ==> {Local} 断开链接 # cause {Code}({CodeValue})[{CodeMsg}], message:{Msg}",
                     channel.RemoteAddress, channel.LocalAddress, code, code.Value, code.Message, cause.Message);
-                var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).GetAndSet(null);
+                var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).GetAndSet(null!);
                 if (tunnel != null)
                 {
                     RpcMessageAide.Send(tunnel, MessageContents.Push(Protocols.PUSH, code));
@@ -161,11 +161,11 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             }
         }
 
-        public override void UserEventTriggered(IChannelHandlerContext context, object evt)
-        {
-            //TODO 空闲超时处理 IdleStateEvent
-            base.UserEventTriggered(context, evt);
-        }
+        // public override void UserEventTriggered(IChannelHandlerContext context, object evt)
+        // {
+        //     //TODO 空闲超时处理 IdleStateEvent
+        //     base.UserEventTriggered(context, evt);
+        // }
     }
 
 }

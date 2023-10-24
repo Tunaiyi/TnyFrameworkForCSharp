@@ -19,7 +19,7 @@ namespace TnyFramework.Net.Attributes
         /// </summary>
         /// <param name="pluginType">插件类型, pluginType 必须 实现 ICommandPlugin</param>
         /// <param name="attribute">参数</param>
-        public BeforePluginAttribute(Type pluginType, string attribute = default) : base(pluginType, attribute)
+        public BeforePluginAttribute(Type pluginType, string? attribute = default) : base(pluginType, attribute)
         {
         }
 

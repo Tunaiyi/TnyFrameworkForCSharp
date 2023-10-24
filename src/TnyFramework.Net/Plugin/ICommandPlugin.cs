@@ -25,7 +25,7 @@ namespace TnyFramework.Net.Plugin
         /// <param name="message">消息</param>
         /// <param name="context">command 上下文</param>
         /// <param name="attributes">参数</param>
-        void Execute(ITunnel tunnel, IMessage message, RpcInvokeContext context, object attributes);
+        void Execute(ITunnel tunnel, IMessage message, RpcInvokeContext context, object? attributes);
     }
 
     public abstract class CommandPlugin<TUid, TAttribute> : ICommandPlugin
@@ -37,11 +37,11 @@ namespace TnyFramework.Net.Plugin
         /// <param name="message"></param>
         /// <param name="context"></param>
         /// <param name="attributes"></param>
-        public abstract void Execute(ITunnel<TUid> tunnel, IMessage message, RpcInvokeContext context, TAttribute attributes);
+        public abstract void Execute(ITunnel<TUid> tunnel, IMessage message, RpcInvokeContext context, TAttribute? attributes);
 
-        public void Execute(ITunnel tunnel, IMessage message, RpcInvokeContext context, object attributes)
+        public void Execute(ITunnel tunnel, IMessage message, RpcInvokeContext context, object? attributes)
         {
-            Execute((ITunnel<TUid>) tunnel, message, context, (TAttribute) attributes);
+            Execute((ITunnel<TUid>) tunnel, message, context, (TAttribute?) attributes);
         }
     }
 

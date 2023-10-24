@@ -24,41 +24,37 @@ namespace TnyFramework.Net.Message
         /// 请求服务
         /// </summary>
         [ProtoMember(2)]
-        public ForwardPoint From { get; set; }
+        public ForwardPoint? From { get; set; }
 
         /// <summary>
         /// 请求发送者
         /// </summary>
         [ProtoMember(3)]
-        public ForwardMessager Sender { get; set; }
+        public ForwardMessager? Sender { get; set; }
 
         /// <summary>
         /// 目标服务
         /// </summary>
         [ProtoMember(4)]
-        public ForwardPoint To { get; set; }
+        public ForwardPoint? To { get; set; }
 
         /// <summary>
         /// 目标接受者
         /// </summary>
         [ProtoMember(5)]
-        public ForwardMessager Receiver { get; set; }
+        public ForwardMessager? Receiver { get; set; }
 
         /// <summary>
         /// 发生转发者
         /// </summary>
         [ProtoMember(6, IsPacked = true)]
-        public ForwardPoint FromForwarder { get; set; }
+        public ForwardPoint? FromForwarder { get; set; }
 
         /// <summary>
         /// 目标转发者
         /// </summary>
         [ProtoMember(7, IsPacked = true)]
-        public ForwardPoint ToForwarder { get; set; }
-
-        public RpcForwardHeader()
-        {
-        }
+        public ForwardPoint? ToForwarder { get; set; }
 
         public override string Key => MessageHeaderConstants.RPC_FORWARD_HEADER_KEY;
 
@@ -123,7 +119,7 @@ namespace TnyFramework.Net.Message
             switch (rpcServicer)
             {
                 case null:
-                    return null;
+                    return null!;
                 case ForwardPoint value:
                     return value;
                 default:
@@ -131,7 +127,7 @@ namespace TnyFramework.Net.Message
             }
         }
 
-        private static ForwardMessager ToForwardMessager(IMessager messager)
+        private static ForwardMessager? ToForwardMessager(IMessager messager)
         {
             switch (messager)
             {

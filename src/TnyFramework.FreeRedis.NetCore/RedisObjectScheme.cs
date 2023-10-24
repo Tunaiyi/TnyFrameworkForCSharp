@@ -22,7 +22,7 @@ namespace TnyFramework.FreeRedis.NetCore
     {
         private static readonly ConcurrentDictionary<Type, RedisObjectScheme> SCHEME_MAP = new ConcurrentDictionary<Type, RedisObjectScheme>();
 
-        private static readonly RedisObjectScheme EMPTY = new RedisObjectScheme(null, null);
+        private static readonly RedisObjectScheme EMPTY = new RedisObjectScheme(null!, null!);
 
         public string Source { get; }
 
@@ -30,7 +30,7 @@ namespace TnyFramework.FreeRedis.NetCore
 
         public IMimeType Mime { get; }
 
-        public static RedisObjectScheme SchemeOf<TValue>(bool throwOnNull = false)
+        public static RedisObjectScheme? SchemeOf<TValue>(bool throwOnNull = false)
         {
             return SchemeOf(typeof(TValue), throwOnNull);
         }
@@ -58,7 +58,7 @@ namespace TnyFramework.FreeRedis.NetCore
             return EMPTY;
         }
 
-        public static RedisObjectScheme SchemeOf(Type type, bool throwOnNull = false)
+        public static RedisObjectScheme? SchemeOf(Type type, bool throwOnNull = false)
         {
             var result = SCHEME_MAP.Get(type);
             if (result != null)
@@ -75,7 +75,7 @@ namespace TnyFramework.FreeRedis.NetCore
             return null;
         }
 
-        private static IMimeType MimeTypeOf(string value)
+        private static IMimeType? MimeTypeOf(string value)
         {
             return !value.IsNotBlank() ? null : MimeType.ForMimeType(value);
         }

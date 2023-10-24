@@ -9,7 +9,6 @@
 using System;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Net.Command.Auth;
-using TnyFramework.Net.Rpc;
 
 namespace TnyFramework.Net.Attributes
 {
@@ -20,11 +19,11 @@ namespace TnyFramework.Net.Attributes
         /// <summary>
         /// 必须剩饭认证
         /// </summary>
-        /// <param name="validator">认证器类型, validator必须实现 IAuthenticateValidator 接口 </param>
         /// <param name="userGroups">限制用户组</param>
         /// <exception cref="CommonException"></exception>
         public AuthenticationRequiredAttribute(params string[] userGroups)
         {
+            Validator = null;
             UserGroups = userGroups;
         }
 
@@ -56,7 +55,7 @@ namespace TnyFramework.Net.Attributes
         /// <summary>
         /// 身份验证器类型
         /// </summary>
-        public Type Validator { get; private set; }
+        public Type? Validator { get; private set; }
 
         /// <summary>
         /// 是否是必须的, 默认为 true

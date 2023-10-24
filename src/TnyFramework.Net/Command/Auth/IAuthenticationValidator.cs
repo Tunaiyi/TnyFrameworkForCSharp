@@ -16,7 +16,7 @@ namespace TnyFramework.Net.Command.Auth
 
     public interface IAuthenticationValidator
     {
-        ICertificate Validate(ITunnel tunnel, IMessage message, ICertificateFactory certificateFactory);
+        ICertificate? Validate(ITunnel tunnel, IMessage message, ICertificateFactory certificateFactory);
 
         IList<int> AuthProtocolLimit { get; }
     }

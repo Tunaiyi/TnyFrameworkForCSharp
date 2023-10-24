@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using DotNetty.Buffers;
@@ -72,8 +73,8 @@ namespace TnyFramework.Net.DotNetty.Codec
             var hasHeader = message.IsHasHeaders();
             var option = mode.GetOption();
             option = (byte) (option |
-                             (message.ExistBody ? CodecConstants.MESSAGE_HEAD_OPTION_EXIST_BODY : (byte) 0) |
-                             (hasHeader ? CodecConstants.MESSAGE_HEAD_OPTION_EXIST_HEADERS_VALUE_EXIST : (byte) 0));
+                             (message.ExistBody ? CodecConstants.MESSAGE_HEAD_OPTION_EXIST_BODY : 0) |
+                             (hasHeader ? CodecConstants.MESSAGE_HEAD_OPTION_EXIST_HEADERS_VALUE_EXIST : 0));
             var line = head.Line;
             if (line < CodecConstants.MESSAGE_HEAD_OPTION_LINE_MIN_VALUE || line > CodecConstants.MESSAGE_HEAD_OPTION_LINE_MAX_VALUE)
             {
@@ -109,7 +110,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                     {
                         headerMap[header.Key] = header;
                     }
-                } catch (System.Exception e)
+                } catch (Exception e)
                 {
                     LOGGER.LogError(e, "decode header exception");
                 }
@@ -117,9 +118,9 @@ namespace TnyFramework.Net.DotNetty.Codec
             return headerMap;
         }
 
-        private object ReadBody(IByteBuffer buffer, bool relay)
+        private object? ReadBody(IByteBuffer buffer, bool relay)
         {
-            object body;
+            object? body;
             ByteBufferUtils.ReadVariant(buffer, out int length);
             var bodyBuff = buffer.Allocator.HeapBuffer(length);
             buffer.ReadBytes(bodyBuff, length);
@@ -148,17 +149,17 @@ namespace TnyFramework.Net.DotNetty.Codec
                 try
                 {
                     headersCodec.Encode(header, buffer);
-                } catch (System.Exception e)
+                } catch (Exception e)
                 {
                     LOGGER.LogError(e, $"encode header {header} exception");
                 }
             }
         }
 
-        private static void WriteObject(IByteBuffer buffer, object body, IMessageBodyCodec coder)
+        private static void WriteObject(IByteBuffer buffer, object? body, IMessageBodyCodec coder)
         {
 
-            IOctetMessageBody releaseBody = null;
+            IOctetMessageBody? releaseBody = null;
             try
             {
                 switch (body)
@@ -182,7 +183,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                         break;
                     }
                     default: {
-                        IByteBuffer bodyBuf = null;
+                        IByteBuffer? bodyBuf = null;
                         try
                         {
                             bodyBuf = buffer.Allocator.HeapBuffer();
@@ -202,10 +203,16 @@ namespace TnyFramework.Net.DotNetty.Codec
             }
         }
 
-        private static void Write(IByteBuffer buffer, byte[] data)
+        private static void Write(IByteBuffer buffer, byte[]? data)
         {
-            ByteBufferUtils.WriteVariant(data.Length, buffer);
-            buffer.WriteBytes(data);
+            if (data != null)
+            {
+                ByteBufferUtils.WriteVariant(data.Length, buffer);
+                buffer.WriteBytes(data);
+            } else
+            {
+                ByteBufferUtils.WriteVariant(0, buffer);
+            }
         }
     }
 

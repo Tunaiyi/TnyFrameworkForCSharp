@@ -40,7 +40,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// @return 操作名
         /// </summary>
-        string OperationName { get; }
+        string? OperationName { get; }
 
         /// <summary>
         /// 失败并响应
@@ -53,7 +53,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// 获取错误原因
         /// </summary>
         /// <return>获取错误原因</return>
-        Exception Cause { get; }
+        Exception? Cause { get; }
 
         /// <summary>
         /// 是否异步

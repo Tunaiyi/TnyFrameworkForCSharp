@@ -130,7 +130,8 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
                 message.PutHeader(tracingHeader);
                 TagSpanRemote(segmentContext, rpcContext.Messager, message);
                 var span = segmentContext.Span;
-                LOGGER.LogInformation("OnBeforeInvoke EXIT Start span {op} {span} | {header}", span.OperationName, Debug(segmentContext), tracingHeader);
+                LOGGER.LogInformation("OnBeforeInvoke EXIT Start span {op} {span} | {header}", span.OperationName, Debug(segmentContext),
+                    tracingHeader);
             } else
             {
                 var message = rpcContext.MessageSubject;
@@ -148,14 +149,15 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             var span = context.Span;
             if (span != null)
             {
-                return $"Span : [SegmentId : {context.SegmentId}| TraceId : {context.TraceId} | SpanId : {span.SpanId} | ParentSpan : {span.ParentSpanId}]";
+                return
+                    $"Span : [SegmentId : {context.SegmentId}| TraceId : {context.TraceId} | SpanId : {span.SpanId} | ParentSpan : {span.ParentSpanId}]";
             } else
             {
                 return "Span : [null]";
             }
         }
 
-        public void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject result, Exception exception)
+        public void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject? result, Exception? exception)
         {
             if (setting.Disable)
             {
@@ -269,7 +271,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             segmentContext.Span.AddTag(ARGUMENTS, stringBuilder.ToString());
         }
 
-        private void TagSpanMessager(SegmentContext segmentContext, string key, IMessager messager)
+        private void TagSpanMessager(SegmentContext segmentContext, string key, IMessager? messager)
         {
             if (messager == null)
             {
@@ -298,7 +300,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
         {
             var headers = new Dictionary<string, string>();
             var header = message.GetHeader(MessageHeaderConstants.RPC_TRACING);
-            if (header == null) 
+            if (header == null)
                 return new TextCarrierHeaderCollection(headers);
             LOGGER.LogInformation("LoadCarrier {protocol} {mode} | {header}", message.ProtocolId, message.Mode, header);
             headers.AddRang(header.Attributes);
@@ -317,7 +319,10 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
 
         private void Restore(IRpcTransactionContext rpcContext, SegmentContext segmentContext)
         {
-            if (segmentContext == null) return;
+            if (segmentContext.IsNull())
+            {
+                return;
+            }
             var span = segmentContext.Span;
             switch (span.SpanType)
             {
@@ -327,26 +332,26 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
                 case SpanType.Exit:
                     exitSegmentContextAccessor.Context = segmentContext;
                     break;
-                    // case SpanType.Local:
-                    //     localSegmentContextAccessor.Context = segmentContext;
-                    // break;
+                // case SpanType.Local:
+                //     localSegmentContextAccessor.Context = segmentContext;
+                // break;
                 default:
                     return;
             }
             LOGGER.LogInformation("restore span {mode} {name} {span}", rpcContext.Mode, span.OperationName, Debug(segmentContext));
         }
 
-        private string Peer(IConnection messager)
+        private string Peer(IConnection? messager)
         {
             if (messager == null)
             {
                 return "NA:NA";
             }
             var address = messager.RemoteAddress;
-            return address.ToString();
+            return address.ToString() ?? "NA:NA";
         }
 
-        private void StopAsyncSpans(IRpcTransactionContext rpcContext, Exception cause, params AttrKey<SegmentContext>[] keys)
+        private void StopAsyncSpans(IRpcTransactionContext rpcContext, Exception? cause, params AttrKey<SegmentContext>[] keys)
         {
             foreach (var key in keys)
             {
@@ -354,10 +359,10 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             }
         }
 
-        private void StopAsyncSpan(IRpcTransactionContext rpcContext, Exception cause, AttrKey<SegmentContext> key)
+        private void StopAsyncSpan(IRpcTransactionContext rpcContext, Exception? cause, AttrKey<SegmentContext> key)
         {
             var segmentContext = rpcContext.Attributes.Remove(key);
-            if (segmentContext == null)
+            if (segmentContext.IsNull())
                 return;
             var span = segmentContext.Span;
             if (cause != null)

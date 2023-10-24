@@ -10,6 +10,7 @@ using System.Net;
 using System.Threading;
 using DotNetty.Transport.Channels;
 using TnyFramework.Common.Attribute;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.DotNetty.Transport
@@ -32,14 +33,14 @@ namespace TnyFramework.Net.DotNetty.Transport
             this.channel = channel;
         }
 
-        public EndPoint RemoteAddress => channel.RemoteAddress;
+        public EndPoint RemoteAddress => channel.IsNotNull() ? channel.RemoteAddress : default!;
 
-        public EndPoint LocalAddress => channel.LocalAddress;
+        public EndPoint LocalAddress => channel.IsNotNull() ? channel.LocalAddress : default!;
 
         public bool IsActive()
         {
             var current = channel;
-            return current != null && current.Active;
+            return current.IsNotNull()  && current.Active;
         }
 
         public bool IsClosed()

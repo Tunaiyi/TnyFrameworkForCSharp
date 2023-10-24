@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TnyFramework.Common.Exceptions;
+using TnyFramework.Common.Extensions;
 using TnyFramework.DI.Container;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Configuration;
@@ -57,20 +58,20 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
             return builder.ConfigureRpcHost(guideConfigure, null);
         }
 
-        public static IHostBuilder UseNoopServerDiscovery<TUserId>(this IHostBuilder builder)
+        public static IHostBuilder UseNoopServerDiscovery(this IHostBuilder builder)
         {
             return builder.ConfigureServices((_, services) => { services.AddSingletonUnit<NoopServerDiscoveryService>(); });
         }
 
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
-            Action<INetServerGuideSpec<RpcAccessIdentify>> serverGuideSpec,
-            Action<INettyServerConfiguration> configure)
+            Action<INetServerGuideSpec<RpcAccessIdentify>>? serverGuideSpec,
+            Action<INettyServerConfiguration>? configure)
         {
             builder.ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
                 var options = new NetApplicationHostOptions();
                 configuration.Bind(NetApplicationHostOptions.ROOT_PATH, options);
-                if (options.RpcServer == null)
+                if (options.RpcServer.IsNull())
                     throw new IllegalArgumentException("NetApplicationHostOptions RpcServer 未配置");
                 var serverSetting = options.RpcServer;
                 var serverConfiguration = RpcServerConfiguration.CreateRpcServer(services);
@@ -91,7 +92,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
         }
         
         public static IHostBuilder ConfigureNetHost<TUserId>(this IHostBuilder builder,
-            Action<INetServerGuideSpec<TUserId>> serverGuideSpec, Action<INettyServerConfiguration> configure)
+            Action<INetServerGuideSpec<TUserId>>? serverGuideSpec, Action<INettyServerConfiguration>? configure)
         {
             return builder.ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
@@ -120,9 +121,9 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
         }
         
         
-        public static IHostBuilder ConfigureRpcRemote(this IHostBuilder builder, Action<IRpcRemoteServiceConfiguration> configure = null)
+        public static IHostBuilder ConfigureRpcRemote(this IHostBuilder builder, Action<IRpcRemoteServiceConfiguration>? configure = null)
         {
-            builder.ConfigureServices((hostBuilder, services) => {
+            builder.ConfigureServices((_, services) => {
                 var serverConfiguration = RpcRemoteServiceConfiguration.CreateRpcRemoteService(services)
                     .AddRemoteServices();
                 configure?.Invoke(serverConfiguration);

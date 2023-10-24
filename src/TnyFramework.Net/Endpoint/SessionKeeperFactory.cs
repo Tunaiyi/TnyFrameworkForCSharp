@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using TnyFramework.Net.Base;
@@ -29,7 +30,9 @@ namespace TnyFramework.Net.Endpoint
 
         public ISessionKeeper CreateKeeper(IMessagerType messagerType, ISessionKeeperSetting setting)
         {
-            return factories.TryGetValue(setting.SessionFactory, out var factory) ? new SessionKeeper<TUserId>(messagerType, factory, setting) : null;
+            return factories.TryGetValue(setting.SessionFactory, out var factory)
+                ? new SessionKeeper<TUserId>(messagerType, factory, setting)
+                : throw new NullReferenceException();
         }
     }
 

@@ -42,6 +42,11 @@ namespace TnyFramework.Net.Rpc.Remote
 
         public RpcRemoteInvokeParams(int size)
         {
+            From = null!;
+            Sender = null!;
+            To = null!;
+            Receiver = null!;
+            RouteValue = null!;
             Params = new object[size];
         }
 
@@ -64,7 +69,7 @@ namespace TnyFramework.Net.Rpc.Remote
 
         internal void SetParams(int index, object value)
         {
-            if (Params[index] == null)
+            if (Params[index].IsNull())
             {
                 Params[index] = value;
             } else
@@ -73,7 +78,7 @@ namespace TnyFramework.Net.Rpc.Remote
             }
         }
 
-        public object GetBody()
+        public object? GetBody()
         {
             return Params.Length == 0 ? null : Params[0];
         }
@@ -86,7 +91,7 @@ namespace TnyFramework.Net.Rpc.Remote
 
         internal RpcRemoteInvokeParams SetTo(IRpcServiceType toService)
         {
-            To = new Message.ForwardPoint(toService);
+            To = new ForwardPoint(toService);
             return this;
         }
 

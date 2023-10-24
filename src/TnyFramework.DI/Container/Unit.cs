@@ -30,10 +30,14 @@ namespace TnyFramework.DI.Container
         internal static Unit Create(Type type, IServiceInstance instance, string name = "")
         {
             var unitType = GetUnitType(type);
-            var unit = (Unit) Activator.CreateInstance(unitType);
-            unit.Name = name;
-            unit.Instance = instance;
-            return unit;
+            var unitObject = Activator.CreateInstance(unitType);
+            if (unitObject is Unit unit)
+            {
+                unit.Name = name;
+                unit.Instance = instance;
+                return unit;
+            }
+            throw new ArgumentException($"{unitType} is not {nameof(Unit)}");
         }
 
         internal static Unit<TUnit> Create<TUnit>(IServiceInstance instance, string name = "")
@@ -60,17 +64,17 @@ namespace TnyFramework.DI.Container
         public static string DefaultName<T>()
         {
             var type = typeof(T);
-            return type.FullName;
+            return type.FullName!;
         }
 
         public static string DefaultName(object type)
         {
-            return type.GetType().FullName;
+            return type.GetType().FullName!;
         }
 
         public static string DefaultName(Type type)
         {
-            return type.FullName;
+            return type.FullName!;
         }
 
         protected Unit()
@@ -83,9 +87,9 @@ namespace TnyFramework.DI.Container
             Instance = instance;
         }
 
-        public string Name { get; private set; }
+        public string Name { get; private set; } = null!;
 
-        public IServiceInstance Instance { get; private set; }
+        public IServiceInstance Instance { get; private set; } = null!;
     }
 
     public class Unit<TUnit> : Unit, IUnit<TUnit>

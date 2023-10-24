@@ -16,7 +16,7 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
     {
         void OnTransfer(IRpcTransferContext context);
 
-        void OnTransfered(IRpcTransferContext context, IMessageSubject result, Exception exception);
+        void OnTransferred(IRpcTransferContext context, IMessageSubject? result, Exception? exception);
     }
 
 }

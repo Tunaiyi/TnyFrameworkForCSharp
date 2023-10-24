@@ -13,14 +13,14 @@ namespace TnyFramework.Net.Message
     {
         bool Relay { get; }
 
-        object Body { get; }
+        object? Body { get; }
 
         void Release();
     }
 
     public interface IOctetMessageBody<out T> : IOctetMessageBody
     {
-        new T Body { get; }
+        new T? Body { get; }
     }
 
 }

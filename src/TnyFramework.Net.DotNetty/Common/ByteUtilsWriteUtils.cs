@@ -380,12 +380,12 @@ namespace TnyFramework.Net.DotNetty.Common
 
         public static int WriteBytes(ArraySegment<byte> source, byte[] bytes, int index)
         {
-            return WriteBytes(source.Array, source.Offset, source.Count, bytes, index);
+            return source.Array != null ? WriteBytes(source.Array, source.Offset, source.Count, bytes, index) : 0;
         }
 
         public static void WriteBytes(ArraySegment<byte> source, IByteBuffer buffer)
         {
-            WriteBytes(source.Array, source.Offset, source.Count, buffer);
+            if (source.Array != null) WriteBytes(source.Array, source.Offset, source.Count, buffer);
         }
     }
 

@@ -40,7 +40,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// Header Key
         /// </summary>
-        public string HeaderKey { get; }
+        public string HeaderKey { get; } = "";
 
         /// <summary>
         /// 是否是必须
@@ -104,7 +104,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     } else if (type == typeof(RpcParamAttribute))
                     {
                         var msgParam = AttributeHolder.GetAttribute<RpcParamAttribute>();
-                        if (msgParam.Index >= 0)
+                        if (msgParam?.Index >= 0)
                         {
                             Index = indexCreator.Use(msgParam.Index);
                         } else
@@ -167,14 +167,14 @@ namespace TnyFramework.Net.Command.Dispatcher
             }
         }
 
-        public object GetValue(INetTunnel tunnel, IMessage message, object body)
+        public object? GetValue(INetTunnel tunnel, IMessage message, object? body)
         {
             if (body == null)
             {
                 body = message.Body;
             }
             var head = message.Head;
-            object value = null;
+            object? value = null;
             var context = tunnel.Context;
             switch (Mode)
             {
@@ -273,7 +273,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     var forwardHeader = head.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
                     if (forwardHeader != null)
                     {
-                        value = context.MessagerFactory.CreateMessager(forwardHeader.Sender);
+                        value = context.MessagerFactory.CreateMessager(forwardHeader.Sender!);
                     }
                     break;
                 }
@@ -281,7 +281,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     var forwardHeader = head.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
                     if (forwardHeader != null)
                     {
-                        value = context.MessagerFactory.CreateMessager(forwardHeader.Receiver);
+                        value = context.MessagerFactory.CreateMessager(forwardHeader.Receiver!);
                     }
                     break;
                 }

@@ -31,7 +31,7 @@ namespace TnyFramework.Net.Base
         /// <summary>
         /// 信息
         /// </summary>
-        IDictionary<string, string> Metadata { get; }
+        IDictionary<string, string>? Metadata { get; }
     }
 
 }

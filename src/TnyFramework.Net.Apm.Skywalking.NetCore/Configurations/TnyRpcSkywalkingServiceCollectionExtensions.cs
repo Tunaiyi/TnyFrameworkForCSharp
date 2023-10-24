@@ -32,13 +32,13 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Configurations
         /**
          * 注入 TnyRpcSkyApm 所需要的服务
          */
-        public static IServiceCollection AddTnyRpcSkyApm(this IServiceCollection services, Action<SkyApmExtensions> extensionsSetup = null)
+        public static IServiceCollection AddTnyRpcSkyApm(this IServiceCollection services, Action<SkyApmExtensions>? extensionsSetup = null)
         {
             services.AddTnyRpcSkyApmCore(extensionsSetup);
             return services;
         }
 
-        private static IServiceCollection AddTnyRpcSkyApmCore(this IServiceCollection services, Action<SkyApmExtensions> extensionsSetup = null)
+        private static IServiceCollection AddTnyRpcSkyApmCore(this IServiceCollection services, Action<SkyApmExtensions>? extensionsSetup = null)
         {
             if (services == null)
             {
@@ -86,8 +86,8 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Configurations
         private static IServiceCollection AddSampling(this IServiceCollection services)
         {
             services.AddSingleton<SimpleCountSamplingInterceptor>();
-            services.AddSingleton<ISamplingInterceptor>(p => p.GetService<SimpleCountSamplingInterceptor>());
-            services.AddSingleton<IExecutionService>(p => p.GetService<SimpleCountSamplingInterceptor>());
+            services.AddSingleton<ISamplingInterceptor>(p => p.GetService<SimpleCountSamplingInterceptor>()!);
+            services.AddSingleton<IExecutionService>(p => p.GetService<SimpleCountSamplingInterceptor>()!);
             services.AddSingleton<ISamplingInterceptor, RandomSamplingInterceptor>();
             services.AddSingleton<ISamplingInterceptor, IgnorePathSamplingInterceptor>();
             return services;

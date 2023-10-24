@@ -28,7 +28,7 @@ namespace TnyFramework.Net.Message
             return Key == other.Key && HeaderType == other.HeaderType;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
@@ -39,7 +39,7 @@ namespace TnyFramework.Net.Message
         {
             unchecked
             {
-                return ((Key != null ? Key.GetHashCode() : 0) * 397) ^ (HeaderType != null ? HeaderType.GetHashCode() : 0);
+                return (Key.GetHashCode() * 397) ^ HeaderType.GetHashCode();
             }
         }
     }

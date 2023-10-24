@@ -75,19 +75,23 @@ namespace TnyFramework.Net.Rpc.Remote
             MethodReturnType,
             RpcInvokeMode.Sync);
 
-        public RpcReturnMode()
-        {
-        }
+        // public RpcReturnMode()
+        // {
+        //     Invocations = null!;
+        //     Modes = null!;
+        //     ReturnTypes = null!;
+        //     BodyTypeFinder = null!;
+        // }
 
         public RpcInvokeMode DefaultInvocation { get; private set; }
 
-        public IList<RpcInvokeMode> Invocations { get; private set; }
+        public IList<RpcInvokeMode> Invocations { get; private set; } = null!;
 
-        public IList<MessageMode> Modes { get; private set; }
+        public IList<MessageMode> Modes { get; private set; } = null!;
 
-        public IList<Type> ReturnTypes { get; private set; }
+        public IList<Type> ReturnTypes { get; private set; } = null!;
 
-        public Func<MethodInfo, Type> BodyTypeFinder { get; private set; }
+        public Func<MethodInfo, Type> BodyTypeFinder { get; private set; } = null!;
 
         private static RpcReturnMode Of(int id,
             IEnumerable<MessageMode> modes,

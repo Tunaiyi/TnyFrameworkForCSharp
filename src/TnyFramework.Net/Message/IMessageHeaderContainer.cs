@@ -19,12 +19,12 @@ namespace TnyFramework.Net.Message
         /// </summary>
         /// <param name="key">查找 key</param>
         /// <returns>Header</returns>
-        MessageHeader GetHeader(string key);
+        MessageHeader? GetHeader(string key);
 
         /// <summary>
         /// 获取转发 header
         /// </summary>
-        T GetHeader<T>(string key) where T : MessageHeader;
+        T? GetHeader<T>(string key) where T : MessageHeader;
 
         /// <summary>
         /// 获取转发 header
@@ -32,7 +32,7 @@ namespace TnyFramework.Net.Message
         /// <param name="key">查找 key</param>
         /// <param name="type">Header 类</param>
         /// <returns>Header</returns>
-        MessageHeader GetHeader(string key, Type type);
+        MessageHeader? GetHeader(string key, Type type);
 
         /// <summary>
         /// 获取转发 header
@@ -49,7 +49,7 @@ namespace TnyFramework.Net.Message
         /// <summary>
         /// 获取转发 header
         /// </summary>
-        T GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>;
+        T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>;
 
         /// <summary>
         /// 获取全部 Header
@@ -78,7 +78,7 @@ namespace TnyFramework.Net.Message
         /// <summary>
         /// 获取转发头
         /// </summary>
-        RpcForwardHeader ForwardHeader { get; }
+        RpcForwardHeader? ForwardHeader { get; }
 
         /// <summary>
         /// 是否存在指定 key 的 Header
@@ -113,14 +113,14 @@ namespace TnyFramework.Net.Message
         /// </summary>
         /// <param name="header">头部信息</param>
         /// <return>返回 context 自身</return>
-        T PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T>;
+        T? PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T>;
 
         /// <summary>
         /// 添加 header, 如果Header 不存在.
         /// </summary>
         /// <param name="header">头部信息</param>
         /// <return>返回 context 自身</return>
-        T PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T>;
+        T? PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T>;
 
         /// <summary>
         /// 删除 header

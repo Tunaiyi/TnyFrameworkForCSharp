@@ -19,18 +19,18 @@ namespace TnyFramework.Net.Exceptions
         {
         }
 
-        public EndpointClosedException(IResultCode code = null, object body = null, string message = "") : base(code,
-            body, message)
+        public EndpointClosedException(IResultCode? code = null, object? body = null, string message = "")
+            : base(code, body, message)
         {
         }
 
-        public EndpointClosedException(Exception innerException, IResultCode code = null, object body = null,
-            string message = "") : base(innerException, code, body, message)
+        public EndpointClosedException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+            : base(innerException, code, body, message)
         {
         }
 
-        public EndpointClosedException(SerializationInfo info, StreamingContext context, IResultCode code = null,
-            object body = null) : base(info, context, code, body)
+        public EndpointClosedException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
+            : base(info, context, code, body)
         {
         }
 

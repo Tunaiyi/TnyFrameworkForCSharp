@@ -31,12 +31,19 @@ namespace TnyFramework.Net.Base
 
         public ICertificateFactory<TUserId> CertificateFactory { get; }
 
-        public IRpcForwarder RpcForwarder { get; }
+        public IRpcForwarder? RpcForwarder { get; }
 
         public ICertificateFactory GetCertificateFactory() => CertificateFactory;
 
         public NetworkContext()
         {
+            MessageDispatcher = null!;
+            CommandTaskProcessor = null!;
+            MessageFactory = null!;
+            MessagerFactory = null!;
+            Setting = null!;
+            RpcMonitor = null!;
+            CertificateFactory = null!;
         }
 
         public NetworkContext(
@@ -47,7 +54,7 @@ namespace TnyFramework.Net.Base
             IMessagerFactory messagerFactory,
             ICertificateFactory<TUserId> certificateFactory,
             RpcMonitor rpcMonitor,
-            IRpcForwarder rpcForwarder = null)
+            IRpcForwarder? rpcForwarder = null)
         {
             Setting = setting;
             MessageDispatcher = messageDispatcher;

@@ -84,7 +84,7 @@ namespace TnyFramework.DI.Extensions
             where TService : class
         {
             var insServiceType = typeof(TService);
-            services.RegisterByInstanceWith(instance, insServiceType, serviceTypes);
+            services.RegisterByInstanceWith(instance!, insServiceType, serviceTypes);
             return services;
         }
 
@@ -98,7 +98,7 @@ namespace TnyFramework.DI.Extensions
         }
 
         private static void RegisterByTypeWith(this IServiceCollection services, Type instanceType,
-            Type insServiceType, IEnumerable<Type> serviceTypes)
+            Type? insServiceType, IEnumerable<Type> serviceTypes)
         {
             var serviceInstance = services.ToSingletonServiceInstance(instanceType);
             if (insServiceType != null)
@@ -109,7 +109,7 @@ namespace TnyFramework.DI.Extensions
         }
 
         private static void RegisterByInstanceWith(this IServiceCollection services, object instance,
-            Type insServiceType, IEnumerable<Type> serviceTypes)
+            Type? insServiceType, IEnumerable<Type> serviceTypes)
         {
             var serviceInstance = services.ToSingletonServiceInstance(instance);
             if (insServiceType != null)
@@ -120,7 +120,7 @@ namespace TnyFramework.DI.Extensions
         }
 
         private static void RegisterByFactoryWith<TInstance>(this IServiceCollection services, Func<IServiceProvider, TInstance> instanceFactory,
-            Type insServiceType, IEnumerable<Type> serviceTypes)
+            Type? insServiceType, IEnumerable<Type> serviceTypes)
         {
             var serviceInstance = services.ToSingletonServiceInstance(instanceFactory);
             if (insServiceType != null)

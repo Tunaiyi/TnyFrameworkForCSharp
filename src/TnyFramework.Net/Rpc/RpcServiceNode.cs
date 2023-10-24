@@ -118,7 +118,7 @@ namespace TnyFramework.Net.Rpc
             }
         }
 
-        public int CompareTo(RpcServiceNode other)
+        public int CompareTo(RpcServiceNode? other)
         {
             if (ReferenceEquals(this, other)) return 0;
             return ReferenceEquals(null, other) ? 1 : ServerId.CompareTo(other.ServerId);

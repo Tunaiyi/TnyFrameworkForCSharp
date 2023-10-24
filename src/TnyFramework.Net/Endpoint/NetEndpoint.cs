@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Command;
@@ -52,11 +53,11 @@ namespace TnyFramework.Net.Endpoint
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NetEndpoint<TUserId>>();
 
-        private volatile INetTunnel<TUserId> tunnel;
+        private volatile INetTunnel<TUserId>? tunnel;
 
         private ICertificate<TUserId> certificate;
 
-        private volatile TaskResponseSourceMonitor sourceMonitor;
+        private volatile TaskResponseSourceMonitor? sourceMonitor;
 
         private int status;
 
@@ -74,7 +75,7 @@ namespace TnyFramework.Net.Endpoint
 
         public IEventBox<EndpointClose> CloseEvent => closeEvent;
 
-        public override NetAccessMode AccessMode => tunnel.AccessMode;
+        public override NetAccessMode AccessMode => tunnel?.AccessMode ?? default!;
 
         public NetEndpoint(ICertificate<TUserId> certificate, IEndpointContext context)
         {
@@ -94,15 +95,15 @@ namespace TnyFramework.Net.Endpoint
 
         public IEndpointContext Context { get; }
 
-        public override EndPoint RemoteAddress => CurrentTunnel?.LocalAddress;
+        public override EndPoint RemoteAddress => CurrentTunnel.LocalAddress;
 
-        public override EndPoint LocalAddress => CurrentTunnel?.RemoteAddress;
+        public override EndPoint LocalAddress => CurrentTunnel.RemoteAddress;
 
         public long OfflineTime { get; private set; }
 
         public override ICertificate<TUserId> Certificate => certificate;
 
-        protected INetTunnel<TUserId> CurrentTunnel => tunnel;
+        protected INetTunnel<TUserId> CurrentTunnel => tunnel!;
 
         private TaskResponseSourceMonitor ResponseSourceMonitor {
             get {
@@ -120,10 +121,10 @@ namespace TnyFramework.Net.Endpoint
         private void PutSource(long messageId, TaskResponseSource source)
         {
             var monitor = ResponseSourceMonitor;
-            monitor?.Put(messageId, source);
+            monitor.Put(messageId, source);
         }
 
-        private TaskResponseSource PollSource(IMessage message)
+        private TaskResponseSource? PollSource(IMessage message)
         {
             var monitor = sourceMonitor;
             if (monitor == null)
@@ -139,9 +140,9 @@ namespace TnyFramework.Net.Endpoint
             private set => status = (int) value;
         }
 
-        public MessageHandleFilter SendFilter { get; set; }
+        public MessageHandleFilter? SendFilter { get; set; }
 
-        public MessageHandleFilter ReceiveFilter { get; set; }
+        public MessageHandleFilter? ReceiveFilter { get; set; }
 
         public bool Receive(IRpcEnterContext rpcContext)
         {
@@ -186,7 +187,7 @@ namespace TnyFramework.Net.Endpoint
             return true;
         }
 
-        private string RejectMessage(bool receive, MessageHandleFilter filter, IMessageSubject message, IConnection handleTunnel)
+        private string RejectMessage(bool receive, MessageHandleFilter? filter, IMessageSubject message, IConnection handleTunnel)
         {
             if (filter == null)
                 throw new ArgumentNullException(nameof(filter));
@@ -207,7 +208,7 @@ namespace TnyFramework.Net.Endpoint
 
         public ISendReceipt Send(MessageContent content) => Send(null, content);
 
-        public ISendReceipt Send(INetTunnel sendTunnel, MessageContent content)
+        public ISendReceipt Send(INetTunnel? sendTunnel, MessageContent content)
         {
             RpcRejectSendException cause;
             var result = MessageHandleStrategy.Handle;
@@ -255,7 +256,11 @@ namespace TnyFramework.Net.Endpoint
             var message = messageFactory.Create(AllocateMessageId(), content);
             if (content is DefaultMessageContent requestContext && requestContext.IsRespondAwaitable())
             {
-                PutSource(message.Id, requestContext.ResponseSource);
+                var source = requestContext.ResponseSource;
+                if (source != null)
+                {
+                    PutSource(message.Id, source);
+                }
             }
             // TODO 加入已发送队列 this.sentMessageQueue.addMessage(message);
             return message;
@@ -265,21 +270,21 @@ namespace TnyFramework.Net.Endpoint
         {
             OfflineTime = 0;
             Status = EndpointStatus.Online;
-            onlineEvent?.Notify(this);
+            onlineEvent.Notify(this);
         }
 
         protected void SetOffline()
         {
             OfflineTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             Status = EndpointStatus.Offline;
-            offlineEvent?.Notify(this);
+            offlineEvent.Notify(this);
         }
 
         private void SetClose()
         {
             Status = EndpointStatus.Close;
             DestroySourceMonitor();
-            closeEvent?.Notify(this);
+            closeEvent.Notify(this);
         }
 
         private void DestroySourceMonitor()
@@ -289,7 +294,7 @@ namespace TnyFramework.Net.Endpoint
 
         public override bool IsActive()
         {
-            var current = CurrentTunnel;
+            var current = tunnel;
             return current != null && current.IsActive();
         }
 
@@ -373,7 +378,7 @@ namespace TnyFramework.Net.Endpoint
             {
                 throw new AuthFailedException(NetResultCode.NO_LOGIN);
             }
-            if (currentCert != null && currentCert.IsAuthenticated() && !currentCert.IsSameCertificate(newCertificate))
+            if (currentCert.IsNotNull() && currentCert.IsAuthenticated() && !currentCert.IsSameCertificate(newCertificate))
             {
                 // 是否是同一个授权
                 throw new AuthFailedException($"Certificate new [{newCertificate}] 与 old [{currentCert}] 不同");
@@ -401,7 +406,7 @@ namespace TnyFramework.Net.Endpoint
         {
             if (newTunnel.Bind(this))
             {
-                var oldTunnel = CurrentTunnel;
+                var oldTunnel = tunnel;
                 tunnel = (INetTunnel<TUserId>) newTunnel;
                 OfflineTime = 0;
                 if (oldTunnel != null && newTunnel != oldTunnel)

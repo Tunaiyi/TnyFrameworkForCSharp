@@ -27,7 +27,7 @@ namespace TnyFramework.Net.Transport
         /// </summary>
         /// <param name="messageBody"> 消息body</param>
         /// <returns>返回当前 context</returns>
-        public abstract MessageContent WithBody(object messageBody);
+        public abstract MessageContent WithBody(object? messageBody);
 
         /// <summary>
         /// 取消 是否打断
@@ -71,15 +71,15 @@ namespace TnyFramework.Net.Transport
 
         public abstract bool ExistBody { get; }
 
-        public abstract object Body { get; protected set; }
+        public abstract object? Body { get; protected set; }
 
-        public abstract MessageContent WithHeader(MessageHeader header);
+        public abstract MessageContent WithHeader(MessageHeader? header);
 
         public abstract MessageContent WithHeader<TH>(Action<TH> action) where TH : MessageHeader, new();
 
         public abstract MessageContent WithHeaders(IEnumerable<MessageHeader> values);
 
-        public abstract T BodyAs<T>();
+        public abstract T? BodyAs<T>();
     }
 
 }

@@ -30,14 +30,10 @@ namespace TnyFramework.DI.Container
 
         private readonly ServiceCollection serviceCollection = new ServiceCollection();
 
-        public ApplicationContainer()
-        {
-        }
-
         /// <summary>
         /// 获取服务提供器
         /// </summary>
-        public IServiceProvider ServiceProvider { get; private set; }
+        public IServiceProvider ServiceProvider { get; private set; } = null!;
 
         /// <summary>
         /// 注册模块
@@ -80,7 +76,10 @@ namespace TnyFramework.DI.Container
             if (!typeof(IApplicationModule).IsAssignableFrom(type))
                 throw new CommonException($"{type} 没有实现 {typeof(IApplicationModule)} 接口");
             var module = Activator.CreateInstance(type);
-            modules.Add((IApplicationModule) module);
+            if (module is IApplicationModule applicationModule)
+            {
+                modules.Add(applicationModule);
+            }
             return this;
         }
 

@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using System.Threading.Tasks;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Message;
@@ -24,7 +25,7 @@ namespace TnyFramework.Net.Transport
         /// <param name="code">消息码</param>
         /// <param name="body">消息体</param>
         /// <return>发送回执l</return>
-        public static MessageContent ToMessage(IRpcEnterContext context, IResultCode code, object body)
+        public static MessageContent ToMessage(IRpcEnterContext context, IResultCode code, object? body)
         {
             var request = context.NetMessage;
             return ToMessage(request, code, body);
@@ -37,7 +38,7 @@ namespace TnyFramework.Net.Transport
         /// <param name="code">消息码</param>
         /// <param name="body">消息体</param>
         /// <return>发送回执l</return>
-        public static MessageContent ToMessage(IMessage request, IResultCode code, object body)
+        public static MessageContent ToMessage(IMessage request, IResultCode code, object? body)
         {
             return request.Mode == MessageMode.Request ? Response(request, code, body) : Push(request, code, body);
         }
@@ -49,7 +50,7 @@ namespace TnyFramework.Net.Transport
         /// <param name="code">消息码</param>
         /// <param name="body">消息体</param>
         /// <returns>发送回执</returns>>
-        private static MessageContent Response(IMessage request, IResultCode code, object body)
+        private static MessageContent Response(IMessage request, IResultCode code, object? body)
         {
             var forwardHeader = request.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
             var backForward = CreateBackForwardHeader(forwardHeader);
@@ -65,7 +66,7 @@ namespace TnyFramework.Net.Transport
         /// <param name="code">消息码</param>
         /// <param name="body">消息体</param>
         /// <returns>发送回执</returns>>
-        private static MessageContent Push(IMessage request, IResultCode code, object body)
+        private static MessageContent Push(IMessage request, IResultCode code, object? body)
         {
             var messageForwardHeader = request.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
             var backForward = CreateBackForwardHeader(messageForwardHeader);
@@ -74,15 +75,15 @@ namespace TnyFramework.Net.Transport
             // Send(tunnel, context, backForward == null);
         }
 
-        private static RpcForwardHeader CreateBackForwardHeader(RpcForwardHeader messageForwardHeader)
+        private static RpcForwardHeader? CreateBackForwardHeader(RpcForwardHeader? messageForwardHeader)
         {
             if (messageForwardHeader != null)
             {
                 return new RpcForwardHeader()
-                    .SetFrom(messageForwardHeader.To)
-                    .SetSender(messageForwardHeader.Receiver)
-                    .SetTo(messageForwardHeader.From)
-                    .SetReceiver(messageForwardHeader.Sender);
+                    .SetFrom(messageForwardHeader.To!)
+                    .SetSender(messageForwardHeader.Receiver!)
+                    .SetTo(messageForwardHeader.From!)
+                    .SetReceiver(messageForwardHeader.Sender!);
             }
             return null;
         }
@@ -90,7 +91,7 @@ namespace TnyFramework.Net.Transport
         private static MessageContent PutTransitiveHeaders(IMessageHeaderContainer request, MessageContent content)
         {
             var headers = request.GetAllHeaders();
-            if (headers == null)
+            if (headers.IsNull())
             {
                 return content;
             }

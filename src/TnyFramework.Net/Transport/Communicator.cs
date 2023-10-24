@@ -28,7 +28,7 @@ namespace TnyFramework.Net.Transport
 
         public object GetUserId()
         {
-            return UserId;
+            return UserId!;
         }
 
         public ICertificate GetCertificate()

@@ -22,19 +22,19 @@ namespace TnyFramework.Net.Exceptions
         {
         }
 
-        public AuthFailedException(IResultCode code = null, object body = null, string message = "") : base(
+        public AuthFailedException(IResultCode? code = null, object? body = null, string message = "") : base(
             code ?? CODE, body,
             message)
         {
         }
 
-        public AuthFailedException(Exception innerException, IResultCode code = null, object body = null,
+        public AuthFailedException(Exception innerException, IResultCode? code = null, object? body = null,
             string message = "") : base(innerException, code ?? CODE, body, message)
         {
         }
 
-        public AuthFailedException(SerializationInfo info, StreamingContext context, IResultCode code = null,
-            object body = null) : base(info, context, code ?? CODE, body)
+        public AuthFailedException(SerializationInfo info, StreamingContext context, IResultCode? code = null,
+            object? body = null) : base(info, context, code ?? CODE, body)
         {
         }
     }

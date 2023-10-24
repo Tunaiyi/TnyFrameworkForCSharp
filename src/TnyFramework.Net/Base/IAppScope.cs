@@ -29,7 +29,7 @@ namespace TnyFramework.Net.Base
         /// <summary>
         /// 区域名字
         /// </summary>
-        public string ScopeName { get; protected set; }
+        public string ScopeName { get; protected set; } = "";
 
         protected override void OnCheck()
         {
@@ -68,7 +68,7 @@ namespace TnyFramework.Net.Base
 
     public abstract class AppScope<T> : AppScope where T : AppScope<T>, new()
     {
-        protected static IAppScope Of(int id, string scopeName, Action<T> builder = null)
+        protected static IAppScope Of(int id, string scopeName, Action<T>? builder = null)
         {
             return E(id, new T {
                 ScopeName = scopeName

@@ -25,6 +25,7 @@ namespace TnyFramework.Net.Rpc
 
         public RpcAccessToken()
         {
+            UserIdentify = null!;
         }
 
         public RpcAccessToken(RpcServiceType serviceType, int serverId, RpcAccessIdentify user) : base(serviceType, serverId, user.Index)

@@ -18,11 +18,11 @@ namespace TnyFramework.Net.Endpoint
     /// </summary>
     public interface IEndpointKeeperManager
     {
-        IEndpoint Online(ICertificate certificate, INetTunnel tunnel);
+        IEndpoint? Online(ICertificate certificate, INetTunnel tunnel);
 
-        IEndpointKeeper LoadKeeper(IMessagerType messagerType, NetAccessMode accessMode);
+        IEndpointKeeper? LoadKeeper(IMessagerType messagerType, NetAccessMode accessMode);
 
-        IEndpointKeeper FindKeeper(IMessagerType messagerType);
+        IEndpointKeeper? FindKeeper(IMessagerType messagerType);
     }
 
 }

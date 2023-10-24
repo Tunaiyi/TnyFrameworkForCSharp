@@ -39,13 +39,13 @@ namespace TnyFramework.Net.Message
 
         public int Count => paramList.Count;
 
-        public bool IsSynchronized => ((IList) paramList).IsSynchronized;
+        public bool IsSynchronized => paramList.IsSynchronized;
 
-        public object SyncRoot => ((IList) paramList).SyncRoot;
+        public object SyncRoot => paramList.SyncRoot;
 
-        public int Add(object value)
+        public int Add(object? value)
         {
-            return ((IList) paramList).Add(value);
+            return paramList.Add(value);
         }
 
         public void Clear()
@@ -53,22 +53,22 @@ namespace TnyFramework.Net.Message
             paramList.Clear();
         }
 
-        public bool Contains(object value)
+        public bool Contains(object? value)
         {
             return paramList.Contains(value);
         }
 
-        public int IndexOf(object value)
+        public int IndexOf(object? value)
         {
             return paramList.IndexOf(value);
         }
 
-        public void Insert(int index, object value)
+        public void Insert(int index, object? value)
         {
             paramList.Insert(index, value);
         }
 
-        public void Remove(object value)
+        public void Remove(object? value)
         {
             paramList.Remove(value);
         }
@@ -82,20 +82,20 @@ namespace TnyFramework.Net.Message
 
         public bool IsReadOnly => paramList.IsReadOnly;
 
-        public object this[int index] {
+        public object? this[int index] {
             get => paramList[index];
             set => paramList[index] = value;
         }
 
         /**
-	     * 如果 没有则返回 null
-	     *
-	     * @param index 查找的 index
-	     * @return 返回查找的值
-	     */
+         * 如果 没有则返回 null
+         *
+         * @param index 查找的 index
+         * @return 返回查找的值
+         */
         public bool Get<T>(int index, out T value)
         {
-            return Get(index, default, out value);
+            return Get(index, default, out value!);
         }
 
         public bool Get<T>(int index, T defaultValue, out T value)
@@ -112,7 +112,7 @@ namespace TnyFramework.Net.Message
 
         public override string ToString()
         {
-            var values = new object[paramList.Count];
+            var values = new object?[paramList.Count];
             for (var i = 0; i < values.Length; i++)
             {
                 values[i] = paramList[i];

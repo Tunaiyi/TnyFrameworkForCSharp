@@ -35,6 +35,7 @@ namespace TnyFramework.Net.Message
 
         public ForwardMessager()
         {
+            MessagerType = null!;
         }
 
         public ForwardMessager(IMessager messager)

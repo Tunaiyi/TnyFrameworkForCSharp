@@ -33,9 +33,9 @@ namespace TnyFramework.Net.Endpoint
 
         private static volatile bool _RUNNING = true;
 
-        private volatile bool close = false;
+        private volatile bool close;
 
-        private volatile ConcurrentDictionary<long, TaskResponseSource> responseSources;
+        private volatile ConcurrentDictionary<long, TaskResponseSource>? responseSources;
 
         static TaskResponseSourceMonitor()
         {
@@ -46,7 +46,7 @@ namespace TnyFramework.Net.Endpoint
                     await Task.Delay(TimeSpan.FromMilliseconds(PERIOD));
                 }
             });
-            Process.GetCurrentProcess().Exited += (e, args) => _RUNNING = false;
+            Process.GetCurrentProcess().Exited += (_, _) => _RUNNING = false;
         }
 
         private ConcurrentDictionary<long, TaskResponseSource> ResponseSources {
@@ -159,7 +159,7 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-        public TaskResponseSource Get(long messageId)
+        public TaskResponseSource? Get(long messageId)
         {
             var sources = responseSources;
             if (sources == null)
@@ -169,7 +169,7 @@ namespace TnyFramework.Net.Endpoint
             return sources.TryGetValue(messageId, out var source) ? source : null;
         }
 
-        public TaskResponseSource Poll(long messageId)
+        public TaskResponseSource? Poll(long messageId)
         {
             var sources = responseSources;
             if (sources == null)
@@ -179,7 +179,7 @@ namespace TnyFramework.Net.Endpoint
             return sources.TryRemove(messageId, out var source) ? source : null;
         }
 
-        public void Put(long messageId, TaskResponseSource source)
+        public void Put(long messageId, TaskResponseSource? source)
         {
             if (source == null)
             {

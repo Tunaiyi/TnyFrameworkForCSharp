@@ -28,10 +28,10 @@ namespace TnyFramework.Net.DotNetty.Codec
             HandleOnError("Message编码", logger, ctx, exception, close);
         }
 
-        private static void HandleOnError(string action, ILogger logger, IChannelHandlerContext ctx, System.Exception exception, bool close)
+        private static void HandleOnError(string action, ILogger logger, IChannelHandlerContext? ctx, System.Exception exception, bool close)
         {
-            ITunnel tunnel = null;
-            IChannel channel = null;
+            ITunnel? tunnel = null;
+            IChannel? channel = null;
             if (ctx != null)
             {
                 channel = ctx.Channel;
@@ -41,7 +41,7 @@ namespace TnyFramework.Net.DotNetty.Codec
             {
                 if (!close)
                 {
-                    IResultCode code = null;
+                    IResultCode? code = null;
                     if (exception is ResultCodeException ex)
                     {
                         code = ex.Code;

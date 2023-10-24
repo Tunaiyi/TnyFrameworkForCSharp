@@ -25,8 +25,8 @@ namespace TnyFramework.Net.Demo.Controller
             var value = message.Body;
             if (!(value is MessageParamList paramList))
                 throw new AuthFailedException("登录失败");
-            var id = (long) paramList[0];
-            var userId = (long) paramList[1];
+            var id = (long) paramList[0]!;
+            var userId = (long) paramList[1]!;
             return factory.Authenticate(id, userId, userId, NetMessagerType.DEFAULT_USER, DateTimeOffset.Now.ToUnixTimeMilliseconds());
             // if (value instanceof LoginDTO) {
             //     LoginDTO dto = as(value);

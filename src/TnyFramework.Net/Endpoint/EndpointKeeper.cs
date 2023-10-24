@@ -67,15 +67,19 @@ namespace TnyFramework.Net.Endpoint
         {
         }
 
-        IEndpoint IEndpointKeeper.GetEndpoint(object userId)
+        IEndpoint? IEndpointKeeper.GetEndpoint(object? userId)
         {
             if (userId != null)
                 return GetEndpoint((TUserId) userId);
             return null;
         }
 
-        public TEndpoint GetEndpoint(TUserId userId)
+        public TEndpoint? GetEndpoint(TUserId userId)
         {
+            if (userId == null)
+            {
+                return default;
+            }
             return endpointMap.TryGetValue(userId, out var endpoint) ? endpoint : default;
         }
 
@@ -110,7 +114,7 @@ namespace TnyFramework.Net.Endpoint
             throw new NotImplementedException();
         }
 
-        public TEndpoint Close(TUserId userId)
+        public TEndpoint? Close(TUserId userId)
         {
             var endpoint = GetEndpoint(userId);
             if (endpoint != null)
@@ -120,12 +124,12 @@ namespace TnyFramework.Net.Endpoint
             return endpoint;
         }
 
-        public IEndpoint Close(object userId)
+        public IEndpoint? Close(object userId)
         {
             return Close((TUserId) userId);
         }
 
-        public TEndpoint Offline(TUserId userId)
+        public TEndpoint? Offline(TUserId userId)
         {
             var endpoint = GetEndpoint(userId);
             if (endpoint != null)
@@ -135,7 +139,7 @@ namespace TnyFramework.Net.Endpoint
             return endpoint;
         }
 
-        public IEndpoint Offline(object userId)
+        public IEndpoint? Offline(object userId)
         {
             return Offline((TUserId) userId);
         }
@@ -171,7 +175,7 @@ namespace TnyFramework.Net.Endpoint
             return IsOnline((TUserId) userId);
         }
 
-        protected TEndpoint FindEndpoint(object uid)
+        protected TEndpoint? FindEndpoint(object uid)
         {
             return endpointMap.TryGetValue(uid, out var endpoint) ? endpoint : default;
         }
@@ -186,11 +190,11 @@ namespace TnyFramework.Net.Endpoint
             return true;
         }
 
-        protected TEndpoint ReplaceEndpoint(object uid, IEndpoint newOne)
+        protected TEndpoint? ReplaceEndpoint(object uid, IEndpoint newOne)
         {
             var endpoint = (TEndpoint) newOne;
             var current = default(TEndpoint);
-            endpointMap.AddOrUpdate(uid, endpoint, (o, exist) => {
+            endpointMap.AddOrUpdate(uid, endpoint, (_, exist) => {
                 if (ReferenceEquals(endpoint, exist))
                     return endpoint;
                 exist.Close();
@@ -242,7 +246,7 @@ namespace TnyFramework.Net.Endpoint
                 return;
             }
             var closeOne = (TEndpoint) endpoint;
-            if (RemoveEndpoint(closeOne.UserId, closeOne))
+            if (closeOne.UserId != null && RemoveEndpoint(closeOne.UserId, closeOne))
             {
                 OnEndpointClose(closeOne);
             }

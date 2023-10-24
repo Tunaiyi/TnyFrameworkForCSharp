@@ -16,7 +16,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Configurations
     {
         public static readonly string ROOT_PATH = ConfigurationPath.Combine("Tny", "Net");
 
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         public int ServerId { get; set; }
 
@@ -26,9 +26,9 @@ namespace TnyFramework.Net.DotNetty.NetCore.Configurations
 
         public string Locale { get; set; } = "zh-CN";
 
-        public ServerSetting Server { get; set; }
+        public ServerSetting Server { get; set; } = null!;
 
-        public ServerSetting RpcServer { get; set; }
+        public ServerSetting RpcServer { get; set; } = null!;
     }
 
 }

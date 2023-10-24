@@ -36,7 +36,7 @@ namespace TnyFramework.Net.Rpc.Remote
 
             var invoker = instance.Invoker(invocation.Method);
             var arguments = invocation.Arguments;
-            invocation.ReturnValue = invoker.Invoke(arguments);
+            invocation.ReturnValue = invoker?.Invoke(arguments);
         }
     }
 
@@ -91,7 +91,7 @@ namespace TnyFramework.Net.Rpc.Remote
             }
             var serviceType = RpcServiceType.ForService(service);
             var remoteServicer = rpcInvokeNode.LoadInvokeNodeSet(serviceType);
-            var instance = new RpcRemoteInstance(rpcType, setting, remoteServicer);
+            var instance = new RpcRemoteInstance(rpcType, setting, remoteServicer!);
 
             IDictionary<MethodInfo, IRpcRemoteInvoker> invokerMap = new Dictionary<MethodInfo, IRpcRemoteInvoker>();
             var count = 0;

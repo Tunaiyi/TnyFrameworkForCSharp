@@ -28,10 +28,10 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <returns>可以分发返回ture, 否则返回 false</returns>
         bool IsCanDispatch(IMessageHead head);
 
-        /// <summary>
-        /// Command执行事件
-        /// </summary>
-        IEventBox<CommandExecute> CommandExecuteEvent { get; }
+        // /// <summary>
+        // /// Command执行事件
+        // /// </summary>
+        // IEventBox<CommandExecute> CommandExecuteEvent { get; }
 
         /// <summary>
         /// Command执行完成事件

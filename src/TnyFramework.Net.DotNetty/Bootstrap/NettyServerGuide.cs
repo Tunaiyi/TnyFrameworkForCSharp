@@ -17,6 +17,7 @@ using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
 using DotNetty.Transport.Libuv;
 using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Transport;
@@ -52,15 +53,15 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         private readonly IIdGenerator idGenerator = new AutoIncrementIdGenerator();
 
-        private readonly IChannelMaker channelMaker;
+        private readonly IChannelMaker? channelMaker;
 
         private volatile ConcurrentDictionary<string, IChannel> channels = new ConcurrentDictionary<string, IChannel>();
 
-        private ServerBootstrap bootstrap;
+        private ServerBootstrap? bootstrap;
 
-        private IEventLoopGroup bossGroup;
+        private IEventLoopGroup? bossGroup;
 
-        private IEventLoopGroup workerGroup;
+        private IEventLoopGroup? workerGroup;
 
         private readonly IServerSetting setting;
 
@@ -122,8 +123,8 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 await Task.WhenAll(closeTasks);
                 Interlocked.Exchange(ref status, STATUS_CLOSE);
                 await Task.WhenAll(
-                    bossGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)),
-                    workerGroup.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)));
+                    bossGroup?.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)) ?? Task.CompletedTask,
+                    workerGroup?.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)) ?? Task.CompletedTask);
             }
         }
 
@@ -136,7 +137,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             }
 
             LOGGER.LogInformation("#NettyServer [ {Name} ] | 正在打开监听{Host}:{Port}", Name, host, port);
-            if (IPAddress.Loopback != null)
+            if (IPAddress.Loopback.IsNotNull())
             {
                 IPAddress address;
                 if (host.Equals("0.0.0.0"))

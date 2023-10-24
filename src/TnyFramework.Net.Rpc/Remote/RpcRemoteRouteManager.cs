@@ -9,17 +9,18 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Net.Rpc.Remote
 {
 
     public class RpcRemoteRouteManager : IRpcRemoteRouteManager
     {
-        private readonly IRpcRouter defaultRouter;
+        private readonly IRpcRouter? defaultRouter;
 
         private readonly IDictionary<Type, IRpcRouter> routers;
 
-        public RpcRemoteRouteManager(IRpcRouter defaultRouter, IEnumerable<IRpcRouter> routers)
+        public RpcRemoteRouteManager(IRpcRouter? defaultRouter, IEnumerable<IRpcRouter> routers)
         {
             this.defaultRouter = defaultRouter;
             this.routers = routers.ToImmutableDictionary(
@@ -27,14 +28,14 @@ namespace TnyFramework.Net.Rpc.Remote
                 router => router);
         }
 
-        public IRpcRouter GetRouter<T>() where T : IRpcRouter
+        public IRpcRouter? GetRouter<T>() where T : IRpcRouter
         {
             return GetRouter(typeof(T));
         }
 
-        public IRpcRouter GetRouter(Type type)
+        public IRpcRouter? GetRouter(Type type)
         {
-            if (type == null || type == typeof(IRpcRouter))
+            if (type.IsNull() || type == typeof(IRpcRouter))
             {
                 return defaultRouter;
             }

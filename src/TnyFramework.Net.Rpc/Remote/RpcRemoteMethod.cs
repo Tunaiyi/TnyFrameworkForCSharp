@@ -13,6 +13,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 using TnyFramework.Common.Exceptions;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command.Dispatcher;
@@ -32,12 +33,12 @@ namespace TnyFramework.Net.Rpc.Remote
         /// <summary>
         /// 目标
         /// </summary>
-        public RpcServiceType TargetServiceType { get; }
+        public RpcServiceType? TargetServiceType { get; }
 
         /// <summary>
         /// 转发
         /// </summary>
-        public RpcServiceType ForwardServiceType { get; }
+        public RpcServiceType? ForwardServiceType { get; }
 
         /// <summary>
         /// 是否通过代理调用
@@ -128,7 +129,7 @@ namespace TnyFramework.Net.Rpc.Remote
             }
             return rpcType.GetMethods()
                 .Select(m => MethodOf(m, rpcType, rpcService))
-                .Where(rpcMethod => rpcMethod != null)
+                .Where(rpcMethod => rpcMethod.IsNotNull())
                 .ToImmutableList();
         }
 
@@ -137,7 +138,7 @@ namespace TnyFramework.Net.Rpc.Remote
             var profile = RpcProfile.OneOf(method);
             if (profile == null)
             {
-                return null;
+                return null!;
             }
             var optionsAttribute = rpcClass.GetCustomAttribute<RpcRemoteOptionsAttribute>() ?? new RpcRemoteOptionsAttribute();
             return new RpcRemoteMethod(method, profile, rpcService, optionsAttribute);
@@ -150,12 +151,16 @@ namespace TnyFramework.Net.Rpc.Remote
             Line = profile.Line;
             var options = method.GetCustomAttribute<RpcRemoteOptionsAttribute>() ?? defaultOptions;
             ReturnType = options.Router;
-            Forward = !rpcService.ForwardService.IsNullOrEmpty();
+            Forward = !CollectionUtilities.IsNullOrEmpty(rpcService.ForwardService);
             Mode = profile.Mode;
             ServiceType = MessagerType.ForGroup(rpcService.Service);
             if (Forward) {
                 TargetServiceType = RpcServiceType.ForService(rpcService.Service);
                 ForwardServiceType = RpcServiceType.ForService(rpcService.ForwardService);
+            } else
+            {
+                TargetServiceType = null!;
+                ForwardServiceType = null!;
             }
             if (method.DeclaringType != null)
             {
@@ -253,7 +258,7 @@ namespace TnyFramework.Net.Rpc.Remote
                 }
                 if (Forward)
                 {
-                    invokeParams.SetTo(TargetServiceType);
+                    invokeParams.SetTo(TargetServiceType!);
                 }
                 if (desc.AttributeHolder.GetAttribute<RpcRouteParamAttribute>() != null)
                 {

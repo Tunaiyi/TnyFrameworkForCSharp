@@ -26,14 +26,19 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         protected void Init(MessageDispatcherContext context,
             IEnumerable<BeforePluginAttribute> beforePlugins, IEnumerable<AfterPluginAttribute> afterPlugins,
-            AuthenticationRequiredAttribute authAttribute, AppProfileAttribute appProfile, ScopeProfileAttribute scopeProfile)
+            AuthenticationRequiredAttribute? authAttribute, AppProfileAttribute? appProfile, ScopeProfileAttribute? scopeProfile)
         {
             AuthAttribute = authAttribute;
             BeforePlugins = InitPlugins(context.CommandPlugins, beforePlugins);
             AfterPlugins = InitPlugins(context.CommandPlugins, afterPlugins);
-            UserGroups = authAttribute?.UserGroups;
-            AppTypes = appProfile?.AppTypes;
-            Scopes = scopeProfile?.Scopes;
+            UserGroups = ListOf(authAttribute!.UserGroups);
+            AppTypes = ListOf(appProfile?.AppTypes);
+            Scopes = ListOf(scopeProfile?.Scopes);
+        }
+
+        private IList<string> ListOf(string[]? value)
+        {
+            return value == null ? ImmutableList<string>.Empty : new List<string>(value);
         }
 
         private IList<CommandPluginHolder> InitPlugins(IList<ICommandPlugin> commandPlugins, IEnumerable<PluginAttribute> attributes)
@@ -57,49 +62,47 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// </summary>
         public Type ControllerType { get; }
 
-        public string Name { get; protected set; }
-        
-        
+        public string Name { get; protected set; } = "";
 
         /// <summary>
         /// 执行前插件
         /// </summary>
-        public virtual IList<CommandPluginHolder> BeforePlugins { get; private set; }
+        public virtual IList<CommandPluginHolder> BeforePlugins { get; private set; } = null!;
 
         /// <summary>
         /// 执行后插件
         /// </summary>
-        public virtual IList<CommandPluginHolder> AfterPlugins { get; private set; }
+        public virtual IList<CommandPluginHolder> AfterPlugins { get; private set; } = null!;
 
         /// <summary>
         /// 认证配置
         /// </summary>
-        public AuthenticationRequiredAttribute AuthAttribute { get; private set; }
+        public AuthenticationRequiredAttribute? AuthAttribute { get; private set; }
 
         /// <summary>
         /// 用户组名称列表
         /// </summary>
-        public IList<string> UserGroups { get; private set; }
+        public IList<string>? UserGroups { get; private set; }
 
         /// <summary>
         /// 应用类型
         /// </summary>
-        public IList<string> AppTypes { get; private set; }
+        public IList<string>? AppTypes { get; private set; }
 
         /// <summary>
         /// 作用域
         /// </summary>
-        public IList<string> Scopes { get; private set; }
+        public IList<string>? Scopes { get; private set; }
 
         public virtual bool IsAuth()
         {
             return AuthAttribute != null && AuthAttribute.Enable;
         }
 
-        public virtual Type AuthValidatorType {
+        public virtual Type? AuthValidatorType {
             get {
                 var auth = AuthAttribute;
-                if (auth != null && auth.Enable && auth.Validator != null)
+                if (auth is {Enable: true} && auth.Validator != null)
                 {
                     return auth.Validator;
                 }
@@ -107,7 +110,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             }
         }
 
-        public abstract TAttribute GetTypeAttribute<TAttribute>() where TAttribute : Attribute;
+        public abstract TAttribute? GetTypeAttribute<TAttribute>() where TAttribute : Attribute;
 
         public abstract IList<TAttribute> GetTypeAttributes<TAttribute>() where TAttribute : Attribute;
 
@@ -158,9 +161,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public bool IsScopeLimit() => Scopes == null || Scopes.Count == 0;
 
-        public IList<CommandPluginHolder> ControllerBeforePlugins { get; }
-
-        public IList<CommandPluginHolder> ControllerAfterPlugins { get; }
+        // public IList<CommandPluginHolder> ControllerBeforePlugins { get; }
+        //
+        // public IList<CommandPluginHolder> ControllerAfterPlugins { get; }
     }
 
 }

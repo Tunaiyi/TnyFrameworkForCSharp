@@ -22,7 +22,7 @@ namespace TnyFramework.Net.Command.Dispatcher
     /// </summary>
     /// <param name="command">command</param>
     /// <param name="cause">异常</param>
-    public delegate void CommandDone(RpcHandleCommand command, Exception cause);
+    public delegate void CommandDone(RpcHandleCommand command, Exception? cause);
 
     // public interface IMessageCommandListener
     // {

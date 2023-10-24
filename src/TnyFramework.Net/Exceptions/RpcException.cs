@@ -15,22 +15,23 @@ namespace TnyFramework.Net.Exceptions
 
     public class RpcException : NetException
     {
-        public RpcException(string message = "") : base(message)
+        public RpcException(string message = "")
+            : base(message)
         {
         }
 
-        public RpcException(IResultCode code = null, object body = null, string message = "") : base(code, body,
-            message)
+        public RpcException(IResultCode? code = null, object? body = null, string message = "")
+            : base(code, body, message)
         {
         }
 
-        public RpcException(Exception innerException, IResultCode code = null, object body = null, string message = "")
+        public RpcException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
             : base(innerException, code, body, message)
         {
         }
 
-        public RpcException(SerializationInfo info, StreamingContext context, IResultCode code = null,
-            object body = null) : base(info, context, code, body)
+        public RpcException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
+            : base(info, context, code, body)
         {
         }
     }

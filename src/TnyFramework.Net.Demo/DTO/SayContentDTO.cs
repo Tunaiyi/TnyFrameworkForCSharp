@@ -25,7 +25,7 @@ namespace TnyFramework.Net.Demo.DTO
         public long userId;
 
         [ProtoMember(2)]
-        public string message;
+        public string message = "";
 
         public SayContentDTO()
         {
