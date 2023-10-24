@@ -215,7 +215,7 @@ namespace TnyFramework.Net.Demo
 
             var unitContainer = new ServiceCollection();
             RpcServerConfiguration.CreateRpcServer(unitContainer)
-                .RpcServer("game-service", 16800)
+                .RpcServer("game-service", 17800)
                 .Server<long>("game-server", serverSpec => serverSpec.Server(18800))
                 .EndpointConfigure(endpointSpec => endpointSpec
                     .SessionKeeperFactory<long>("defaultSessionKeeperFactory")

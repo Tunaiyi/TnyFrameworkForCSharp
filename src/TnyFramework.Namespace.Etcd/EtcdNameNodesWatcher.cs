@@ -100,7 +100,7 @@ namespace TnyFramework.Namespace.Etcd
         {
             this.valueType = valueType;
             key = watchPath;
-            endKey = endPath != null ? EtcdClient.GetRangeEnd(key) : null;
+            endKey = endPath.IsNotBlank() ? EtcdClient.GetRangeEnd(key) : null;
             coroutine = DefaultCoroutineFactory.Default.Create("EtcdNameNodeWatcher");
         }
 

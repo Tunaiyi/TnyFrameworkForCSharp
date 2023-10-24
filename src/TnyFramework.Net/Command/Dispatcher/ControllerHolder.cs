@@ -31,7 +31,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             AuthAttribute = authAttribute;
             BeforePlugins = InitPlugins(context.CommandPlugins, beforePlugins);
             AfterPlugins = InitPlugins(context.CommandPlugins, afterPlugins);
-            UserGroups = ListOf(authAttribute!.UserGroups);
+            UserGroups = ListOf(authAttribute?.UserGroups);
             AppTypes = ListOf(appProfile?.AppTypes);
             Scopes = ListOf(scopeProfile?.Scopes);
         }

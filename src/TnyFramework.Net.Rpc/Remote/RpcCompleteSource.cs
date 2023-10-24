@@ -25,11 +25,20 @@ namespace TnyFramework.Net.Rpc.Remote
 
     public static class RpcInvokerFastInvokers
     {
-        private static readonly MethodInfo RCP_RESULT_CREATE_METHOD = typeof(RpcResults).GetMethods()
-            .First(info => info.Name == "Result" && info.IsGenericMethod
-                                                 && info.GetGenericArguments().Length == 1 && info.GetParameters().Length == 2
-                                                 && info.GetParameters()[0].ParameterType == typeof(IResultCode)
-                                                 && info.GetParameters()[1].Name == "message");
+
+
+        /// <summary>
+        /// 请求结果
+        /// </summary>
+        /// <returns>结果</returns>
+        public static IRpcResult<TBody> Result<TBody>(IResultCode code, TBody body)
+        {
+            return RpcResults.Result(code, body);
+        }
+
+
+        private static readonly MethodInfo RCP_RESULT_CREATE_METHOD = typeof(RpcInvokerFastInvokers).GetMethods()
+            .First(info => info is {Name: "Result", IsGenericMethod: true});
 
         public static IFastInvoker RcpResultCreator(Type resultType)
         {

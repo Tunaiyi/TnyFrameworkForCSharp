@@ -37,8 +37,8 @@ namespace TnyFramework.Common.Util
         public static string AlignDigits(long hashCode, long maxCode)
         {
 
-            var digits = (int) Math.Floor(Math.Log10(hashCode) + 1);
-            var maxDigits = (int) Math.Floor(Math.Log10(hashCode) + 1);
+            var digits = hashCode == 0 ? 1 : (int) Math.Floor(Math.Log10(hashCode) + 1);
+            var maxDigits = (int) Math.Floor(Math.Log10(maxCode) + 1);
             var lack = maxDigits - digits;
             if (lack == 0)
             {

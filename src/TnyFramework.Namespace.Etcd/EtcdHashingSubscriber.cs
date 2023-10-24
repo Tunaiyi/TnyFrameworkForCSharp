@@ -90,7 +90,7 @@ namespace TnyFramework.Namespace.Etcd
                     } else
                     {
                         existMap.Remove(range.ToSlot);
-                        var _ = exist.Close();
+                        _ = exist.Close();
                         AddSubscription(range, watchers);
                         watchers.Add(WATCH_ALL_SLOT, exist);
                     }

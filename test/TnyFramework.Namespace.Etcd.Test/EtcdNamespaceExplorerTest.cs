@@ -102,7 +102,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             lessee.CompletedEvent.Add(_ => closed = true);
             lessee.RenewEvent.Add(_ => renew = true);
 
-            await lessee.Lease();
+            leased = await lessee.Lease();
             await Task.Delay(1000);
             Assert.IsTrue(leased);
             Assert.IsTrue(renew);
@@ -298,14 +298,20 @@ namespace TnyFramework.Namespace.Etcd.Test
                 {
                     if (prePlayerMap.TryAdd(hash, player))
                     {
+                        LOGGER.LogInformation("Add !! {player} hash code {code}", player.Name, hash);
                         prePlayerList.Add(player);
                         await publisher.Publish(player.Name, player);
                     } else
                     {
+                        LOGGER.LogInformation("Op !! {player} hash code {code}", player.Name, hash);
                         opPlayerList.Add(player);
                     }
                     watchedList.Add(player);
                     LOGGER.LogInformation("watched = " + player.Name + " = " + hash);
+                } else
+                {
+                    LOGGER.LogInformation("OutRange !! {player} hash code {code}", player.Name, hash);
+                    LOGGER.LogInformation("{player} hash code {code}", player.Name, hash);
                 }
                 playerList.Add(player);
             }
@@ -318,7 +324,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             subscriber.UpdateEvent.Add((_, node) => { updateList.Add(node.Value); });
             subscriber.DeleteEvent.Add((_, node) => { deleteList.Add(node.Value); });
 
-            await subscriber.Subscribe(new List<ShardingRange> {new ShardingRange(0, toSlot, maxSlot)});
+            await subscriber.Subscribe(new List<ShardingRange> {new(0, toSlot, maxSlot)});
             var lessee = await publisher.Lease();
             await Task.Delay(100);
 
@@ -339,10 +345,10 @@ namespace TnyFramework.Namespace.Etcd.Test
         private void Check(IReadOnlyList<List<Player>> checkList,
             ICollection<Player> loadList, ICollection<Player> createList, ICollection<Player> updateList, ICollection<Player> deleteList)
         {
-            AssertCollection(checkList[0], loadList, "Load");
-            AssertCollection(checkList[1], createList, "Create");
-            AssertCollection(checkList[2], updateList, "Update");
-            AssertCollection(checkList[3], deleteList, "Delete");
+            AssertCollection(loadList, checkList[0], "Load");
+            AssertCollection(createList, checkList[1], "Create");
+            AssertCollection(updateList, checkList[2], "Update");
+            AssertCollection(deleteList, checkList[3], "Delete");
         }
 
         private void AssertCollection(ICollection<Player> expect, ICollection<Player> check, string name)
@@ -1204,9 +1210,9 @@ namespace TnyFramework.Namespace.Etcd.Test
 
     public class Player
     {
-        public string Name { get; set; } = "";
+        public string Name { get; set; }
 
-        public int Age { get; set; } = 0;
+        public int Age { get; set; }
 
         public Player()
         {
