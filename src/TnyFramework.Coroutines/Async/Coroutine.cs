@@ -18,7 +18,7 @@ using TnyFramework.Coroutines.Exceptions;
 namespace TnyFramework.Coroutines.Async
 {
 
-    public class Coroutine : ICoroutine
+    public class Coroutine : CoroutineTaskScheduler, ICoroutine
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<Coroutine>();
 
@@ -51,13 +51,7 @@ namespace TnyFramework.Coroutines.Async
         // 关闭任务
         private volatile Task<bool>? shuttingTask = null;
 
-        private SpinLock locker;
-
-        private volatile SynchronizationContext? asSynchronizationContext;
-
-        private volatile TaskScheduler? asTaskScheduler;
-
-        public Coroutine() : this(TaskScheduler.Default)
+        public Coroutine() : this(Default)
         {
         }
 
@@ -72,80 +66,10 @@ namespace TnyFramework.Coroutines.Async
             Name = name ?? $"Coroutine-{Id}";
             Queue = new CoroutineWorkQueue();
             this.executeTaskScheduler = executeTaskScheduler;
-        }
-
-        public TaskScheduler AsTaskScheduler()
-        {
-            if (asTaskScheduler != null)
-            {
-                return asTaskScheduler;
-            }
-            var locked = false;
-            locker.Enter(ref locked);
-            try
-            {
-                if (asTaskScheduler != null)
-                {
-                    return asTaskScheduler;
-                }
-                asTaskScheduler = new CoroutineTaskScheduler(this);
-                return asTaskScheduler;
-            } finally
-            {
-                if (locked)
-                {
-                    locker.Exit(true);
-                }
-            }
-        }
-
-        public SynchronizationContext AsSynchronizationContext()
-        {
-            if (asSynchronizationContext != null)
-            {
-                return asSynchronizationContext;
-            }
-            var locked = false;
-            locker.Enter(ref locked);
-            try
-            {
-                if (asSynchronizationContext != null)
-                {
-                    return asSynchronizationContext;
-                }
-                asSynchronizationContext = new CoroutineSynchronizationContext(this);
-                return asSynchronizationContext;
-            } finally
-            {
-                if (locked)
-                {
-                    locker.Exit(true);
-                }
-            }
+            Coroutine = this;
         }
 
         public static Coroutine CurrentCoroutine => CURRENT_COROUTINE.Value!;
-
-        internal static void InitializeSynchronizationContext()
-        {
-            var current = SynchronizationContext.Current;
-            if (current is CoroutineSynchronizationContext)
-                return;
-            var coroutine = new Coroutine();
-            SynchronizationContext.SetSynchronizationContext(coroutine.AsSynchronizationContext());
-            CURRENT_COROUTINE.Value = coroutine;
-        }
-
-        internal static void InitializeSynchronizationContext(ICoroutine coroutine)
-        {
-            var current = SynchronizationContext.Current;
-            if (current is CoroutineSynchronizationContext)
-                return;
-            if (!(coroutine is Coroutine value))
-                return;
-            SynchronizationContext.SetSynchronizationContext(value.AsSynchronizationContext());
-            CURRENT_COROUTINE.Value = value;
-        }
 
         public int Id { get; }
 
@@ -296,48 +220,6 @@ namespace TnyFramework.Coroutines.Async
             return true;
         }
 
-        // Exec will execute tasks off the task list
-        private void ExecuteAllWorks()
-        {
-            DoTransaction(() =>
-                Task.Factory.StartNew(DoExecuteWorks, CancellationToken.None, TaskCreationOptions.None, asTaskScheduler ?? AsTaskScheduler()));
-        }
-
-        private void DoTransaction(Action action)
-        {
-            var currentCoroutine = CURRENT_COROUTINE.Value;
-            try
-            {
-                execThread = Thread.CurrentThread;
-                CURRENT_COROUTINE.Value = this;
-                action();
-            } finally
-            {
-                execThread = null!;
-                CURRENT_COROUTINE.Value = currentCoroutine ?? null!;
-                Interlocked.Exchange(ref submit, SUBMIT_STATUS_IDLE);
-                if (!Queue.IsWorkEmpty)
-                {
-                    TrySummit();
-                }
-            }
-        }
-
-        private void DoExecuteWorks()
-        {
-            DoTransaction(() => {
-                var queue = Queue.CurrentFrameQueue;
-                if (queue.IsEmpty)
-                {
-                    return;
-                }
-                while (queue.TryDequeue(out var work))
-                {
-                    work.Invoke();
-                }
-            });
-        }
-
         public CoroutineStatus Status => (CoroutineStatus) status;
 
         public bool IsStart()
@@ -418,6 +300,47 @@ namespace TnyFramework.Coroutines.Async
             if (current == SUBMIT_STATUS_IDLE && Interlocked.CompareExchange(ref submit, SUBMIT_STATUS_SUBMIT, SUBMIT_STATUS_IDLE) == current)
             {
                 executeTaskScheduler.StartNew(ExecuteAllWorks);
+            }
+        }
+
+        // Exec will execute tasks off the task list
+        private void ExecuteAllWorks()
+        {
+            DoTransaction(() => Task.Factory.StartNew(DoExecuteWorks, CancellationToken.None, TaskCreationOptions.None, this));
+        }
+
+        private void DoExecuteWorks()
+        {
+            DoTransaction(() => {
+                var queue = Queue.CurrentFrameQueue;
+                if (queue.IsEmpty)
+                {
+                    return;
+                }
+                while (queue.TryDequeue(out var work))
+                {
+                    work.Invoke();
+                }
+            });
+        }
+
+        private void DoTransaction(Action action)
+        {
+            var currentCoroutine = CURRENT_COROUTINE.Value;
+            try
+            {
+                execThread = Thread.CurrentThread;
+                CURRENT_COROUTINE.Value = this;
+                action();
+            } finally
+            {
+                execThread = null!;
+                CURRENT_COROUTINE.Value = currentCoroutine ?? null!;
+                Interlocked.Exchange(ref submit, SUBMIT_STATUS_IDLE);
+                if (!Queue.IsWorkEmpty)
+                {
+                    TrySummit();
+                }
             }
         }
     }

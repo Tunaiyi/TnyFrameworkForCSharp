@@ -9,7 +9,7 @@
 using System;
 using System.Threading;
 
-namespace TnyFramework.Coroutines.Async
+namespace TnyFramework.Coroutines.Executors
 {
 
     /// <summary>

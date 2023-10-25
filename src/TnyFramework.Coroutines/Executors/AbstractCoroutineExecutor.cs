@@ -10,7 +10,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TnyFramework.Coroutines.Async
+namespace TnyFramework.Coroutines.Executors
 {
 
     public abstract class AbstractCoroutineExecutor : ICoroutineExecutor

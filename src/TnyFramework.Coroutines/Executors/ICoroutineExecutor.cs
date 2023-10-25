@@ -7,27 +7,20 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace TnyFramework.Coroutines.Async
+namespace TnyFramework.Coroutines.Executors
 {
 
     /// <summary>
-    /// 线程池协程运行器
+    /// 协程执行器
     /// </summary>
-    public class ThreadPoolCoroutineExecutor : ICoroutineExecutor
+    public interface ICoroutineExecutor
     {
-        private ThreadPoolCoroutineExecutor()
-        {
-        }
-
-        public static ICoroutineExecutor Default { get; } = new ThreadPoolCoroutineExecutor();
-
-        public void Summit(Action action)
-        {
-            Task.Run(action);
-        }
+        /// <summary>
+        /// 提交
+        /// </summary>
+        /// <param name="action">任务</param>
+        void Summit(Action action);
     }
 
 }

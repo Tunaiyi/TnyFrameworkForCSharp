@@ -23,10 +23,6 @@ namespace TnyFramework.Coroutines.Async
         /// </summary>
         CoroutineStatus Status { get; }
 
-        TaskScheduler AsTaskScheduler();
-
-        SynchronizationContext AsSynchronizationContext();
-
         /// <summary>
         /// 协程 id 自动分配
         /// </summary>

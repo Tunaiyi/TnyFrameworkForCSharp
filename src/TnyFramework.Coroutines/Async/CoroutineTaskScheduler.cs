@@ -15,13 +15,21 @@ using Microsoft.Extensions.ObjectPool;
 namespace TnyFramework.Coroutines.Async
 {
 
-    public class CoroutineTaskScheduler : TaskScheduler
+    public abstract class CoroutineTaskScheduler : TaskScheduler
     {
-        private readonly Coroutine coroutine;
+        private Coroutine coroutine = null!;
 
-        public CoroutineTaskScheduler(Coroutine coroutine)
+        protected CoroutineTaskScheduler()
+        {
+        }
+
+        protected CoroutineTaskScheduler(Coroutine coroutine)
         {
             this.coroutine = coroutine;
+        }
+
+        protected Coroutine Coroutine {
+            set => coroutine = value;
         }
 
         protected override IEnumerable<Task> GetScheduledTasks()

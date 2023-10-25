@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.ThreadPools;
 
-namespace TnyFramework.Coroutines.Async
+namespace TnyFramework.Coroutines.Executors
 {
 
     /// <summary>

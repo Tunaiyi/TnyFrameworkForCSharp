@@ -6,22 +6,20 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
-using System.Threading.Tasks;
-
-namespace TnyFramework.Coroutines.Async
+namespace TnyFramework.Coroutines.TaskSchedulers
 {
 
-    /// <summary>
-    /// 协程执行器
-    /// </summary>
-    public interface ICoroutineExecutor
+    public class OrderedTaskScheduler : LimitedConcurrencyLevelTaskScheduler
     {
         /// <summary>
-        /// 提交
+        /// Provides a task scheduler that ensures only one task is executing at a time, and that tasks
+        /// execute in the order that they were queued.
         /// </summary>
-        /// <param name="action">任务</param>
-        void Summit(Action action);
+        /// <summary>Initializes an instance of the OrderedTaskScheduler class.</summary>
+        public OrderedTaskScheduler() : base(1)
+        {
+        }
+
     }
 
 }

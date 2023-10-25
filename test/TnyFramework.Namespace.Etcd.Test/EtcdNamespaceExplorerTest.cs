@@ -1210,7 +1210,7 @@ namespace TnyFramework.Namespace.Etcd.Test
 
     public class Player
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = "";
 
         public int Age { get; set; }
 

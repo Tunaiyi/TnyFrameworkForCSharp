@@ -11,8 +11,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using TnyFramework.Common.Extensions;
+using TnyFramework.Coroutines.ThreadPools;
 
-namespace TnyFramework.Coroutines.ThreadPools
+namespace TnyFramework.Coroutines.TaskSchedulers
 {
 
     public class WorkStealingTaskScheduler : TaskScheduler, IDisposable
@@ -336,140 +337,77 @@ namespace TnyFramework.Coroutines.ThreadPools
         }
     }
 
-}
-
-/// <summary>A work-stealing queue.</summary>
-/// <typeparam name="T">Specifies the type of data stored in the queue.</typeparam>
-internal class WorkStealingQueue<T> where T : class
-{
-    private const int INITIAL_SIZE = 32;
-    private T[] mArray = new T[INITIAL_SIZE];
-    private int mMask = INITIAL_SIZE - 1;
-    private volatile int mHeadIndex = 0;
-    private volatile int mTailIndex = 0;
-
-    private readonly object mForeignLock = new object();
-
-    internal void LocalPush(T obj)
+    /// <summary>A work-stealing queue.</summary>
+    /// <typeparam name="T">Specifies the type of data stored in the queue.</typeparam>
+    internal class WorkStealingQueue<T> where T : class
     {
-        var tail = mTailIndex;
+        private const int INITIAL_SIZE = 32;
+        private T[] mArray = new T[INITIAL_SIZE];
+        private int mMask = INITIAL_SIZE - 1;
+        private volatile int mHeadIndex = 0;
+        private volatile int mTailIndex = 0;
 
-        // When there are at least 2 elements' worth of space, we can take the fast path.
-        if (tail < mHeadIndex + mMask)
+        private readonly object mForeignLock = new object();
+
+        internal void LocalPush(T obj)
         {
-            mArray[tail & mMask] = obj;
-            mTailIndex = tail + 1;
-        } else
-        {
-            // We need to contend with foreign pops, so we lock.
-            lock (mForeignLock)
+            var tail = mTailIndex;
+
+            // When there are at least 2 elements' worth of space, we can take the fast path.
+            if (tail < mHeadIndex + mMask)
             {
-                var head = mHeadIndex;
-                var count = mTailIndex - mHeadIndex;
-
-                // If there is still space (one left), just add the element.
-                if (count >= mMask)
-                {
-                    // We're full; expand the queue by doubling its size.
-                    T[] newArray = new T[mArray.Length << 1];
-                    for (var i = 0; i < mArray.Length; i++)
-                        newArray[i] = mArray[(i + head) & mMask];
-
-                    // Reset the field values, incl. the mask.
-                    mArray = newArray;
-                    mHeadIndex = 0;
-                    mTailIndex = tail = count;
-                    mMask = (mMask << 1) | 1;
-                }
-
                 mArray[tail & mMask] = obj;
                 mTailIndex = tail + 1;
-            }
-        }
-    }
-
-    internal bool LocalPop(ref T obj)
-    {
-        while (true)
-        {
-            // Decrement the tail using a fence to ensure subsequent read doesn't come before.
-            var tail = mTailIndex;
-            if (mHeadIndex >= tail)
-            {
-                obj = null!;
-                return false;
-            }
-
-            tail -= 1;
-#pragma warning disable 0420
-            Interlocked.Exchange(ref mTailIndex, tail);
-#pragma warning restore 0420
-
-            // If there is no interaction with a take, we can head down the fast path.
-            if (mHeadIndex <= tail)
-            {
-                var idx = tail & mMask;
-                obj = mArray[idx];
-
-                // Check for nulls in the array.
-                if (obj == null)
-                {
-                    continue;
-                }
-
-                mArray[idx] = null!;
-                return true;
             } else
             {
-                // Interaction with takes: 0 or 1 elements left.
+                // We need to contend with foreign pops, so we lock.
                 lock (mForeignLock)
                 {
-                    if (mHeadIndex <= tail)
-                    {
-                        // Element still available. Take it.
-                        var idx = tail & mMask;
-                        obj = mArray[idx];
+                    var head = mHeadIndex;
+                    var count = mTailIndex - mHeadIndex;
 
-                        // Check for nulls in the array.
-                        if (obj == null)
-                        {
-                            continue;
-                        }
-
-                        mArray[idx] = null!;
-                        return true;
-                    } else
+                    // If there is still space (one left), just add the element.
+                    if (count >= mMask)
                     {
-                        // We lost the race, element was stolen, restore the tail.
-                        mTailIndex = tail + 1;
-                        obj = null!;
-                        return false;
+                        // We're full; expand the queue by doubling its size.
+                        T[] newArray = new T[mArray.Length << 1];
+                        for (var i = 0; i < mArray.Length; i++)
+                            newArray[i] = mArray[(i + head) & mMask];
+
+                        // Reset the field values, incl. the mask.
+                        mArray = newArray;
+                        mHeadIndex = 0;
+                        mTailIndex = tail = count;
+                        mMask = (mMask << 1) | 1;
                     }
+
+                    mArray[tail & mMask] = obj;
+                    mTailIndex = tail + 1;
                 }
             }
         }
-    }
 
-    internal bool TrySteal(ref T obj)
-    {
-        obj = null!;
-
-        while (true)
+        internal bool LocalPop(ref T obj)
         {
-            if (mHeadIndex >= mTailIndex)
-                return false;
-
-            lock (mForeignLock)
+            while (true)
             {
-                // Increment head, and ensure read of tail doesn't move before it (fence).
-                var head = mHeadIndex;
+                // Decrement the tail using a fence to ensure subsequent read doesn't come before.
+                var tail = mTailIndex;
+                if (mHeadIndex >= tail)
+                {
+                    obj = null!;
+                    return false;
+                }
+
+                tail -= 1;
 #pragma warning disable 0420
-                Interlocked.Exchange(ref mHeadIndex, head + 1);
+                Interlocked.Exchange(ref mTailIndex, tail);
 #pragma warning restore 0420
 
-                if (head < mTailIndex)
+                // If there is no interaction with a take, we can head down the fast path.
+                if (mHeadIndex <= tail)
                 {
-                    var idx = head & mMask;
+                    var idx = tail & mMask;
                     obj = mArray[idx];
 
                     // Check for nulls in the array.
@@ -482,70 +420,133 @@ internal class WorkStealingQueue<T> where T : class
                     return true;
                 } else
                 {
-                    // Failed, restore head.
-                    mHeadIndex = head;
-                    obj = null!;
+                    // Interaction with takes: 0 or 1 elements left.
+                    lock (mForeignLock)
+                    {
+                        if (mHeadIndex <= tail)
+                        {
+                            // Element still available. Take it.
+                            var idx = tail & mMask;
+                            obj = mArray[idx];
+
+                            // Check for nulls in the array.
+                            if (obj == null)
+                            {
+                                continue;
+                            }
+
+                            mArray[idx] = null!;
+                            return true;
+                        } else
+                        {
+                            // We lost the race, element was stolen, restore the tail.
+                            mTailIndex = tail + 1;
+                            obj = null!;
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        internal bool TrySteal(ref T obj)
+        {
+            obj = null!;
+
+            while (true)
+            {
+                if (mHeadIndex >= mTailIndex)
+                    return false;
+
+                lock (mForeignLock)
+                {
+                    // Increment head, and ensure read of tail doesn't move before it (fence).
+                    var head = mHeadIndex;
+#pragma warning disable 0420
+                    Interlocked.Exchange(ref mHeadIndex, head + 1);
+#pragma warning restore 0420
+
+                    if (head < mTailIndex)
+                    {
+                        var idx = head & mMask;
+                        obj = mArray[idx];
+
+                        // Check for nulls in the array.
+                        if (obj == null)
+                        {
+                            continue;
+                        }
+
+                        mArray[idx] = null!;
+                        return true;
+                    } else
+                    {
+                        // Failed, restore head.
+                        mHeadIndex = head;
+                        obj = null!;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        internal bool TryFindAndPop(T obj)
+        {
+            // We do an O(N) search for the work item. The theory of work stealing and our
+            // inlining logic is that most waits will happen on recently queued work.  And
+            // since recently queued work will be close to the tail end (which is where we
+            // begin our search), we will likely find it quickly.  In the worst case, we
+            // will traverse the whole local queue; this is typically not going to be a
+            // problem (although degenerate cases are clearly an issue) because local work
+            // queues tend to be somewhat shallow in length, and because if we fail to find
+            // the work item, we are about to block anyway (which is very expensive).
+
+            for (var i = mTailIndex - 1; i >= mHeadIndex; i--)
+            {
+                if (mArray[i & mMask] == obj)
+                {
+                    // If we found the element, block out steals to avoid interference.
+                    lock (mForeignLock)
+                    {
+                        // If we lost the race, bail.
+                        if (mArray[i & mMask] == null)
+                        {
+                            return false;
+                        }
+
+                        // Otherwise, null out the element.
+                        mArray[i & mMask] = null!;
+
+                        // And then check to see if we can fix up the indexes (if we're at
+                        // the edge).  If we can't, we just leave nulls in the array and they'll
+                        // get filtered out eventually (but may lead to superflous resizing).
+                        if (i == mTailIndex)
+                            mTailIndex -= 1;
+                        else if (i == mHeadIndex)
+                            mHeadIndex += 1;
+
+                        return true;
+                    }
                 }
             }
 
             return false;
         }
-    }
 
-    internal bool TryFindAndPop(T obj)
-    {
-        // We do an O(N) search for the work item. The theory of work stealing and our
-        // inlining logic is that most waits will happen on recently queued work.  And
-        // since recently queued work will be close to the tail end (which is where we
-        // begin our search), we will likely find it quickly.  In the worst case, we
-        // will traverse the whole local queue; this is typically not going to be a
-        // problem (although degenerate cases are clearly an issue) because local work
-        // queues tend to be somewhat shallow in length, and because if we fail to find
-        // the work item, we are about to block anyway (which is very expensive).
-
-        for (var i = mTailIndex - 1; i >= mHeadIndex; i--)
+        internal T[] ToArray()
         {
-            if (mArray[i & mMask] == obj)
+            var list = new List<T>();
+            for (var i = mTailIndex - 1; i >= mHeadIndex; i--)
             {
-                // If we found the element, block out steals to avoid interference.
-                lock (mForeignLock)
+                var obj = mArray[i & mMask];
+                if (obj != null)
                 {
-                    // If we lost the race, bail.
-                    if (mArray[i & mMask] == null)
-                    {
-                        return false;
-                    }
-
-                    // Otherwise, null out the element.
-                    mArray[i & mMask] = null!;
-
-                    // And then check to see if we can fix up the indexes (if we're at
-                    // the edge).  If we can't, we just leave nulls in the array and they'll
-                    // get filtered out eventually (but may lead to superflous resizing).
-                    if (i == mTailIndex)
-                        mTailIndex -= 1;
-                    else if (i == mHeadIndex)
-                        mHeadIndex += 1;
-
-                    return true;
+                    list.Add(obj);
                 }
             }
+            return list.ToArray();
         }
-
-        return false;
     }
 
-    internal T[] ToArray()
-    {
-        var list = new List<T>();
-        for (var i = mTailIndex - 1; i >= mHeadIndex; i--)
-        {
-            var obj = mArray[i & mMask];
-            if (obj != null)
-            {
-                list.Add(obj);
-            }
-        }
-        return list.ToArray();
-    }
 }

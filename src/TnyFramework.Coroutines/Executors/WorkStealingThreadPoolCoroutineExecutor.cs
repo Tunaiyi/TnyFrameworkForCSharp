@@ -9,9 +9,10 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using TnyFramework.Coroutines.TaskSchedulers;
 using TnyFramework.Coroutines.ThreadPools;
 
-namespace TnyFramework.Coroutines.Async
+namespace TnyFramework.Coroutines.Executors
 {
 
     /// <summary>

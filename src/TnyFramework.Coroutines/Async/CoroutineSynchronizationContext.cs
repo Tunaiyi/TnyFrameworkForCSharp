@@ -30,16 +30,40 @@ namespace TnyFramework.Coroutines.Async
         /// </summary>
         public static void InitializeSynchronizationContext()
         {
-            Coroutine.InitializeSynchronizationContext();
+            var current = Current;
+            if (current is CoroutineSynchronizationContext)
+                return;
+            var coroutine = new Coroutine();
+            var synchronizationContext = new CoroutineSynchronizationContext(coroutine);
+            SetSynchronizationContext(synchronizationContext);
         }
 
         /// <summary>
         /// 初始化 Context
         /// </summary>
-        public static void InitializeSynchronizationContext(ICoroutine coroutine)
+        public static void InitializeSynchronizationContext(Coroutine coroutine)
         {
-            Coroutine.InitializeSynchronizationContext(coroutine);
+            var current = Current;
+            if (current is CoroutineSynchronizationContext)
+                return;
+            var synchronizationContext = new CoroutineSynchronizationContext(coroutine);
+            SetSynchronizationContext(synchronizationContext);
         }
+
+        // internal static void InitializeSynchronizationContext()
+        // {
+        // }
+        //
+        // internal static void InitializeSynchronizationContext(ICoroutine coroutine)
+        // {
+        //     var current = SynchronizationContext.Current;
+        //     if (current is CoroutineSynchronizationContext)
+        //         return;
+        //     if (!(coroutine is Coroutine value))
+        //         return;
+        //     SynchronizationContext.SetSynchronizationContext(value.AsSynchronizationContext());
+        //     CURRENT_COROUTINE.Value = value;
+        // }
 
         internal CoroutineSynchronizationContext(Coroutine coroutine)
         {
