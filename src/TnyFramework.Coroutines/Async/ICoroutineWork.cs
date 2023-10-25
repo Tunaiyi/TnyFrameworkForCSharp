@@ -39,7 +39,7 @@ namespace TnyFramework.Coroutines.Async
         protected void HandleException(Exception cause)
         {
             var name = Coroutine.CurrentCoroutine.Name;
-            var id = Coroutine.CurrentCoroutine.Id;
+            var id = Coroutine.CurrentCoroutine.CoroutineId;
             logger.LogWarning(cause, "Coroutine {Name} [{Id}] Invoke exception", name, id);
         }
 

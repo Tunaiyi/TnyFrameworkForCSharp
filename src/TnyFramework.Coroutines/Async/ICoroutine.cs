@@ -26,7 +26,7 @@ namespace TnyFramework.Coroutines.Async
         /// <summary>
         /// 协程 id 自动分配
         /// </summary>
-        int Id { get; }
+        int CoroutineId { get; }
 
         /// <summary>
         /// 协程名称

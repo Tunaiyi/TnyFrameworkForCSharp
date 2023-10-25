@@ -62,8 +62,8 @@ namespace TnyFramework.Coroutines.Async
         /// <param name="name">协程名字</param>
         public Coroutine(TaskScheduler executeTaskScheduler, string? name = null)
         {
-            Id = Interlocked.Increment(ref _ID_COUNTER);
-            Name = name ?? $"Coroutine-{Id}";
+            CoroutineId = Interlocked.Increment(ref _ID_COUNTER);
+            Name = name ?? $"Coroutine-{CoroutineId}";
             Queue = new CoroutineWorkQueue();
             this.executeTaskScheduler = executeTaskScheduler;
             Coroutine = this;
@@ -71,7 +71,7 @@ namespace TnyFramework.Coroutines.Async
 
         public static Coroutine CurrentCoroutine => CURRENT_COROUTINE.Value!;
 
-        public int Id { get; }
+        public int CoroutineId { get; }
 
         public string Name { get; }
 
@@ -251,14 +251,14 @@ namespace TnyFramework.Coroutines.Async
 
         public override string ToString()
         {
-            return $"Coroutine[{Name}]-cid[{Id}]";
+            return $"Coroutine[{Name}]-cid[{CoroutineId}]";
         }
 
         private void CheckStartStatus()
         {
             if (Status != CoroutineStatus.Start)
             {
-                throw new CoroutineStatusException($"{Name}-cid{Id} 已关闭");
+                throw new CoroutineStatusException($"{Name}-cid{CoroutineId} 已关闭");
             }
         }
 
