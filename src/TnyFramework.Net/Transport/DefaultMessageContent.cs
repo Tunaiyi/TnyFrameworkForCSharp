@@ -29,8 +29,6 @@ namespace TnyFramework.Net.Transport
 
         public override MessageMode Mode { get; }
 
-        public override MessageType Type => Mode.GetMessageType();
-
         public override object? Body { get; protected set; }
 
         public override MessageContent WithHeader(MessageHeader? header)

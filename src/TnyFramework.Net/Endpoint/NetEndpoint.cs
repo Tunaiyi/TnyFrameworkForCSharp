@@ -68,13 +68,9 @@ namespace TnyFramework.Net.Endpoint
         private readonly IEventBus<EndpointOffline> offlineEvent;
 
         private readonly IEventBus<EndpointClose> closeEvent;
-
         public IEventBox<EndpointOnline> OnlineEvent => onlineEvent;
-
         public IEventBox<EndpointOffline> OfflineEvent => offlineEvent;
-
         public IEventBox<EndpointClose> CloseEvent => closeEvent;
-
         public override NetAccessMode AccessMode => tunnel?.AccessMode ?? default!;
 
         public NetEndpoint(ICertificate<TUserId> certificate, IEndpointContext context)
@@ -95,9 +91,9 @@ namespace TnyFramework.Net.Endpoint
 
         public IEndpointContext Context { get; }
 
-        public override EndPoint RemoteAddress => CurrentTunnel.LocalAddress;
+        public override EndPoint? RemoteAddress => CurrentTunnel.LocalAddress;
 
-        public override EndPoint LocalAddress => CurrentTunnel.RemoteAddress;
+        public override EndPoint? LocalAddress => CurrentTunnel.RemoteAddress;
 
         public long OfflineTime { get; private set; }
 

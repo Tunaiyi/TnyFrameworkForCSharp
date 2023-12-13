@@ -41,9 +41,9 @@ namespace TnyFramework.Net.Transport
             return Certificate.IsAuthenticated();
         }
 
-        public abstract EndPoint RemoteAddress { get; }
+        public abstract EndPoint? RemoteAddress { get; }
 
-        public abstract EndPoint LocalAddress { get; }
+        public abstract EndPoint? LocalAddress { get; }
 
         public abstract NetAccessMode AccessMode { get; }
 

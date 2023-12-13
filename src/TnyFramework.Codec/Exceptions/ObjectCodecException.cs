@@ -9,7 +9,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace TnyFramework.Codec.Execptions
+namespace TnyFramework.Codec.Exceptions
 {
 
     public class ObjectCodecException : Exception

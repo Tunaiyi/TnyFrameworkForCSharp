@@ -24,17 +24,18 @@ namespace TnyFramework.Net.Transport
         where TEndpoint : INetEndpoint<TUserId>
         where TTransporter : IMessageTransporter
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger(typeof(BaseNetTunnel<,,>));
-
         protected TTransporter Transporter { get; }
 
-        public override EndPoint RemoteAddress => Transporter.RemoteAddress;
+        public override EndPoint? RemoteAddress => Transporter.RemoteAddress;
 
-        public override EndPoint LocalAddress => Transporter.LocalAddress;
+        public override EndPoint? LocalAddress => Transporter.LocalAddress;
+
+        protected readonly ILogger logger;
 
         protected BaseNetTunnel(long id, TTransporter transporter, NetAccessMode accessMode, INetworkContext context)
             : base(id, accessMode, context)
         {
+            logger = LogFactory.Logger(GetType());
             if (transporter.IsNotNull())
             {
                 Transporter = transporter;
@@ -97,7 +98,7 @@ namespace TnyFramework.Net.Transport
                 transporter.Close();
             } catch (Exception e)
             {
-                LOGGER.LogError(e, "transporter close error");
+                logger.LogError(e, "transporter close error");
             }
         }
 

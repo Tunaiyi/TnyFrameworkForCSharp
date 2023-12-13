@@ -28,8 +28,6 @@ namespace TnyFramework.Net.Message
 
         public long ToMessage => MessageConstants.EMPTY_MESSAGE_ID;
 
-        public MessageType Type { get; }
-
         public MessageMode Mode { get; }
 
         public int ProtocolId { get; }
@@ -39,11 +37,6 @@ namespace TnyFramework.Net.Message
         private TickMessageHead(MessageMode mode)
         {
             Mode = mode;
-            Type = Mode switch {
-                MessageMode.Ping => MessageType.Ping,
-                MessageMode.Pong => MessageType.Pong,
-                _ => Type
-            };
             ProtocolId = Protocols.PING_PONG_PROTOCOL_NUM;
             Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         }
@@ -69,7 +62,7 @@ namespace TnyFramework.Net.Message
 
         public IList<MessageHeader> GetHeaders(Type type) => ImmutableList<MessageHeader>.Empty;
 
-        public T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => default;
+        public T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader => default;
 
         public bool IsHasHeaders() => false;
 
@@ -83,19 +76,19 @@ namespace TnyFramework.Net.Message
 
         public bool ExistHeader(string key) => false;
 
-        public bool ExistHeader<T>(string key) where T : MessageHeader<T> => false;
+        public bool ExistHeader<T>(string key) where T : MessageHeader => false;
 
         public bool ExistHeader(MessageHeaderKey key) => false;
 
-        public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => false;
+        public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader => false;
 
-        public T? PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T> => null;
+        public T? PutHeader<T>(T header) where T : MessageHeader => null;
 
-        public T? PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T> => null;
+        public T? PutHeaderIfAbsent<T>(T header) where T : MessageHeader => null;
 
         public bool RemoveHeader<T>(string key) => false;
 
-        public bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => false;
+        public bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader => false;
 
         public void RemoveHeaders(IEnumerable<string> keys)
         {

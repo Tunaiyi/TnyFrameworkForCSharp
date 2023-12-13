@@ -38,13 +38,13 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         public INetMessage Decode(IByteBuffer buffer, IMessageFactory factory)
         {
-            ByteBufferUtils.ReadVariant(buffer, out long id);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out long id);
             var option = buffer.ReadByte();
             var mode = (MessageMode) (option & CodecConstants.MESSAGE_HEAD_OPTION_MODE_MASK);
-            ByteBufferUtils.ReadVariant(buffer, out int protocol);
-            ByteBufferUtils.ReadVariant(buffer, out int code);
-            ByteBufferUtils.ReadVariant(buffer, out long toMessage);
-            ByteBufferUtils.ReadVariant(buffer, out long time);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out int protocol);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out int code);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out long toMessage);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out long time);
 
             int line = (byte) (option & CodecConstants.MESSAGE_HEAD_OPTION_LINE_MASK);
             line >>= CodecConstants.MESSAGE_HEAD_OPTION_LINE_SHIFT;
@@ -62,12 +62,12 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         public void Encode(INetMessage message, IByteBuffer buffer)
         {
-            if (message.Type != MessageType.Message)
+            if (!message.Mode.IsMessage())
             {
                 return;
             }
             //		ProtoExOutputStream stream = new ProtoExOutputStream(1024, 2 * 1024);
-            ByteBufferUtils.WriteVariant(message.Id, buffer);
+            ByteBufferVariantExtensions.WriteVariant(message.Id, buffer);
             var head = message.Head;
             var mode = head.Mode;
             var hasHeader = message.IsHasHeaders();
@@ -83,10 +83,10 @@ namespace TnyFramework.Net.DotNetty.Codec
             }
             option = (byte) (option | line << CodecConstants.MESSAGE_HEAD_OPTION_LINE_SHIFT);
             buffer.WriteByte(option);
-            ByteBufferUtils.WriteVariant(head.ProtocolId, buffer);
-            ByteBufferUtils.WriteVariant(head.Code, buffer);
-            ByteBufferUtils.WriteVariant(head.ToMessage, buffer);
-            ByteBufferUtils.WriteVariant(head.Time, buffer);
+            ByteBufferVariantExtensions.WriteVariant(head.ProtocolId, buffer);
+            ByteBufferVariantExtensions.WriteVariant(head.Code, buffer);
+            ByteBufferVariantExtensions.WriteVariant(head.ToMessage, buffer);
+            ByteBufferVariantExtensions.WriteVariant(head.Time, buffer);
             if (hasHeader)
             {
                 WriteHeaders(buffer, message.GetAllHeaders());
@@ -100,7 +100,7 @@ namespace TnyFramework.Net.DotNetty.Codec
         private IDictionary<string, MessageHeader> ReadHeaders(IByteBuffer buffer)
         {
             var headerMap = new Dictionary<string, MessageHeader>();
-            ByteBufferUtils.ReadVariant(buffer, out int size);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out int size);
             for (var index = 0; index < size; index++)
             {
                 try
@@ -121,7 +121,7 @@ namespace TnyFramework.Net.DotNetty.Codec
         private object? ReadBody(IByteBuffer buffer, bool relay)
         {
             object? body;
-            ByteBufferUtils.ReadVariant(buffer, out int length);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out int length);
             var bodyBuff = buffer.Allocator.HeapBuffer(length);
             buffer.ReadBytes(bodyBuff, length);
             if (relay)
@@ -143,7 +143,7 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         private void WriteHeaders(IByteBuffer buffer, IList<MessageHeader> headers)
         {
-            ByteBufferUtils.WriteVariant(headers.Count, buffer);
+            ByteBufferVariantExtensions.WriteVariant(headers.Count, buffer);
             foreach (var header in headers)
             {
                 try
@@ -178,7 +178,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                         {
                             throw NetCodecException.CauseEncodeFailed("ByteBufMessageBody is released");
                         }
-                        ByteBufferUtils.WriteVariant(data.ReadableBytes, buffer);
+                        ByteBufferVariantExtensions.WriteVariant(data.ReadableBytes, buffer);
                         buffer.WriteBytes(data);
                         break;
                     }
@@ -188,7 +188,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                         {
                             bodyBuf = buffer.Allocator.HeapBuffer();
                             coder.Encode(body, bodyBuf);
-                            ByteBufferUtils.WriteVariant(bodyBuf.ReadableBytes, buffer);
+                            ByteBufferVariantExtensions.WriteVariant(bodyBuf.ReadableBytes, buffer);
                             buffer.WriteBytes(bodyBuf);
                         } finally
                         {
@@ -207,11 +207,11 @@ namespace TnyFramework.Net.DotNetty.Codec
         {
             if (data != null)
             {
-                ByteBufferUtils.WriteVariant(data.Length, buffer);
+                ByteBufferVariantExtensions.WriteVariant(data.Length, buffer);
                 buffer.WriteBytes(data);
             } else
             {
-                ByteBufferUtils.WriteVariant(0, buffer);
+                ByteBufferVariantExtensions.WriteVariant(0, buffer);
             }
         }
     }

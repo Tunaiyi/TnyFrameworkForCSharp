@@ -17,27 +17,27 @@ namespace TnyFramework.Net.Message
         /// <summary>
         /// 请求
         /// </summary>
-        Request = 0,
+        Request = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_REQUEST,
 
         /// <summary>
         /// 响应
         /// </summary>
-        Response = 1,
+        Response = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_RESPONSE,
 
         /// <summary>
         /// 推送
         /// </summary>
-        Push = 2,
+        Push = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PUSH,
 
         /// <summary>
         /// ping
         /// </summary>
-        Ping = 0xFF,
+        Ping = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PING,
 
         /// <summary>
         /// pong
         /// </summary>
-        Pong = 0xFE,
+        Pong = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PONG,
     }
 
     public static class MessageModeExtensions
@@ -47,20 +47,14 @@ namespace TnyFramework.Net.Message
             return (byte) value;
         }
 
-        public static MessageType GetMessageType(this MessageMode self)
+        public static bool IsHeartBeat(this MessageMode value)
         {
-            switch (self)
-            {
-                case MessageMode.Ping:
-                    return MessageType.Ping;
-                case MessageMode.Pong:
-                    return MessageType.Pong;
-                case MessageMode.Request:
-                case MessageMode.Response:
-                case MessageMode.Push:
-                default:
-                    return MessageType.Message;
-            }
+            return value is MessageMode.Ping or MessageMode.Pong;
+        }
+
+        public static bool IsMessage(this MessageMode value)
+        {
+            return value is MessageMode.Request or MessageMode.Response or MessageMode.Push;
         }
 
         public static int GetIndex(this MessageMode self)

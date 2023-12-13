@@ -39,7 +39,7 @@ namespace TnyFramework.Net.DotNetty.Codec
         public MessageHeader? Decode(IByteBuffer buffer)
         {
             var codec = codecFactory.CreateCodec(typeof(object));
-            ByteBufferUtils.ReadVariant(buffer, out int bodyLength);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out int bodyLength);
             var body = buffer.ReadBytes(bodyLength);
             using var stream = new ReadOnlyByteBufferStream(body, true);
             return (MessageHeader?) codec.Decode(stream);
@@ -57,7 +57,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                 codec.Encode(body, stream);
                 if (stream.Position <= 0)
                     return;
-                ByteBufferUtils.WriteVariant(stream.Position, buffer);
+                ByteBufferVariantExtensions.WriteVariant(stream.Position, buffer);
                 buffer.WriteBytes(stream.GetBuffer(), 0, (int) stream.Position);
             } finally
             {

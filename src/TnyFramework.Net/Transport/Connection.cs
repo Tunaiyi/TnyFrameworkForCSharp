@@ -17,12 +17,12 @@ namespace TnyFramework.Net.Transport
         /// <summary>
         /// 远程地址
         /// </summary>
-        EndPoint RemoteAddress { get; }
+        EndPoint? RemoteAddress { get; }
 
         /// <summary>
         /// 本地地址
         /// </summary>
-        EndPoint LocalAddress { get; }
+        EndPoint? LocalAddress { get; }
 
         /// <summary>
         /// 接入模式

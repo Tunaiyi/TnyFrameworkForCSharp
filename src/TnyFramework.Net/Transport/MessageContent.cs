@@ -65,7 +65,7 @@ namespace TnyFramework.Net.Transport
 
         public abstract long ToMessage { get; }
 
-        public abstract MessageType Type { get; }
+        // public abstract MessageType Type { get; }
 
         public abstract MessageMode Mode { get; }
 

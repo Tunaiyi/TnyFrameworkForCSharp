@@ -348,7 +348,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
                 return "NA:NA";
             }
             var address = messager.RemoteAddress;
-            return address.ToString() ?? "NA:NA";
+            return address?.ToString() ?? "NA:NA";
         }
 
         private void StopAsyncSpans(IRpcTransactionContext rpcContext, Exception? cause, params AttrKey<SegmentContext>[] keys)

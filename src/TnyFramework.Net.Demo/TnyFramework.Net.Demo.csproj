@@ -16,6 +16,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <Configurations>Debug;Release;Publish</Configurations>
         <Platforms>AnyCPU</Platforms>
+        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

@@ -72,14 +72,11 @@ namespace TnyFramework.Net.ProtobufNet
 
         private void DoEncode(object? body, IByteBuffer buffer, bool paramList)
         {
-            DataCoder? coder = nullCoder;
+            DataCoder coder = nullCoder;
             if (body != null)
             {
                 var type = body.GetType();
-                if (!typeCoders.TryGetValue(type, out coder))
-                {
-                    coder = complexCoder;
-                }
+                coder = typeCoders.GetValueOrDefault(type, complexCoder);
             }
             var option = (byte) (paramList ? PROTOBUF_MESSAGE_IS_PARAMS : 0);
             coder.Encode(body, buffer, option);
@@ -119,24 +116,17 @@ namespace TnyFramework.Net.ProtobufNet
             DataCoder? coder = nullCoder;
             if (rawType == ProtobufRawType.Null)
                 return coder.Decode(buffer);
-            if (!rawTypeCoders.TryGetValue(rawType, out coder))
-            {
-                coder = complexCoder;
-            }
+            coder = rawTypeCoders.GetValueOrDefault(rawType, complexCoder);
             return coder.Decode(buffer);
         }
 
         private void Register(DataCoder coder)
         {
-            if (!rawTypeCoders.ContainsKey(coder.RawType))
+            if (rawTypeCoders.TryAdd(coder.RawType, coder))
             {
-                rawTypeCoders.Add(coder.RawType, coder);
                 foreach (var coderValueType in coder.ValueTypes)
                 {
-                    if (!typeCoders.ContainsKey(coderValueType))
-                    {
-                        typeCoders.Add(coderValueType, coder);
-                    } else
+                    if (!typeCoders.TryAdd(coderValueType, coder))
                     {
                         throw new ArgumentException($"已存在该coder：{coderValueType}");
                     }
@@ -272,13 +262,13 @@ namespace TnyFramework.Net.ProtobufNet
         {
             if (value is int v)
             {
-                ByteBufferUtils.WriteVariant(v, buffer);
+                ByteBufferVariantExtensions.WriteVariant(v, buffer);
             }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
         {
-            ByteBufferUtils.ReadVariant(buffer, out int value);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out int value);
             return (short) value;
         }
     }
@@ -293,13 +283,13 @@ namespace TnyFramework.Net.ProtobufNet
         {
             if (value is int v)
             {
-                ByteBufferUtils.WriteVariant(v, buffer);
+                ByteBufferVariantExtensions.WriteVariant(v, buffer);
             }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
         {
-            ByteBufferUtils.ReadVariant(buffer, out int value);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out int value);
             return value;
         }
     }
@@ -314,13 +304,13 @@ namespace TnyFramework.Net.ProtobufNet
         {
             if (value is long v)
             {
-                ByteBufferUtils.WriteVariant(v, buffer);
+                ByteBufferVariantExtensions.WriteVariant(v, buffer);
             }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
         {
-            ByteBufferUtils.ReadVariant(buffer, out long value);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out long value);
             return value;
         }
     }
@@ -335,13 +325,13 @@ namespace TnyFramework.Net.ProtobufNet
         {
             if (value is float v)
             {
-                ByteBufferUtils.WriteVariant(v, buffer);
+                ByteBufferVariantExtensions.WriteVariant(v, buffer);
             }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
         {
-            ByteBufferUtils.ReadVariant(buffer, out float value);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out float value);
             return value;
         }
     }
@@ -357,13 +347,13 @@ namespace TnyFramework.Net.ProtobufNet
 
             if (value is double v)
             {
-                ByteBufferUtils.WriteVariant(v, buffer);
+                ByteBufferVariantExtensions.WriteVariant(v, buffer);
             }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
         {
-            ByteBufferUtils.ReadVariant(buffer, out double value);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out double value);
             return value;
         }
     }
@@ -406,7 +396,7 @@ namespace TnyFramework.Net.ProtobufNet
                         stream.Seek(0, SeekOrigin.Begin);
                         break;
                     }
-                    ByteBufferUtils.WriteVariant(length, buffer);
+                    ByteBufferVariantExtensions.WriteVariant(length, buffer);
                     buffer.WriteBytes(stream.GetBuffer(), 0, (int) length);
                     stream.Seek(0, SeekOrigin.Begin);
                     break;
@@ -415,7 +405,7 @@ namespace TnyFramework.Net.ProtobufNet
 
         protected override object? DoDecode(IByteBuffer buffer)
         {
-            ByteBufferUtils.ReadVariant(buffer, out int bodyLength);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out int bodyLength);
             if (bodyLength == 0)
             {
                 return "";
@@ -451,7 +441,7 @@ namespace TnyFramework.Net.ProtobufNet
                 codec.Encode(value, stream);
                 if (stream.Position <= 0)
                     return;
-                ByteBufferUtils.WriteVariant(stream.Position, buffer);
+                ByteBufferVariantExtensions.WriteVariant(stream.Position, buffer);
                 buffer.WriteBytes(stream.GetBuffer(), 0, (int) stream.Position);
             } finally
             {
@@ -462,7 +452,7 @@ namespace TnyFramework.Net.ProtobufNet
         protected override object? DoDecode(IByteBuffer buffer)
         {
             var codec = factory.CreateCodec(typeof(object));
-            ByteBufferUtils.ReadVariant(buffer, out int bodyLength);
+            ByteBufferVariantExtensions.ReadVariant(buffer, out int bodyLength);
             var body = buffer.Slice(buffer.ReaderIndex, bodyLength);
             using var stream = new ReadOnlyByteBufferStream(body, true);
             return codec.Decode(stream);

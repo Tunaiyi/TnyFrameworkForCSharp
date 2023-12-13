@@ -8,10 +8,10 @@
 
 using System.Linq;
 
-namespace TnyFramework.Net.DotNetty.Codec
+namespace TnyFramework.Net.Message
 {
 
-    internal static class CodecConstants
+    public static class CodecConstants
     {
         //时间 + MAGICS + data package
         //data package = head option + payloadLength + payload

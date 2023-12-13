@@ -9,14 +9,14 @@
 using System;
 using System.Text;
 
-namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
+namespace TnyFramework.Common.Binary.Extensions
 {
 
-    public static partial class ByteUtils
+    public static partial class VariantExtensions
     {
-        static readonly UTF8Encoding encoding = new UTF8Encoding();
-        const long Int64Msb = 1L << 63;
-        const int Int32Msb = 1 << 31;
+        private static readonly UTF8Encoding ENCODING = new();
+        private const long INT64_MSB = 1L << 63;
+        private const int INT32_MSB = 1 << 31;
 
         private const ulong MAX_LONG7_BIT = 0xffffffffffffffffL << 7;
         private const ulong MAX_LONG14_BIT = 0xffffffffffffffffL << 14;
@@ -38,7 +38,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        private static int Zig(int value)
+        public static int Zig(int value)
         {
             return (value << 1) ^ (value >> 31);
         }
@@ -48,7 +48,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        private static long Zig(long value)
+        public static long Zig(long value)
         {
             return (value << 1) ^ (value >> 63);
         }
@@ -58,9 +58,9 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        private static int Zag(int value)
+        public static int Zag(int value)
         {
-            return (-(value & 0x01)) ^ ((value >> 1) & ~Int32Msb);
+            return (-(value & 0x01)) ^ ((value >> 1) & ~INT32_MSB);
         }
 
         /// <summary>
@@ -68,9 +68,9 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        private static long Zag(long value)
+        public static long Zag(long value)
         {
-            return (-(value & 0x01L)) ^ ((value >> 1) & ~Int64Msb);
+            return (-(value & 0x01L)) ^ ((value >> 1) & ~INT64_MSB);
         }
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return ComputeVarInt32Len((uint) value);
         }
 
-        private static int ComputeVarInt32Len(uint value)
+        public static int ComputeVarInt32Len(uint value)
         {
             if ((value & MAX_INT7_BIT) == 0)
                 return 1;
@@ -106,7 +106,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             return ComputeVarInt64Len((ulong) value);
         }
 
-        private static int ComputeVarInt64Len(ulong value)
+        public static int ComputeVarInt64Len(ulong value)
         {
             if ((value & MAX_LONG7_BIT) == 0)
                 return 1;
@@ -135,7 +135,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
         /// <param name="required"></param>
         /// <param name="bytes"></param>
         /// <param name="index"></param>
-        private static void VerifySpace(int required, byte[] bytes, int index)
+        public static void VerifySpace(int required, byte[] bytes, int index)
         {
             if (bytes.Length - index < required)
             {
@@ -143,22 +143,22 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             }
         }
 
-        private static long Double2Long(double value)
+        public static long Double2Long(double value)
         {
             return BitConverter.ToInt64(BitConverter.GetBytes(value), 0);
         }
 
-        private static int Float2Int(float value)
+        public static int Float2Int(float value)
         {
             return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
         }
 
-        private static double Long2Double(long value)
+        public static double Long2Double(long value)
         {
             return BitConverter.ToDouble(BitConverter.GetBytes(value), 0);
         }
 
-        private static float Int2Float(int value)
+        public static float Int2Float(int value)
         {
             return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
         }

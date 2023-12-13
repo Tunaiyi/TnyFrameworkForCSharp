@@ -18,7 +18,7 @@ namespace TnyFramework.Net.Message
     [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
     [TypeProtobuf(MessageHeaderConstants.RPC_ORIGINAL_MESSAGE_ID_TYPE_PROTO)]
     [ProtoContract]
-    public class RpcOriginalMessageIdHeader : MessageHeader<RpcOriginalMessageIdHeader>
+    public class RpcOriginalMessageIdHeader : MessageHeader
     {
         [ProtoMember(1)]
         public long MessageId { get; set; }
