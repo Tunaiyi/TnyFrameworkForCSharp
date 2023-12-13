@@ -43,19 +43,23 @@ namespace TnyFramework.Net.DotNetty.Transport
             }
         }
 
-        public Task Write(IMessage message)
+        public ValueTask Write(IMessage message, bool waitWritten = false)
         {
-            return channel.WriteAndFlushAsync(message);
+            return waitWritten ? ValueTask.CompletedTask : new ValueTask(channel.WriteAndFlushAsync(message));
         }
 
-        public Task Write(IMessageAllocator maker, IMessageFactory factory, MessageContent content)
+        public ValueTask Write(IMessageAllocator maker, IMessageFactory factory, MessageContent content, bool waitWritten = false)
         {
-            return Write(maker.Allocate, factory, content);
+            return waitWritten ? ValueTask.CompletedTask : Write(maker.Allocate, factory, content);
         }
 
-        public Task Write(MessageAllocator maker, IMessageFactory factory, MessageContent content)
+        public ValueTask Write(MessageAllocator maker, IMessageFactory factory, MessageContent content, bool waitWritten = false)
         {
-            return channel.EventLoop.SubmitAsync<object?>(() => {
+            if (waitWritten)
+            {
+                return ValueTask.CompletedTask;
+            }
+            return new ValueTask(channel.EventLoop.SubmitAsync(() => {
                 IMessage? message = null;
                 try
                 {
@@ -65,11 +69,8 @@ namespace TnyFramework.Net.DotNetty.Transport
                     content.Cancel(e);
                     LOGGER.LogError(e, "");
                 }
-                var task = channel.WriteAndFlushAsync(message);
-                if (content is IMessageWritableContext ctx)
-                    ctx.SetWrittenTask(task);
-                return default;
-            });
+                return channel.WriteAndFlushAsync(message);
+            }).Unwrap());
         }
     }
 

@@ -13,11 +13,11 @@ namespace TnyFramework.Net.Endpoint
 
     public class SessionKeeperSetting : ISessionKeeperSetting
     {
-        private readonly SessionSetting sessionSetting = new SessionSetting();
+        private readonly SessionSetting sessionSetting = new();
 
         public string Name { get; set; } = "";
 
-        public string KeeperFactory { get; set; } = Unit.DefaultName<SessionKeeperFactory<object>>();
+        public string KeeperFactory { get; set; } = Unit.DefaultName<SessionKeeperFactory>();
 
         public string SessionFactory { get; set; } = Unit.DefaultName<SessionFactory>();
 
@@ -28,11 +28,6 @@ namespace TnyFramework.Net.Endpoint
         public long ClearSessionInterval { get; set; } = 60000;
 
         public ISessionSetting SessionSetting => sessionSetting;
-
-        public SessionSetting GetSessionSetting()
-        {
-            return sessionSetting;
-        }
     }
 
 }

@@ -14,38 +14,29 @@ using System.Threading;
 using System.Threading.Tasks;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Command.Dispatcher;
-using TnyFramework.Net.Command.Processor;
 using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Command.Tasks
 {
 
-    public class CommandTaskBox : IAsyncExecutor
+    public class CommandBox
     {
-        private const int STATUS_IDLE = 0;
-        private const int STATUS_SUBMITTED = 1;
+        private readonly ReaderWriterLockSlim boxLock = new();
 
-        private readonly ReaderWriterLockSlim boxLock = new ReaderWriterLockSlim();
+        private readonly ConcurrentQueue<ICommand> commandQueue = new();
 
-        private readonly ConcurrentQueue<ICommand> commandQueue = new ConcurrentQueue<ICommand>();
-
-        private readonly ICommandTaskBoxProcessor processor;
-
-        private volatile object? attachment;
+        private readonly ICommandExecutor executor;
 
         private volatile bool closed;
 
-        public CommandTaskBox(ICommandTaskBoxProcessor processor)
+        public CommandBox(ICommandExecutorFactory executorFactory)
         {
-            this.processor = processor;
+            executor = executorFactory.CreateCommandExecutor(this);
         }
 
         public bool IsEmpty => commandQueue.IsEmpty;
 
-        public bool AddCommand(IRpcEnterContext rpcContext)
-        {
-            return DoAddCommand(() => CreateCommand(rpcContext));
-        }
+        public TaskScheduler TaskScheduler => executor.TaskScheduler;
 
         public bool AddCommand(ICommand command)
         {
@@ -57,12 +48,17 @@ namespace TnyFramework.Net.Command.Tasks
                     return false;
                 }
                 commandQueue.Enqueue(command);
-                processor.Submit(this);
+                executor.TrySummit();
                 return true;
             } finally
             {
                 boxLock.ExitReadLock();
             }
+        }
+
+        public bool AddCommand(IRpcEnterContext rpcContext)
+        {
+            return DoAddCommand(() => CreateCommand(rpcContext));
         }
 
         private ICommand? CreateCommand(IRpcEnterContext rpcContext)
@@ -88,16 +84,6 @@ namespace TnyFramework.Net.Command.Tasks
             return null;
         }
 
-        public Task AsyncExec(AsyncHandle handle)
-        {
-            return processor.AsyncExec(this, handle);
-        }
-
-        public Task<T> AsyncExec<T>(AsyncHandle<T> function)
-        {
-            return processor.AsyncExec(this, function);
-        }
-
         private bool DoAddCommand(Func<ICommand?> commandFunc)
         {
             boxLock.EnterReadLock();
@@ -111,7 +97,7 @@ namespace TnyFramework.Net.Command.Tasks
                 if (command == null)
                     return false;
                 commandQueue.Enqueue(command);
-                processor.Submit(this);
+                executor.TrySummit();
                 return true;
             } finally
             {
@@ -119,7 +105,17 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
 
-        public bool TakeOver(CommandTaskBox box)
+        public Task AsyncExec(AsyncHandle handle)
+        {
+            return executor.AsyncExec(handle);
+        }
+
+        public Task<T> AsyncExec<T>(AsyncHandle<T> function)
+        {
+            return executor.AsyncExec(function);
+        }
+
+        public bool TakeOver(CommandBox box)
         {
             if (closed)
             {
@@ -140,7 +136,7 @@ namespace TnyFramework.Net.Command.Tasks
                 {
                     commandQueue.Enqueue(task);
                 }
-                processor.Submit(this);
+                executor.TrySummit();
                 return true;
             } finally
             {
@@ -179,69 +175,6 @@ namespace TnyFramework.Net.Command.Tasks
         public bool Poll(out ICommand task)
         {
             return commandQueue.TryDequeue(out task!);
-        }
-
-        public TAttachment? GetAttachment<TAttachment>()
-        {
-            if (attachment == null)
-            {
-                return default;
-            }
-            return (TAttachment) attachment;
-        }
-
-        public TAttachment? SetAttachmentIfNull<TAttachment>(ICommandTaskBoxProcessor checkProcessor, TAttachment value)
-        {
-            if (processor != checkProcessor)
-                return default;
-            if (attachment != null)
-                return default;
-            lock (this)
-            {
-                if (attachment != null)
-                    return default;
-                attachment = value;
-                return value;
-            }
-        }
-
-        public TAttachment? SetAttachmentIfNull<TAttachment>(ICommandTaskBoxProcessor checkProcessor, Func<TAttachment> func)
-        {
-            if (processor != checkProcessor)
-                return default;
-            if (attachment != null)
-                return default;
-            lock (this)
-            {
-                if (attachment != null)
-                    return default;
-                var value = func.Invoke();
-                attachment = value;
-                return value;
-            }
-        }
-
-        public TAttachment? SetAttachment<TAttachment>(ICommandTaskBoxProcessor checkProcessor, TAttachment value)
-        {
-            if (processor != checkProcessor)
-                return default;
-            lock (this)
-            {
-                attachment = value;
-                return value;
-            }
-        }
-
-        public TAttachment? SetAttachment<TAttachment>(ICommandTaskBoxProcessor checkProcessor, Func<TAttachment> func)
-        {
-            if (processor != checkProcessor)
-                return default;
-            lock (this)
-            {
-                var value = func.Invoke();
-                attachment = value;
-                return value;
-            }
         }
     }
 

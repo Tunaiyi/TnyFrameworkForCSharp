@@ -8,10 +8,8 @@
 
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Common.Logger;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Plugin;
@@ -38,11 +36,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private readonly IDictionary<object, IAuthenticationValidator> authenticationValidators = new Dictionary<object, IAuthenticationValidator>();
 
-        // private readonly IEventBus<CommandExecute> commandExecuteEvent;
-
         private readonly IEventBus<CommandDone> commandDoneEvent;
-
-        // public IEventBox<CommandExecute> CommandExecuteEvent => commandExecuteEvent;
 
         public IEventBox<CommandDone> CommandDoneEvent => commandDoneEvent;
 
@@ -70,7 +64,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         }
 
         public IList<ICommandPlugin> CommandPlugins { get; }
-        
+
         /// <summary>
         /// 获取应用配置
         /// </summary>
@@ -87,11 +81,6 @@ namespace TnyFramework.Net.Command.Dispatcher
         {
             return authenticationValidators.TryGetValue(protocolId, out var validator) ? validator : null;
         }
-
-        // internal void FireExecute(RpcHandleCommand rpcHandleCommand)
-        // {
-        //     commandExecuteEvent.Notify(rpcHandleCommand);
-        // }
 
         internal void FireDone(RpcHandleCommand rpcHandleCommand, Exception? cause)
         {

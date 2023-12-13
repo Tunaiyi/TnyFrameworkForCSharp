@@ -13,7 +13,7 @@ namespace TnyFramework.Net.Message.Extensions
     {
         public static long GetOriginalId(this IMessage subject)
         {
-            var idHeader = subject.GetHeader(MessageHeaderConstants.RPC_ORIGINAL_MESSAGE_ID);
+            var idHeader = subject.GetHeader(MessageHeaderKeys.RPC_ORIGINAL_MESSAGE_ID_HEADER);
             return idHeader?.MessageId ?? subject.Id;
         }
     }

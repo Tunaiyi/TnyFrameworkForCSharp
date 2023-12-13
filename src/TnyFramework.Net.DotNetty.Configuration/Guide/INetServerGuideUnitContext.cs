@@ -16,8 +16,4 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         IServerSetting LoadServerSetting();
     }
 
-    public interface INetServerGuideUnitContext<TUserId> : INetGuideUnitContext<TUserId>, INetServerGuideUnitContext
-    {
-    }
-
 }

@@ -11,11 +11,9 @@ namespace TnyFramework.Net.Transport
 
     public enum NetAccessMode
     {
-        
         Server,
 
         Client
-
     }
 
 }

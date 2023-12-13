@@ -6,12 +6,16 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Transport
+using TnyFramework.Net.Transport;
+
+namespace TnyFramework.Net.Message
 {
 
-    public abstract class RequestContent : MessageContent
+    public abstract class RequestContent : MessageContent, IMessageResponsable
     {
         private const long DEFAULT_FUTURE_TIMEOUT = 10000L;
+
+        protected TaskResponseSource? responseSource = null;
 
         /// <summary>
         /// 设置消息 body
@@ -40,6 +44,8 @@ namespace TnyFramework.Net.Transport
         /// <param name="timeout">超时</param>
         /// <returns>返回当前 context</returns>
         public abstract RequestContent WillRespondAwaiter(long timeout);
+
+        TaskResponseSource? IMessageResponsable.ResponseSource => responseSource;
     }
 
 }

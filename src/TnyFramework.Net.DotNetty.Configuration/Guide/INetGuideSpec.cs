@@ -9,39 +9,33 @@
 using System;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
 
-    public interface INetGuideSpec<in TUnit, TUserId, out TContext, out TSpec> : IUnitSpec<TUnit, TContext>
-        where TSpec : INetGuideSpec<TUnit, TUserId, TContext, TSpec>
+    public interface INetGuideSpec<in TUnit, out TContext, out TSpec> : IUnitSpec<TUnit, TContext>
+        where TSpec : INetGuideSpec<TUnit, TContext, TSpec>
         where TUnit : INetServer
         where TContext : INetGuideUnitContext
     {
-        TSpec AnonymousId(TUserId anonymousUserId);
+        TSpec TunnelConfigure(Action<IUnitSpec<INettyTunnelFactory, INetGuideUnitContext>> action);
 
-        TSpec CertificateConfigure(Action<IUnitSpec<ICertificateFactory<TUserId>, INetGuideUnitContext<TUserId>>> action);
+        TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, INetGuideUnitContext>> action);
 
-        TSpec TunnelConfigure(Action<IUnitSpec<INettyTunnelFactory, INetGuideUnitContext<TUserId>>> action);
+        TSpec ContactConfigure(Action<IUnitSpec<IContactFactory, INetGuideUnitContext>> action);
 
-        TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, INetGuideUnitContext<TUserId>>> action);
+        TSpec MessageBodyCodecConfigure(Action<UnitSpec<IMessageBodyCodec, INetGuideUnitContext>> action);
 
-        TSpec ContactConfigure(Action<IUnitSpec<IContactFactory, INetGuideUnitContext<TUserId>>> action);
-
-        TSpec MessageBodyCodecConfigure(Action<UnitSpec<IMessageBodyCodec, INetGuideUnitContext<TUserId>>> action);
-
-        TSpec MessageCodecConfigure(Action<UnitSpec<IMessageCodec, INetGuideUnitContext<TUserId>>> action);
+        TSpec MessageCodecConfigure(Action<UnitSpec<IMessageCodec, INetGuideUnitContext>> action);
 
         TSpec ChannelMakerConfigure(Action<UnitSpec<IChannelMaker, INetGuideUnitContext>> action);
 
-        TSpec RpcMonitorConfigure(Action<UnitSpec<RpcMonitor, INetGuideUnitContext<TUserId>>> action);
+        TSpec RpcMonitorConfigure(Action<UnitSpec<RpcMonitor, INetGuideUnitContext>> action);
     }
 
 }

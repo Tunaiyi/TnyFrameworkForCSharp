@@ -48,8 +48,10 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
 
         private readonly ITracingContext tracingContext;
         private readonly IEntrySegmentContextAccessor enterSegmentContextAccessor;
+
         private readonly IExitSegmentContextAccessor exitSegmentContextAccessor;
-        private readonly ILocalSegmentContextAccessor localSegmentContextAccessor;
+
+        // private readonly ILocalSegmentContextAccessor localSegmentContextAccessor;
         private readonly TracingConfig tracingConfig;
         private readonly InstrumentConfig instrumentConfig;
         private readonly SkywalkingRpcMonitorProperties setting;
@@ -62,14 +64,14 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             ITracingContext tracingContext,
             IEntrySegmentContextAccessor enterSegmentContextAccessor,
             IExitSegmentContextAccessor exitSegmentContextAccessor,
-            ILocalSegmentContextAccessor localSegmentContextAccessor,
+            // ILocalSegmentContextAccessor localSegmentContextAccessor,
             SkywalkingRpcMonitorProperties setting,
             IConfigAccessor configAccessor)
         {
             this.tracingContext = tracingContext;
             this.enterSegmentContextAccessor = enterSegmentContextAccessor;
             this.exitSegmentContextAccessor = exitSegmentContextAccessor;
-            this.localSegmentContextAccessor = localSegmentContextAccessor;
+            // this.localSegmentContextAccessor = localSegmentContextAccessor;
             this.setting = setting;
             instrumentConfig = configAccessor.Get<InstrumentConfig>();
             var config = configAccessor.Get<TracingConfig>();
@@ -89,7 +91,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             var message = rpcContext.MessageSubject;
             var contextCarrier = LoadCarrier(message);
             var rpcSegmentContext = tracingContext.CreateEntrySegmentContext(RpcOperationName(message), contextCarrier);
-            var contact = rpcContext.Contact;
+            var contact = rpcContext.Connector;
             TagSpanService(rpcSegmentContext, contact, message);
             var attributes = rpcContext.Attributes;
             attributes.Set(TRACING_RPC_SPAN, rpcSegmentContext);
@@ -125,10 +127,10 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
                 var message = rpcContext.MessageSubject;
                 operationName = RemoteOperationName(rpcContext);
                 var carrierHeader = new TextCarrierHeaderCollection(new Dictionary<string, string>());
-                segmentContext = tracingContext.CreateExitSegmentContext(operationName, Peer(rpcContext.Contact), carrierHeader);
+                segmentContext = tracingContext.CreateExitSegmentContext(operationName, Peer(rpcContext.Connector), carrierHeader);
                 tracingHeader.Attributes.AddRang(carrierHeader);
                 message.PutHeader(tracingHeader);
-                TagSpanRemote(segmentContext, rpcContext.Contact, message);
+                TagSpanRemote(segmentContext, rpcContext.Connector, message);
                 var span = segmentContext.Span;
                 LOGGER.LogInformation("OnBeforeInvoke EXIT Start span {op} {span} | {header}", span.OperationName, Debug(segmentContext),
                     tracingHeader);
@@ -137,7 +139,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
                 var message = rpcContext.MessageSubject;
                 operationName = LocalOperationName(rpcContext);
                 segmentContext = tracingContext.CreateLocalSegmentContext(operationName);
-                TagSpanLocal(segmentContext, rpcContext.Contact, message);
+                TagSpanLocal(segmentContext, rpcContext.Connector, message);
                 var span = segmentContext.Span;
                 LOGGER.LogInformation("OnBeforeInvoke ENTER Start span {op} {span}", span.OperationName, Debug(segmentContext));
             }
@@ -206,13 +208,13 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             return $"{contact.ContactType.Group}[{contact.ContactId}]";
         }
 
-        private void TagSpanService(SegmentContext segmentContext, INetContact contact, IMessageSubject message)
+        private void TagSpanService(SegmentContext segmentContext, IConnector contact, IMessageSubject message)
         {
             TagSpanCommon(segmentContext, contact.AccessMode, message);
             TagSpanContact(segmentContext, CONTACT, contact);
         }
 
-        private void TagSpanRemote(SegmentContext segmentContext, INetContact contact, IMessageSubject message)
+        private void TagSpanRemote(SegmentContext segmentContext, IConnector contact, IMessageSubject message)
         {
             TagSpanCommon(segmentContext, NetAccessMode.Client, message);
             TagSpanContact(segmentContext, TARGET, contact);
@@ -220,17 +222,17 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             TagSpanForward(segmentContext, message);
         }
 
-        private void TagSpanLocal(SegmentContext span, INetContact contact, IMessageSubject message)
+        private void TagSpanLocal(SegmentContext span, IContact connector, IMessageSubject message)
         {
             TagSpanCommon(span, NetAccessMode.Server, message);
             TagSpanArguments(span, message);
             TagSpanForward(span, message);
-            TagSpanContact(span, CONTACT, contact);
+            TagSpanContact(span, CONTACT, connector);
         }
 
         private void TagSpanForward(SegmentContext segmentContext, IMessageSubject message)
         {
-            var header = message.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+            var header = message.GetHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
             var forward = header?.To;
             if (forward == null)
             {
@@ -299,7 +301,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
         private ICarrierHeaderCollection LoadCarrier(IMessageSubject message)
         {
             var headers = new Dictionary<string, string>();
-            var header = message.GetHeader(MessageHeaderConstants.RPC_TRACING);
+            var header = message.GetHeader(MessageHeaderKeys.RPC_TRACING_HEADER);
             if (header == null)
                 return new TextCarrierHeaderCollection(headers);
             LOGGER.LogInformation("LoadCarrier {protocol} {mode} | {header}", message.ProtocolId, message.Mode, header);

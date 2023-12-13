@@ -45,7 +45,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public INetTunnel NetTunnel => tunnel;
 
-        public override INetContact Contact => tunnel;
+        public override IConnector Connector => tunnel;
 
         public IMessage Message => message;
 
@@ -53,9 +53,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public override bool Valid => tunnel.IsNull() && Message.IsNull();
 
-        public INetContact From => tunnel;
+        public IContact From => tunnel;
 
-        public INetContact To => to;
+        public IContact To => to;
 
         public RpcEnterInvocationContext(INetTunnel tunnel, INetMessage message, bool async, IAttributes? attributes = null)
             : base(message, async, attributes)
@@ -76,7 +76,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return Prepare(operationName);
         }
 
-        public override IEndpoint GetEndpoint() => tunnel.GetEndpoint();
+        public override IEndpoint GetEndpoint() => tunnel.Endpoint;
 
         public bool Resume()
         {
@@ -132,7 +132,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         protected override void OnReturn(MessageContent content)
         {
-            RpcMessageAide.Send(tunnel, content);
+            _ = RpcMessageAide.Send(tunnel, content);
         }
     }
 

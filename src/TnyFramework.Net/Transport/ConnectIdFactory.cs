@@ -11,7 +11,7 @@ using System.Threading;
 namespace TnyFramework.Net.Transport
 {
 
-    public static class TransporterIdFactory
+    public static class ConnectIdFactory
     {
         private static volatile int _TUNNEL_ID_CREATOR = 0;
 

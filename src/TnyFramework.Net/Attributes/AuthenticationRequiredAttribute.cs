@@ -19,27 +19,27 @@ namespace TnyFramework.Net.Attributes
         /// <summary>
         /// 必须剩饭认证
         /// </summary>
-        /// <param name="userGroups">限制用户组</param>
+        /// <param name="contactGroups">限制用户组</param>
         /// <exception cref="CommonException"></exception>
-        public AuthenticationRequiredAttribute(params string[] userGroups)
+        public AuthenticationRequiredAttribute(params string[] contactGroups)
         {
             Validator = null;
-            UserGroups = userGroups;
+            ContactGroups = contactGroups;
         }
 
         /// <summary>
         /// 必须剩饭认证
         /// </summary>
         /// <param name="validator">认证器类型, validator必须实现 IAuthenticateValidator 接口 </param>
-        /// <param name="userGroups">限制用户组</param>
+        /// <param name="contactGroups">限制用户组</param>
         /// <exception cref="CommonException"></exception>
-        public AuthenticationRequiredAttribute(Type validator, params string[] userGroups)
+        public AuthenticationRequiredAttribute(Type validator, params string[] contactGroups)
         {
             if (!typeof(IAuthenticationValidator).IsAssignableFrom(validator))
             {
                 throw new CommonException($"{validator} 没有继承 {typeof(IAuthenticationValidator)}");
             }
-            UserGroups = userGroups;
+            ContactGroups = contactGroups;
             Validator = validator;
         }
 
@@ -60,7 +60,7 @@ namespace TnyFramework.Net.Attributes
         /// <summary>
         /// 是否是必须的, 默认为 true
         /// </summary>
-        public string[] UserGroups { get; }
+        public string[] ContactGroups { get; }
 
         /// <summary>
         /// 是否生效

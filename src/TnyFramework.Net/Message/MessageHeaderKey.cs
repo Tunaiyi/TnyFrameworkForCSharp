@@ -13,19 +13,22 @@ namespace TnyFramework.Net.Message
 
     public abstract class MessageHeaderKey
     {
-        public string Key { get; }
+        public string Value { get; }
+
+        public MessageHeaderUsage Usage { get; }
 
         public Type HeaderType { get; }
 
-        protected MessageHeaderKey(string key, Type headerType)
+        protected MessageHeaderKey(string value, MessageHeaderUsage usage, Type headerType)
         {
-            Key = key;
+            Usage = usage;
+            Value = value;
             HeaderType = headerType;
         }
 
         private bool Equals(MessageHeaderKey other)
         {
-            return Key == other.Key && HeaderType == other.HeaderType;
+            return Value == other.Value && HeaderType == other.HeaderType && Usage == other.Usage;
         }
 
         public override bool Equals(object? obj)
@@ -39,7 +42,7 @@ namespace TnyFramework.Net.Message
         {
             unchecked
             {
-                return (Key.GetHashCode() * 397) ^ HeaderType.GetHashCode();
+                return (Value.GetHashCode() * 397) ^ HeaderType.GetHashCode();
             }
         }
     }
@@ -50,12 +53,12 @@ namespace TnyFramework.Net.Message
     /// <typeparam name="TH"></typeparam>
     public class MessageHeaderKey<TH> : MessageHeaderKey where TH : MessageHeader
     {
-        public static MessageHeaderKey<TH> Of(string key)
+        public static MessageHeaderKey<TH> Of(string key, MessageHeaderUsage usage)
         {
-            return new MessageHeaderKey<TH>(key);
+            return new MessageHeaderKey<TH>(key, usage);
         }
 
-        private MessageHeaderKey(string key) : base(key, typeof(TH))
+        private MessageHeaderKey(string value, MessageHeaderUsage usage) : base(value, usage, typeof(TH))
         {
         }
     }

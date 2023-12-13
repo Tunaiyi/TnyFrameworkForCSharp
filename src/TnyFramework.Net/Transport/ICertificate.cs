@@ -6,29 +6,24 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Message;
+using TnyFramework.Net.Endpoint;
 
 namespace TnyFramework.Net.Transport
 {
 
-    public interface ICertificate : IContact
+    public interface ICertificate : IConnectIdentity
     {
+        public const long ANONYMITY_CONTACT_ID = -1L;
+        public const long ANONYMITY_IDENTIFY = -1L;
+        public const long ANONYMITY_ID = -1L;
+
         long Id { get; }
-
-        object GetUserId();
-
-        string UserGroup { get; }
 
         long AuthenticateAt { get; }
 
         CertificateStatus Status { get; }
 
         bool IsAuthenticated();
-    }
-
-    public interface ICertificate<out TUserId> : ICertificate
-    {
-        TUserId UserId { get; }
     }
 
     public static class CertificateExtensions
@@ -77,7 +72,8 @@ namespace TnyFramework.Net.Transport
             {
                 return true;
             }
-            return Equals(one.GetUserId(), other.GetUserId()) && Equals(one.UserGroup, other.UserGroup);
+            return Equals(one.ContactType, other.ContactType)
+                   && Equals(one.ContactId, other.ContactId);
         }
 
         public static bool IsSameCertificate(this ICertificate one, ICertificate other)
@@ -87,7 +83,10 @@ namespace TnyFramework.Net.Transport
             {
                 return true;
             }
-            return one.Id == other.Id && Equals(one.GetUserId(), other.GetUserId()) && Equals(one.UserGroup, other.UserGroup);
+            return one.Id == other.Id
+                   && Equals(one.Identify, other.Identify)
+                   && Equals(one.ContactType, other.ContactType) &&
+                   Equals(one.ContactId, other.ContactId);
         }
     }
 

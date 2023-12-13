@@ -11,14 +11,12 @@ using System.Collections;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
 using TnyFramework.DI.Container;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Demo.Controller;
 using TnyFramework.Net.Demo.DTO;
 using TnyFramework.Net.DotNetty.Configuration;
@@ -55,9 +53,9 @@ namespace TnyFramework.Net.Demo
                 };
                 dto.message = $"{dto.userId} - {dto.certId} 登录成功 at {DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
                 LOGGER.LogInformation("will send Current thread {ThreadId}", Thread.CurrentThread.ManagedThreadId);
-                var send = tunnel.Send(MessageContents.Respond(ResultCode.SUCCESS, message)
+                var sent = tunnel.Send(MessageContents.Respond(ResultCode.SUCCESS, message)
                     .WithBody(dto));
-                await send.Written();
+                await sent;
                 LOGGER.LogInformation("sent : Current thread {ThreadId}", Thread.CurrentThread.ManagedThreadId);
             }
         }
@@ -187,11 +185,7 @@ namespace TnyFramework.Net.Demo
 
             LogFactory.Logger<Program>().LogInformation("============");
             var services = new ServiceCollection();
-            services.TryAdd(ServiceDescriptor.Singleton(typeof(ICertificateFactory<>), typeof(CertificateFactory<>)));
             var p = services.BuildServiceProvider();
-            var intF = p.GetService<ICertificateFactory<int>>();
-            var longF = p.GetService<ICertificateFactory<long>>();
-            var fs = p.GetServices(typeof(ICertificateFactory));
             // var onMessage = p.GetService<TestOnMessage>();
             var user = new RpcAccessIdentify(TestRpcServiceType.TEST_CLIENT, 300, 1);
             var token = new RpcAccessToken(TestRpcServiceType.TEST_SERVICE, 200, user);
@@ -216,9 +210,9 @@ namespace TnyFramework.Net.Demo
             var unitContainer = new ServiceCollection();
             RpcServerConfiguration.CreateRpcServer(unitContainer)
                 .RpcServer("game-service", 17800)
-                .Server<long>("game-server", serverSpec => serverSpec.Server(18800))
+                .Server("game-server", serverSpec => serverSpec.Server(18800))
                 .EndpointConfigure(endpointSpec => endpointSpec
-                    .SessionKeeperFactory<long>("defaultSessionKeeperFactory")
+                    .SessionKeeperFactory("defaultSessionKeeperFactory")
                     .CustomSessionConfigure(settingSpec => settingSpec
                         .UserType(ContactType.DEFAULT_USER_TYPE)
                         .KeeperFactory("defaultSessionKeeperFactory")))

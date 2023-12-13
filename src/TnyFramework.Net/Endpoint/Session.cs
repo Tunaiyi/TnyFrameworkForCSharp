@@ -6,15 +6,14 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Endpoint
 {
 
-    public class Session<TUserId> : NetEndpoint<TUserId>, INetSession<TUserId>
+    public class Session : NetEndpoint, INetSession
     {
-        public Session(ICertificate<TUserId> certificate, IEndpointContext context) : base(certificate, context)
+        public Session(ICertificate certificate, IEndpointContext context) : base(certificate, context)
         {
         }
 
@@ -45,7 +44,7 @@ namespace TnyFramework.Net.Endpoint
 
         public override string ToString()
         {
-            return $"Session[UserType:{UserGroup}, UserId:${UserId}, Tunnel:{CurrentTunnel}]";
+            return $"Session[UserType:{ContactGroup}, UserId:${Identify}, Tunnel:{CurrentTunnel}]";
         }
     }
 

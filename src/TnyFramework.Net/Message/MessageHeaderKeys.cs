@@ -9,23 +9,23 @@
 namespace TnyFramework.Net.Message
 {
 
-    public static class MessageHeaderConstants
+    public static class MessageHeaderKeys
     {
         /// <summary>
         /// RpcForwardHeader type proto id
         /// </summary>
-        public const int RPC_FORWARD_HEADER_TYPE_PROTO = 100;
+        public const int RPC_FORWARD_TYPE_PROTO = 100;
 
         /// <summary>
         /// RpcForwardHeader key name
         /// </summary>
-        public const string RPC_FORWARD_HEADER_KEY = "Rpc-Forward";
+        public const string RPC_FORWARD_KEY = "Rpc-Forward";
 
         /// <summary>
         /// RpcForwardHeader MessageHeaderKey
         /// </summary>
         public static readonly MessageHeaderKey<RpcForwardHeader> RPC_FORWARD_HEADER =
-            MessageHeaderKey<RpcForwardHeader>.Of(RPC_FORWARD_HEADER_KEY);
+            MessageHeaderKey<RpcForwardHeader>.Of(RPC_FORWARD_KEY, MessageHeaderUsage.Transient);
 
         /// <summary>
         /// RpcOriginalMessageIdHeader type proto id
@@ -40,15 +40,15 @@ namespace TnyFramework.Net.Message
         /// <summary>
         /// RpcOriginalMessageIdHeader MessageHeaderKey
         /// </summary>
-        public static readonly MessageHeaderKey<RpcOriginalMessageIdHeader> RPC_ORIGINAL_MESSAGE_ID =
-            MessageHeaderKey<RpcOriginalMessageIdHeader>.Of(RPC_ORIGINAL_MESSAGE_ID_KEY);
+        public static readonly MessageHeaderKey<RpcOriginalMessageIdHeader> RPC_ORIGINAL_MESSAGE_ID_HEADER =
+            MessageHeaderKey<RpcOriginalMessageIdHeader>.Of(RPC_ORIGINAL_MESSAGE_ID_KEY, MessageHeaderUsage.Feedback);
 
         public const int RPC_TRACING_TYPE_PROTO = 102;
 
         public const string RPC_TRACING_TYPE_PROTO_KEY = "Rpc-Tracing";
 
-        public static readonly MessageHeaderKey<RpcTracingHeader> RPC_TRACING =
-            MessageHeaderKey<RpcTracingHeader>.Of(RPC_TRACING_TYPE_PROTO_KEY);
+        public static readonly MessageHeaderKey<RpcTracingHeader> RPC_TRACING_HEADER =
+            MessageHeaderKey<RpcTracingHeader>.Of(RPC_TRACING_TYPE_PROTO_KEY, MessageHeaderUsage.Infect);
     }
 
 }

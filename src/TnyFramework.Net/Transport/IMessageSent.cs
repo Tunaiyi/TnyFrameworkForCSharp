@@ -6,48 +6,32 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Command;
+using System.Threading.Tasks;
 using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Transport
 {
 
-    public interface IConnector : INetContact
+    public interface IMessageSent
     {
+        //
         /// <summary>
-        /// 获取用户 id
+        /// 获取响应 Task
         /// </summary>
-        object GetUserId();
+        /// <returns>响应 Task</returns>
+        bool Respond(out Task<IMessage> task);
 
         /// <summary>
-        /// 用户类型
+        /// 是否写出，如果未写出返回false
         /// </summary>
         /// <returns></returns>
-        string UserGroup { get; }
+        bool Written { get; }
 
-        /// <summary>
-        /// 认证
-        /// </summary>
-        ICertificate GetCertificate();
-
-        /// <summary>
-        /// 是否登陆认证
-        /// </summary>
-        /// <returns></returns>
-        bool IsAuthenticated();
-    }
-
-    public interface IConnector<out TUserId> : IConnector
-    {
-        /// <summary>
-        /// 用户 id
-        /// </summary>
-        TUserId UserId { get; }
-
-        /// <summary>
-        /// 认证
-        /// </summary>
-        ICertificate<TUserId> Certificate { get; }
+        // /// <summary>
+        // /// 是否可以等待响应
+        // /// </summary>
+        // /// <returns>是否可以等待响应</returns>
+        // bool IsRespondAwaitable();
     }
 
 }

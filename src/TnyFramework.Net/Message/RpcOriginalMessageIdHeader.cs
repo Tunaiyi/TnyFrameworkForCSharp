@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using ProtoBuf;
-using TnyFramework.Codec;
 using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.ProtobufNet.Attributes;
 using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
@@ -16,16 +15,16 @@ namespace TnyFramework.Net.Message
 {
 
     [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
-    [TypeProtobuf(MessageHeaderConstants.RPC_ORIGINAL_MESSAGE_ID_TYPE_PROTO)]
+    [TypeProtobuf(MessageHeaderKeys.RPC_ORIGINAL_MESSAGE_ID_TYPE_PROTO)]
     [ProtoContract]
     public class RpcOriginalMessageIdHeader : MessageHeader
     {
         [ProtoMember(1)]
         public long MessageId { get; set; }
 
-        public override string Key => MessageHeaderConstants.RPC_ORIGINAL_MESSAGE_ID_KEY;
-
-        public override bool IsTransitive => false;
+        public RpcOriginalMessageIdHeader() : base(MessageHeaderKeys.RPC_TRACING_HEADER)
+        {
+        }
     }
 
 }

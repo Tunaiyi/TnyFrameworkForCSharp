@@ -19,7 +19,7 @@ using TnyFramework.DI.Units;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Command.Dispatcher;
-using TnyFramework.Net.Command.Processor;
+using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
@@ -69,9 +69,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
             //         c.LoadChannelMaker()));
         }
 
-        public NettyServerConfiguration Server<TUserId>(string name, Action<INetServerGuideSpec<TUserId>> action)
+        public NettyServerConfiguration Server(string name, Action<INetServerGuideSpec> action)
         {
-            var spec = new NetServerGuideSpec<TUserId>(name, NetUnitContext, UnitContainer);
+            var spec = new NetServerGuideSpec(name, NetUnitContext, UnitContainer);
             action(spec);
             netServerGuideBuilders.Add(spec);
             return this;
@@ -108,10 +108,10 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-        public NettyServerConfiguration CommandTaskBoxProcessor(
-            Action<IUnitSpec<ICommandTaskBoxProcessor, INetUnitContext>> action)
+        public NettyServerConfiguration CommandBoxFactory(
+            Action<IUnitSpec<ICommandBoxFactory, INetUnitContext>> action)
         {
-            action.Invoke(NetUnitContext.CommandTaskBoxProcessorSpec);
+            action.Invoke(NetUnitContext.CommandBoxFactorySpec);
             return this;
         }
 

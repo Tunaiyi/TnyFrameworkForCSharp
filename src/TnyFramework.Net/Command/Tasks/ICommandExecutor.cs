@@ -6,20 +6,17 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Command.Tasks;
+using System.Threading.Tasks;
+using TnyFramework.Coroutines.Async;
 
-namespace TnyFramework.Net.Command.Processor
+namespace TnyFramework.Net.Command.Tasks
 {
 
-    public interface ICommandTaskBoxDriverExecutor
+    public interface ICommandExecutor : IAsyncExecutor
     {
-        void Execute(CommandTaskBoxDriver driver);
-    }
+        TaskScheduler TaskScheduler { get; }
 
-    public interface ICommandTaskBoxDriverExecutor<in TDriver> : ICommandTaskBoxDriverExecutor
-        where TDriver : CommandTaskBoxDriver
-    {
-        void Execute(TDriver driver);
+        void TrySummit();
     }
 
 }

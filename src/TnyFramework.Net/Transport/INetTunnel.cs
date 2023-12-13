@@ -8,8 +8,6 @@
 
 using TnyFramework.Common.Event;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
-using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport.Event;
@@ -17,8 +15,10 @@ using TnyFramework.Net.Transport.Event;
 namespace TnyFramework.Net.Transport
 {
 
-    public interface INetTunnel : ITunnel, ITransport, IMessageSender
+    public interface INetTunnel : ITunnel, ITransport
     {
+        INetEndpoint NetEndpoint { get; }
+
         /// <summary>
         /// 接收消息
         /// </summary>
@@ -36,16 +36,6 @@ namespace TnyFramework.Net.Transport
         /// Message 工厂
         /// </summary>
         IMessageFactory MessageFactory { get; }
-
-        /// <summary>
-        /// 终端
-        /// </summary>
-        new INetEndpoint GetEndpoint();
-
-        /// <summary>
-        /// 认证工厂
-        /// </summary>
-        ICertificateFactory CertificateFactory { get; }
 
         /// <summary>
         /// 终端 Endpoint
@@ -101,24 +91,6 @@ namespace TnyFramework.Net.Transport
         /// 关闭事件总线, 可监听到当前 Tunnel 的事件
         /// </summary>
         IEventBox<TunnelClose> CloseEvent { get; }
-    }
-
-    public interface INetTunnel<TUserId> : ITunnel<TUserId>, INetTunnel
-    {
-        new INetEndpoint<TUserId> Endpoint { get; }
-
-        /// <summary>
-        /// 认证工厂
-        /// </summary>
-        new ICertificateFactory<TUserId> CertificateFactory { get; }
-    }
-
-    public static class NetTunnelExtensions
-    {
-        public static INetTunnel<TUserId> As<TUserId>(this INetTunnel tunnel)
-        {
-            return (INetTunnel<TUserId>) tunnel;
-        }
     }
 
 }

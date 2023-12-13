@@ -6,7 +6,6 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Endpoint;
 
 namespace TnyFramework.Net.Command.Dispatcher
@@ -21,12 +20,12 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <return>获取终端</return>
         IEndpoint GetEndpoint();
 
-        /// <summary>
-        /// 当前执行器
-        /// </summary>
-        ///
-        /// <return>当前执行器</return>
-        IAsyncExecutor Executor { get; }
+        // /// <summary>
+        // /// 当前执行器
+        // /// </summary>
+        // ///
+        // /// <return>当前执行器</return>
+        // IAsyncExecutor Executor { get; }
     }
 
 }

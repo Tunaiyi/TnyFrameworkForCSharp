@@ -7,7 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Command.Dispatcher;
-using TnyFramework.Net.Command.Processor;
+using TnyFramework.Net.Command.Tasks;
 
 namespace TnyFramework.Net.Endpoint
 {
@@ -23,9 +23,9 @@ namespace TnyFramework.Net.Endpoint
         IMessageDispatcher MessageDispatcher { get; }
 
         /// <summary>
-        /// 任务执行器
+        /// 命令任务
         /// </summary>
-        ICommandTaskBoxProcessor CommandTaskProcessor { get; }
+        ICommandBoxFactory CommandBoxFactory { get; }
     }
 
 }

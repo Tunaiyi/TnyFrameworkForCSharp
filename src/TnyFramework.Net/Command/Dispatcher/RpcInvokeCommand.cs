@@ -20,6 +20,7 @@ using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Command.Dispatcher
@@ -55,11 +56,11 @@ namespace TnyFramework.Net.Command.Dispatcher
             this.contactAuthenticator = contactAuthenticator;
         }
 
-        protected override async Task OnRun()
+        protected override Task OnRun()
         {
             rpcContext.Invoke(RpcTransactionContext.RpcOperation(invokeContext.Name, rpcContext.NetMessage));
             // 调用逻辑业务
-            await Invoke();
+            return Invoke();
         }
 
         protected override void OnException(Exception? cause)
@@ -122,9 +123,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
             // 判断身份是否符合
             LOGGER.LogDebug("Controller [{Name}] 检测用户组调用权限", Name);
-            if (!controller.IsUserGroup(invokeContext.ContactType))
+            if (!controller.IsContactGroup(invokeContext.ContactType))
             {
-                LOGGER.LogError("Controller [{Name}] , 用户组 [{User}] 无法调用此协议", Name, tunnel.UserGroup);
+                LOGGER.LogError("Controller [{Name}] , 用户组 [{User}] 无法调用此协议", Name, tunnel.ContactGroup);
                 invokeContext.Intercept(NetResultCode.NO_PERMISSIONS);
                 return;
             }

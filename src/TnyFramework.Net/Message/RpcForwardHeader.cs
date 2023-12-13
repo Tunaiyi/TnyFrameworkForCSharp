@@ -16,7 +16,7 @@ namespace TnyFramework.Net.Message
 {
 
     [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
-    [TypeProtobuf(MessageHeaderConstants.RPC_FORWARD_HEADER_TYPE_PROTO)]
+    [TypeProtobuf(MessageHeaderKeys.RPC_FORWARD_TYPE_PROTO)]
     [ProtoContract]
     public class RpcForwardHeader : MessageHeader
     {
@@ -56,9 +56,9 @@ namespace TnyFramework.Net.Message
         [ProtoMember(7, IsPacked = true)]
         public ForwardPoint? ToForwarder { get; set; }
 
-        public override string Key => MessageHeaderConstants.RPC_FORWARD_HEADER_KEY;
-
-        public override bool IsTransitive => false;
+        public RpcForwardHeader() : base(MessageHeaderKeys.RPC_FORWARD_HEADER)
+        {
+        }
 
         public RpcForwardHeader SetFrom(IRpcServicer fromService)
         {

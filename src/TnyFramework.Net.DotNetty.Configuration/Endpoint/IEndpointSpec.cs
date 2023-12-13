@@ -33,14 +33,14 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
         /// 配置SessionKeeperFactory
         /// </summary>
         /// <returns></returns>
-        IEndpointSpec SessionKeeperFactory<TUserId>();
+        IEndpointSpec SessionKeeperFactory();
 
         /// <summary>
         /// 配置SessionKeeperFactory
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        IEndpointSpec SessionKeeperFactory<TUserId>(string name);
+        IEndpointSpec SessionKeeperFactory(string name);
 
         /// <summary>
         /// 配置 默认Session

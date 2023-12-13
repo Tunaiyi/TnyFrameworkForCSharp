@@ -6,21 +6,19 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
-using TnyFramework.Net.Command.Processor;
+using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Base
 {
 
-    public class NetworkContext<TUserId> : INetworkContext
+    public class NetworkContext : INetworkContext
     {
         public IMessageDispatcher MessageDispatcher { get; }
 
-        public ICommandTaskBoxProcessor CommandTaskProcessor { get; }
+        public ICommandBoxFactory CommandBoxFactory { get; }
 
         public IMessageFactory MessageFactory { get; }
 
@@ -30,46 +28,34 @@ namespace TnyFramework.Net.Base
 
         public RpcMonitor RpcMonitor { get; }
 
-        public ICertificateFactory<TUserId> CertificateFactory { get; }
-
         public IRpcForwarder? RpcForwarder { get; }
-
-        public ICertificateFactory GetCertificateFactory() => CertificateFactory;
 
         public NetworkContext()
         {
             MessageDispatcher = null!;
-            CommandTaskProcessor = null!;
+            CommandBoxFactory = null!;
             MessageFactory = null!;
             ContactFactory = null!;
             Setting = null!;
             RpcMonitor = null!;
-            CertificateFactory = null!;
         }
 
         public NetworkContext(
             IServerBootstrapSetting setting,
             IMessageDispatcher messageDispatcher,
-            ICommandTaskBoxProcessor commandTaskProcessor,
+            ICommandBoxFactory commandBoxFactory,
             IMessageFactory messageFactory,
             IContactFactory contactFactory,
-            ICertificateFactory<TUserId> certificateFactory,
             RpcMonitor rpcMonitor,
             IRpcForwarder? rpcForwarder = null)
         {
             Setting = setting;
             MessageDispatcher = messageDispatcher;
-            CommandTaskProcessor = commandTaskProcessor;
+            CommandBoxFactory = commandBoxFactory;
             MessageFactory = messageFactory;
             ContactFactory = contactFactory;
-            CertificateFactory = certificateFactory;
             RpcMonitor = rpcMonitor;
             RpcForwarder = rpcForwarder;
-        }
-
-        ICertificateFactory<TUid> INetworkContext.CertificateFactory<TUid>()
-        {
-            return (ICertificateFactory<TUid>) CertificateFactory;
         }
     }
 

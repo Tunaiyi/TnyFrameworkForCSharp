@@ -13,7 +13,6 @@ using System.Collections.Immutable;
 using System.Linq;
 using TnyFramework.Common.Event;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Endpoint.Event;
 using TnyFramework.Net.Transport;
 
@@ -91,7 +90,7 @@ namespace TnyFramework.Net.Endpoint
 
         public IEndpointKeeper? FindKeeper(IContactType contactType)
         {
-            return endpointKeeperMap.TryGetValue(contactType, out var keeper) ? keeper : default;
+            return endpointKeeperMap.GetValueOrDefault(contactType);
         }
     }
 

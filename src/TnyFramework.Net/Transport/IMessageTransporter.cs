@@ -25,8 +25,9 @@ namespace TnyFramework.Net.Transport
         /// 发送消
         /// </summary>
         /// <param name="message">消息</param>
+        /// <param name="waitWritten">是否等待写出</param>
         /// <returns>写出等待对象</returns>
-        Task Write(IMessage message);
+        ValueTask Write(IMessage message, bool waitWritten = false);
 
         /// <summary>
         /// 发送消息
@@ -34,8 +35,9 @@ namespace TnyFramework.Net.Transport
         /// <param name="maker">消息创建器</param>
         /// <param name="factory">消息消息工厂</param>
         /// <param name="content">消息上下文</param>
+        /// <param name="waitWritten">是否等待写出</param>
         /// <returns>写出等待对象</returns>
-        Task Write(IMessageAllocator maker, IMessageFactory factory, MessageContent content);
+        ValueTask Write(IMessageAllocator maker, IMessageFactory factory, MessageContent content, bool waitWritten = false);
 
         /// <summary>
         /// 发送消息
@@ -43,8 +45,9 @@ namespace TnyFramework.Net.Transport
         /// <param name="maker">消息创建器</param>
         /// <param name="factory">消息消息工厂</param>
         /// <param name="content">消息上下文</param>
+        /// <param name="waitWritten">是否等待写出</param>
         /// <returns>写出等待对象</returns>
-        Task Write(MessageAllocator maker, IMessageFactory factory, MessageContent content);
+        ValueTask Write(MessageAllocator maker, IMessageFactory factory, MessageContent content, bool waitWritten = false);
     }
 
 }

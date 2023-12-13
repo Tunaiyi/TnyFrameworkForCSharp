@@ -30,7 +30,7 @@ namespace TnyFramework.Net.Rpc.Auth
 
         [RpcRequest(RpcProtocol.RPC_AUTH_4_AUTHENTICATE)]
         [AuthenticationRequired(typeof(RpcPasswordValidator))]
-        public IRpcResult<string> Authenticate(IServerBootstrapSetting setting, [UserId] RpcAccessIdentify id)
+        public IRpcResult<string> Authenticate(IServerBootstrapSetting setting, [IdentifyToken] RpcAccessIdentify id)
         {
             var serviceType = RpcServiceType.ForService(setting.ServiceName());
             var token = rpcAuthService.CreateToken(serviceType, id);
@@ -40,7 +40,7 @@ namespace TnyFramework.Net.Rpc.Auth
 
         [RpcResponse(RpcProtocol.RPC_AUTH_4_AUTHENTICATE)]
         [AuthenticationRequired(typeof(RpcTokenValidator))]
-        public void Authenticated([UserId] RpcAccessIdentify id)
+        public void Authenticated([IdentifyToken] RpcAccessIdentify id)
         {
             LOGGER.LogInformation("Rpc响应 >> [{id}] 认证完成", id);
         }

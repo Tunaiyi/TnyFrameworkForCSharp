@@ -6,7 +6,6 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Endpoint
@@ -14,9 +13,9 @@ namespace TnyFramework.Net.Endpoint
 
     public class SessionFactory : ISessionFactory
     {
-        public INetSession Create<TUserId>(ISessionSetting setting, IEndpointContext context, ICertificateFactory<TUserId> certificateFactory)
+        public INetSession Create(IEndpointSetting setting, IEndpointContext context)
         {
-            return new Session<TUserId>(certificateFactory.Anonymous(), context);
+            return new Session(Certificates.Anonymous, context);
         }
     }
 

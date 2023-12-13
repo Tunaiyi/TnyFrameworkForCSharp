@@ -20,8 +20,8 @@ using TnyFramework.Net.Message;
 namespace TnyFramework.Net.Transport
 {
 
-    public abstract class BaseNetTunnel<TUserId, TEndpoint, TTransporter> : NetTunnel<TUserId, TEndpoint>
-        where TEndpoint : INetEndpoint<TUserId>
+    public abstract class BaseNetTunnel<TEndpoint, TTransporter> : NetTunnel<TEndpoint>
+        where TEndpoint : INetEndpoint
         where TTransporter : IMessageTransporter
     {
         protected TTransporter Transporter { get; }
@@ -73,14 +73,34 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-        public override Task Write(IMessage message)
+        public override async ValueTask Write(IMessage message, bool waitWritten = false)
         {
-            return CheckAvailable(null, out var task) ? Transporter.Write(message) : task;
+            if (!await CheckAvailable(null))
+            {
+                return;
+            }
+            if (waitWritten)
+            {
+                await Transporter.Write(message);
+            } else
+            {
+                _ = Transporter.Write(message);
+            }
         }
 
-        public override Task Write(MessageAllocator allocator, MessageContent messageContent)
+        public override async ValueTask Write(MessageAllocator allocator, MessageContent messageContent, bool waitWritten = false)
         {
-            return CheckAvailable(messageContent, out var task) ? Transporter.Write(allocator, MessageFactory, messageContent) : task;
+            if (!await CheckAvailable(null))
+            {
+                return;
+            }
+            if (waitWritten)
+            {
+                await Transporter.Write(allocator, MessageFactory, messageContent);
+            } else
+            {
+                _ = Transporter.Write(allocator, MessageFactory, messageContent);
+            }
         }
 
         protected virtual void OnWriteUnavailable()
@@ -102,29 +122,27 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-        private bool CheckAvailable(MessageContent? content, out Task task)
+        private ValueTask<bool> CheckAvailable(MessageContent? content)
         {
             if (IsActive())
             {
-                task = null!;
-                return true;
+                return ValueTask.FromResult(true);
             }
             OnWriteUnavailable();
+            var cause = new TunnelDisconnectedException($"{this} is disconnect");
             if (content != null)
             {
                 content.Cancel(false);
-                task = content.Written();
             } else
             {
-                var cause = new TunnelDisconnectedException($"{this} is disconnect");
-                task = Task.FromException(cause);
+                return ValueTask.FromException<bool>(cause);
             }
-            return false;
+            return ValueTask.FromResult(false);
         }
 
         public override string ToString()
         {
-            return $"Tunnel({AccessMode})[{UserGroup}({UserId})]{Transporter}";
+            return $"Tunnel({AccessMode})[{ContactGroup}({Identify})]{Transporter}";
         }
     }
 

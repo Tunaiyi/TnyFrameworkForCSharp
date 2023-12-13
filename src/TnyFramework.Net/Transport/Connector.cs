@@ -9,36 +9,27 @@
 using System.Net;
 using TnyFramework.Common.Attribute;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 
 namespace TnyFramework.Net.Transport
 {
 
-    public abstract class Connector<TUserId> : AttributesContext, IConnector<TUserId>
+    public abstract class Connector : AttributesContext, IConnector
     {
-        public abstract ICertificate<TUserId> Certificate { get; }
+        public abstract ICertificate Certificate { get; }
 
-        public TUserId UserId => Certificate.UserId;
+        public long Identify => Certificate.Identify;
+
+        public object? IdentifyToken => Certificate.IdentifyToken;
 
         public long ContactId => Certificate.ContactId;
 
-        public string UserGroup => Certificate.UserGroup;
-
         public IContactType ContactType => Certificate.ContactType;
 
-        public object GetUserId()
-        {
-            return UserId!;
-        }
+        public string ContactGroup => Certificate.ContactGroup;
 
         public ICertificate GetCertificate()
         {
             return Certificate;
-        }
-
-        public bool IsAuthenticated()
-        {
-            return Certificate.IsAuthenticated();
         }
 
         public abstract EndPoint? RemoteAddress { get; }

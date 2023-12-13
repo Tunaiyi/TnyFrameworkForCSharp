@@ -6,32 +6,21 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Threading.Tasks;
-using TnyFramework.Net.Message;
+using System;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Attributes
 {
 
-    public interface ISendReceipt
+    [AttributeUsage(AttributeTargets.Parameter)]
+    public class IdentifyAttribute : Attribute
     {
-        //
         /// <summary>
-        /// 获取响应 Task
+        /// Message 的用户 id
         /// </summary>
-        /// <returns>响应 Task</returns>
-        Task<IMessage> Respond();
-
-        /// <summary>
-        /// 是否可以等待响应
-        /// </summary>
-        /// <returns>是否可以等待响应</returns>
-        bool IsRespondAwaitable();
-
-        /// <summary>
-        /// 返回发送 Task
-        /// </summary>
-        /// <returns></returns>
-        Task Written();
+        /// <param name="require"></param>
+        public IdentifyAttribute(bool require = true)
+        {
+        }
     }
 
 }

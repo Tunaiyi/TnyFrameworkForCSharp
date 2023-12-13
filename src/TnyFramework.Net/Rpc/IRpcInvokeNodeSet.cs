@@ -24,7 +24,7 @@ namespace TnyFramework.Net.Rpc
         /// </summary>
         /// <param name="nodeId">节点 id</param>
         /// <returns>远程节点</returns>
-        IRpcInvokeNode? FindInvokeNode(int nodeId);
+        IRpcInvokeNode? FindInvokeNode(long nodeId);
 
         /// <summary>
         /// 查找远程接入(连接)
@@ -32,7 +32,7 @@ namespace TnyFramework.Net.Rpc
         /// <param name="nodeId">节点 id</param>
         /// <param name="accessId">接入点 id</param>
         /// <returns>远程接入点</returns>
-        IRpcAccess? FindInvokeAccess(int nodeId, long accessId);
+        IRpcAccess? FindInvokeAccess(long nodeId, long accessId);
     }
 
 }

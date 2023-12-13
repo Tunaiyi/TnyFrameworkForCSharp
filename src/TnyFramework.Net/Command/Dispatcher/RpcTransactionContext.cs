@@ -10,7 +10,6 @@ using System;
 using System.Threading;
 using TnyFramework.Common.Attribute;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
@@ -68,7 +67,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private int status = INIT;
 
-        protected RpcTransactionContext(bool async,  IAttributes? attributes = null) : base(attributes)
+        protected RpcTransactionContext(bool async, IAttributes? attributes = null) : base(attributes)
         {
             Async = async;
             OperationName = null!;
@@ -81,15 +80,13 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public bool Async { get; }
 
-        public IAsyncExecutor Executor => GetEndpoint();
-
         public bool Completed => status == CLOSE;
 
         public abstract IMessageSubject MessageSubject { get; }
 
         public abstract RpcTransactionMode Mode { get; }
 
-        public abstract INetContact Contact { get; }
+        public abstract IConnector Connector { get; }
 
         public abstract bool Valid { get; }
 

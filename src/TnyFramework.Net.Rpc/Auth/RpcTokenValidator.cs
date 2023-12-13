@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
@@ -16,7 +15,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Rpc.Auth
 {
 
-    public class RpcTokenValidator : AuthenticationValidator<RpcAccessIdentify>
+    public class RpcTokenValidator : AuthenticationValidator
     {
         private readonly IIdGenerator idCreator;
 
@@ -28,8 +27,7 @@ namespace TnyFramework.Net.Rpc.Auth
             this.rpcAuthService = rpcAuthService;
         }
 
-        public override ICertificate<RpcAccessIdentify> Validate(ITunnel<RpcAccessIdentify> tunnel, IMessage message,
-            ICertificateFactory<RpcAccessIdentify> factory)
+        public override ICertificate Validate(ITunnel tunnel, IMessage message)
         {
             var token = message.BodyAs<string>();
             if (token == null)
@@ -42,8 +40,8 @@ namespace TnyFramework.Net.Rpc.Auth
                 if (result.IsSuccess())
                 {
                     var rpcToken = result.Value;
-                    return factory.Authenticate(idCreator.Generate(), RpcAccessIdentify.Parse(rpcToken.Id), rpcToken.Id,
-                        rpcToken.ServiceType, DateTimeOffset.Now.ToUnixTimeMilliseconds());
+                    var rpcIdentify = RpcAccessIdentify.Parse(rpcToken.Id);
+                    return Certificates.CreateAuthenticated(idCreator.Generate(), rpcIdentify.Id, rpcToken.Id, rpcToken.ServiceType, rpcIdentify);
                 }
                 var resultCode = result.Code;
                 throw new AuthFailedException(resultCode, null, $"Rpc登录认证失败. {{resultCode}} : {result.Message}");

@@ -6,7 +6,10 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System.Threading.Tasks;
 using TnyFramework.Net.Endpoint;
+using TnyFramework.Net.Message;
+using TnyFramework.Net.Rpc.Extensions;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Rpc
@@ -14,21 +17,21 @@ namespace TnyFramework.Net.Rpc
 
     public class RpcEndpointAccessPoint : IRpcRemoteAccessPoint
     {
-        public RpcAccessIdentify AccessId => Endpoint.UserId;
+        public RpcAccessIdentify AccessId => Endpoint.GetRpcAccessIdentify();
 
-        public Message.ForwardPoint ForwardPoint { get; }
+        public ForwardPoint ForwardPoint { get; }
 
-        internal IEndpoint<RpcAccessIdentify> Endpoint { get; }
+        private IEndpoint Endpoint { get; }
 
-        public RpcEndpointAccessPoint(IEndpoint<RpcAccessIdentify> endpoint)
+        public RpcEndpointAccessPoint(IEndpoint endpoint)
         {
             Endpoint = endpoint;
-            ForwardPoint = new Message.ForwardPoint(AccessId);
+            ForwardPoint = new ForwardPoint(AccessId);
         }
 
-        public ISendReceipt Send(MessageContent content)
+        public ValueTask<IMessageSent> Send(MessageContent content, bool waitWritten = false)
         {
-            return Endpoint.Send(content);
+            return Endpoint.Send(content, waitWritten);
         }
 
         public int CompareTo(IRpcRemoteAccessPoint? other)

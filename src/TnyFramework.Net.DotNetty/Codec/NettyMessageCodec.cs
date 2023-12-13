@@ -38,13 +38,13 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         public INetMessage Decode(IByteBuffer buffer, IMessageFactory factory)
         {
-            ByteBufferVariantExtensions.ReadVariant(buffer, out long id);
+            buffer.ReadVariant(out long id);
             var option = buffer.ReadByte();
             var mode = (MessageMode) (option & CodecConstants.MESSAGE_HEAD_OPTION_MODE_MASK);
-            ByteBufferVariantExtensions.ReadVariant(buffer, out int protocol);
-            ByteBufferVariantExtensions.ReadVariant(buffer, out int code);
-            ByteBufferVariantExtensions.ReadVariant(buffer, out long toMessage);
-            ByteBufferVariantExtensions.ReadVariant(buffer, out long time);
+            buffer.ReadVariant(out int protocol);
+            buffer.ReadVariant(out int code);
+            buffer.ReadVariant(out long toMessage);
+            buffer.ReadVariant(out long time);
 
             int line = (byte) (option & CodecConstants.MESSAGE_HEAD_OPTION_LINE_MASK);
             line >>= CodecConstants.MESSAGE_HEAD_OPTION_LINE_SHIFT;
@@ -100,7 +100,7 @@ namespace TnyFramework.Net.DotNetty.Codec
         private IDictionary<string, MessageHeader> ReadHeaders(IByteBuffer buffer)
         {
             var headerMap = new Dictionary<string, MessageHeader>();
-            ByteBufferVariantExtensions.ReadVariant(buffer, out int size);
+            buffer.ReadVariant(out int size);
             for (var index = 0; index < size; index++)
             {
                 try
@@ -121,7 +121,7 @@ namespace TnyFramework.Net.DotNetty.Codec
         private object? ReadBody(IByteBuffer buffer, bool relay)
         {
             object? body;
-            ByteBufferVariantExtensions.ReadVariant(buffer, out int length);
+            buffer.ReadVariant(out int length);
             var bodyBuff = buffer.Allocator.HeapBuffer(length);
             buffer.ReadBytes(bodyBuff, length);
             if (relay)

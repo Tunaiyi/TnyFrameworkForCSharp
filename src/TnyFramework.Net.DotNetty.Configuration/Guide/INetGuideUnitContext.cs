@@ -7,8 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
-using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
@@ -37,17 +35,12 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         IMessageHeaderCodec LoadMessageHeaderCodec();
 
         INetworkContext LoadNetworkContext();
-        
+
         RpcMonitor LoadRpcMonitor();
 
         IDataPacketV1ChannelMakerUnitContext ChannelMakerUnitContext { get; }
 
         INetUnitContext UnitContext { get; }
-    }
-
-    public interface INetGuideUnitContext<TUserId> : INetGuideUnitContext
-    {
-        ICertificateFactory<TUserId> LoadCertificateFactory();
     }
 
 }

@@ -62,7 +62,7 @@ namespace TnyFramework.Net.Message
 
         public T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader
         {
-            return GetHeader<T>(key.Key);
+            return GetHeader<T>(key.Value);
         }
 
         public bool IsHasHeaders()
@@ -74,9 +74,9 @@ namespace TnyFramework.Net.Message
 
         public IDictionary<string, MessageHeader> GetAllHeaderMap() => Headers.ToImmutableDictionary();
 
-        public bool IsForward() => ExistHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+        public bool IsForward() => ExistHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
 
-        public RpcForwardHeader? ForwardHeader => GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+        public RpcForwardHeader? ForwardHeader => GetHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
 
         public bool ExistHeader(string key)
         {
@@ -90,7 +90,7 @@ namespace TnyFramework.Net.Message
 
         public bool ExistHeader(MessageHeaderKey key)
         {
-            return ExistHeader(key.Key);
+            return ExistHeader(key.Value);
         }
 
         public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader
@@ -125,7 +125,7 @@ namespace TnyFramework.Net.Message
 
         public bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader
         {
-            return Headers.Remove(key.Key);
+            return Headers.Remove(key.Value);
         }
 
         public void RemoveHeaders(IEnumerable<string> keys)

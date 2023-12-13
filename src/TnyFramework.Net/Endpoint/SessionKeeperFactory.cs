@@ -14,7 +14,7 @@ using TnyFramework.Net.Base;
 namespace TnyFramework.Net.Endpoint
 {
 
-    public class SessionKeeperFactory<TUserId> : ISessionKeeperFactory
+    public class SessionKeeperFactory : ISessionKeeperFactory
     {
         private readonly IDictionary<string, ISessionFactory> factories;
 
@@ -31,7 +31,7 @@ namespace TnyFramework.Net.Endpoint
         public ISessionKeeper CreateKeeper(IContactType contactType, ISessionKeeperSetting setting)
         {
             return factories.TryGetValue(setting.SessionFactory, out var factory)
-                ? new SessionKeeper<TUserId>(contactType, factory, setting)
+                ? new SessionKeeper(contactType, factory, setting)
                 : throw new NullReferenceException();
         }
     }

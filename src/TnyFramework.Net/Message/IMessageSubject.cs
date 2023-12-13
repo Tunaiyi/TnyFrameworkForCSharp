@@ -12,11 +12,6 @@ namespace TnyFramework.Net.Message
     public interface IMessageSubject : IMessageHeaderContainer, IMessageSchema
     {
         /// <summary>
-        /// 结果码
-        /// </summary>
-        int GetCode();
-
-        /// <summary>
         /// 是否存在消息
         /// </summary>
         bool ExistBody { get; }

@@ -6,21 +6,17 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
+using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Attributes
+namespace TnyFramework.Net.Message
 {
 
-    [AttributeUsage(AttributeTargets.Parameter)]
-    public class UserIdAttribute : Attribute
+    internal interface IMessageResponsable
     {
         /// <summary>
-        /// Message 的用户 id
+        /// 获取相应任务源
         /// </summary>
-        /// <param name="require"></param>
-        public UserIdAttribute(bool require = true)
-        {
-        }
+        internal TaskResponseSource? ResponseSource { get; }
     }
 
 }

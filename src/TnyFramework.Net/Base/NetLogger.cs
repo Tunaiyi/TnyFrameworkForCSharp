@@ -19,25 +19,25 @@ namespace TnyFramework.Net.Base
 
     public static class NetLogger
     {
-        private static ILogger GetMessageSendLogger(string service, IMessageSchema message)
+        private static ILogger GetMessageSendLogger(string group, IMessageSchema message)
         {
-            return NetLoggerGroup.OfRpc(service).ForSendMessage(message.Mode);
+            return NetLoggerGroup.OfRpc(group).ForSendMessage(message.Mode);
         }
 
-        private static ILogger GetMessageReceiveLogger(string service, IMessageSchema message)
+        private static ILogger GetMessageReceiveLogger(string group, IMessageSchema message)
         {
-            return NetLoggerGroup.OfRpc(service).ForReceiveMessage(message.Mode);
+            return NetLoggerGroup.OfRpc(group).ForReceiveMessage(message.Mode);
         }
 
         internal static void LogSend(ITunnel tunnel, IMessage message)
         {
-            var logger = GetMessageSendLogger(tunnel.UserGroup, message);
+            var logger = GetMessageSendLogger(tunnel.ContactGroup, message);
             logger?.LogDebug("# {tunnel} [发送] =>> Message : {message}", tunnel, message);
         }
 
         internal static void LogReceive(ITunnel tunnel, IMessage message)
         {
-            var logger = GetMessageReceiveLogger(tunnel.UserGroup, message);
+            var logger = GetMessageReceiveLogger(tunnel.ContactGroup, message);
             logger?.LogDebug("# {tunnel} [接收] <<= Message : {message}", tunnel, message);
         }
     }
@@ -49,10 +49,10 @@ namespace TnyFramework.Net.Base
         private readonly ILogger[] sendLoggers;
 
         private static readonly Func<NetworkWay, string, string, ILogger> MESSAGE_RECEIVE_LOGGER_NAME_FACTORY =
-            (way, service, mode) => LogFactory.Logger($"com.tny.game.net.rpc.{way.Value}.receive.{service.ToLower()}.{mode.ToLower()}");
+            (way, group, mode) => LogFactory.Logger($"com.tny.game.net.rpc.{way.Value}.receive.{group.ToLower()}.{mode.ToLower()}");
 
         private static readonly Func<NetworkWay, string, string, ILogger> MESSAGE_SEND_LOGGER_NAME_FACTORY =
-            (way, service, mode) => LogFactory.Logger($"com.tny.game.net.roc.{way.Value}.send.{service.ToLower()}.{mode.ToLower()}");
+            (way, group, mode) => LogFactory.Logger($"com.tny.game.net.roc.{way.Value}.send.{group.ToLower()}.{mode.ToLower()}");
 
         private static readonly ConcurrentDictionary<string, NetLoggerGroup> NET_LOGGER_GROUP_MAP =
             new ConcurrentDictionary<string, NetLoggerGroup>();
@@ -69,7 +69,7 @@ namespace TnyFramework.Net.Base
             return NET_LOGGER_GROUP_MAP.GetOrAdd($"Rpc:{userType}", logger);
         }
 
-        private NetLoggerGroup(string service,
+        private NetLoggerGroup(string group,
             Func<NetworkWay, string, string, ILogger> receiveLoggerFactory,
             Func<NetworkWay, string, string, ILogger> sendLoggerFactory)
         {
@@ -80,8 +80,8 @@ namespace TnyFramework.Net.Base
             {
                 if (value is not MessageMode mode)
                     continue;
-                receiveLoggers[mode.GetIndex()] = receiveLoggerFactory(mode.GetWay(), service, $"{mode}");
-                sendLoggers[mode.GetIndex()] = sendLoggerFactory(mode.GetWay(), service, $"{mode}");
+                receiveLoggers[mode.GetIndex()] = receiveLoggerFactory(mode.GetWay(), group, $"{mode}");
+                sendLoggers[mode.GetIndex()] = sendLoggerFactory(mode.GetWay(), group, $"{mode}");
             }
         }
 

@@ -14,7 +14,7 @@ namespace TnyFramework.Net.Message
 
     public class CommonMessageHead : AbstractNetMessageHead
     {
-        private long id;  
+        private long id;
 
         public override long Id => id;
 
@@ -48,7 +48,7 @@ namespace TnyFramework.Net.Message
             Line = subject.Line;
             Mode = subject.Mode;
             ProtocolId = subject.ProtocolId;
-            Code = subject.GetCode();
+            Code = subject.Code;
             ToMessage = subject.ToMessage;
             Time = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         }

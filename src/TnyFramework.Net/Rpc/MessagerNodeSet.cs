@@ -36,11 +36,11 @@ namespace TnyFramework.Net.Rpc
             return remoterList;
         }
 
-        public IRpcInvokeNode FindInvokeNode(int nodeId) => this;
+        public IRpcInvokeNode FindInvokeNode(long nodeId) => this;
 
-        public IRpcAccess? FindInvokeAccess(int nodeId, long accessId) => GetAccess(accessId);
+        public IRpcAccess? FindInvokeAccess(long nodeId, long accessId) => GetAccess(accessId);
 
-        public int NodeId => 0;
+        public long NodeId => 0;
 
         public IContactType ServiceType { get; }
 

@@ -6,14 +6,26 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Command.Dispatcher
-{
+namespace TnyFramework.Net.Command.Tasks;
 
-    public interface IMessageReceiver : INetContact, IReceiver
+public class DefaultCommandBoxFactory : ICommandBoxFactory
+{
+    private readonly ICommandExecutorFactory commandExecutorFactory;
+
+    public DefaultCommandBoxFactory()
     {
+        commandExecutorFactory = new SerialCommandExecutorFactory();
     }
 
+    public DefaultCommandBoxFactory(ICommandExecutorFactory commandExecutorFactory)
+    {
+        this.commandExecutorFactory = commandExecutorFactory;
+    }
+
+    public CommandBox CreateCommandBox(ICertificate certificate)
+    {
+        return new CommandBox(commandExecutorFactory);
+    }
 }

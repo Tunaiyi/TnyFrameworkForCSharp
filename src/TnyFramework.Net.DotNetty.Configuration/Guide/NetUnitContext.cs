@@ -12,7 +12,7 @@ using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Command.Dispatcher;
-using TnyFramework.Net.Command.Processor;
+using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
@@ -36,7 +36,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         public UnitSpec<IRpcInvokeNodeManager, INetUnitContext> RpcRemoteServiceManagerSpec { get; }
 
-        public UnitSpec<ICommandTaskBoxProcessor, INetUnitContext> CommandTaskBoxProcessorSpec { get; }
+        public UnitSpec<ICommandBoxFactory, INetUnitContext> CommandBoxFactorySpec { get; }
 
         public UnitCollectionSpec<ICommandPlugin, INetUnitContext> CommandPluginSpecs { get; }
 
@@ -57,8 +57,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
                 .Default(DefaultMessageDispatcherContext);
 
             // CommandTaskBoxProcessor
-            CommandTaskBoxProcessorSpec = UnitSpec.Unit<ICommandTaskBoxProcessor, INetUnitContext>()
-                .Default<CoroutineCommandTaskBoxProcessor>();
+            CommandBoxFactorySpec = UnitSpec.Unit<ICommandBoxFactory, INetUnitContext>()
+                .Default<DefaultCommandBoxFactory>();
 
             // CommandPlugin
             CommandPluginSpecs = UnitCollectionSpec.Units<ICommandPlugin, INetUnitContext>();
@@ -80,7 +80,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             LoadAuthenticateValidators();
             LoadCommandPlugins();
             LoadMessageDispatcher();
-            LoadCommandTaskProcessor();
+            LoadCommandBoxFactory();
             LoadMessageDispatcherContext();
             LoadRpcRemoteServiceManager();
         }
@@ -100,9 +100,9 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return MessageDispatcherSpec.Load(this, UnitContainer);
         }
 
-        public ICommandTaskBoxProcessor LoadCommandTaskProcessor()
+        public ICommandBoxFactory LoadCommandBoxFactory()
         {
-            return CommandTaskBoxProcessorSpec.Load(this, UnitContainer);
+            return CommandBoxFactorySpec.Load(this, UnitContainer);
         }
 
         public INetAppContext LoadAppContext()

@@ -25,6 +25,11 @@ namespace TnyFramework.Net.Message
         /// 消息者类型
         /// </summary>
         IContactType ContactType { get; }
+
+        /// <summary>
+        /// 消息者类型
+        /// </summary>
+        string ContactGroup => ContactType.Group;
     }
 
 }

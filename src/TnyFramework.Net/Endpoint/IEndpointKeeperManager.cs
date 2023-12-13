@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Endpoint

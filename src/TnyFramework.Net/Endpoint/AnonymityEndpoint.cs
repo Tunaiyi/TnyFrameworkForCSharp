@@ -6,28 +6,25 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Endpoint
 {
 
-    public class AnonymityEndpoint<TUserId> : NetEndpoint<TUserId>, INetSession<TUserId>
+    public class AnonymityEndpoint : NetEndpoint, INetSession
     {
-        public AnonymityEndpoint(ICertificateFactory<TUserId> certificateFactory, IEndpointContext context)
-            : base(certificateFactory.Anonymous(), context)
+        public AnonymityEndpoint(IEndpointContext context)
+            : base(Certificates.Anonymous, context)
         {
         }
 
-        public AnonymityEndpoint(ICertificateFactory<TUserId> certificateFactory, IEndpointContext context, INetTunnel<TUserId> tunnel)
-            : base(certificateFactory.Anonymous(), context)
+        public AnonymityEndpoint(IEndpointContext context, INetTunnel tunnel)
+            : base(Certificates.Anonymous, context)
         {
             SetTunnel(tunnel);
         }
 
         public override void OnUnactivated(INetTunnel tunnel) => Close();
-
-        
     }
 
 }

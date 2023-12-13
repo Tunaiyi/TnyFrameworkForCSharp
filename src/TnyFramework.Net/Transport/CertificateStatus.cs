@@ -15,23 +15,23 @@ namespace TnyFramework.Net.Transport
     public enum CertificateStatus
     {
         /**
-		 * 无效的
-		 */
+         * 无效的
+         */
         Invalid = 0,
 
         /**
-		 * 未认证
-		 */
+         * 未认证
+         */
         Unauthenticated = 1 << 1,
 
         /**
-		 * 已认证
-		 */
+         * 已认证
+         */
         Authenticated = (2 << 1) | 1,
 
         /**
-		 * 续约认证
-		 */
+         * 续约认证
+         */
         Renew = (3 << 1) | 1,
     }
 

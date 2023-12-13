@@ -8,16 +8,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Result;
-using TnyFramework.Net.Message;
+using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Message
 {
 
-    public class DefaultMessageContent : RequestContent, IMessageWritableContext
+    public class DefaultMessageContent : RequestContent
     {
         public override IResultCode ResultCode { get; }
 
@@ -58,17 +57,12 @@ namespace TnyFramework.Net.Transport
             return this;
         }
 
-        public TaskResponseSource? ResponseSource { get; private set; }
-
-        public Task? WrittenTask { get; private set; }
-
         public DefaultMessageContent(MessageMode mode, IProtocol protocol, IResultCode resultCode,
             long toMessage = MessageConstants.EMPTY_MESSAGE_ID)
         {
             ResultCode = resultCode;
             Body = null;
-            ResponseSource = null!;
-            WrittenTask = null!;
+            responseSource = null!;
             ToMessage = toMessage;
             Mode = mode;
             ProtocolId = protocol.ProtocolId;
@@ -95,55 +89,27 @@ namespace TnyFramework.Net.Transport
 
         public override void Cancel(bool mayInterruptIfRunning)
         {
-            ResponseSource?.TrySetCanceled();
-            if (WrittenTask == null)
-            {
-                WrittenTask = Task.FromCanceled(CancellationToken.None);
-            }
+            responseSource?.TrySetCanceled();
         }
 
         public override void Cancel(Exception cause)
         {
-            ResponseSource?.SetException(cause);
-            if (WrittenTask == null)
-            {
-                WrittenTask = Task.FromException(cause);
-            }
-        }
-
-        public override Task<IMessage> Respond()
-        {
-            return ResponseSource?.Task ?? Task.FromResult<IMessage>(null!);
-        }
-
-        public override bool IsRespondAwaitable()
-        {
-            return ResponseSource != null;
-        }
-
-        public override Task Written()
-        {
-            return WrittenTask ?? Task.CompletedTask;
-        }
-
-        public override bool IsWriteAwaitable()
-        {
-            return WrittenTask != null;
+            responseSource?.SetException(cause);
         }
 
         public override RequestContent WillRespondAwaiter(long timeout)
         {
-            ResponseSource = new TaskResponseSource(timeout);
+            responseSource = new TaskResponseSource(timeout);
             return this;
         }
 
-        public void SetWrittenTask(Task task)
+        public override bool Respond(out Task<IMessage> task)
         {
-            if (WrittenTask == null)
-            {
-                WrittenTask = task;
-            }
+            task = responseSource?.Task!;
+            return task != null;
         }
+
+        public override bool IsWaitRespond => responseSource != null;
     }
 
 }

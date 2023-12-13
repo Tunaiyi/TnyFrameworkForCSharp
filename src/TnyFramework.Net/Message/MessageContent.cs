@@ -10,17 +10,22 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TnyFramework.Common.Result;
-using TnyFramework.Net.Message;
+using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Message
 {
 
-    public abstract class MessageContent : MessageHeaderContainer, ISendReceipt, IMessageSubject
+    public abstract class MessageContent : MessageHeaderContainer, IMessageWritable, IMessageSent, IMessageSubject
     {
         /// <summary>
         /// 获取结果码
         /// </summary>
         public abstract IResultCode ResultCode { get; }
+
+        /// <summary>
+        /// 获取结果码
+        /// </summary>
+        public int Code => ResultCode.Value;
 
         /// <summary>
         /// 设置消息 body
@@ -46,26 +51,17 @@ namespace TnyFramework.Net.Transport
             return protocol.ProtocolId == ProtocolId;
         }
 
-        public int GetCode()
-        {
-            return ResultCode.Value;
-        }
+        public abstract bool Respond(out Task<IMessage> task);
 
-        public abstract Task<IMessage> Respond();
+        public abstract bool IsWaitRespond { get; }
 
-        public abstract bool IsRespondAwaitable();
-
-        public abstract Task Written();
-
-        public abstract bool IsWriteAwaitable();
+        public bool Written { get; private set; }
 
         public abstract int ProtocolId { get; }
 
         public abstract int Line { get; }
 
         public abstract long ToMessage { get; }
-
-        // public abstract MessageType Type { get; }
 
         public abstract MessageMode Mode { get; }
 
@@ -80,6 +76,11 @@ namespace TnyFramework.Net.Transport
         public abstract MessageContent WithHeaders(IEnumerable<MessageHeader> values);
 
         public abstract T? BodyAs<T>();
+
+        void IMessageWritable.Written()
+        {
+            Written = true;
+        }
     }
 
 }

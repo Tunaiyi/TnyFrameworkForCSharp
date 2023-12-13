@@ -9,23 +9,21 @@
 using System;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
 
-    public abstract class NetGuideSpec<TUnit, TUserId, TContext, TUContext, TSpec>
-        : UnitSpec<TUnit, TContext>, INetGuideSpec<TUnit, TUserId, TContext, TSpec>
+    public abstract class NetGuideSpec<TUnit, TContext, TUContext, TSpec>
+        : UnitSpec<TUnit, TContext>, INetGuideSpec<TUnit, TContext, TSpec>
         where TUnit : INetServer
-        where TContext : INetGuideUnitContext<TUserId>
-        where TUContext : NetGuideUnitContext<TUserId>
-        where TSpec : INetGuideSpec<TUnit, TUserId, TContext, TSpec>
+        where TContext : INetGuideUnitContext
+        where TUContext : NetGuideUnitContext
+        where TSpec : INetGuideSpec<TUnit, TContext, TSpec>
     {
         protected readonly TUContext context;
 
@@ -36,51 +34,37 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         protected abstract TSpec Self();
 
-        public TSpec TunnelConfigure(Action<IUnitSpec<INettyTunnelFactory, INetGuideUnitContext<TUserId>>> action)
+        public TSpec TunnelConfigure(Action<IUnitSpec<INettyTunnelFactory, INetGuideUnitContext>> action)
         {
             action(context.TunnelFactorySpec);
             return Self();
         }
 
-        public TSpec AnonymousId(TUserId anonymousUserId)
-        {
-
-            context.CertificateFactorySpec.Creator(c => new CertificateFactory<TUserId>(anonymousUserId));
-            return Self();
-        }
-
-        public TSpec CertificateConfigure(
-            Action<IUnitSpec<ICertificateFactory<TUserId>, INetGuideUnitContext<TUserId>>> action)
-        {
-            action(context.CertificateFactorySpec);
-            return Self();
-        }
-
-        public TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, INetGuideUnitContext<TUserId>>> action)
+        public TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, INetGuideUnitContext>> action)
         {
             action(context.MessageFactorySpec);
             return Self();
         }
 
-        public TSpec ContactConfigure(Action<IUnitSpec<IContactFactory, INetGuideUnitContext<TUserId>>> action)
+        public TSpec ContactConfigure(Action<IUnitSpec<IContactFactory, INetGuideUnitContext>> action)
         {
             action(context.ContactFactorySpec);
             return Self();
         }
 
-        public TSpec MessageBodyCodecConfigure(Action<UnitSpec<IMessageBodyCodec, INetGuideUnitContext<TUserId>>> action)
+        public TSpec MessageBodyCodecConfigure(Action<UnitSpec<IMessageBodyCodec, INetGuideUnitContext>> action)
         {
             action(context.MessageBodyCodecSpec);
             return Self();
         }
 
-        public TSpec MessageHeaderCodecConfigure(Action<UnitSpec<IMessageHeaderCodec, INetGuideUnitContext<TUserId>>> action)
+        public TSpec MessageHeaderCodecConfigure(Action<UnitSpec<IMessageHeaderCodec, INetGuideUnitContext>> action)
         {
             action(context.MessageHeaderCodecSpec);
             return Self();
         }
 
-        public TSpec MessageCodecConfigure(Action<UnitSpec<IMessageCodec, INetGuideUnitContext<TUserId>>> action)
+        public TSpec MessageCodecConfigure(Action<UnitSpec<IMessageCodec, INetGuideUnitContext>> action)
         {
             action(context.MessageCodecSpec);
             return Self();
@@ -92,7 +76,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return Self();
         }
 
-        public TSpec RpcMonitorConfigure(Action<UnitSpec<RpcMonitor, INetGuideUnitContext<TUserId>>> action)
+        public TSpec RpcMonitorConfigure(Action<UnitSpec<RpcMonitor, INetGuideUnitContext>> action)
         {
             action(context.RpcMonitorSpec);
             return Self();

@@ -12,18 +12,17 @@ using System.Reflection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Command.Dispatcher;
-using TnyFramework.Net.Command.Processor;
+using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.Plugin;
-using TnyFramework.Net.Rpc;
 
 namespace TnyFramework.Net.DotNetty.Configuration
 {
 
     public interface INettyServerConfiguration
     {
-        NettyServerConfiguration Server<TUserId>(string name, Action<INetServerGuideSpec<TUserId>> action);
+        NettyServerConfiguration Server(string name, Action<INetServerGuideSpec> action);
 
         NettyServerConfiguration AppContext(int serverId, string name);
 
@@ -33,7 +32,7 @@ namespace TnyFramework.Net.DotNetty.Configuration
 
         NettyServerConfiguration MessageDispatcherConfigure(Action<IUnitSpec<IMessageDispatcher, INetUnitContext>> action);
 
-        NettyServerConfiguration CommandTaskBoxProcessor(Action<IUnitSpec<ICommandTaskBoxProcessor, INetUnitContext>> action);
+        NettyServerConfiguration CommandBoxFactory(Action<IUnitSpec<ICommandBoxFactory, INetUnitContext>> action);
 
         NettyServerConfiguration AddController<TController>() where TController : class, IController;
 

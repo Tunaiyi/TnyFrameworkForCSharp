@@ -10,6 +10,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Coroutines.Async;
 using Xunit;
 using Xunit.Abstractions;
@@ -60,6 +61,27 @@ namespace TnyFramework.Coroutines.Test
             await coroutine1.Shutdown(5000);
             logger.LogInformation("[Run : {CoroName} at Thread-{ThreadId}] [GOGO] 4", Coroutine.CurrentCoroutine,
                 Thread.CurrentThread.ManagedThreadId);
+        }
+
+        public async Task Exception()
+        {
+            throw new Exception();
+        }
+
+        [Fact]
+        public void TestTaskSchedulerNoWait()
+        {
+            TaskScheduler.UnobservedTaskException += (o, args) => {
+                logger.LogError(args.Exception, "");
+            };
+            var executor = TaskScheduler.Default;
+            var factory = new DefaultCoroutineFactory("Actor", executor);
+            var coroutine1 = factory.Create();
+            Task.Run(Exception);
+            coroutine1.TaskScheduler().StartNew(Exception).Wait();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            Task.Delay(10000).Wait();
         }
 
         [Fact]

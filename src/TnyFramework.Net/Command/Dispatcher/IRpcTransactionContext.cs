@@ -7,8 +7,8 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
+using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Command.Dispatcher
 {
@@ -24,7 +24,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// 消息者
         /// </summary>
-        INetContact Contact { get; }
+        IConnector Connector { get; }
 
         /// <summary>
         /// @return 获取消息

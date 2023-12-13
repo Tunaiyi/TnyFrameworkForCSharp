@@ -33,7 +33,7 @@ namespace TnyFramework.Coroutines.Async
             var current = Current;
             if (current is CoroutineSynchronizationContext)
                 return;
-            var coroutine = new Coroutine();
+            var coroutine = new DefaultCoroutine();
             var synchronizationContext = new CoroutineSynchronizationContext(coroutine);
             SetSynchronizationContext(synchronizationContext);
         }

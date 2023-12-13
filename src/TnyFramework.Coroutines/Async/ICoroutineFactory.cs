@@ -18,9 +18,9 @@ namespace TnyFramework.Coroutines.Async
         /// 创建协程
         /// </summary>
         /// <returns></returns>
-        ICoroutine Create();
+        Coroutine Create();
 
-        ICoroutine Create(string name);
+        Coroutine Create(string name);
     }
 
 }

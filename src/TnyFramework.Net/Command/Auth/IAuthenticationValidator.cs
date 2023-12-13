@@ -16,35 +16,25 @@ namespace TnyFramework.Net.Command.Auth
 
     public interface IAuthenticationValidator
     {
-        ICertificate? Validate(ITunnel tunnel, IMessage message, ICertificateFactory certificateFactory);
+        ICertificate Validate(ITunnel tunnel, IMessage message);
 
         IList<int> AuthProtocolLimit { get; }
     }
 
-    public interface IAuthenticationValidator<TUserId> : IAuthenticationValidator
-    {
-        ICertificate<TUserId> Validate(ITunnel<TUserId> tunnel, IMessage message, ICertificateFactory<TUserId> factory);
-    }
-
-    public abstract class AuthenticationValidator<TUserId> : IAuthenticationValidator<TUserId>
+    public abstract class AuthenticationValidator : IAuthenticationValidator
     {
         protected AuthenticationValidator()
         {
             AuthProtocolLimit = ImmutableList.Create<int>();
         }
 
-        protected AuthenticationValidator(IList<int> authProtocolLimit)
+        protected AuthenticationValidator(IList<int>? authProtocolLimit)
         {
             AuthProtocolLimit = authProtocolLimit == null ? ImmutableList.Create<int>() : ImmutableList.CreateRange(authProtocolLimit);
 
         }
 
-        public abstract ICertificate<TUserId> Validate(ITunnel<TUserId> tunnel, IMessage message, ICertificateFactory<TUserId> factory);
-
-        public ICertificate Validate(ITunnel tunnel, IMessage message, ICertificateFactory certificateFactory)
-        {
-            return Validate((ITunnel<TUserId>) tunnel, message, (ICertificateFactory<TUserId>) certificateFactory);
-        }
+        public abstract ICertificate Validate(ITunnel tunnel, IMessage message);
 
         public IList<int> AuthProtocolLimit { get; }
     }

@@ -19,7 +19,7 @@ namespace TnyFramework.Net.Message
     {
         private readonly INetMessageHead head;
 
-        private readonly AttributesContext attributes = new AttributesContext();
+        private readonly AttributesContext attributes = new();
 
         protected AbstractNetMessage(INetMessageHead head)
         {
@@ -52,6 +52,11 @@ namespace TnyFramework.Net.Message
         public object? Body { get; }
 
         public IAttributes Attribute => attributes.Attributes;
+
+        public int GetCode()
+        {
+            throw new NotImplementedException();
+        }
 
         public bool ExistBody => Body != null;
 
@@ -101,8 +106,6 @@ namespace TnyFramework.Net.Message
         public bool IsOwn(IProtocol protocol) => head.IsOwn(protocol);
 
         public void AllotMessageId(long id) => head.AllotMessageId(id);
-
-        public int GetCode() => Code;
 
         public T? BodyAs<T>()
         {

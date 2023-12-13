@@ -17,7 +17,6 @@ using TnyFramework.Net.Common;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Exceptions;
-using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Rpc.Remote
 {
@@ -173,7 +172,8 @@ namespace TnyFramework.Net.Rpc.Remote
             invokeContext.Invoke(RpcTransactionContext.RpcOperation(method.Name, content));
             try
             {
-                content.Respond().ContinueWith(task => {
+                content.Respond(out var respondTask);
+                respondTask.ContinueWith(task => {
                     if (task.IsFaulted)
                     {
                         invokeContext.Complete(task.Exception!);
@@ -182,12 +182,12 @@ namespace TnyFramework.Net.Rpc.Remote
                         invokeContext.Complete(task.Result);
                     }
                 });
-                var receipt = endpoint.Send(content);
+                _ = endpoint.Send(content, true);
                 if (method.IsAsync())
                 {
-                    return ToReturnTask(receipt.Respond());
+                    return ToReturnTask(respondTask);
                 }
-                var message = receipt.Respond().Result;
+                var message = respondTask.Result;
                 invokeContext.Complete(message);
                 return returnValueFormatter?.Invoke(message);
             } catch (Exception e)
@@ -216,13 +216,13 @@ namespace TnyFramework.Net.Rpc.Remote
             try
             {
                 invokeContext.Invoke(RpcTransactionContext.RpcOperation(method.Name, content));
-                var receipt = endpoint.Send(content);
+                var sent = endpoint.Send(content, true);
                 invokeContext.Complete();
                 if (method.IsAsync())
                 {
-                    return receipt.Written();
+                    return sent.AsTask();
                 }
-                receipt.Written().Wait(timeout);
+                sent.AsTask().Wait(timeout);
                 return null;
             } catch (Exception e)
             {

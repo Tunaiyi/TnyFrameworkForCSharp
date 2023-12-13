@@ -77,7 +77,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                     return TickMessage.Pong();
                 }
 
-                ByteBufferVariantExtensions.ReadFixed32(inBuffer, out payloadLength);
+                inBuffer.ReadFixed32(out payloadLength);
                 if (payloadLength > setting.MaxPayloadLength)
                 {
                     inBuffer.SkipBytes(inBuffer.ReadableBytes);
@@ -110,7 +110,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                 var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).Get();
                 // 获取打包器
                 var index = inBuffer.ReaderIndex;
-                ByteBufferVariantExtensions.ReadVariant(inBuffer, out long accessId);
+                inBuffer.ReadVariant(out long accessId);
                 var packageContext = channel.GetAttribute(NettyNetAttrKeys.READ_PACKAGER).Get();
                 if (packageContext == null)
                 {
@@ -118,7 +118,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                     tunnel.SetAccessId(accessId);
                     channel.GetAttribute(NettyNetAttrKeys.READ_PACKAGER).Set(packageContext);
                 }
-                ByteBufferVariantExtensions.ReadVariant(inBuffer, out int number);
+                inBuffer.ReadVariant(out int number);
                 // 移动到当前包序号
                 packageContext.GoToAndCheck(number);
                 var verifyEnable = CodecConstants.IsOption(option, CodecConstants.DATA_PACK_OPTION_VERIFY);

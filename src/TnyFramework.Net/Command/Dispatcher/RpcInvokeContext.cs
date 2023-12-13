@@ -10,6 +10,7 @@ using System;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Command.Dispatcher
@@ -27,7 +28,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             RpcContext = rpcContext;
             this.appContext = appContext;
             var message = rpcContext.NetMessage;
-            forward = message.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+            forward = message.GetHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
         }
 
         public MethodControllerHolder Controller { get; }

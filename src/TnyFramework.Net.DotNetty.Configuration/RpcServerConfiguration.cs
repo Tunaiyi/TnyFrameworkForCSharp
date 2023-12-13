@@ -13,7 +13,6 @@ using TnyFramework.Net.Base;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.DotNetty.Configuration.Rpc;
-using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Rpc.Auth;
 using TnyFramework.Net.Transport;
 
@@ -39,17 +38,16 @@ namespace TnyFramework.Net.DotNetty.Configuration
             AddController<RpcAuthController>()
                 .AddAuthenticateValidators(spec => spec.Creator(DefaultRpcPasswordValidator))
                 .AddAuthenticateValidators(spec => spec.Creator(DefaultRpcTokenValidator))
-                .EndpointConfigure(spec => spec
-                    .SessionKeeperFactory<RpcAccessIdentify>(RPC_SESSION_KEEPER_NAME)
+                .EndpointConfigure(spec => spec.SessionKeeperFactory(RPC_SESSION_KEEPER_NAME)
                     .DefaultSessionConfigure(keeper => keeper.KeeperFactory(RPC_SESSION_KEEPER_NAME))
                 );
             IdGeneratorSpec = UnitSpec.Unit<IIdGenerator, IRpcUnitContext>()
                 .Default<AutoIncrementIdGenerator>();
         }
 
-        public RpcServerConfiguration RpcServer(ServerSetting setting, Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
+        public RpcServerConfiguration RpcServer(ServerSetting setting, Action<INetServerGuideSpec>? action = null)
         {
-            Server<RpcAccessIdentify>(setting.Name, spec => {
+            Server(setting.Name, spec => {
                 spec.Server(setting);
                 action?.Invoke(spec);
             });
@@ -57,9 +55,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-        public RpcServerConfiguration RpcServer(string name, int port, Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
+        public RpcServerConfiguration RpcServer(string name, int port, Action<INetServerGuideSpec>? action = null)
         {
-            Server<RpcAccessIdentify>(name, spec => {
+            Server(name, spec => {
                 spec.Server(port);
                 action?.Invoke(spec);
             });
@@ -67,9 +65,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
             return this;
         }
 
-        public RpcServerConfiguration RpcServer(string name, string host, int port, Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
+        public RpcServerConfiguration RpcServer(string name, string host, int port, Action<INetServerGuideSpec>? action = null)
         {
-            Server<RpcAccessIdentify>(name, spec => {
+            Server(name, spec => {
                 spec.Server(host, port);
                 action?.Invoke(spec);
             });
@@ -78,9 +76,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
         public RpcServerConfiguration RpcServer(string name, string host, int port, bool libuv,
-            Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
+            Action<INetServerGuideSpec>? action = null)
         {
-            Server<RpcAccessIdentify>(name, spec => {
+            Server(name, spec => {
                 spec.Server(host, port, libuv);
                 action?.Invoke(spec);
             });
@@ -89,9 +87,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
         public RpcServerConfiguration RpcServer(string name, string serveName, string host, int port,
-            Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
+            Action<INetServerGuideSpec>? action = null)
         {
-            Server<RpcAccessIdentify>(name, spec => {
+            Server(name, spec => {
                 spec.Server(serveName, host, port);
                 action?.Invoke(spec);
             });
@@ -100,9 +98,9 @@ namespace TnyFramework.Net.DotNetty.Configuration
         }
 
         public RpcServerConfiguration RpcServer(string name, string serveName, string host, int port, bool libuv,
-            Action<INetServerGuideSpec<RpcAccessIdentify>>? action = null)
+            Action<INetServerGuideSpec>? action = null)
         {
-            Server<RpcAccessIdentify>(name, spec => {
+            Server(name, spec => {
                 spec.Server(serveName, host, port, libuv);
                 action?.Invoke(spec);
             });

@@ -25,7 +25,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         Setting,
 
-        UserId,
+        Identify,
+
+        IdentifyToken,
 
         Param,
 

@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Transport;
@@ -22,13 +21,10 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Endpoint
 {
 
-    public class SessionKeeper
+    public class SessionKeeper : EndpointKeeper<ISession>, ISessionKeeper
     {
-        internal static readonly ILogger LOGGER = LogFactory.Logger<SessionKeeper>();
-    }
+        private static readonly ILogger LOGGER = LogFactory.Logger<SessionKeeper>();
 
-    public class SessionKeeper<TUserId> : EndpointKeeper<TUserId, ISession<TUserId>>, ISessionKeeper<TUserId>
-    {
         /* 离线session */
         private readonly ConcurrentDictionary<ISession, bool> offlineSessionQueue = new ConcurrentDictionary<ISession, bool>();
 
@@ -42,7 +38,7 @@ namespace TnyFramework.Net.Endpoint
 
         private int start;
 
-        private ILogger Logger => SessionKeeper.LOGGER;
+        private ILogger Logger => LOGGER;
 
         public SessionKeeper(IContactType contactType, ISessionFactory factory, ISessionKeeperSetting setting) : base(contactType)
         {
@@ -84,14 +80,10 @@ namespace TnyFramework.Net.Endpoint
             if (!Equals(ContactType, certificate.ContactType))
             {
                 throw new AuthFailedException(NetResultCode.AUTH_FAIL_ERROR, null,
-                    $"cert {certificate} userType is {certificate.UserGroup}, not {ContactType}");
+                    $"cert {certificate} userType is {certificate.ContactGroup}, not {ContactType}");
             }
-            var uid = certificate.GetUserId();
-            if (uid == null)
-            {
-                throw new NullReferenceException("uid is null");
-            }
-            var index = Math.Abs(uid.GetHashCode()) % locks.Length;
+            var identify = certificate.Identify;
+            var index = Math.Abs(identify.GetHashCode()) % locks.Length;
             lock (locks[index])
             {
                 return certificate.IsAuthenticated() ? NewSession(certificate, tunnel) : DoAcceptTunnel(certificate, tunnel);
@@ -100,17 +92,12 @@ namespace TnyFramework.Net.Endpoint
 
         private IEndpoint DoAcceptTunnel(ICertificate certificate, INetTunnel newTunnel)
         {
-            var userId = certificate.GetUserId();
-            if (userId == null)
-            {
-                Logger.LogWarning("新session userId is null");
-                throw new AuthFailedException(NetResultCode.SESSION_LOSS_ERROR);
-            }
-            var existSession = FindEndpoint(userId);
+            var identify = certificate.Identify;
+            var existSession = FindEndpoint(identify);
             if (existSession == null)
             {
                 // 旧 session 失效
-                Logger.LogWarning("旧session {User} 已经丢失", newTunnel.GetUserId());
+                Logger.LogWarning("旧session {User} 已经丢失", newTunnel.Identify);
                 throw new AuthFailedException(NetResultCode.SESSION_LOSS_ERROR);
             }
             if (existSession.IsClosed())
@@ -120,7 +107,7 @@ namespace TnyFramework.Net.Endpoint
                 throw new AuthFailedException(NetResultCode.SESSION_LOSS_ERROR);
             }
 
-            var current = (INetSession<TUserId>) existSession;
+            var current = (INetSession) existSession;
             // existSession.offline(); // 将旧 session 的 Tunnel T 下线
             current.Online(certificate, newTunnel);
             return existSession;
@@ -129,13 +116,8 @@ namespace TnyFramework.Net.Endpoint
         private IEndpoint NewSession(ICertificate certificate, INetTunnel newTunnel)
         {
 
-            var userId = certificate.GetUserId();
-            if (userId == null)
-            {
-                Logger.LogWarning("新session userId is null");
-                throw new AuthFailedException(NetResultCode.SESSION_LOSS_ERROR);
-            }
-            var oldSession = FindEndpoint(userId);
+            var identify = certificate.Identify;
+            var oldSession = FindEndpoint(identify);
             if (oldSession != null)
             {
                 // 如果旧 session 存在
@@ -147,8 +129,8 @@ namespace TnyFramework.Net.Endpoint
                     throw new AuthFailedException(NetResultCode.INVALID_CERTIFICATE_ERROR);
                 }
             }
-            var endpoint = newTunnel.GetEndpoint();
-            var session = factory.Create(setting.SessionSetting, endpoint.Context, newTunnel.As<TUserId>().CertificateFactory);
+            var endpoint = newTunnel.NetEndpoint;
+            var session = factory.Create(setting.SessionSetting, endpoint.Context);
             if (oldSession != null)
             {
                 if (!oldSession.IsClosed())
@@ -157,21 +139,21 @@ namespace TnyFramework.Net.Endpoint
                 }
             }
             session.Online(certificate, newTunnel);
-            ReplaceEndpoint(session.GetUserId(), session);
+            ReplaceEndpoint(session.Identify, session);
             return session;
         }
 
-        protected override void OnEndpointClose(ISession<TUserId> endpoint)
+        protected override void OnEndpointClose(ISession endpoint)
         {
             offlineSessionQueue.TryRemove(endpoint, out _);
         }
 
-        protected override void OnEndpointOnline(ISession<TUserId> endpoint)
+        protected override void OnEndpointOnline(ISession endpoint)
         {
             offlineSessionQueue.TryRemove(endpoint, out _);
         }
 
-        protected override void OnEndpointOffline(ISession<TUserId> endpoint)
+        protected override void OnEndpointOffline(ISession endpoint)
         {
             if (endpoint.IsAuthenticated() && endpoint.IsOffline())
             {
@@ -181,7 +163,7 @@ namespace TnyFramework.Net.Endpoint
 
         private void ClearInvalidedSession()
         {
-            var logger = SessionKeeper.LOGGER;
+            var logger = LOGGER;
             var now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
             foreach (var session in offlineSessionQueue.Keys)
             {
@@ -190,11 +172,11 @@ namespace TnyFramework.Net.Endpoint
                     ISession? closeSession = null;
                     if (session.IsClosed())
                     {
-                        logger.LogInformation("移除已关闭的 OfflineSession userId : {User}", session.GetUserId());
+                        logger.LogInformation("移除已关闭的 OfflineSession identify : {User}", session.Certificate);
                         closeSession = session;
                     } else if (session.IsOnline() && session.OfflineTime + setting.OfflineCloseDelay < now)
                     {
-                        logger.LogInformation("移除下线超时的 OfflineSession userId : {User}", session.GetUserId());
+                        logger.LogInformation("移除下线超时的 OfflineSession identify : {User}", session.Certificate);
                         session.Close();
                         if (session.IsClosed())
                         {
@@ -203,11 +185,11 @@ namespace TnyFramework.Net.Endpoint
                     }
                     if (closeSession == null)
                         continue;
-                    RemoveEndpoint(closeSession.GetUserId(), closeSession);
+                    RemoveEndpoint(closeSession.Identify, closeSession);
                     offlineSessionQueue.TryRemove(closeSession, out _);
                 } catch (Exception e)
                 {
-                    logger.LogError(e, "clear {User} invalided session exception", session.GetUserId());
+                    logger.LogError(e, "clear {User} invalided session exception", session.Certificate);
                 }
             }
             // TODO LRU 算法移除多余的 session

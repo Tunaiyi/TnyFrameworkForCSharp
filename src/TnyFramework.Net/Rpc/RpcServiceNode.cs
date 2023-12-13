@@ -28,11 +28,11 @@ namespace TnyFramework.Net.Rpc
 
         private readonly ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
 
-        public int ServerId { get; }
+        public long ServerId { get; }
 
         public bool IsActive() => !orderAccessPoints.IsEmpty();
 
-        public int NodeId => ServerId;
+        public long NodeId => ServerId;
 
         public IContactType ServiceType => service.ServiceType;
 
@@ -44,10 +44,10 @@ namespace TnyFramework.Net.Rpc
 
         private void WriteUnlock() => rwLock.ExitWriteLock();
 
-        public RpcServiceNode(int serverId, RpcServiceSet service)
+        public RpcServiceNode(long serverId, RpcServiceSet service)
         {
             this.service = service;
-            ServerId = serverId;
+            ServerId = (int) serverId;
         }
 
         public IList<IRpcAccess> GetOrderAccesses()
@@ -67,14 +67,13 @@ namespace TnyFramework.Net.Rpc
             }
         }
 
-        internal void AddEndpoint(IEndpoint<RpcAccessIdentify> endpoint)
+        internal void AddEndpoint(IEndpoint endpoint)
         {
             WriteLock();
             try
             {
                 var activate = remoteServiceAccessMap.IsEmpty();
-                var nodeId = endpoint.UserId;
-                remoteServiceAccessMap[nodeId.Id] = new RpcRemoteServiceAccess(endpoint);
+                remoteServiceAccessMap[endpoint.Identify] = new RpcRemoteServiceAccess(endpoint);
                 Order(activate);
             } finally
             {
@@ -82,19 +81,18 @@ namespace TnyFramework.Net.Rpc
             }
         }
 
-        internal void RemoveEndpoint(IEndpoint<RpcAccessIdentify> endpoint)
+        internal void RemoveEndpoint(IEndpoint endpoint)
         {
             WriteLock();
             try
             {
-                var nodeId = endpoint.UserId;
-                var activate = this.remoteServiceAccessMap.IsEmpty();
-                if (!remoteServiceAccessMap.TryGetValue(nodeId.Id, out var accessPoint))
+                var activate = remoteServiceAccessMap.IsEmpty();
+                if (!remoteServiceAccessMap.TryGetValue(endpoint.Identify, out var accessPoint))
                     return;
                 var exist = accessPoint.Endpoint;
                 if (!ReferenceEquals(endpoint, exist))
                     return;
-                if (remoteServiceAccessMap.Remove(nodeId.Id))
+                if (remoteServiceAccessMap.Remove(endpoint.Identify))
                 {
                     Order(activate);
                 }

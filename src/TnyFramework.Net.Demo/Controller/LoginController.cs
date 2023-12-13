@@ -23,7 +23,7 @@ namespace TnyFramework.Net.Demo.Controller
     {
         [RpcRequest(CtrlerIds.LOGIN_4_LOGIN)]
         [AuthenticationRequired(typeof(DemoAuthenticationValidator), ContactType.DEFAULT_USER_TYPE)]
-        public LoginDTO Login(ITunnel<long> tunnel, IEndpoint<long> endpoint, long sessionId, long userId)
+        public LoginDTO Login(ITunnel tunnel, IEndpoint endpoint, long sessionId, long userId)
         {
             var certificate = endpoint.Certificate;
             //        EXECUTOR_SERVICE.scheduleAtFixedRate(() -> endpoint.send(MessageContexts

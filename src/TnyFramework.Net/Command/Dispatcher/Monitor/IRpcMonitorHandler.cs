@@ -11,7 +11,6 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
 
     public interface IRpcMonitorHandler
     {
-        
     }
 
 }

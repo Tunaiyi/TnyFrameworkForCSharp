@@ -37,16 +37,16 @@ namespace TnyFramework.Coroutines.Async
 
         private string Name { get; }
 
-        public ICoroutine Create()
+        public Coroutine Create()
         {
             var currentIndex = Interlocked.Increment(ref index);
-            return new Coroutine(executor, $"{Name}-{currentIndex}");
+            return new DefaultCoroutine(executor, $"{Name}-{currentIndex}");
         }
 
-        public ICoroutine Create(string name)
+        public Coroutine Create(string name)
         {
             var currentIndex = Interlocked.Increment(ref index);
-            return new Coroutine(executor, $"{name}-{currentIndex}");
+            return new DefaultCoroutine(executor, $"{name}-{currentIndex}");
         }
     }
 

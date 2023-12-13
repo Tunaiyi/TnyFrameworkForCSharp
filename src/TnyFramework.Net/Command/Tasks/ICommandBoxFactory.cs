@@ -6,20 +6,14 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Command.Tasks;
+using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Command.Processor
+namespace TnyFramework.Net.Command.Tasks
 {
 
-    public abstract class CommandTaskBoxDriverExecutor<TDriver> : ICommandTaskBoxDriverExecutor<TDriver>
-        where TDriver : CommandTaskBoxDriver
+    public interface ICommandBoxFactory
     {
-        public abstract void Execute(TDriver driver);
-
-        public void Execute(CommandTaskBoxDriver driver)
-        {
-            Execute((TDriver) driver);
-        }
+        CommandBox CreateCommandBox(ICertificate certificate);
     }
 
 }

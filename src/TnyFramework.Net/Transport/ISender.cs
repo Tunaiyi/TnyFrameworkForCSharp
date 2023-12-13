@@ -6,6 +6,9 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System.Threading.Tasks;
+using TnyFramework.Net.Message;
+
 namespace TnyFramework.Net.Transport
 {
 
@@ -15,8 +18,9 @@ namespace TnyFramework.Net.Transport
         /// 异步发送消息
         /// </summary>
         /// <param name="content">发送消息上下文</param>
+        /// <param name="waitWritten">是否等待</param>
         /// <returns>返回发送回执</returns>
-        ISendReceipt Send(MessageContent content);
+        ValueTask<IMessageSent> Send(MessageContent content, bool waitWritten = false);
     }
 
 }

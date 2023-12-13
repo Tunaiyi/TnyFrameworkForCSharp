@@ -15,6 +15,11 @@ namespace TnyFramework.Net.Message
     public interface IMessageSchema : IProtocol
     {
         /// <summary>
+        /// 结果码
+        /// </summary>
+        int Code { get; }
+
+        /// <summary>
         /// 响应消息, -1 为无
         /// </summary>
         long ToMessage { get; }
@@ -23,7 +28,6 @@ namespace TnyFramework.Net.Message
         /// 消息模式
         /// </summary>
         MessageMode Mode { get; }
-
     }
 
 }

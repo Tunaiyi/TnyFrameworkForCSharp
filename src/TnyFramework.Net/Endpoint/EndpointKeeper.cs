@@ -6,15 +6,14 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using TnyFramework.Common.Event;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Endpoint.Event;
+using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Endpoint
@@ -37,8 +36,8 @@ namespace TnyFramework.Net.Endpoint
         public static IEventBox<EndpointKeeperRemoveEndpoint> RemoveEndpointEventBox => RemoveEndpointEventBus;
     }
 
-    public abstract class EndpointKeeper<TUserId, TEndpoint> : IEndpointKeeper<TUserId, TEndpoint>, INetEndpointKeeper
-        where TEndpoint : IEndpoint<TUserId>
+    public abstract class EndpointKeeper<TEndpoint> : IEndpointKeeper<TEndpoint>, INetEndpointKeeper
+        where TEndpoint : IEndpoint
     {
         private readonly ConcurrentDictionary<object, TEndpoint> endpointMap = new ConcurrentDictionary<object, TEndpoint>();
 
@@ -52,7 +51,7 @@ namespace TnyFramework.Net.Endpoint
 
         public IContactType ContactType { get; }
 
-        public string UserGroup => ContactType.Group;
+        public string ContactGroup => ContactType.Group;
 
         public int Size => endpointMap.Count;
 
@@ -67,20 +66,14 @@ namespace TnyFramework.Net.Endpoint
         {
         }
 
-        IEndpoint? IEndpointKeeper.GetEndpoint(object? userId)
+        public TEndpoint? GetEndpoint(long identify)
         {
-            if (userId != null)
-                return GetEndpoint((TUserId) userId);
-            return null;
+            return endpointMap.GetValueOrDefault(identify);
         }
 
-        public TEndpoint? GetEndpoint(TUserId userId)
+        IEndpoint? IEndpointKeeper.GetEndpoint(long identify)
         {
-            if (userId == null)
-            {
-                return default;
-            }
-            return endpointMap.TryGetValue(userId, out var endpoint) ? endpoint : default;
+            return endpointMap.GetValueOrDefault(identify);
         }
 
         IList<IEndpoint> IEndpointKeeper.GetAllEndpoints()
@@ -93,30 +86,33 @@ namespace TnyFramework.Net.Endpoint
             return ImmutableList.CreateRange(endpointMap.Values);
         }
 
-        public void Send2User(object userId, MessageContent content)
+        public void Send2User(long identify, MessageContent content)
         {
-            if (endpointMap.TryGetValue(userId, out var endpoint))
+            if (endpointMap.TryGetValue(identify, out var endpoint))
             {
                 endpoint.Send(content);
             }
         }
 
-        public void Send2Users(IEnumerable<object> userIds, MessageContent content)
+        public void Send2Users(IEnumerable<long> identifies, MessageContent content)
         {
-            foreach (var userId in userIds)
+            foreach (var identify in identifies)
             {
-                Send2User(userId, content);
+                Send2User(identify, content);
             }
         }
 
         public void Send2AllOnline(MessageContent content)
         {
-            throw new NotImplementedException();
+            foreach (var endpoint in endpointMap.Values)
+            {
+                endpoint.Send(content);
+            }
         }
 
-        public TEndpoint? Close(TUserId userId)
+        private TEndpoint? DoClose(long identify)
         {
-            var endpoint = GetEndpoint(userId);
+            var endpoint = GetEndpoint(identify);
             if (endpoint != null)
             {
                 endpoint.Close();
@@ -124,14 +120,9 @@ namespace TnyFramework.Net.Endpoint
             return endpoint;
         }
 
-        public IEndpoint? Close(object userId)
+        private TEndpoint? DoOffline(long identify)
         {
-            return Close((TUserId) userId);
-        }
-
-        public TEndpoint? Offline(TUserId userId)
-        {
-            var endpoint = GetEndpoint(userId);
+            var endpoint = GetEndpoint(identify);
             if (endpoint != null)
             {
                 endpoint.Offline();
@@ -139,10 +130,13 @@ namespace TnyFramework.Net.Endpoint
             return endpoint;
         }
 
-        public IEndpoint? Offline(object userId)
-        {
-            return Offline((TUserId) userId);
-        }
+        TEndpoint? IEndpointKeeper<TEndpoint>.Close(long identify) => DoClose(identify);
+
+        public IEndpoint? Close(long identify) => DoClose(identify);
+
+        TEndpoint? IEndpointKeeper<TEndpoint>.Offline(long identify) => DoOffline(identify);
+
+        public IEndpoint? Offline(long identify) => DoOffline(identify);
 
         public void OfflineAll()
         {
@@ -164,37 +158,32 @@ namespace TnyFramework.Net.Endpoint
 
         public abstract IEndpoint Online(ICertificate certificate, INetTunnel tunnel);
 
-        public bool IsOnline(TUserId userId)
+        public bool IsOnline(long identify)
         {
-            var endpoint = GetEndpoint(userId);
+            var endpoint = GetEndpoint(identify);
             return endpoint != null && endpoint.IsOnline();
         }
 
-        public bool IsOnline(object userId)
+        protected TEndpoint? FindEndpoint(long identify)
         {
-            return IsOnline((TUserId) userId);
+            return endpointMap.GetValueOrDefault(identify);
         }
 
-        protected TEndpoint? FindEndpoint(object uid)
+        protected bool RemoveEndpoint(long identify, IEndpoint removeOne)
         {
-            return endpointMap.TryGetValue(uid, out var endpoint) ? endpoint : default;
-        }
-
-        protected bool RemoveEndpoint(object uid, IEndpoint removeOne)
-        {
-            if (!endpointMap.TryGetValue(uid, out var endpoint) || !ReferenceEquals(endpoint, removeOne))
+            if (!endpointMap.TryGetValue(identify, out var endpoint) || !ReferenceEquals(endpoint, removeOne))
                 return false;
-            if (!endpointMap.TryRemove(uid, out endpoint))
+            if (!endpointMap.TryRemove(identify, out endpoint))
                 return false;
             removeEndpointEvent.Notify(this, endpoint);
             return true;
         }
 
-        protected TEndpoint? ReplaceEndpoint(object uid, IEndpoint newOne)
+        protected TEndpoint? ReplaceEndpoint(long identify, IEndpoint newOne)
         {
             var endpoint = (TEndpoint) newOne;
             var current = default(TEndpoint);
-            endpointMap.AddOrUpdate(uid, endpoint, (_, exist) => {
+            endpointMap.AddOrUpdate(identify, endpoint, (_, exist) => {
                 if (ReferenceEquals(endpoint, exist))
                     return endpoint;
                 exist.Close();
@@ -246,7 +235,7 @@ namespace TnyFramework.Net.Endpoint
                 return;
             }
             var closeOne = (TEndpoint) endpoint;
-            if (closeOne.UserId != null && RemoveEndpoint(closeOne.UserId, closeOne))
+            if (RemoveEndpoint(closeOne.Identify, closeOne))
             {
                 OnEndpointClose(closeOne);
             }

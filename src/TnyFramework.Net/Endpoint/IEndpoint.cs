@@ -7,13 +7,12 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Coroutines.Async;
-using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Endpoint
 {
 
-    public interface IEndpoint : IConnector, IConnection, IMessageSender, IAsyncExecutor
+    public interface IEndpoint : IConnector, IConnection, ISender, IAsyncExecutor
     {
         long Id { get; }
 
@@ -32,10 +31,6 @@ namespace TnyFramework.Net.Endpoint
         bool IsOnline();
 
         bool IsOffline();
-    }
-
-    public interface IEndpoint<out TUserId> : IEndpoint, IConnector<TUserId>
-    {
     }
 
 }

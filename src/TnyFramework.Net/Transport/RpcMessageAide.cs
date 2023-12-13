@@ -52,7 +52,7 @@ namespace TnyFramework.Net.Transport
         /// <returns>发送回执</returns>>
         private static MessageContent Response(IMessage request, IResultCode code, object? body)
         {
-            var forwardHeader = request.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+            var forwardHeader = request.GetHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
             var backForward = CreateBackForwardHeader(forwardHeader);
             return PutTransitiveHeaders(request, MessageContents.Respond(request, code, body, request.GetOriginalId()))
                 .WithHeader(backForward);
@@ -68,7 +68,7 @@ namespace TnyFramework.Net.Transport
         /// <returns>发送回执</returns>>
         private static MessageContent Push(IMessage request, IResultCode code, object? body)
         {
-            var messageForwardHeader = request.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+            var messageForwardHeader = request.GetHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
             var backForward = CreateBackForwardHeader(messageForwardHeader);
             return PutTransitiveHeaders(request, MessageContents.Push(request, code, body)
                 .WithHeader(backForward));
@@ -97,7 +97,7 @@ namespace TnyFramework.Net.Transport
             }
             foreach (var header in headers)
             {
-                if (header.IsTransitive)
+                if (header.HeaderKey.Usage.IsTransitive(content.Mode))
                 {
                     content.WithHeader(header);
                 }
@@ -112,22 +112,21 @@ namespace TnyFramework.Net.Transport
         /// <param name="content">消息信息上下文</param>
         /// <param name="autoClose"></param>
         /// <returns>发送回执</returns>>
-        public static void Send(INetTunnel tunnel, MessageContent content, bool autoClose = true)
+        public static ValueTask<IMessageSent> Send(INetTunnel tunnel, MessageContent content, bool autoClose = true)
         {
-            var _ = DoSend(tunnel, content, autoClose);
+            return DoSend(tunnel, content, autoClose);
         }
 
-        private static async Task<ISendReceipt> DoSend(INetTunnel tunnel, MessageContent content, bool autoClose = true)
+        private static async ValueTask<IMessageSent> DoSend(INetTunnel tunnel, MessageContent content, bool autoClose = true)
         {
-            var close = content.ResultCode.Level == ResultLevel.Error;
-            var receipt = tunnel.Send(content);
-            if (!autoClose || !close)
+            var close = autoClose && content.ResultCode.Level == ResultLevel.Error;
+            var sent = await tunnel.Send(content, close);
+            if (!close)
             {
-                return receipt;
+                return sent;
             }
-            await receipt.Written();
             tunnel.Close();
-            return receipt;
+            return sent;
         }
     }
 

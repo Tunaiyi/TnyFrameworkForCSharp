@@ -11,12 +11,9 @@ namespace TnyFramework.Net.Rpc
 
     public enum RpcTransactionMode
     {
-        
         Enter,
-        
+
         Exit,
-        
-        
     }
 
 }

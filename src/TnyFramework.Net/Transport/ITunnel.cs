@@ -11,7 +11,7 @@ using TnyFramework.Net.Endpoint;
 namespace TnyFramework.Net.Transport
 {
 
-    public interface ITunnel : IConnector, IConnection
+    public interface ITunnel : IConnector, IConnection, ISender
     {
         /// <summary>
         /// 通道 Id
@@ -38,15 +38,7 @@ namespace TnyFramework.Net.Transport
         /// <summary>
         /// 会话
         /// </summary>
-        IEndpoint GetEndpoint();
-    }
-
-    public interface ITunnel<out TUserId> : IConnector<TUserId>, ITunnel
-    {
-        /// <summary>
-        /// 会话
-        /// </summary>
-        IEndpoint<TUserId> Endpoint { get; }
+        IEndpoint Endpoint { get; }
     }
 
 }

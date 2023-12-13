@@ -31,9 +31,8 @@ namespace TnyFramework.Net.Rpc.Remote
 
         public object RouteValue { get; internal set; }
 
-        
         public bool Forward { get; internal set; }
-        
+
         public IResultCode Code { get; internal set; } = ResultCode.SUCCESS;
 
         private readonly IDictionary<string, MessageHeader> headerMap = new Dictionary<string, MessageHeader>();
@@ -52,11 +51,11 @@ namespace TnyFramework.Net.Rpc.Remote
 
         public IEnumerable<MessageHeader> GetAllHeaders()
         {
-            if (!Forward) 
+            if (!Forward)
                 return headerMap.Values;
-            if (headerMap.ContainsKey(MessageHeaderConstants.RPC_FORWARD_HEADER_KEY)) 
+            if (headerMap.ContainsKey(MessageHeaderKeys.RPC_FORWARD_KEY))
                 return headerMap.Values;
-            if (!To.IsNotNull() && !From.IsNotNull() && !Receiver.IsNotNull() && !Sender.IsNotNull()) 
+            if (!To.IsNotNull() && !From.IsNotNull() && !Receiver.IsNotNull() && !Sender.IsNotNull())
                 return headerMap.Values;
             var forwardHeader = new RpcForwardHeader()
                 .SetFrom(From)
@@ -85,7 +84,7 @@ namespace TnyFramework.Net.Rpc.Remote
 
         internal RpcRemoteInvokeParams PutHeader(MessageHeader messageHeader)
         {
-            headerMap[messageHeader.Key] = messageHeader;
+            headerMap.TryAdd(messageHeader.Key, messageHeader);
             return this;
         }
 

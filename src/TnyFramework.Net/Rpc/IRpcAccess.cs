@@ -7,12 +7,11 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Endpoint;
-using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Rpc
 {
 
-    public interface IRpcAccess 
+    public interface IRpcAccess
     {
         /// <summary>
         /// 访问点 id

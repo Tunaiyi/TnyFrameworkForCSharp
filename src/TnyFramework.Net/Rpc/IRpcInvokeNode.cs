@@ -30,7 +30,6 @@ namespace TnyFramework.Net.Rpc
         /// 节点是否活跃(存在有存活的接入点)
         /// </summary>
         bool IsActive();
-
     }
 
 }

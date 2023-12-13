@@ -15,7 +15,6 @@ using TnyFramework.Common.Event;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Common;
@@ -27,35 +26,32 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Endpoint
 {
 
-    public static class NetEndpoint
+    public abstract class NetEndpoint : Connector, INetEndpoint
     {
-        internal static readonly IEventBus<EndpointOnline> ONLINE_EVENT_BUS = EventBuses.Create<EndpointOnline>();
-        internal static readonly IEventBus<EndpointOffline> OFFLINE_EVENT_BUS = EventBuses.Create<EndpointOffline>();
-        internal static readonly IEventBus<EndpointClose> CLOSE_EVENT_BUS = EventBuses.Create<EndpointClose>();
+        private static readonly IEventBus<EndpointOnline> ONLINE_GLOBAL_EVENT_BUS = EventBuses.Create<EndpointOnline>();
+        private static readonly IEventBus<EndpointOffline> OFFLINE_GLOBAL_BUS = EventBuses.Create<EndpointOffline>();
+        private static readonly IEventBus<EndpointClose> CLOSE_GLOBAL_BUS = EventBuses.Create<EndpointClose>();
 
         /// <summary>
         /// 激活事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<EndpointOnline> OnlineEventBox => ONLINE_EVENT_BUS;
+        public static IEventBox<EndpointOnline> OnlineGlobalEvent => ONLINE_GLOBAL_EVENT_BUS;
 
         /// <summary>
         /// 断线事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<EndpointOffline> OfflineEventBox => OFFLINE_EVENT_BUS;
+        public static IEventBox<EndpointOffline> OfflineGlobalBox => OFFLINE_GLOBAL_BUS;
 
         /// <summary>
         /// 关闭事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<EndpointClose> CloseEventBox => CLOSE_EVENT_BUS;
-    }
+        public static IEventBox<EndpointClose> CloseGlobalBox => CLOSE_GLOBAL_BUS;
 
-    public abstract class NetEndpoint<TUserId> : Connector<TUserId>, INetEndpoint<TUserId>
-    {
-        private static readonly ILogger LOGGER = LogFactory.Logger<NetEndpoint<TUserId>>();
+        private static readonly ILogger LOGGER = LogFactory.Logger<NetEndpoint>();
 
-        private volatile INetTunnel<TUserId>? tunnel;
+        private volatile INetTunnel? tunnel;
 
-        private ICertificate<TUserId> certificate;
+        private ICertificate certificate;
 
         private volatile TaskResponseSourceMonitor? sourceMonitor;
 
@@ -63,31 +59,38 @@ namespace TnyFramework.Net.Endpoint
 
         private long idCreator;
 
+        private readonly MessageAllocator allocator;
+
         private readonly IEventBus<EndpointOnline> onlineEvent;
 
         private readonly IEventBus<EndpointOffline> offlineEvent;
 
         private readonly IEventBus<EndpointClose> closeEvent;
+
         public IEventBox<EndpointOnline> OnlineEvent => onlineEvent;
+
         public IEventBox<EndpointOffline> OfflineEvent => offlineEvent;
+
         public IEventBox<EndpointClose> CloseEvent => closeEvent;
+
         public override NetAccessMode AccessMode => tunnel?.AccessMode ?? default!;
 
-        public NetEndpoint(ICertificate<TUserId> certificate, IEndpointContext context)
+        public NetEndpoint(ICertificate certificate, IEndpointContext context)
         {
-            Id = TransporterIdFactory.NewEndpointId();
+            Id = ConnectIdFactory.NewEndpointId();
             this.certificate = certificate;
             Context = context;
             Status = EndpointStatus.Init;
-            CommandTaskBox = new CommandTaskBox(context.CommandTaskProcessor);
-            onlineEvent = NetEndpoint.ONLINE_EVENT_BUS.ForkChild();
-            offlineEvent = NetEndpoint.OFFLINE_EVENT_BUS.ForkChild();
-            closeEvent = NetEndpoint.CLOSE_EVENT_BUS.ForkChild();
+            allocator = (this as INetEndpoint).CreateMessage;
+            CommandBox = context.CommandBoxFactory.CreateCommandBox(this.certificate);
+            onlineEvent = ONLINE_GLOBAL_EVENT_BUS.ForkChild();
+            offlineEvent = OFFLINE_GLOBAL_BUS.ForkChild();
+            closeEvent = CLOSE_GLOBAL_BUS.ForkChild();
         }
 
         public long Id { get; }
 
-        public CommandTaskBox CommandTaskBox { get; }
+        public CommandBox CommandBox { get; }
 
         public IEndpointContext Context { get; }
 
@@ -97,9 +100,9 @@ namespace TnyFramework.Net.Endpoint
 
         public long OfflineTime { get; private set; }
 
-        public override ICertificate<TUserId> Certificate => certificate;
+        public override ICertificate Certificate => certificate;
 
-        protected INetTunnel<TUserId> CurrentTunnel => tunnel!;
+        protected INetTunnel CurrentTunnel => tunnel!;
 
         private TaskResponseSourceMonitor ResponseSourceMonitor {
             get {
@@ -114,7 +117,7 @@ namespace TnyFramework.Net.Endpoint
             }
         }
 
-        private void PutSource(long messageId, TaskResponseSource source)
+        private void PutSource(long messageId, TaskResponseSource? source)
         {
             var monitor = ResponseSourceMonitor;
             monitor.Put(messageId, source);
@@ -155,7 +158,7 @@ namespace TnyFramework.Net.Endpoint
                 }
                 if (result.IsHandleable())
                 {
-                    return CommandTaskBox.AddCommand(rpcContext);
+                    return CommandBox.AddCommand(rpcContext);
                 }
                 cause = new RpcRejectReceiveException(RejectMessage(true, filter, message, rcTunnel));
             } catch (Exception e)
@@ -168,7 +171,7 @@ namespace TnyFramework.Net.Endpoint
                 var source = PollSource(message);
                 if (source != null)
                 {
-                    CommandTaskBox.AsyncExec(() => {
+                    CommandBox.AsyncExec(() => {
                         source.SetResult(message);
                         return source.Task as Task;
                     });
@@ -188,33 +191,32 @@ namespace TnyFramework.Net.Endpoint
             if (filter == null)
                 throw new ArgumentNullException(nameof(filter));
             var mode = receive ? "receive" : "send";
-            return $"{this} cannot {mode} {message} from {handleTunnel} after being filtered by {nameof(filter)}";
+            return $"{this} cannot {mode} {message} from {handleTunnel} after being filtered by {nameof(filter)} {filter}";
         }
 
         protected void SetTunnel(INetTunnel value)
         {
-            if (value is INetTunnel<TUserId> newOne)
-                tunnel = newOne;
+            tunnel = value;
         }
 
-        public void TakeOver(CommandTaskBox commandTaskBox)
+        public void TakeOver(CommandBox commandBox)
         {
-            CommandTaskBox.TakeOver(commandTaskBox);
+            CommandBox.TakeOver(commandBox);
         }
 
-        public ISendReceipt Send(MessageContent content) => Send(null, content);
+        public ValueTask<IMessageSent> Send(MessageContent content, bool waitWritten = false) => Send(null, content, waitWritten);
 
-        public ISendReceipt Send(INetTunnel? sendTunnel, MessageContent content)
+        public async ValueTask<IMessageSent> Send(INetTunnel? sendTunnel, MessageContent content, bool waitWritten = false)
         {
             RpcRejectSendException cause;
             var result = MessageHandleStrategy.Handle;
+            IMessageWritable write = content;
             try
             {
                 sendTunnel ??= CurrentTunnel;
                 if (IsClosed())
                 {
-                    content.Cancel(new EndpointClosedException($"endpoint {this} closed"));
-                    return content;
+                    throw new EndpointClosedException($"endpoint {this} closed");
                 }
                 var filter = SendFilter;
                 if (filter != null)
@@ -223,7 +225,12 @@ namespace TnyFramework.Net.Endpoint
                 }
                 if (result.IsHandleable())
                 {
-                    sendTunnel.Write(CreateMessage, content);
+                    var written = sendTunnel.Write(allocator, content);
+                    if (waitWritten)
+                    {
+                        await written;
+                    }
+                    write.Written();
                     return content;
                 }
                 cause = new RpcRejectSendException(RejectMessage(false, filter, content, sendTunnel));
@@ -247,18 +254,13 @@ namespace TnyFramework.Net.Endpoint
             return Interlocked.Increment(ref idCreator);
         }
 
-        public INetMessage CreateMessage(IMessageFactory messageFactory, MessageContent content)
+        INetMessage INetEndpoint.CreateMessage(IMessageFactory messageFactory, MessageContent content)
         {
             var message = messageFactory.Create(AllocateMessageId(), content);
-            if (content is DefaultMessageContent requestContext && requestContext.IsRespondAwaitable())
+            if (content is IMessageResponsable completable)
             {
-                var source = requestContext.ResponseSource;
-                if (source != null)
-                {
-                    PutSource(message.Id, source);
-                }
+                PutSource(message.Id, completable.ResponseSource);
             }
-            // TODO 加入已发送队列 this.sentMessageQueue.addMessage(message);
             return message;
         }
 
@@ -393,7 +395,7 @@ namespace TnyFramework.Net.Endpoint
             lock (this)
             {
                 CheckOnlineCertificate(newCertificate);
-                certificate = (ICertificate<TUserId>) newCertificate;
+                certificate = newCertificate;
                 AcceptTunnel(onlineOne);
             }
         }
@@ -403,7 +405,7 @@ namespace TnyFramework.Net.Endpoint
             if (newTunnel.Bind(this))
             {
                 var oldTunnel = tunnel;
-                tunnel = (INetTunnel<TUserId>) newTunnel;
+                tunnel = newTunnel;
                 OfflineTime = 0;
                 if (oldTunnel != null && newTunnel != oldTunnel)
                 {
@@ -423,12 +425,12 @@ namespace TnyFramework.Net.Endpoint
 
         public Task AsyncExec(AsyncHandle handle)
         {
-            return CommandTaskBox.AsyncExec(handle);
+            return CommandBox.AsyncExec(handle);
         }
 
         public Task<T> AsyncExec<T>(AsyncHandle<T> function)
         {
-            return CommandTaskBox.AsyncExec(function);
+            return CommandBox.AsyncExec(function);
         }
     }
 

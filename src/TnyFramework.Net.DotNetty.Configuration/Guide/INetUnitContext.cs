@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Command.Dispatcher;
-using TnyFramework.Net.Command.Processor;
+using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.DotNetty.Configuration.Endpoint;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
@@ -26,10 +26,10 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         IMessageDispatcher LoadMessageDispatcher();
 
-        ICommandTaskBoxProcessor LoadCommandTaskProcessor();
+        ICommandBoxFactory LoadCommandBoxFactory();
 
         IEndpointUnitContext EndpointUnitContext { get; }
-        
+
         INetAppContext LoadAppContext();
 
         IRpcInvokeNodeManager LoadRpcRemoteServiceManager();

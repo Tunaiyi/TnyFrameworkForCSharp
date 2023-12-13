@@ -31,15 +31,14 @@ namespace TnyFramework.Net.Command.Auth
             var networkContext = context.NetworkContext;
             if (tunnel.IsAuthenticated())
                 return;
-            var certificateFactory = networkContext.GetCertificateFactory();
             var validator = GetValidator(dispatcherContext, type);
             if (validator == null)
             {
                 throw new AuthFailedException(NetResultCode.SERVER_ERROR, null, $"{nameof(type)} is null");
             }
-            var certificate = validator.Validate(tunnel, message, certificateFactory);
+            var certificate = validator.Validate(tunnel, message);
             // 是否需要做登录校验,判断是否已经登录
-            if (certificate == null || !certificate.IsAuthenticated())
+            if (!certificate.IsAuthenticated())
                 return;
             var endpointKeeper = endpointKeeperManager
                 .LoadKeeper(certificate.ContactType, tunnel.AccessMode);

@@ -9,7 +9,7 @@
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Command
+namespace TnyFramework.Net.Rpc
 {
 
     //TODO Protocol 设置
@@ -54,7 +54,7 @@ namespace TnyFramework.Net.Command
 
     public static class RpcResults
     {
-        private static readonly IRpcResult SUCCESS = new DefaultRpcResult<object>(ResultCode.SUCCESS, (object)null!);
+        private static readonly IRpcResult SUCCESS = new DefaultRpcResult<object>(ResultCode.SUCCESS, (object) null!);
 
         /// <summary>
         /// 创建成功响应结果

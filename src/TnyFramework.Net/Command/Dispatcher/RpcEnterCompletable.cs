@@ -8,7 +8,7 @@
 
 using System;
 using TnyFramework.Common.Result;
-using TnyFramework.Net.Transport;
+using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Command.Dispatcher
 {
@@ -54,6 +54,5 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <return>是否完成成功</return>
         bool Complete(MessageContent? content, Exception? error);
     }
-
 
 }

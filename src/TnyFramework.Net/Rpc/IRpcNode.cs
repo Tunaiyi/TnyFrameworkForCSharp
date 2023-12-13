@@ -16,7 +16,7 @@ namespace TnyFramework.Net.Rpc
         /// <summary>
         /// 节点id
         /// </summary>
-        int NodeId { get; }
+        long NodeId { get; }
 
         /// <summary>
         /// 服务类型

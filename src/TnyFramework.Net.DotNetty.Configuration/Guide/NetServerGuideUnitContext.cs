@@ -14,18 +14,18 @@ using TnyFramework.Net.DotNetty.Transport;
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
 
-    public class NetServerGuideUnitContext<TUserId> : NetGuideUnitContext<TUserId>, INetServerGuideUnitContext<TUserId>
+    public class NetServerGuideUnitContext : NetGuideUnitContext, INetServerGuideUnitContext
     {
         public ServerSettingSpec ServerSettingSpec { get; }
 
-        private UnitSpec<INetworkContext, INetServerGuideUnitContext<TUserId>> NetworkContextSpec { get; }
+        private UnitSpec<INetworkContext, INetServerGuideUnitContext> NetworkContextSpec { get; }
 
         public NetServerGuideUnitContext(INetUnitContext unitContext, IServiceCollection unitContainer) : base(unitContext, unitContainer)
         {
             ServerSettingSpec = new ServerSettingSpec();
-            TunnelFactorySpec.Default<ServerTunnelFactory<TUserId>>();
-            NetworkContextSpec = UnitSpec.Unit<INetworkContext, INetServerGuideUnitContext<TUserId>>()
-                .Default(DefaultNetworkContext<TUserId>);
+            TunnelFactorySpec.Default<ServerTunnelFactory>();
+            NetworkContextSpec = UnitSpec.Unit<INetworkContext, INetServerGuideUnitContext>()
+                .Default(DefaultNetworkContext);
         }
 
         protected override void OnSetName(string name)
@@ -45,16 +45,15 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return NetworkContextSpec.Load(this, UnitContainer);
         }
 
-        private static INetworkContext DefaultNetworkContext<T>(INetServerGuideUnitContext<TUserId> context)
+        private static INetworkContext DefaultNetworkContext(INetServerGuideUnitContext context)
         {
             var unitContext = context.UnitContext;
-            return new NetworkContext<TUserId>(
+            return new NetworkContext(
                 context.LoadServerSetting(),
                 unitContext.LoadMessageDispatcher(),
-                unitContext.LoadCommandTaskProcessor(),
+                unitContext.LoadCommandBoxFactory(),
                 context.LoadMessageFactory(),
                 context.LoadContactFactory(),
-                context.LoadCertificateFactory(),
                 context.LoadRpcMonitor());
         }
     }

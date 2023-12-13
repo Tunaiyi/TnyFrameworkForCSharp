@@ -21,6 +21,4 @@ public interface IAddressPeer
     /// 本地地址
     /// </summary>
     EndPoint? LocalAddress { get; }
-
-
 }

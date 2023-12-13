@@ -14,9 +14,16 @@ namespace TnyFramework.Net.Message
     /// </summary>
     public abstract class MessageHeader
     {
-        public abstract string Key { get; }
+        public MessageHeaderKey HeaderKey { get; }
 
-        public abstract bool IsTransitive { get; }
+        public string Key => HeaderKey.Value;
+
+        public MessageHeaderUsage Usage => HeaderKey.Usage;
+
+        protected MessageHeader(MessageHeaderKey headerKey)
+        {
+            HeaderKey = headerKey;
+        }
     }
 
 }

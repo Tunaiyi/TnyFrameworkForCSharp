@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
+using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Rpc
@@ -16,7 +17,7 @@ namespace TnyFramework.Net.Rpc
     {
         RpcAccessIdentify AccessId { get; }
 
-        Message.ForwardPoint ForwardPoint { get; }
+        ForwardPoint ForwardPoint { get; }
     }
 
 }

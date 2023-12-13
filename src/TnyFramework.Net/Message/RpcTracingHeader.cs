@@ -17,16 +17,19 @@ namespace TnyFramework.Net.Message
 {
 
     [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
-    [TypeProtobuf(MessageHeaderConstants.RPC_TRACING_TYPE_PROTO)]
+    [TypeProtobuf(MessageHeaderKeys.RPC_TRACING_TYPE_PROTO)]
     [ProtoContract]
     public class RpcTracingHeader : MessageHeader
     {
         [ProtoMember(1, IsPacked = true, OverwriteList = true)]
         public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
 
-        public override string Key => MessageHeaderConstants.RPC_TRACING_TYPE_PROTO_KEY;
-
-        public override bool IsTransitive => true;
+        public RpcTracingHeader() : base(MessageHeaderKeys.RPC_ORIGINAL_MESSAGE_ID_HEADER)
+        {
+        }
+        // public override string Key => MessageHeaderKeys.RPC_TRACING_TYPE_PROTO_KEY;
+        //
+        // public override bool IsTransitive => true;
 
         public override string ToString()
         {

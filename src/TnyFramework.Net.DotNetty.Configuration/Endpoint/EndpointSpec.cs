@@ -54,15 +54,15 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             return this;
         }
 
-        public IEndpointSpec SessionKeeperFactory<TUserId>()
+        public IEndpointSpec SessionKeeperFactory()
         {
-            sessionKeeperFactorySpec.Add(context => new SessionKeeperFactory<TUserId>(context.LoadSessionFactories()));
+            sessionKeeperFactorySpec.Add(context => new SessionKeeperFactory(context.LoadSessionFactories()));
             return this;
         }
 
-        public IEndpointSpec SessionKeeperFactory<TUserId>(string name)
+        public IEndpointSpec SessionKeeperFactory(string name)
         {
-            sessionKeeperFactorySpec.Add(name, context => new SessionKeeperFactory<TUserId>(context.LoadSessionFactories()));
+            sessionKeeperFactorySpec.Add(name, context => new SessionKeeperFactory(context.LoadSessionFactories()));
             return this;
         }
 

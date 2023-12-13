@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Common.Result;
+using TnyFramework.Net.Rpc;
 
 namespace TnyFramework.Net.Command.Dispatcher
 {
@@ -16,17 +17,17 @@ namespace TnyFramework.Net.Command.Dispatcher
         string Name { get; }
 
         /**
-		 * 设置CommandResult,并中断执行
-		 *
-		 * @param result 运行结果
-		 */
+         * 设置CommandResult,并中断执行
+         *
+         * @param result 运行结果
+         */
         void Intercept(IRpcResult result);
 
         /**
-		 * 设置结果码,并中断执行
-		 *
-		 * @param code 结果码
-		 */
+         * 设置结果码,并中断执行
+         *
+         * @param code 结果码
+         */
         void Intercept(IResultCode code);
 
         /**

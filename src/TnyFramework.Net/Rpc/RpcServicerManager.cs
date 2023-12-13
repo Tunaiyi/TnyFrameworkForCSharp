@@ -11,6 +11,7 @@ using System.Collections.Concurrent;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Endpoint;
+using TnyFramework.Net.Rpc.Extensions;
 
 namespace TnyFramework.Net.Rpc
 {
@@ -74,7 +75,7 @@ namespace TnyFramework.Net.Rpc
 
         private void OnCreate(IEndpointKeeper keeper)
         {
-            if (!(keeper.ContactType is IRpcServiceType))
+            if (keeper.ContactType is not IRpcServiceType)
                 return;
             keeper.AddEndpointEvent.Add(OnAddEndpoint);
             keeper.RemoveEndpointEvent.Add(OnRemoveEndpoint);
@@ -82,18 +83,24 @@ namespace TnyFramework.Net.Rpc
 
         private void OnRemoveEndpoint(IEndpointKeeper keeper, IEndpoint endpoint)
         {
-            if (!(endpoint is IEndpoint<RpcAccessIdentify> point))
+            var rpcIdentify = endpoint.GetRpcAccessIdentify();
+            if (rpcIdentify.IsNull())
+            {
                 return;
-            var servicer = DoLoadRpcServiceSet(point.UserId.ServiceType);
-            servicer.RemoveEndpoint(point);
+            }
+            var servicer = DoLoadRpcServiceSet(rpcIdentify.ServiceType);
+            servicer.RemoveEndpoint(endpoint);
         }
 
         private void OnAddEndpoint(IEndpointKeeper keeper, IEndpoint endpoint)
         {
-            if (!(endpoint is IEndpoint<RpcAccessIdentify> point))
+            var rpcIdentify = endpoint.GetRpcAccessIdentify();
+            if (rpcIdentify.IsNull())
+            {
                 return;
-            var servicer = DoLoadRpcServiceSet(point.UserId.ServiceType);
-            servicer.AddEndpoint(point);
+            }
+            var servicer = DoLoadRpcServiceSet(rpcIdentify.ServiceType);
+            servicer.AddEndpoint(endpoint);
         }
     }
 

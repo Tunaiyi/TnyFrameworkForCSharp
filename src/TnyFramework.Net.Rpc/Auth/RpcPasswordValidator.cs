@@ -6,10 +6,8 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
@@ -18,7 +16,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Rpc.Auth
 {
 
-    public class RpcPasswordValidator : IAuthenticationValidator<RpcAccessIdentify>
+    public class RpcPasswordValidator : IAuthenticationValidator
     {
         private readonly IRpcAuthService rpcAuthService;
 
@@ -32,15 +30,7 @@ namespace TnyFramework.Net.Rpc.Auth
             this.rpcAuthService = rpcAuthService;
         }
 
-        public ICertificate Validate(ITunnel tunnel, IMessage message, ICertificateFactory certificateFactory)
-        {
-            if (tunnel is ITunnel<RpcAccessIdentify> rpcTunnel && certificateFactory is ICertificateFactory<RpcAccessIdentify> rpcFactory)
-                return Validate(rpcTunnel, message, rpcFactory);
-            throw new AuthFailedException("服务器错误");
-        }
-
-        public ICertificate<RpcAccessIdentify> Validate(ITunnel<RpcAccessIdentify> tunnel, IMessage message,
-            ICertificateFactory<RpcAccessIdentify> factory)
+        public ICertificate Validate(ITunnel tunnel, IMessage message)
         {
             var paramList = message.BodyAs<MessageParamList>();
             if (paramList == null)
@@ -53,8 +43,7 @@ namespace TnyFramework.Net.Rpc.Auth
             if (result.IsFailure())
                 throw new AuthFailedException($"Rpc登录认证失败, Code : {result.Value} ; Message : {result.Message}");
             var identify = result.Value;
-            return factory.Authenticate(idGenerator.Generate(), identify, identify.Id, identify.ServiceType,
-                DateTimeOffset.Now.ToUnixTimeMilliseconds());
+            return Certificates.CreateAuthenticated(idGenerator.Generate(), identify.Id, identify.ServerId, identify.ServiceType, identify);
         }
     }
 

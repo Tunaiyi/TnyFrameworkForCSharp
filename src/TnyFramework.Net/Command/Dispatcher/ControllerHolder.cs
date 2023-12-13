@@ -31,7 +31,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             AuthAttribute = authAttribute;
             BeforePlugins = InitPlugins(context.CommandPlugins, beforePlugins);
             AfterPlugins = InitPlugins(context.CommandPlugins, afterPlugins);
-            UserGroups = ListOf(authAttribute?.UserGroups);
+            ContactGroups = ListOf(authAttribute?.ContactGroups);
             AppTypes = ListOf(appProfile?.AppTypes);
             Scopes = ListOf(scopeProfile?.Scopes);
         }
@@ -82,7 +82,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// 用户组名称列表
         /// </summary>
-        public IList<string>? UserGroups { get; private set; }
+        public IList<string>? ContactGroups { get; private set; }
 
         /// <summary>
         /// 应用类型
@@ -144,9 +144,9 @@ namespace TnyFramework.Net.Command.Dispatcher
         // /// </returns>
         // public abstract List<Attribute> GetParamAnnotationsByIndex(int index);
 
-        public virtual bool IsUserGroup(IContactType contactType)
+        public virtual bool IsContactGroup(IContactType contactType)
         {
-            return UserGroups == null || UserGroups.Count == 0 || UserGroups.Contains(contactType.Group);
+            return ContactGroups == null || ContactGroups.Count == 0 || ContactGroups.Contains(contactType.Group);
         }
 
         public virtual bool IsActiveByAppType(string appType)

@@ -9,7 +9,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
@@ -17,12 +16,11 @@ using TnyFramework.Net.DotNetty.Configuration.Channel;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.ProtobufNet;
-using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
 
-    public abstract class NetGuideUnitContext<TUserId> : INetGuideUnitContext<TUserId>
+    public abstract class NetGuideUnitContext : INetGuideUnitContext
     {
         internal IServiceCollection UnitContainer { get; }
 
@@ -30,21 +28,19 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         public IDataPacketV1ChannelMakerUnitContext ChannelMakerUnitContext => ChannelMakerSpec;
 
-        public UnitSpec<INettyTunnelFactory, INetGuideUnitContext<TUserId>> TunnelFactorySpec { get; }
+        public UnitSpec<INettyTunnelFactory, INetGuideUnitContext> TunnelFactorySpec { get; }
 
-        public UnitSpec<IMessageFactory, INetGuideUnitContext<TUserId>> MessageFactorySpec { get; }
+        public UnitSpec<IMessageFactory, INetGuideUnitContext> MessageFactorySpec { get; }
 
-        public UnitSpec<IContactFactory, INetGuideUnitContext<TUserId>> ContactFactorySpec { get; }
+        public UnitSpec<IContactFactory, INetGuideUnitContext> ContactFactorySpec { get; }
 
-        public UnitSpec<IMessageBodyCodec, INetGuideUnitContext<TUserId>> MessageBodyCodecSpec { get; }
+        public UnitSpec<IMessageBodyCodec, INetGuideUnitContext> MessageBodyCodecSpec { get; }
 
-        public UnitSpec<IMessageHeaderCodec, INetGuideUnitContext<TUserId>> MessageHeaderCodecSpec { get; }
+        public UnitSpec<IMessageHeaderCodec, INetGuideUnitContext> MessageHeaderCodecSpec { get; }
 
-        public UnitSpec<RpcMonitor, INetGuideUnitContext<TUserId>> RpcMonitorSpec { get; }
+        public UnitSpec<RpcMonitor, INetGuideUnitContext> RpcMonitorSpec { get; }
 
-        public UnitSpec<IMessageCodec, INetGuideUnitContext<TUserId>> MessageCodecSpec { get; }
-
-        public UnitSpec<ICertificateFactory<TUserId>, INetGuideUnitContext<TUserId>> CertificateFactorySpec { get; }
+        public UnitSpec<IMessageCodec, INetGuideUnitContext> MessageCodecSpec { get; }
 
         public DataPacketV1ChannelMakerSpec ChannelMakerSpec { get; }
 
@@ -57,43 +53,38 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             UnitContext = unitContext;
 
             // TunnelFactory
-            TunnelFactorySpec = UnitSpec.Unit<INettyTunnelFactory, INetGuideUnitContext<TUserId>>();
+            TunnelFactorySpec = UnitSpec.Unit<INettyTunnelFactory, INetGuideUnitContext>();
 
             // MessageFactory
-            MessageFactorySpec = UnitSpec.Unit<IMessageFactory, INetGuideUnitContext<TUserId>>()
+            MessageFactorySpec = UnitSpec.Unit<IMessageFactory, INetGuideUnitContext>()
                 .Default<CommonMessageFactory>();
 
             // ContactFactory
-            ContactFactorySpec = UnitSpec.Unit<IContactFactory, INetGuideUnitContext<TUserId>>()
+            ContactFactorySpec = UnitSpec.Unit<IContactFactory, INetGuideUnitContext>()
                 .Default<InnerContactFactory>();
 
             // MessageBodyCodec
-            MessageBodyCodecSpec = UnitSpec.Unit<IMessageBodyCodec, INetGuideUnitContext<TUserId>>()
+            MessageBodyCodecSpec = UnitSpec.Unit<IMessageBodyCodec, INetGuideUnitContext>()
                 .Default<TypeProtobufMessageBodyCodec>();
 
             // MessageBodyCodec
-            MessageHeaderCodecSpec = UnitSpec.Unit<IMessageHeaderCodec, INetGuideUnitContext<TUserId>>()
+            MessageHeaderCodecSpec = UnitSpec.Unit<IMessageHeaderCodec, INetGuideUnitContext>()
                 .Default<MessageHeaderCodec>();
 
             // MessageCodec
-            MessageCodecSpec = UnitSpec.Unit<IMessageCodec, INetGuideUnitContext<TUserId>>()
+            MessageCodecSpec = UnitSpec.Unit<IMessageCodec, INetGuideUnitContext>()
                 .Default(DefaultMessageCodec);
 
-            // CertificateFactory
-            CertificateFactorySpec = UnitSpec.Unit<ICertificateFactory<TUserId>, INetGuideUnitContext<TUserId>>()
-                .Default<CertificateFactory<TUserId>>();
-
-            // CertificateFactory
-            RpcMonitorSpec = UnitSpec.Unit<RpcMonitor, INetGuideUnitContext<TUserId>>()
+            // RpcMonitor
+            RpcMonitorSpec = UnitSpec.Unit<RpcMonitor, INetGuideUnitContext>()
                 .Default(DefaultRpcMonitor);
 
             // ChannelMaker 
             ChannelMakerSpec = new DataPacketV1ChannelMakerSpec(UnitContainer);
 
-
         }
 
-        private RpcMonitor DefaultRpcMonitor(INetGuideUnitContext<TUserId> context)
+        private RpcMonitor DefaultRpcMonitor(INetGuideUnitContext context)
         {
             return new RpcMonitor();
         }
@@ -106,7 +97,6 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             MessageBodyCodecSpec.WithNamePrefix(name);
             MessageHeaderCodecSpec.WithNamePrefix(name);
             MessageCodecSpec.WithNamePrefix(name);
-            CertificateFactorySpec.WithNamePrefix(name);
             ChannelMakerSpec.SetName(name);
             OnSetName(name);
         }
@@ -153,12 +143,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return MessageHeaderCodecSpec.Load(this, UnitContainer);
         }
 
-        public ICertificateFactory<TUserId> LoadCertificateFactory()
-        {
-            return CertificateFactorySpec.Load(this, UnitContainer);
-        }
-
-        private static IMessageCodec DefaultMessageCodec(INetGuideUnitContext<TUserId> context)
+        private static IMessageCodec DefaultMessageCodec(INetGuideUnitContext context)
         {
             return new NettyMessageCodec(context.LoadMessageBodyCodec(), context.LoadMessageHeaderCodec());
         }

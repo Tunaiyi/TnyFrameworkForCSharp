@@ -9,8 +9,8 @@
 using System.Collections.Generic;
 using TnyFramework.Common.Event;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Endpoint.Event;
+using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Endpoint
@@ -24,21 +24,16 @@ namespace TnyFramework.Net.Endpoint
         IContactType ContactType { get; }
 
         /// <summary>
-        /// 获取用户组
-        /// </summary>
-        string UserGroup { get; }
-
-        /// <summary>
         /// 所有endpoint数量
         /// </summary>
         int Size { get; }
 
         /// <summary>
-        /// 获取指定userId对应的Session <br />
+        /// 获取指定identify对应的Session <br />
         /// </summary>
-        /// <param name="userId">指定的Key</param>
+        /// <param name="identify">指定的Key</param>
         /// <returns>返回获取的endpoint</returns>
-        IEndpoint? GetEndpoint(object userId);
+        IEndpoint? GetEndpoint(long identify);
 
         /// <summary>
         /// 获取所有的endpoints
@@ -47,32 +42,32 @@ namespace TnyFramework.Net.Endpoint
         IList<IEndpoint> GetAllEndpoints();
 
         /// <summary>
-        /// 使指定userId的endpoint关闭
+        /// 使指定identify的endpoint关闭
         /// </summary>
-        /// <param name="userId">指定userId</param>
+        /// <param name="identify">指定identify</param>
         /// <returns>返回关闭endpoint</returns>
-        IEndpoint? Close(object userId);
+        IEndpoint? Close(long identify);
 
         /// <summary>
-        /// 使指定userId的endpoint下线
+        /// 使指定identify的endpoint下线
         /// </summary>
-        /// <param name="userId">指定userId</param>
+        /// <param name="identify">指定identify</param>
         /// <returns>返回下线的endpoint</returns>
-        IEndpoint? Offline(object userId);
+        IEndpoint? Offline(long identify);
 
         /// <summary>
         /// 发信息给用户
         /// </summary>
-        /// <param name="userId"></param>
+        /// <param name="identify"></param>
         /// <param name="content"></param>
-        void Send2User(object userId, MessageContent content);
+        void Send2User(long identify, MessageContent content);
 
         /// <summary>
         /// 发信息给用户集合
         /// </summary>
-        /// <param name="userIds">用户ID列表</param>
+        /// <param name="identifies">用户ID列表</param>
         /// <param name="content"></param>
-        void Send2Users(IEnumerable<object> userIds, MessageContent content);
+        void Send2Users(IEnumerable<long> identifies, MessageContent content);
 
         /// <summary>
         /// 发送给所有在线的用户
@@ -104,11 +99,11 @@ namespace TnyFramework.Net.Endpoint
         IEndpoint? Online(ICertificate certificate, INetTunnel tunnel);
 
         /**
-         * 获取指定userId对应的Session
-         * @param userId 指定的Key
+         * 获取指定identify对应的Session
+         * @param identify 指定的Key
          * @return 返回获取的endpoint, 无endpoint返回null
          */
-        bool IsOnline(object userId);
+        bool IsOnline(long identify);
 
         /// <summary>
         /// 添加 Endpoint 事件
@@ -126,15 +121,15 @@ namespace TnyFramework.Net.Endpoint
         void Start();
     }
 
-    public interface IEndpointKeeper<in TUserId, TEndpoint> : IEndpointKeeper
-        where TEndpoint : IEndpoint<TUserId>
+    public interface IEndpointKeeper<TEndpoint> : IEndpointKeeper
+        where TEndpoint : IEndpoint
     {
         /// <summary>
-        /// 获取指定userId对应的Session <br />
+        /// 获取指定identify对应的Session <br />
         /// </summary>
-        /// <param name="userId">指定的Key</param>
+        /// <param name="identify">指定的Key</param>
         /// <returns>返回获取的endpoint</returns>
-        TEndpoint? GetEndpoint(TUserId userId);
+        new TEndpoint? GetEndpoint(long identify);
 
         /// <summary>
         /// 获取所有的endpoints
@@ -143,25 +138,18 @@ namespace TnyFramework.Net.Endpoint
         new IList<TEndpoint> GetAllEndpoints();
 
         /// <summary>
-        /// 使指定userId的endpoint关闭
+        /// 使指定identify的endpoint关闭
         /// </summary>
-        /// <param name="userId">指定userId</param>
+        /// <param name="identify">指定identify</param>
         /// <returns>返回关闭endpoint</returns>
-        TEndpoint? Close(TUserId userId);
+        new TEndpoint? Close(long identify);
 
         /// <summary>
-        /// 使指定userId的endpoint下线
+        /// 使指定identify的endpoint下线
         /// </summary>
-        /// <param name="userId">指定userId</param>
+        /// <param name="identify">指定identify</param>
         /// <returns>返回下线的endpoint</returns>
-        TEndpoint? Offline(TUserId userId);
-
-        /// <summary>
-        /// 判断指定用户是否在线
-        /// </summary>
-        /// <param name="userId">用户 id</param>
-        /// <returns>在线返回 true 否则返回 false</returns>
-        bool IsOnline(TUserId userId);
+        new TEndpoint? Offline(long identify);
     }
 
 }

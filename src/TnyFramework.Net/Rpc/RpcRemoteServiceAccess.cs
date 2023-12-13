@@ -8,13 +8,14 @@
 
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Rpc.Extensions;
 
 namespace TnyFramework.Net.Rpc
 {
 
     public class RpcRemoteServiceAccess : IRpcServiceAccess
     {
-        private readonly IEndpoint<RpcAccessIdentify> endpoint;
+        private readonly IEndpoint endpoint;
 
         public IEndpoint Endpoint => endpoint;
 
@@ -22,10 +23,10 @@ namespace TnyFramework.Net.Rpc
 
         public ForwardPoint ForwardPoint { get; }
 
-        public RpcRemoteServiceAccess(IEndpoint<RpcAccessIdentify> endpoint)
+        public RpcRemoteServiceAccess(IEndpoint endpoint)
         {
             this.endpoint = endpoint;
-            ForwardPoint = new ForwardPoint(endpoint.UserId);
+            ForwardPoint = new ForwardPoint(endpoint.GetRpcAccessIdentify());
         }
 
         public bool IsActive()
@@ -33,7 +34,7 @@ namespace TnyFramework.Net.Rpc
             return Endpoint.IsActive();
         }
 
-        public RpcAccessIdentify Identify => endpoint.UserId;
+        public RpcAccessIdentify Identify => endpoint.GetRpcAccessIdentify();
     }
 
 }

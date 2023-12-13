@@ -19,7 +19,7 @@ namespace TnyFramework.Net.Rpc
 
     public class RpcServiceSet : IRpcInvokeNodeSet
     {
-        private readonly ConcurrentDictionary<int, RpcServiceNode> remoteNodeMap = new ConcurrentDictionary<int, RpcServiceNode>();
+        private readonly ConcurrentDictionary<long, RpcServiceNode> remoteNodeMap = new();
 
         private volatile IList<IRpcInvokeNode> orderRemoteNodes = ImmutableList.Create<IRpcInvokeNode>();
 
@@ -36,36 +36,35 @@ namespace TnyFramework.Net.Rpc
             ServiceType = serviceType;
         }
 
-
         public IList<IRpcInvokeNode> GetOrderInvokeNodes()
         {
             return orderRemoteNodes;
         }
 
-        public IRpcInvokeNode? FindInvokeNode(int nodeId)
+        public IRpcInvokeNode? FindInvokeNode(long nodeId)
         {
-            return remoteNodeMap[nodeId];
+            return remoteNodeMap.GetValueOrDefault(nodeId);
         }
 
-        public IRpcAccess? FindInvokeAccess(int nodeId, long accessId)
+        public IRpcAccess? FindInvokeAccess(long nodeId, long accessId)
         {
-            var node = remoteNodeMap[nodeId];
+            var node = remoteNodeMap.GetValueOrDefault(nodeId);
             return node?.GetAccess(accessId);
         }
-        
+
         private void UpdateVersion()
         {
             Interlocked.Increment(ref version);
         }
 
-        internal void AddEndpoint(IEndpoint<RpcAccessIdentify> endpoint)
+        internal void AddEndpoint(IEndpoint endpoint)
         {
             var node = LoadOrCreate(endpoint);
             node.AddEndpoint(endpoint);
             RefreshNodes(node);
         }
 
-        internal void RemoveEndpoint(IEndpoint<RpcAccessIdentify> endpoint)
+        internal void RemoveEndpoint(IEndpoint endpoint)
         {
             var node = LoadOrCreate(endpoint);
             node.RemoveEndpoint(endpoint);
@@ -82,13 +81,12 @@ namespace TnyFramework.Net.Rpc
             RefreshNodes(rpcServiceNode);
         }
 
-        private RpcServiceNode LoadOrCreate(IConnector<RpcAccessIdentify> endpoint)
+        private RpcServiceNode LoadOrCreate(IConnector endpoint)
         {
-            var nodeId = endpoint.UserId;
-            return remoteNodeMap.GetOrAdd(nodeId.ServerId, CreateNode);
+            return remoteNodeMap.GetOrAdd(endpoint.ContactId, CreateNode);
         }
 
-        private RpcServiceNode CreateNode(int serverId)
+        private RpcServiceNode CreateNode(long serverId)
         {
             return new RpcServiceNode(serverId, this);
         }
@@ -107,7 +105,6 @@ namespace TnyFramework.Net.Rpc
         {
             return node.IsActive();
         }
-
     }
 
 }

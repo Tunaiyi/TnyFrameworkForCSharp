@@ -19,9 +19,9 @@ namespace TnyFramework.Net.DotNetty.Codec
 
     public class MessageHeaderCodec : IMessageHeaderCodec
     {
-        private readonly TypeProtobufObjectCodecFactory codecFactory;
+        private readonly TypeProtobufObjectCodecFactory codecFactory = new();
 
-        private static readonly FastThreadLocal<MemoryStream> STEAM_LOCAL = new FastThreadLocal<MemoryStream>();
+        private static readonly FastThreadLocal<MemoryStream> STEAM_LOCAL = new();
 
         static MessageHeaderCodec()
         {
@@ -31,15 +31,10 @@ namespace TnyFramework.Net.DotNetty.Codec
             factory.Load<RpcOriginalMessageIdHeader>();
         }
 
-        public MessageHeaderCodec()
-        {
-            codecFactory = new TypeProtobufObjectCodecFactory();
-        }
-
         public MessageHeader? Decode(IByteBuffer buffer)
         {
             var codec = codecFactory.CreateCodec(typeof(object));
-            ByteBufferVariantExtensions.ReadVariant(buffer, out int bodyLength);
+            buffer.ReadVariant(out int bodyLength);
             var body = buffer.ReadBytes(bodyLength);
             using var stream = new ReadOnlyByteBufferStream(body, true);
             return (MessageHeader?) codec.Decode(stream);

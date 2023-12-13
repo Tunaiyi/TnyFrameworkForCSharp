@@ -18,7 +18,6 @@ using TnyFramework.Net.Demo.DTO;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
-using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Demo.Controller
 {
@@ -35,20 +34,20 @@ namespace TnyFramework.Net.Demo.Controller
         private static readonly ThreadLocal<Random> THREAD_LOCAL = new ThreadLocal<Random>();
 
         [RpcRequest(CtrlerIds.SPEAK_4_SAY)]
-        public SayContentDTO Say(IEndpoint<long> endpoint, string message)
+        public SayContentDTO Say(IEndpoint endpoint, string message)
         {
             endpoint.Send(MessageContents.Push(Protocols.Protocol(CtrlerIds.SPEAK_4_PUSH), "因为 [" + message + "] 推条信息给你! " + Rand()));
             return new SayContentDTO(endpoint.Id, "respond " + message);
         }
 
         [RpcRequest(CtrlerIds.SPEAK_4_SAY_FOR_RPC)]
-        public SayContentDTO SayForBody([UserId] RpcAccessIdentify id, string message)
+        public SayContentDTO SayForBody([Identify] RpcAccessIdentify id, string message)
         {
             return new SayContentDTO(id.Id, "respond " + message);
         }
 
         [RpcRequest(CtrlerIds.SPEAK_4_TEST)]
-        public SayContentDTO Test(IEndpoint<long> endpoint,
+        public SayContentDTO Test(IEndpoint endpoint,
             sbyte byteValue,
             short shortValue,
             int intValue,
@@ -71,7 +70,7 @@ namespace TnyFramework.Net.Demo.Controller
         }
 
         [RpcRequest(CtrlerIds.SPEAK_4_DELAY_SAY)]
-        public async Task<SayContentDTO> DelaySay(IEndpoint<long> endpoint, string message, long delay)
+        public async Task<SayContentDTO> DelaySay(IEndpoint endpoint, string message, long delay)
         {
             var timeout = DateTime.Now.ToLongTimeString() + delay;
             await Task.Delay((int) delay);

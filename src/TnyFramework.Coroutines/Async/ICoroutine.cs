@@ -115,6 +115,12 @@ namespace TnyFramework.Coroutines.Async
         /// <param name="millisecondsTimeout">等待超时</param>
         /// <returns>无超时返回 false, 超时返回 true</returns>
         Task<bool> Shutdown(long millisecondsTimeout);
+
+        // /// <summary>
+        // /// 转化成 TaskScheduler
+        // /// </summary>
+        // /// <returns></returns>
+        // TaskScheduler TaskScheduler();
     }
 
 }

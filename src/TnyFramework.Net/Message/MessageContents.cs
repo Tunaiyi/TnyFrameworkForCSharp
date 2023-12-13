@@ -7,9 +7,8 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Common.Result;
-using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Message
 {
 
     public static class MessageContents

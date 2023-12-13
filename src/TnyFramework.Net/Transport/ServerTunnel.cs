@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using Microsoft.Extensions.Logging;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Endpoint;
@@ -19,16 +20,13 @@ namespace TnyFramework.Net.Transport
         internal static readonly ILogger LOGGER = LogFactory.Logger<ServerTunnel>();
     }
 
-    public class ServerTunnel<TUserId, TTransporter> : BaseNetTunnel<TUserId, INetSession<TUserId>, TTransporter>
+    public class ServerTunnel<TTransporter> : BaseNetTunnel<INetSession, TTransporter>
         where TTransporter : IMessageTransporter
     {
-        private readonly ILogger logger = ServerTunnel.LOGGER;
-
         public ServerTunnel(long id, TTransporter transporter, INetworkContext context)
             : base(id, transporter, NetAccessMode.Server, context)
         {
-            var factory = context.CertificateFactory<TUserId>();
-            Bind(new AnonymityEndpoint<TUserId>(factory, context, this));
+            Bind(new AnonymityEndpoint(context, this));
         }
 
         protected sealed override bool ReplaceEndpoint(INetEndpoint newEndpoint)
@@ -37,8 +35,8 @@ namespace TnyFramework.Net.Transport
             var certificate = Certificate;
             if (certificate.IsAuthenticated())
                 return false;
-            var commandTaskBox = Endpoint.CommandTaskBox;
-            SetEndpoint((INetSession<TUserId>) newEndpoint);
+            var commandTaskBox = Endpoint.CommandBox;
+            SetEndpoint((INetSession) newEndpoint);
             Endpoint.TakeOver(commandTaskBox);
             return true;
         }
@@ -51,7 +49,7 @@ namespace TnyFramework.Net.Transport
         protected override bool OnOpen()
         {
             var transporter = Transporter;
-            if (transporter != null && transporter.IsActive())
+            if (transporter.IsNotNull() && transporter.IsActive())
                 return true;
             logger.LogWarning("open failed. channel {Transporter} is not active", transporter);
             return false;

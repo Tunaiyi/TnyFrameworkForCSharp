@@ -9,11 +9,11 @@
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
 
-    public interface IServerUnitContext<TUserId>
+    public interface IServerUnitContext
     {
         INetUnitContext UnitContext { get; }
 
-        INetServerGuideUnitContext<TUserId> ServerGuideUnitContext { get; }
+        INetServerGuideUnitContext ServerGuideUnitContext { get; }
     }
 
 }

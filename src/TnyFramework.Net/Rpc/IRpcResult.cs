@@ -6,19 +6,30 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Command.Dispatcher;
+using TnyFramework.Common.Result;
+using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Rpc
 {
 
-    public interface IReceiver
+    public interface IRpcResult
     {
-        /// <summary>
-        /// 接收消息
-        /// </summary>
-        /// <param name="rpcContext">消息</param>
-        /// <returns>是否接收成功</returns>
-        bool Receive(IRpcEnterContext rpcContext);
+        object? Body { get; }
+
+        IMessage? Message { get; }
+
+        IResultCode ResultCode { get; }
+
+        string Description { get; }
+
+        bool IsSuccess();
+
+        bool IsFailure();
+    }
+
+    public interface IRpcResult<out TBody> : IRpcResult
+    {
+        new TBody? Body { get; }
     }
 
 }

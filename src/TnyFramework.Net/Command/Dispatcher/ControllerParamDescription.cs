@@ -112,9 +112,12 @@ namespace TnyFramework.Net.Command.Dispatcher
                             Index = indexCreator.Peek();
                         }
                         Mode = ParamMode.Param;
-                    } else if (type == typeof(UserIdAttribute))
+                    } else if (type == typeof(IdentifyAttribute))
                     {
-                        Mode = ParamMode.UserId;
+                        Mode = ParamMode.Identify;
+                    } else if (type == typeof(IdentifyTokenAttribute))
+                    {
+                        Mode = ParamMode.IdentifyToken;
                     } else if (type == typeof(RpcCodeAttribute))
                     {
                         if (ParamType == typeof(int))
@@ -184,7 +187,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     value = message;
                     break;
                 case ParamMode.Session: {
-                    value = tunnel.GetEndpoint();
+                    value = tunnel.Endpoint;
                     if (ParamType.IsInstanceOfType(value))
                     {
                         break;
@@ -192,7 +195,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     throw new NullReferenceException($"{tunnel} session is null");
                 }
                 case ParamMode.Endpoint: {
-                    value = tunnel.GetEndpoint();
+                    value = tunnel.Endpoint;
                     break;
                 }
                 case ParamMode.Tunnel:
@@ -205,8 +208,11 @@ namespace TnyFramework.Net.Command.Dispatcher
                 case ParamMode.Body:
                     value = body;
                     break;
-                case ParamMode.UserId:
-                    value = tunnel.GetUserId();
+                case ParamMode.Identify:
+                    value = tunnel.Identify;
+                    break;
+                case ParamMode.IdentifyToken:
+                    value = tunnel.IdentifyToken;
                     break;
                 case ParamMode.Header:
                     if (HeaderKey.IsNotBlank())
@@ -254,7 +260,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     value = head.Code;
                     break;
                 case ParamMode.FromService: {
-                    var forwardHeader = head.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+                    var forwardHeader = head.GetHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
                     if (forwardHeader != null)
                     {
                         value = forwardHeader.From;
@@ -262,7 +268,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     break;
                 }
                 case ParamMode.ToService: {
-                    var forwardHeader = head.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+                    var forwardHeader = head.GetHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
                     if (forwardHeader != null)
                     {
                         value = forwardHeader.To;
@@ -270,7 +276,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     break;
                 }
                 case ParamMode.Sender: {
-                    var forwardHeader = head.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+                    var forwardHeader = head.GetHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
                     if (forwardHeader != null)
                     {
                         value = context.ContactFactory.CreateContact(forwardHeader.Sender!);
@@ -278,7 +284,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     break;
                 }
                 case ParamMode.Receiver: {
-                    var forwardHeader = head.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
+                    var forwardHeader = head.GetHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
                     if (forwardHeader != null)
                     {
                         value = context.ContactFactory.CreateContact(forwardHeader.Receiver!);

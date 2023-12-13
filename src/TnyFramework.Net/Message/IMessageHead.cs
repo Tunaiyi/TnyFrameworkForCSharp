@@ -6,7 +6,6 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-
 namespace TnyFramework.Net.Message
 {
 
@@ -21,15 +20,9 @@ namespace TnyFramework.Net.Message
         long Id { get; }
 
         /// <summary>
-        /// 消息响应码
-        /// </summary>
-        int Code { get; }
-
-        /// <summary>
         /// 请求时间
         /// </summary>
         long Time { get; }
-
     }
 
 }

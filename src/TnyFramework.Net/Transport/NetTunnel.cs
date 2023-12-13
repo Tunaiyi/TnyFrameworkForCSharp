@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using TnyFramework.Common.Event;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
@@ -20,30 +19,30 @@ using TnyFramework.Net.Transport.Event;
 namespace TnyFramework.Net.Transport
 {
 
-    public static class NetTunnel
+    public interface ITunnelEventSource
     {
-        internal static readonly IEventBus<TunnelActivate> ACTIVATE_EVENT_BUS = EventBuses.Create<TunnelActivate>();
-        internal static readonly IEventBus<TunnelUnactivated> UNACTIVATED_EVENT_BUS = EventBuses.Create<TunnelUnactivated>();
-        internal static readonly IEventBus<TunnelClose> CLOSE_EVENT_BUS = EventBuses.Create<TunnelClose>();
+        protected static readonly IEventBus<TunnelActivate> ACTIVATE_GLOBAL_EVENT = EventBuses.Create<TunnelActivate>();
+        protected static readonly IEventBus<TunnelUnactivated> UNACTIVATED_GLOBAL_EVENT = EventBuses.Create<TunnelUnactivated>();
+        protected static readonly IEventBus<TunnelClose> CLOSE_GLOBAL_EVENT = EventBuses.Create<TunnelClose>();
 
         /// <summary>
         /// 激活事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<TunnelActivate> ActivateEventBox => ACTIVATE_EVENT_BUS;
+        public static IEventBox<TunnelActivate> ActivateGlobalEvent => ACTIVATE_GLOBAL_EVENT;
 
         /// <summary>
         /// 断线事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<TunnelUnactivated> UnactivatedEventBox => UNACTIVATED_EVENT_BUS;
+        public static IEventBox<TunnelUnactivated> UnactivatedGlobalEvent => UNACTIVATED_GLOBAL_EVENT;
 
         /// <summary>
         /// 关闭事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<TunnelClose> CloseEventBox => CLOSE_EVENT_BUS;
+        public static IEventBox<TunnelClose> CloseGlobalEvent => CLOSE_GLOBAL_EVENT;
     }
 
-    public abstract class NetTunnel<TUserId, TEndpoint> : Connector<TUserId>, INetTunnel<TUserId>
-        where TEndpoint : INetEndpoint<TUserId>
+    public abstract class NetTunnel<TEndpoint> : Connector, ITunnelEventSource, INetTunnel
+        where TEndpoint : INetEndpoint
     {
         private int status = TunnelStatus.Init.Value();
 
@@ -61,25 +60,21 @@ namespace TnyFramework.Net.Transport
             protected set => status = value.Value();
         }
 
-        public override ICertificate<TUserId> Certificate => endpoint.IsNull() ? null! : endpoint.Certificate;
+        public override ICertificate Certificate => endpoint.IsNull() ? null! : endpoint.Certificate;
 
         public INetworkContext Context { get; }
 
         public IMessageFactory MessageFactory => Context.MessageFactory;
 
-        public ICertificateFactory CertificateFactory => Context.GetCertificateFactory();
-
-        ICertificateFactory<TUserId> INetTunnel<TUserId>.CertificateFactory => Context.CertificateFactory<TUserId>();
-
         // public abstract override EndPoint RemoteAddress { get; }
         //
         // public abstract override EndPoint LocalAddress { get; }
 
-        public INetEndpoint<TUserId> Endpoint => endpoint;
+        public INetEndpoint Endpoint => endpoint;
 
         public override NetAccessMode AccessMode { get; }
 
-        IEndpoint<TUserId> ITunnel<TUserId>.Endpoint => Endpoint;
+        IEndpoint ITunnel.Endpoint => Endpoint;
 
         public bool IsOpen() => Status == TunnelStatus.Open;
 
@@ -101,9 +96,9 @@ namespace TnyFramework.Net.Transport
             Context = context;
             endpoint = default!;
             AccessMode = accessMode;
-            activateEvent = NetTunnel.ACTIVATE_EVENT_BUS.ForkChild();
-            unactivatedEvent = NetTunnel.UNACTIVATED_EVENT_BUS.ForkChild();
-            closeEvent = NetTunnel.CLOSE_EVENT_BUS.ForkChild();
+            activateEvent = ITunnelEventSource.ACTIVATE_GLOBAL_EVENT.ForkChild();
+            unactivatedEvent = ITunnelEventSource.UNACTIVATED_GLOBAL_EVENT.ForkChild();
+            closeEvent = ITunnelEventSource.CLOSE_GLOBAL_EVENT.ForkChild();
         }
 
         public IEndpoint GetEndpoint()
@@ -111,10 +106,7 @@ namespace TnyFramework.Net.Transport
             return endpoint;
         }
 
-        INetEndpoint INetTunnel.GetEndpoint()
-        {
-            return endpoint;
-        }
+        public INetEndpoint NetEndpoint => endpoint;
 
         protected void SetEndpoint(TEndpoint value)
         {
@@ -136,12 +128,12 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-        public ISendReceipt Send(MessageContent content)
+        public ValueTask<IMessageSent> Send(MessageContent content, bool waitWritten = false)
         {
             endpointLock.EnterReadLock();
             try
             {
-                return endpoint.Send(this, content);
+                return endpoint.Send(this, content, waitWritten);
             } finally
             {
                 endpointLock.ExitReadLock();
@@ -223,7 +215,7 @@ namespace TnyFramework.Net.Transport
 
         public void Disconnect()
         {
-            TEndpoint? netEndpoint;
+            INetEndpoint? netEndpoint;
             lock (this)
             {
                 var current = Status;
@@ -257,7 +249,7 @@ namespace TnyFramework.Net.Transport
             {
                 return false;
             }
-            TEndpoint? netEndpoint;
+            INetEndpoint? netEndpoint;
             lock (this)
             {
                 current = Status;
@@ -296,14 +288,9 @@ namespace TnyFramework.Net.Transport
             Write(TickMessage.Ping());
         }
 
-        public abstract Task Write(IMessage message);
+        public abstract ValueTask Write(IMessage message, bool waitWritten = false);
 
-        public abstract Task Write(MessageAllocator allocator, MessageContent messageContent);
-
-        public Task Write(IMessageAllocator allocator, MessageContent messageContent)
-        {
-            return Write(allocator.Allocate, messageContent);
-        }
+        public abstract ValueTask Write(MessageAllocator allocator, MessageContent messageContent, bool waitWritten = false);
     }
 
 }

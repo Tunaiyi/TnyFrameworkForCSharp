@@ -24,19 +24,19 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
 
     public static class TnyRpcHostBuilderExtensions
     {
-        public static IHostBuilder ConfigureNetHost<TUserId>(this IHostBuilder builder)
+        public static IHostBuilder ConfigureNetHost(this IHostBuilder builder)
         {
-            return builder.ConfigureNetHost<TUserId>(null, null);
+            return builder.ConfigureNetHost(null, null);
         }
 
-        public static IHostBuilder ConfigureNetHost<TUserId>(this IHostBuilder builder,
+        public static IHostBuilder ConfigureNetHost(this IHostBuilder builder,
             Action<INettyServerConfiguration> configure)
         {
-            return builder.ConfigureNetHost<TUserId>(null, configure);
+            return builder.ConfigureNetHost(null, configure);
         }
 
-        public static IHostBuilder ConfigureNetHost<TUserId>(this IHostBuilder builder,
-            Action<INetServerGuideSpec<TUserId>> guideConfigure)
+        public static IHostBuilder ConfigureNetHost(this IHostBuilder builder,
+            Action<INetServerGuideSpec> guideConfigure)
         {
             return builder.ConfigureNetHost(guideConfigure, null);
         }
@@ -53,7 +53,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
         }
 
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
-            Action<INetServerGuideSpec<RpcAccessIdentify>> guideConfigure)
+            Action<INetServerGuideSpec> guideConfigure)
         {
             return builder.ConfigureRpcHost(guideConfigure, null);
         }
@@ -64,7 +64,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
         }
 
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
-            Action<INetServerGuideSpec<RpcAccessIdentify>>? serverGuideSpec,
+            Action<INetServerGuideSpec>? serverGuideSpec,
             Action<INettyServerConfiguration>? configure)
         {
             builder.ConfigureServices((hostBuilder, services) => {
@@ -91,8 +91,8 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
             return builder;
         }
         
-        public static IHostBuilder ConfigureNetHost<TUserId>(this IHostBuilder builder,
-            Action<INetServerGuideSpec<TUserId>>? serverGuideSpec, Action<INettyServerConfiguration>? configure)
+        public static IHostBuilder ConfigureNetHost(this IHostBuilder builder,
+            Action<INetServerGuideSpec>? serverGuideSpec, Action<INettyServerConfiguration>? configure)
         {
             return builder.ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
@@ -109,7 +109,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
                             .ScopeType(options.ScopeType)
                             .Locale(options.Locale);
                     })
-                    .Server<TUserId>(serverSetting.Name, spec => {
+                    .Server(serverSetting.Name, spec => {
                         spec.Server(serverSetting);
                         serverGuideSpec?.Invoke(spec);
                     })

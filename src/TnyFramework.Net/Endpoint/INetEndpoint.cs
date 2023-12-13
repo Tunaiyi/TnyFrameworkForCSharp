@@ -6,8 +6,8 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System.Threading.Tasks;
 using TnyFramework.Common.Event;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Endpoint.Event;
@@ -20,23 +20,23 @@ namespace TnyFramework.Net.Endpoint
     /// <summary>
     /// 终端会话
     /// </summary>
-    public interface INetEndpoint : IEndpoint, IMessageReceiver
+    public interface INetEndpoint : IEndpoint
     {
-        // /// <summary>
-        // /// 处理收到消息
-        // /// </summary>
-        // /// <param name="receiver">通道</param>
-        // /// <param name="message">消息</param>
-        // /// <returns></returns>
-        // bool Receive(INetTunnel receiver, IMessage message);
+        /// <summary>
+        /// 接收消息
+        /// </summary>
+        /// <param name="rpcContext">消息</param>
+        /// <returns>是否接收成功</returns>
+        bool Receive(IRpcEnterContext rpcContext);
 
         /// <summary>
         /// 异步发送消息
         /// </summary>
         /// <param name="sendTunnel">发送的通道</param>
         /// <param name="content">发送消息上下文</param>
+        /// <param name="waitWritten"></param>
         /// <returns>返回发送回执</returns>
-        ISendReceipt Send(INetTunnel sendTunnel, MessageContent content);
+        ValueTask<IMessageSent> Send(INetTunnel sendTunnel, MessageContent content, bool waitWritten = false);
 
         /// <summary>
         /// 分配生成消息
@@ -44,7 +44,7 @@ namespace TnyFramework.Net.Endpoint
         /// <param name="messageFactory">消息工厂</param>
         /// <param name="content">发送内容</param>
         /// <returns>返回创建消息</returns>
-        INetMessage CreateMessage(IMessageFactory messageFactory, MessageContent content);
+        internal INetMessage CreateMessage(IMessageFactory messageFactory, MessageContent content);
 
         /// <summary>
         /// 使用指定认证登陆
@@ -62,13 +62,13 @@ namespace TnyFramework.Net.Endpoint
         /// <summary>
         /// 消息盒
         /// </summary>
-        CommandTaskBox CommandTaskBox { get; }
+        CommandBox CommandBox { get; }
 
         /// <summary>
         /// 接管载入消息盒子
         /// </summary>
-        /// <param name="commandTaskBox">消息</param>
-        void TakeOver(CommandTaskBox commandTaskBox);
+        /// <param name="commandBox">消息</param>
+        void TakeOver(CommandBox commandBox);
 
         /// <summary>
         /// 终端下文
@@ -89,14 +89,6 @@ namespace TnyFramework.Net.Endpoint
         /// 关闭事件总线, 可监听到当前 Endpoint 的事件
         /// </summary>
         IEventBox<EndpointClose> CloseEvent { get; }
-    }
-
-    /// <summary>
-    /// 终端会话
-    /// </summary>
-    /// <typeparam name="TUserId"></typeparam>
-    public interface INetEndpoint<out TUserId> : IEndpoint<TUserId>, INetEndpoint
-    {
     }
 
 }
