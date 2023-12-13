@@ -6,21 +6,28 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Base;
+using System;
+using System.Runtime.Serialization;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Codec.Exceptions
 {
 
-    internal class InnerMessager : IMessager
+    public class ObjectCodecException : Exception
     {
-        public long MessagerId { get; }
-
-        public IMessagerType MessagerType { get; }
-
-        public InnerMessager(IMessagerType messagerType, long messagerId)
+        public ObjectCodecException()
         {
-            MessagerType = messagerType;
-            MessagerId = messagerId;
+        }
+
+        public ObjectCodecException(string message) : base(message)
+        {
+        }
+
+        public ObjectCodecException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected ObjectCodecException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
     }
 

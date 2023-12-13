@@ -48,7 +48,7 @@ namespace TnyFramework.Net.Message
     /// 消息头信息 Key
     /// </summary>
     /// <typeparam name="TH"></typeparam>
-    public class MessageHeaderKey<TH> : MessageHeaderKey where TH : MessageHeader<TH>
+    public class MessageHeaderKey<TH> : MessageHeaderKey where TH : MessageHeader
     {
         public static MessageHeaderKey<TH> Of(string key)
         {

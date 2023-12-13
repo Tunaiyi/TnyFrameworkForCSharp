@@ -8,7 +8,7 @@
 
 using TnyFramework.Net.Base;
 
-namespace TnyFramework.Net.Command
+namespace TnyFramework.Net.Transport
 {
 
     public class CertificateFactory<TUserId> : ICertificateFactory<TUserId>
@@ -30,14 +30,14 @@ namespace TnyFramework.Net.Command
             return Certificate.CreateUnauthenticated(anonymousUserId);
         }
 
-        public ICertificate<TUserId> Authenticate(long id, TUserId userId, long messagerId, IMessagerType messagerType, long authenticateAt)
+        public ICertificate<TUserId> Authenticate(long id, TUserId userId, long contactId, IContactType contactType, long authenticateAt)
         {
-            return Certificate.CreateAuthenticated(id, userId, messagerId, messagerType, authenticateAt);
+            return Certificate.CreateAuthenticated(id, userId, contactId, contactType, authenticateAt);
         }
 
-        public ICertificate<TUserId> RenewAuthenticate(long id, TUserId userId, long messagerId, IMessagerType messagerType, long authenticateAt)
+        public ICertificate<TUserId> RenewAuthenticate(long id, TUserId userId, long contactId, IContactType contactType, long authenticateAt)
         {
-            return Certificate.CreateAuthenticated(id, userId, messagerId, messagerType, authenticateAt, true);
+            return Certificate.CreateAuthenticated(id, userId, contactId, contactType, authenticateAt, true);
         }
 
         ICertificate ICertificateFactory.Anonymous()
@@ -45,14 +45,14 @@ namespace TnyFramework.Net.Command
             return Anonymous();
         }
 
-        public ICertificate GeneralAuthenticate(long id, object userId, long messagerId, IMessagerType messagerType, long authenticateAt)
+        public ICertificate GeneralAuthenticate(long id, object userId, long contactId, IContactType contactType, long authenticateAt)
         {
-            return Authenticate(id, (TUserId) userId, messagerId, messagerType, authenticateAt);
+            return Authenticate(id, (TUserId) userId, contactId, contactType, authenticateAt);
         }
 
-        public ICertificate RenewAuthenticate(long id, object userId, long messagerId, IMessagerType messagerType, long authenticateAt)
+        public ICertificate RenewAuthenticate(long id, object userId, long contactId, IContactType contactType, long authenticateAt)
         {
-            return RenewAuthenticate(id, (TUserId) userId, messagerId, messagerType, authenticateAt);
+            return RenewAuthenticate(id, (TUserId) userId, contactId, contactType, authenticateAt);
         }
     }
 

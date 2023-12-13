@@ -24,7 +24,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// 消息者
         /// </summary>
-        INetMessager Messager { get; }
+        INetContact Contact { get; }
 
         /// <summary>
         /// @return 获取消息

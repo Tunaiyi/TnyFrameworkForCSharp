@@ -34,16 +34,16 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// </summary>
         private readonly MessageDispatcherContext context;
 
-        private readonly IMessagerAuthenticator messagerAuthenticator;
+        private readonly IContactAuthenticator contactAuthenticator;
 
         // public IEventBox<CommandExecute> CommandExecuteEvent => context.CommandExecuteEvent;
 
         public IEventBox<CommandDone> CommandDoneEvent => context.CommandDoneEvent;
 
-        public MessageDispatcher(MessageDispatcherContext context, IMessagerAuthenticator messagerAuthenticator)
+        public MessageDispatcher(MessageDispatcherContext context, IContactAuthenticator contactAuthenticator)
         {
             this.context = context;
-            this.messagerAuthenticator = messagerAuthenticator;
+            this.contactAuthenticator = contactAuthenticator;
         }
 
         public ICommand Dispatch(IRpcEnterContext rpcContext)
@@ -54,7 +54,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             if (controller != null)
             {
                 var handleContext = new RpcInvokeContext(controller, rpcContext, context.AppContext);
-                return new RpcInvokeCommand(context, handleContext, messagerAuthenticator);
+                return new RpcInvokeCommand(context, handleContext, contactAuthenticator);
             }
             if (message.Mode == MessageMode.Request)
             {

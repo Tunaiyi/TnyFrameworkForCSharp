@@ -44,15 +44,15 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private readonly MessageDispatcherContext dispatcherContext;
 
-        private readonly IMessagerAuthenticator messagerAuthenticator;
+        private readonly IContactAuthenticator contactAuthenticator;
 
         public RpcInvokeCommand(MessageDispatcherContext dispatcherContext, RpcInvokeContext handleContext,
-            IMessagerAuthenticator messagerAuthenticator)
+            IContactAuthenticator contactAuthenticator)
             : base(handleContext.RpcContext)
         {
             invokeContext = handleContext;
             this.dispatcherContext = dispatcherContext;
-            this.messagerAuthenticator = messagerAuthenticator;
+            this.contactAuthenticator = contactAuthenticator;
         }
 
         protected override async Task OnRun()
@@ -90,7 +90,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             // 检测登录认证
             if (controller.IsHasAuthValidator && !tunnel.IsAuthenticated())
             {
-                messagerAuthenticator.Authenticate(dispatcherContext, rpcContext, controller.AuthValidatorType!);
+                contactAuthenticator.Authenticate(dispatcherContext, rpcContext, controller.AuthValidatorType!);
             }
 
             var appType = invokeContext.AppType;
@@ -122,7 +122,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
             // 判断身份是否符合
             LOGGER.LogDebug("Controller [{Name}] 检测用户组调用权限", Name);
-            if (!controller.IsUserGroup(invokeContext.MessagerType))
+            if (!controller.IsUserGroup(invokeContext.ContactType))
             {
                 LOGGER.LogError("Controller [{Name}] , 用户组 [{User}] 无法调用此协议", Name, tunnel.UserGroup);
                 invokeContext.Intercept(NetResultCode.NO_PERMISSIONS);

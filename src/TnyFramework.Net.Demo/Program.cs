@@ -161,7 +161,7 @@ namespace TnyFramework.Net.Demo
             var rcpResultCreator = RpcInvokerFastInvokers.RcpResultCreator(typeof(IRpcResult));
             var rpcResult = rcpResultCreator.Invoke(null!, ResultCode.SUCCESS, null!);
 
-            NetMessagerType.GetValues();
+            NetContactType.GetValues();
             var test = new ServiceCollection();
             test.AddSingletonUnit<OtherClass>("OtherClass")
                 .AddSingletonUnit<MyClass>("MyClass")
@@ -220,7 +220,7 @@ namespace TnyFramework.Net.Demo
                 .EndpointConfigure(endpointSpec => endpointSpec
                     .SessionKeeperFactory<long>("defaultSessionKeeperFactory")
                     .CustomSessionConfigure(settingSpec => settingSpec
-                        .UserType(MessagerType.DEFAULT_USER_TYPE)
+                        .UserType(ContactType.DEFAULT_USER_TYPE)
                         .KeeperFactory("defaultSessionKeeperFactory")))
                 .AddController<LoginController>()
                 .AddController<ServerSpeakController>()

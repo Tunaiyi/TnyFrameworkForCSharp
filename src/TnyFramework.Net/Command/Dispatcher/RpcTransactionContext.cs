@@ -89,7 +89,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public abstract RpcTransactionMode Mode { get; }
 
-        public abstract INetMessager Messager { get; }
+        public abstract INetContact Contact { get; }
 
         public abstract bool Valid { get; }
 

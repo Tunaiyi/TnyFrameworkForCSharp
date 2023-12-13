@@ -18,7 +18,7 @@ namespace TnyFramework.Net.Message
     [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
     [TypeProtobuf(MessageHeaderConstants.RPC_FORWARD_HEADER_TYPE_PROTO)]
     [ProtoContract]
-    public class RpcForwardHeader : MessageHeader<RpcForwardHeader>
+    public class RpcForwardHeader : MessageHeader
     {
         /// <summary>
         /// 请求服务
@@ -30,7 +30,7 @@ namespace TnyFramework.Net.Message
         /// 请求发送者
         /// </summary>
         [ProtoMember(3)]
-        public ForwardMessager? Sender { get; set; }
+        public ForwardContact? Sender { get; set; }
 
         /// <summary>
         /// 目标服务
@@ -42,7 +42,7 @@ namespace TnyFramework.Net.Message
         /// 目标接受者
         /// </summary>
         [ProtoMember(5)]
-        public ForwardMessager? Receiver { get; set; }
+        public ForwardContact? Receiver { get; set; }
 
         /// <summary>
         /// 发生转发者
@@ -66,9 +66,9 @@ namespace TnyFramework.Net.Message
             return this;
         }
 
-        public RpcForwardHeader SetSender(IMessager sender)
+        public RpcForwardHeader SetSender(IContact sender)
         {
-            Sender = ToForwardMessager(sender);
+            Sender = ToForwardContact(sender);
             return this;
         }
 
@@ -84,9 +84,9 @@ namespace TnyFramework.Net.Message
             return this;
         }
 
-        public RpcForwardHeader SetReceiver(IMessager receiver)
+        public RpcForwardHeader SetReceiver(IContact receiver)
         {
-            Receiver = ToForwardMessager(receiver);
+            Receiver = ToForwardContact(receiver);
             return this;
         }
 
@@ -127,16 +127,16 @@ namespace TnyFramework.Net.Message
             }
         }
 
-        private static ForwardMessager? ToForwardMessager(IMessager messager)
+        private static ForwardContact? ToForwardContact(IContact contact)
         {
-            switch (messager)
+            switch (contact)
             {
                 case null:
                     return null;
-                case ForwardMessager value:
+                case ForwardContact value:
                     return value;
                 default:
-                    return new ForwardMessager(messager);
+                    return new ForwardContact(contact);
             }
         }
     }

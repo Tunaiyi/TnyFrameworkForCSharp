@@ -44,7 +44,7 @@ namespace TnyFramework.Net.Endpoint
 
         private ILogger Logger => SessionKeeper.LOGGER;
 
-        public SessionKeeper(IMessagerType messagerType, ISessionFactory factory, ISessionKeeperSetting setting) : base(messagerType)
+        public SessionKeeper(IContactType contactType, ISessionFactory factory, ISessionKeeperSetting setting) : base(contactType)
         {
             this.factory = factory;
             this.setting = setting;
@@ -81,10 +81,10 @@ namespace TnyFramework.Net.Endpoint
             {
                 throw new AuthFailedException(NetResultCode.AUTH_FAIL_ERROR, null, $"cert {certificate} is unauthentic");
             }
-            if (!Equals(MessagerType, certificate.MessagerType))
+            if (!Equals(ContactType, certificate.ContactType))
             {
                 throw new AuthFailedException(NetResultCode.AUTH_FAIL_ERROR, null,
-                    $"cert {certificate} userType is {certificate.UserGroup}, not {MessagerType}");
+                    $"cert {certificate} userType is {certificate.UserGroup}, not {ContactType}");
             }
             var uid = certificate.GetUserId();
             if (uid == null)

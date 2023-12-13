@@ -19,7 +19,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <param name="to">目标</param>
         /// <param name="operationName">操作</param>
         /// <returns>返回是否成功</returns>
-        bool Transfer(INetMessager to, string operationName);
+        bool Transfer(INetContact to, string operationName);
 
         /// <summary>
         /// 传送消息
@@ -29,12 +29,12 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// 发送服务
         /// </summary>
-        INetMessager From { get; }
+        INetContact From { get; }
 
         /// <summary>
         /// 目标服务
         /// </summary>
-        INetMessager To { get; }
+        INetContact To { get; }
     }
 
 }

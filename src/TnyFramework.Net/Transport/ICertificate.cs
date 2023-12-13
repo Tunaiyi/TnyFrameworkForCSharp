@@ -7,12 +7,11 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Rpc;
 
-namespace TnyFramework.Net.Command
+namespace TnyFramework.Net.Transport
 {
 
-    public interface ICertificate : IMessager
+    public interface ICertificate : IContact
     {
         long Id { get; }
 

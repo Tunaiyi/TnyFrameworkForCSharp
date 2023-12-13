@@ -14,7 +14,7 @@ using TnyFramework.Common.Enum;
 namespace TnyFramework.Net.Base
 {
 
-    public interface IMessagerType : IEnum
+    public interface IContactType : IEnum
     {
         /// <summary>
         /// 用户组
@@ -22,13 +22,13 @@ namespace TnyFramework.Net.Base
         string Group { get; }
     }
 
-    public class MessagerType : BaseEnum<MessagerType>, IMessagerType
+    public class ContactType : BaseEnum<ContactType>, IContactType
     {
         public const string DEFAULT_USER_TYPE = "#user";
 
         public const string ANONYMITY_USER_TYPE = "#anonymity";
 
-        private static readonly ConcurrentDictionary<string, MessagerType> GROUP_MAP = new ConcurrentDictionary<string, MessagerType>();
+        private static readonly ConcurrentDictionary<string, ContactType> GROUP_MAP = new ConcurrentDictionary<string, ContactType>();
 
         /// <summary>
         /// 用户组 
@@ -46,29 +46,29 @@ namespace TnyFramework.Net.Base
             }
         }
 
-        public new static MessagerType ForId(int id)
+        public new static ContactType ForId(int id)
         {
-            return BaseEnum<MessagerType>.ForId(id);
+            return BaseEnum<ContactType>.ForId(id);
         }
 
-        public new static MessagerType ForName(string name)
+        public new static ContactType ForName(string name)
         {
-            return BaseEnum<MessagerType>.ForName(name);
+            return BaseEnum<ContactType>.ForName(name);
         }
 
-        public static MessagerType ForGroup(string group)
+        public static ContactType ForGroup(string group)
         {
             if (!GROUP_MAP.TryGetValue(group, out var obj))
                 throw new ArgumentException($"枚举Group不存在 -> {group}");
             return obj;
         }
 
-        public static implicit operator int(MessagerType type) => type.Id;
+        public static implicit operator int(ContactType type) => type.Id;
 
-        public static explicit operator MessagerType(int type) => ForId(type);
+        public static explicit operator ContactType(int type) => ForId(type);
     }
 
-    public abstract class MessagerType<T> : MessagerType where T : MessagerType<T>, new()
+    public abstract class ContactType<T> : ContactType where T : ContactType<T>, new()
     {
         protected static T Of(int id, string group, Action<T>? builder = null)
         {
@@ -79,10 +79,10 @@ namespace TnyFramework.Net.Base
 
         public new static void LoadAll() => LoadAll(typeof(T));
 
-        public new static IReadOnlyCollection<MessagerType> GetValues()
+        public new static IReadOnlyCollection<ContactType> GetValues()
         {
             LoadAll(typeof(T));
-            return BaseEnum<MessagerType>.GetValues();
+            return BaseEnum<ContactType>.GetValues();
         }
     }
 

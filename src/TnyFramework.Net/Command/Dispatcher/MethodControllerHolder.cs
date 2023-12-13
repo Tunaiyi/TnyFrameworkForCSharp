@@ -198,9 +198,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public bool IsHasAuthValidator => AuthValidatorType != null;
 
-        public override bool IsUserGroup(IMessagerType messagerType)
+        public override bool IsUserGroup(IContactType contactType)
         {
-            return UserGroups != null ? base.IsUserGroup(messagerType) : typeController.IsUserGroup(messagerType);
+            return UserGroups != null ? base.IsUserGroup(contactType) : typeController.IsUserGroup(contactType);
         }
 
         public override bool IsActiveByAppType(string appType)

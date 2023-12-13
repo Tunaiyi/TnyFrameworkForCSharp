@@ -12,7 +12,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
-    public interface IMessageReceiver : INetMessager, IReceiver
+    public interface IMessageReceiver : INetContact, IReceiver
     {
     }
 

@@ -12,7 +12,7 @@ using TnyFramework.Net.Message;
 namespace TnyFramework.Net.Rpc
 {
 
-    public interface IRpcAccessPoint : IRpcServicer, IMessager, IComparable<IRpcAccessPoint>
+    public interface IRpcAccessPoint : IRpcServicer, IContact, IComparable<IRpcAccessPoint>
     {
     }
 

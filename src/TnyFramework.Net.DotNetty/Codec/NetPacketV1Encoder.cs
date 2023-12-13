@@ -10,6 +10,7 @@ using DotNetty.Buffers;
 using DotNetty.Common;
 using DotNetty.Common.Utilities;
 using DotNetty.Transport.Channels;
+using TnyFramework.Common.Binary.Extensions;
 using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
@@ -36,12 +37,27 @@ namespace TnyFramework.Net.DotNetty.Codec
             this.setting = setting;
         }
 
+        public static MessageType OfMode(MessageMode self)
+        {
+            switch (self)
+            {
+                case MessageMode.Ping:
+                    return MessageType.Ping;
+                case MessageMode.Pong:
+                    return MessageType.Pong;
+                case MessageMode.Request:
+                case MessageMode.Response:
+                case MessageMode.Push:
+                default:
+                    return MessageType.Message;
+            }
+        }
         public void EncodeObject(IChannelHandlerContext ctx, IMessage message, IByteBuffer outBuffer)
         {
             var channel = ctx.Channel;
             // 写出包头
             outBuffer.WriteBytes(CodecConstants.MAGICS);
-            var messageType = message.Type;
+            var messageType = OfMode(message.Mode);
             // 非消息, Ping or Pong
             if (messageType != MessageType.Message)
             {
@@ -69,7 +85,8 @@ namespace TnyFramework.Net.DotNetty.Codec
             try
             {
                 // 写入 Option
-                var option = message.Type.GetOption();
+                var messageType = OfMode(message.Mode);
+                var option = messageType.GetOption();
                 option = CodecConstants.SetOption(option, CodecConstants.DATA_PACK_OPTION_VERIFY, setting.VerifyEnable);
                 option = CodecConstants.SetOption(option, CodecConstants.DATA_PACK_OPTION_ENCRYPT,
                     setting.EncryptEnable);
@@ -79,9 +96,9 @@ namespace TnyFramework.Net.DotNetty.Codec
                 //payloadLength
                 var payloadLength = 0;
                 var accessId = writePkgContext.AccessId;
-                payloadLength += ByteBufferUtils.ComputeVarInt64Len(accessId);
+                payloadLength += VariantExtensions.ComputeVarInt64Len(accessId);
                 var number = writePkgContext.NextNumber();
-                payloadLength += ByteBufferUtils.ComputeVarInt32Len(number);
+                payloadLength += VariantExtensions.ComputeVarInt32Len(number);
                 if (setting.WasteBytesEnable)
                 {
                     // TODO 生成废字节长度
@@ -104,11 +121,11 @@ namespace TnyFramework.Net.DotNetty.Codec
                     throw new NetException($"payload length {payloadLength} > {CodecConstants.PAYLOAD_BYTES_MAX_SIZE}");
                 }
                 // 写入包长度
-                ByteBufferUtils.WriteFixed32(payloadLength, outBuffer);
+                ByteBufferVariantExtensions.WriteFixed32(payloadLength, outBuffer);
                 // 写入 accessId
-                ByteBufferUtils.WriteVariant(accessId, outBuffer);
+                ByteBufferVariantExtensions.WriteVariant(accessId, outBuffer);
                 // 写入 number
-                ByteBufferUtils.WriteVariant(number, outBuffer);
+                ByteBufferVariantExtensions.WriteVariant(number, outBuffer);
                 // TODO 写入废字节
                 // TODO 写入校验码
                 // 写入包体

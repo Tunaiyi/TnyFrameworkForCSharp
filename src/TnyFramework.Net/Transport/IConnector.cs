@@ -6,52 +6,48 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Net;
-using TnyFramework.Common.Attribute;
+using TnyFramework.Net.Command;
+using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Transport
 {
 
-    public interface IConnection
+    public interface IConnector : INetContact
     {
         /// <summary>
-        /// 远程地址
+        /// 获取用户 id
         /// </summary>
-        EndPoint RemoteAddress { get; }
+        object GetUserId();
 
         /// <summary>
-        /// 本地地址
-        /// </summary>
-        EndPoint LocalAddress { get; }
-
-        /// <summary>
-        /// 接入模式
-        /// </summary>
-        NetAccessMode AccessMode { get; }
-
-        /// <summary>
-        /// 是否活跃
+        /// 用户类型
         /// </summary>
         /// <returns></returns>
-        bool IsActive();
+        string UserGroup { get; }
 
         /// <summary>
-        /// 是否关闭终端
+        /// 认证
         /// </summary>
-        /// <returns></returns>
-        bool IsClosed();
+        ICertificate GetCertificate();
 
         /// <summary>
-        /// 关闭终端
+        /// 是否登陆认证
         /// </summary>
         /// <returns></returns>
-        bool Close();
+        bool IsAuthenticated();
+    }
+
+    public interface IConnector<out TUserId> : IConnector
+    {
+        /// <summary>
+        /// 用户 id
+        /// </summary>
+        TUserId UserId { get; }
 
         /// <summary>
-        /// 获取属性
+        /// 认证
         /// </summary>
-        /// <returns></returns>
-        IAttributes Attributes { get; }
+        ICertificate<TUserId> Certificate { get; }
     }
 
 }

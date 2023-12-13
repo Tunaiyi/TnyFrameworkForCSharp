@@ -13,7 +13,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Endpoint
 {
 
-    public interface IEndpoint : ICommunicator, IMessageSender, IAsyncExecutor
+    public interface IEndpoint : IConnector, IConnection, IMessageSender, IAsyncExecutor
     {
         long Id { get; }
 
@@ -34,7 +34,7 @@ namespace TnyFramework.Net.Endpoint
         bool IsOffline();
     }
 
-    public interface IEndpoint<out TUserId> : IEndpoint, ICommunicator<TUserId>
+    public interface IEndpoint<out TUserId> : IEndpoint, IConnector<TUserId>
     {
     }
 

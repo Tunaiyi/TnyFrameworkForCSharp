@@ -8,41 +8,40 @@
 
 using ProtoBuf;
 using TnyFramework.Net.Base;
-using MessagerTypes = TnyFramework.Net.Base.MessagerType;
 
 namespace TnyFramework.Net.Message
 {
 
     [ProtoContract]
-    public class ForwardMessager : IMessager
+    public class ForwardContact : IContact
     {
-        private int messagerTypeId;
+        private int contactTypeId;
 
         [ProtoMember(1)]
-        public long MessagerId { get; set; }
+        public long ContactId { get; set; }
 
         [ProtoMember(2)]
-        public int MessagerTypeId {
-            get => messagerTypeId;
+        public int ContactTypeId {
+            get => contactTypeId;
             set {
-                messagerTypeId = value;
-                MessagerType = MessagerTypes.ForId(messagerTypeId);
+                contactTypeId = value;
+                ContactType = Base.ContactType.ForId(contactTypeId);
             }
         }
 
         [ProtoIgnore]
-        public IMessagerType MessagerType { get; private set; }
+        public IContactType ContactType { get; private set; }
 
-        public ForwardMessager()
+        public ForwardContact()
         {
-            MessagerType = null!;
+            ContactType = null!;
         }
 
-        public ForwardMessager(IMessager messager)
+        public ForwardContact(IContact contact)
         {
-            MessagerId = messager.MessagerId;
-            MessagerType = messager.MessagerType;
-            messagerTypeId = MessagerType.Id;
+            ContactId = contact.ContactId;
+            ContactType = contact.ContactType;
+            contactTypeId = ContactType.Id;
         }
     }
 

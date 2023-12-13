@@ -18,11 +18,11 @@ namespace TnyFramework.Net.Demo.Controller
 {
 
     [RpcController]
-    [AuthenticationRequired(MessagerType.DEFAULT_USER_TYPE)]
+    [AuthenticationRequired(ContactType.DEFAULT_USER_TYPE)]
     public class LoginController : IController
     {
         [RpcRequest(CtrlerIds.LOGIN_4_LOGIN)]
-        [AuthenticationRequired(typeof(DemoAuthenticationValidator), MessagerType.DEFAULT_USER_TYPE)]
+        [AuthenticationRequired(typeof(DemoAuthenticationValidator), ContactType.DEFAULT_USER_TYPE)]
         public LoginDTO Login(ITunnel<long> tunnel, IEndpoint<long> endpoint, long sessionId, long userId)
         {
             var certificate = endpoint.Certificate;

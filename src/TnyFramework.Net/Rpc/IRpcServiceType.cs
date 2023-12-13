@@ -14,7 +14,7 @@ using TnyFramework.Net.Base;
 namespace TnyFramework.Net.Rpc
 {
 
-    public interface IRpcServiceType : IMessagerType
+    public interface IRpcServiceType : IContactType
     {
         /// <summary>
         /// 用户组
@@ -27,7 +27,7 @@ namespace TnyFramework.Net.Rpc
         AppType AppType { get; }
     }
 
-    public class RpcServiceType : MessagerType, IRpcServiceType
+    public class RpcServiceType : ContactType, IRpcServiceType
     {
         private static readonly ConcurrentDictionary<string, RpcServiceType> SERVICE_MAP = new();
 

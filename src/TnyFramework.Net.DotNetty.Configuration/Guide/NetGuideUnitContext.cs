@@ -17,6 +17,7 @@ using TnyFramework.Net.DotNetty.Configuration.Channel;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.ProtobufNet;
+using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
@@ -33,7 +34,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         public UnitSpec<IMessageFactory, INetGuideUnitContext<TUserId>> MessageFactorySpec { get; }
 
-        public UnitSpec<IMessagerFactory, INetGuideUnitContext<TUserId>> MessagerFactorySpec { get; }
+        public UnitSpec<IContactFactory, INetGuideUnitContext<TUserId>> ContactFactorySpec { get; }
 
         public UnitSpec<IMessageBodyCodec, INetGuideUnitContext<TUserId>> MessageBodyCodecSpec { get; }
 
@@ -62,9 +63,9 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             MessageFactorySpec = UnitSpec.Unit<IMessageFactory, INetGuideUnitContext<TUserId>>()
                 .Default<CommonMessageFactory>();
 
-            // MessagerFactory
-            MessagerFactorySpec = UnitSpec.Unit<IMessagerFactory, INetGuideUnitContext<TUserId>>()
-                .Default<InnerMessagerFactory>();
+            // ContactFactory
+            ContactFactorySpec = UnitSpec.Unit<IContactFactory, INetGuideUnitContext<TUserId>>()
+                .Default<InnerContactFactory>();
 
             // MessageBodyCodec
             MessageBodyCodecSpec = UnitSpec.Unit<IMessageBodyCodec, INetGuideUnitContext<TUserId>>()
@@ -101,7 +102,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
         {
             TunnelFactorySpec.WithNamePrefix(name);
             MessageFactorySpec.WithNamePrefix(name);
-            MessagerFactorySpec.WithNamePrefix(name);
+            ContactFactorySpec.WithNamePrefix(name);
             MessageBodyCodecSpec.WithNamePrefix(name);
             MessageHeaderCodecSpec.WithNamePrefix(name);
             MessageCodecSpec.WithNamePrefix(name);
@@ -132,9 +133,9 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return MessageFactorySpec.Load(this, UnitContainer);
         }
 
-        public IMessagerFactory LoadMessagerFactory()
+        public IContactFactory LoadContactFactory()
         {
-            return MessagerFactorySpec.Load(this, UnitContainer);
+            return ContactFactorySpec.Load(this, UnitContainer);
         }
 
         public IMessageCodec LoadMessageCodec()

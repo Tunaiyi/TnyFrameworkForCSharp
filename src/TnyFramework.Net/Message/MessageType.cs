@@ -17,17 +17,17 @@ namespace TnyFramework.Net.Message
         /// <summary>
         /// 处理请求
         /// </summary>
-        Message = 0,
+        Message = CodecConstants.DATA_PACK_OPTION_MESSAGE,
 
         /// <summary>
         /// Ping
         /// </summary>
-        Ping = 1,
+        Ping = CodecConstants.DATA_PACK_OPTION_PING,
 
         /// <summary>
         /// Pong
         /// </summary>
-        Pong = 2,
+        Pong = CodecConstants.DATA_PACK_OPTION_PONG,
     }
 
     public static class MessageTypeExtensions

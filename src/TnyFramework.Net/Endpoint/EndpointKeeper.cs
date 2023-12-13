@@ -50,15 +50,15 @@ namespace TnyFramework.Net.Endpoint
 
         public IEventBox<EndpointKeeperRemoveEndpoint> RemoveEndpointEvent => removeEndpointEvent;
 
-        public IMessagerType MessagerType { get; }
+        public IContactType ContactType { get; }
 
-        public string UserGroup => MessagerType.Group;
+        public string UserGroup => ContactType.Group;
 
         public int Size => endpointMap.Count;
 
-        public EndpointKeeper(IMessagerType messagerType)
+        public EndpointKeeper(IContactType contactType)
         {
-            MessagerType = messagerType;
+            ContactType = contactType;
             addEndpointEvent = EndpointKeeper.AddEndpointEventBus.ForkChild();
             removeEndpointEvent = EndpointKeeper.RemoveEndpointEventBus.ForkChild();
         }
@@ -223,7 +223,7 @@ namespace TnyFramework.Net.Endpoint
 
         public void NotifyEndpointOnline(IEndpoint endpoint)
         {
-            if (!Equals(endpoint.MessagerType, MessagerType))
+            if (!Equals(endpoint.ContactType, ContactType))
             {
                 return;
             }
@@ -232,7 +232,7 @@ namespace TnyFramework.Net.Endpoint
 
         public void NotifyEndpointOffline(IEndpoint endpoint)
         {
-            if (!Equals(endpoint.MessagerType, MessagerType))
+            if (!Equals(endpoint.ContactType, ContactType))
             {
                 return;
             }
@@ -241,7 +241,7 @@ namespace TnyFramework.Net.Endpoint
 
         public void NotifyEndpointClose(IEndpoint endpoint)
         {
-            if (!Equals(endpoint.MessagerType, MessagerType))
+            if (!Equals(endpoint.ContactType, ContactType))
             {
                 return;
             }

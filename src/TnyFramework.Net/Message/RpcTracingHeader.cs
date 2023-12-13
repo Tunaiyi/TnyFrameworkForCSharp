@@ -19,7 +19,7 @@ namespace TnyFramework.Net.Message
     [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
     [TypeProtobuf(MessageHeaderConstants.RPC_TRACING_TYPE_PROTO)]
     [ProtoContract]
-    public class RpcTracingHeader : MessageHeader<RpcTracingHeader>
+    public class RpcTracingHeader : MessageHeader
     {
         [ProtoMember(1, IsPacked = true, OverwriteList = true)]
         public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();

@@ -15,11 +15,11 @@ using TnyFramework.Net.Exceptions;
 namespace TnyFramework.Net.Command.Auth
 {
 
-    public class MessagerAuthenticateService : IMessagerAuthenticator
+    public class ContactAuthenticateService : IContactAuthenticator
     {
         private readonly IEndpointKeeperManager endpointKeeperManager;
 
-        public MessagerAuthenticateService(IEndpointKeeperManager endpointKeeperManager)
+        public ContactAuthenticateService(IEndpointKeeperManager endpointKeeperManager)
         {
             this.endpointKeeperManager = endpointKeeperManager;
         }
@@ -42,7 +42,7 @@ namespace TnyFramework.Net.Command.Auth
             if (certificate == null || !certificate.IsAuthenticated())
                 return;
             var endpointKeeper = endpointKeeperManager
-                .LoadKeeper(certificate.MessagerType, tunnel.AccessMode);
+                .LoadKeeper(certificate.ContactType, tunnel.AccessMode);
             endpointKeeper?.Online(certificate, tunnel);
         }
 

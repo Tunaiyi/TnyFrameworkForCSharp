@@ -34,7 +34,7 @@ namespace TnyFramework.Net.Rpc
 
         public int NodeId => ServerId;
 
-        public IMessagerType ServiceType => service.ServiceType;
+        public IContactType ServiceType => service.ServiceType;
 
         private void ReadLock() => rwLock.EnterReadLock();
 

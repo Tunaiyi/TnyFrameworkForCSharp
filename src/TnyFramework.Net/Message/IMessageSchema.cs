@@ -20,14 +20,10 @@ namespace TnyFramework.Net.Message
         long ToMessage { get; }
 
         /// <summary>
-        /// 消息类型
-        /// </summary>
-        MessageType Type { get; }
-
-        /// <summary>
-        /// 获取消息模式
+        /// 消息模式
         /// </summary>
         MessageMode Mode { get; }
+
     }
 
 }

@@ -60,7 +60,7 @@ namespace TnyFramework.Net.Message
             return Headers.Values.Where(type.IsInstanceOfType).ToList();
         }
 
-        public T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>
+        public T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader
         {
             return GetHeader<T>(key.Key);
         }
@@ -83,7 +83,7 @@ namespace TnyFramework.Net.Message
             return Headers.ContainsKey(key);
         }
 
-        public bool ExistHeader<T>(string key) where T : MessageHeader<T>
+        public bool ExistHeader<T>(string key) where T : MessageHeader
         {
             return GetHeader<T>(key) != null;
         }
@@ -93,7 +93,7 @@ namespace TnyFramework.Net.Message
             return ExistHeader(key.Key);
         }
 
-        public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>
+        public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader
         {
             return GetHeader(key) != null;
         }
@@ -108,12 +108,12 @@ namespace TnyFramework.Net.Message
             return Headers.PutIfAbsent(header.Key, header);
         }
 
-        public T? PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T>
+        public T? PutHeader<T>(T header) where T : MessageHeader
         {
             return (T?) Headers.Put(header.Key, header);
         }
 
-        public T? PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T>
+        public T? PutHeaderIfAbsent<T>(T header) where T : MessageHeader
         {
             return (T?) Headers.PutIfAbsent(header.Key, header);
         }
@@ -123,7 +123,7 @@ namespace TnyFramework.Net.Message
             return Headers.Remove(key);
         }
 
-        public bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>
+        public bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader
         {
             return Headers.Remove(key.Key);
         }

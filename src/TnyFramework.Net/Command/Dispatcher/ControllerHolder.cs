@@ -144,9 +144,9 @@ namespace TnyFramework.Net.Command.Dispatcher
         // /// </returns>
         // public abstract List<Attribute> GetParamAnnotationsByIndex(int index);
 
-        public virtual bool IsUserGroup(IMessagerType messagerType)
+        public virtual bool IsUserGroup(IContactType contactType)
         {
-            return UserGroups == null || UserGroups.Count == 0 || UserGroups.Contains(messagerType.Group);
+            return UserGroups == null || UserGroups.Count == 0 || UserGroups.Contains(contactType.Group);
         }
 
         public virtual bool IsActiveByAppType(string appType)

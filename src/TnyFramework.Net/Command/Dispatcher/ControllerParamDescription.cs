@@ -130,7 +130,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                         }
                     } else if (type == typeof(RpcFromAttribute))
                     {
-                        if (typeof(IMessager).IsAssignableFrom(ParamType))
+                        if (typeof(IContact).IsAssignableFrom(ParamType))
                         {
                             Mode = ParamMode.Sender;
                         }
@@ -140,7 +140,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                         }
                     } else if (type == typeof(RpcToAttribute))
                     {
-                        if (typeof(IMessager).IsAssignableFrom(ParamType))
+                        if (typeof(IContact).IsAssignableFrom(ParamType))
                         {
                             Mode = ParamMode.Receiver;
                         }
@@ -273,7 +273,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     var forwardHeader = head.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
                     if (forwardHeader != null)
                     {
-                        value = context.MessagerFactory.CreateMessager(forwardHeader.Sender!);
+                        value = context.ContactFactory.CreateContact(forwardHeader.Sender!);
                     }
                     break;
                 }
@@ -281,7 +281,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     var forwardHeader = head.GetHeader(MessageHeaderConstants.RPC_FORWARD_HEADER);
                     if (forwardHeader != null)
                     {
-                        value = context.MessagerFactory.CreateMessager(forwardHeader.Receiver!);
+                        value = context.ContactFactory.CreateContact(forwardHeader.Receiver!);
                     }
                     break;
                 }

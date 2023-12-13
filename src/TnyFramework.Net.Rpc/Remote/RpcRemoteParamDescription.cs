@@ -87,7 +87,7 @@ namespace TnyFramework.Net.Rpc.Remote
                         Route = true;
                     } else if (attribute is RpcFromAttribute)
                     {
-                        if (typeof(IMessager).IsAssignableFrom(paramType))
+                        if (typeof(IContact).IsAssignableFrom(paramType))
                         {
                             Mode = ParamMode.Sender;
                         }
@@ -97,7 +97,7 @@ namespace TnyFramework.Net.Rpc.Remote
                         }
                     } else if (attribute is RpcToAttribute)
                     {
-                        if (typeof(IMessager).IsAssignableFrom(paramType))
+                        if (typeof(IContact).IsAssignableFrom(paramType))
                         {
                             Mode = ParamMode.Receiver;
                         }

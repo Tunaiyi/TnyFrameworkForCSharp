@@ -40,9 +40,9 @@ namespace TnyFramework.Net.Message
 
         public long Id => AccessId?.Id ?? -1;
 
-        public long MessagerId => AccessId?.Id ?? -1;
+        public long ContactId => AccessId?.Id ?? -1;
 
-        public IMessagerType MessagerType => ServiceType;
+        public IContactType ContactType => ServiceType;
 
         public ForwardPoint()
         {
@@ -90,7 +90,7 @@ namespace TnyFramework.Net.Message
         {
             if (ReferenceEquals(this, other)) return 0;
             if (ReferenceEquals(null, other)) return 1;
-            return MessagerId.CompareTo(other.MessagerId);
+            return ContactId.CompareTo(other.ContactId);
         }
     }
 

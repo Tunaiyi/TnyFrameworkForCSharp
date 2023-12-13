@@ -15,7 +15,7 @@ namespace TnyFramework.Net.Rpc
 {
 
     [JsonObject(MemberSerialization.OptIn)]
-    public class RpcAccessIdentify : IRpcServicerPoint, IMessager
+    public class RpcAccessIdentify : IRpcServicerPoint, IContact
     {
         private const long RPC_SERVER_INDEX_SIZE = 10000;
 
@@ -32,10 +32,10 @@ namespace TnyFramework.Net.Rpc
         public int ServerId { get; set; }
 
         [JsonIgnore]
-        public long MessagerId => ServerId;
+        public long ContactId => ServerId;
 
         [JsonIgnore]
-        public IMessagerType MessagerType => ServiceType;
+        public IContactType ContactType => ServiceType;
 
         [JsonProperty("id")]
         public long Id {

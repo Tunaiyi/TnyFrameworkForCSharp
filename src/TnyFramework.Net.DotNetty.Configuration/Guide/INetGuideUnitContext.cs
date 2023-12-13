@@ -15,6 +15,7 @@ using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Configuration.Channel;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
@@ -27,7 +28,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
         IMessageFactory LoadMessageFactory();
 
-        IMessagerFactory LoadMessagerFactory();
+        IContactFactory LoadContactFactory();
 
         IMessageCodec LoadMessageCodec();
 

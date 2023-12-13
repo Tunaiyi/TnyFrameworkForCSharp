@@ -21,7 +21,7 @@ namespace TnyFramework.Net.Rpc
         /// <summary>
         /// 服务类型
         /// </summary>
-        IMessagerType ServiceType { get; }
+        IContactType ServiceType { get; }
     }
 
 }

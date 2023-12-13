@@ -20,9 +20,9 @@ namespace TnyFramework.Net.Endpoint
     {
         IEndpoint? Online(ICertificate certificate, INetTunnel tunnel);
 
-        IEndpointKeeper? LoadKeeper(IMessagerType messagerType, NetAccessMode accessMode);
+        IEndpointKeeper? LoadKeeper(IContactType contactType, NetAccessMode accessMode);
 
-        IEndpointKeeper? FindKeeper(IMessagerType messagerType);
+        IEndpointKeeper? FindKeeper(IContactType contactType);
     }
 
 }

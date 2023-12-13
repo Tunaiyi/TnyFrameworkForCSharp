@@ -17,7 +17,6 @@ namespace TnyFramework.Net.Message
 
     public abstract class AbstractNetMessage : INetMessage
     {
-
         private readonly INetMessageHead head;
 
         private readonly AttributesContext attributes = new AttributesContext();
@@ -46,8 +45,6 @@ namespace TnyFramework.Net.Message
 
         public long ToMessage => head.ToMessage;
 
-        public MessageType Type => head.Type;
-
         public MessageMode Mode => head.Mode;
 
         public IMessageHead Head => head;
@@ -68,7 +65,7 @@ namespace TnyFramework.Net.Message
 
         public IList<MessageHeader> GetHeaders(Type type) => head.GetHeaders(type);
 
-        public T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.GetHeader(key);
+        public T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader => head.GetHeader(key);
 
         bool IMessageHeaderContainer.IsHasHeaders() => head.IsHasHeaders();
 
@@ -82,20 +79,20 @@ namespace TnyFramework.Net.Message
 
         public bool ExistHeader(string key) => head.ExistHeader(key);
 
-        public bool ExistHeader<T>(string key) where T : MessageHeader<T> => head.ExistHeader<T>(key);
+        public bool ExistHeader<T>(string key) where T : MessageHeader => head.ExistHeader<T>(key);
 
         public bool ExistHeader(MessageHeaderKey key) => head.ExistHeader(key);
 
-        public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.ExistHeader(key);
+        public bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader => head.ExistHeader(key);
 
-        public T? PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T> => head.PutHeader(header);
+        public T? PutHeader<T>(T header) where T : MessageHeader => head.PutHeader(header);
 
-        public T? PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T> =>
+        public T? PutHeaderIfAbsent<T>(T header) where T : MessageHeader =>
             head.PutHeaderIfAbsent(header);
 
         public bool RemoveHeader<T>(string key) => head.RemoveHeader<T>(key);
 
-        public bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T> => head.RemoveHeader(key);
+        public bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader => head.RemoveHeader(key);
 
         public void RemoveHeaders(IEnumerable<string> keys) => head.RemoveHeaders(keys);
 

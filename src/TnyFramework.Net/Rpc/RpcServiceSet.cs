@@ -82,7 +82,7 @@ namespace TnyFramework.Net.Rpc
             RefreshNodes(rpcServiceNode);
         }
 
-        private RpcServiceNode LoadOrCreate(ICommunicator<RpcAccessIdentify> endpoint)
+        private RpcServiceNode LoadOrCreate(IConnector<RpcAccessIdentify> endpoint)
         {
             var nodeId = endpoint.UserId;
             return remoteNodeMap.GetOrAdd(nodeId.ServerId, CreateNode);

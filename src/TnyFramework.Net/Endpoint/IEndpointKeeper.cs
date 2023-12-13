@@ -21,7 +21,7 @@ namespace TnyFramework.Net.Endpoint
         /// <summary>
         /// 获取用户类型
         /// </summary>
-        IMessagerType MessagerType { get; }
+        IContactType ContactType { get; }
 
         /// <summary>
         /// 获取用户组

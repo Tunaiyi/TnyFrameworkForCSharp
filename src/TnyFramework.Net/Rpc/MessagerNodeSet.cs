@@ -14,15 +14,15 @@ using TnyFramework.Net.Endpoint;
 namespace TnyFramework.Net.Rpc
 {
 
-    public class MessagerNodeSet : IRpcInvokeNodeSet, IRpcInvokeNode
+    public class ContactNodeSet : IRpcInvokeNodeSet, IRpcInvokeNode
     {
         private readonly IList<IRpcInvokeNode> remoterList;
 
         private IEndpointKeeper? keeper;
 
-        public MessagerNodeSet(IMessagerType messagerType)
+        public ContactNodeSet(IContactType contactType)
         {
-            this.ServiceType = messagerType;
+            this.ServiceType = contactType;
             remoterList = ImmutableList.Create((IRpcInvokeNode) this);
         }
 
@@ -42,14 +42,14 @@ namespace TnyFramework.Net.Rpc
 
         public int NodeId => 0;
 
-        public IMessagerType ServiceType { get; }
+        public IContactType ServiceType { get; }
 
         public IList<IRpcAccess> GetOrderAccesses() => ImmutableList<IRpcAccess>.Empty;
 
         public IRpcAccess? GetAccess(long accessId)
         {
             var endpoint = keeper?.GetEndpoint(accessId);
-            return endpoint != null ? RpcMessagerAccess.Of(endpoint) : null;
+            return endpoint != null ? RpcContactAccess.Of(endpoint) : null;
         }
 
         public bool IsActive() => true;

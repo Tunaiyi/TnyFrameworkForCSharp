@@ -11,24 +11,24 @@ using TnyFramework.Net.Base;
 namespace TnyFramework.Net.Message
 {
 
-    public interface IMessagerFactory
+    public interface IContactFactory
     {
         /// <summary>
-        /// 创建 Messager
+        /// 创建 Contact
         /// </summary>
         /// <param name="type">消息者类型</param>
-        /// <param name="messagerId">消息者id</param>
-        /// <typeparam name="TM">返回创建的 messager</typeparam>
+        /// <param name="contactId">消息者id</param>
+        /// <typeparam name="TM">返回创建的 contact</typeparam>
         /// <returns></returns>
-        IMessager CreateMessager(IMessagerType type, long messagerId);
+        IContact CreateContact(IContactType type, long contactId);
 
         /// <summary>
-        /// 创建 Messager
+        /// 创建 Contact
         /// </summary>
-        /// <param name="messager">转发消息者</param>
-        /// <typeparam name="TM">返回创建的 messager</typeparam>
+        /// <param name="contact">转发消息者</param>
+        /// <typeparam name="TM">返回创建的 contact</typeparam>
         /// <returns></returns>
-        IMessager CreateMessager(ForwardMessager messager);
+        IContact CreateContact(ForwardContact contact);
     }
 
 }

@@ -16,7 +16,6 @@ using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.Message;
@@ -85,9 +84,10 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                         var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).Get();
                         if (tunnel != null)
                         {
-                            var rpcContext = RpcTransactionContext.CreateEnter(tunnel, message);
-                            rpcMonitor.OnReceive(rpcContext);
-                            tunnel.Receive(rpcContext);
+                            tunnel.Receive(message);
+                        } else
+                        {
+                            // TODO rpcMonitor 处理未找到 tunnel!!
                         }
                     } catch (Exception ex)
                     {

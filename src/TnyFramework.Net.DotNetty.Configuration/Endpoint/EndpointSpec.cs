@@ -22,7 +22,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
         private readonly SessionKeeperSettingSpec defaultSessionKeeperSetting;
         private readonly SessionKeeperSettingSpecs customSessionKeeperSettingSpecs;
         private readonly UnitCollectionSpec<ISessionKeeperFactory, IEndpointUnitContext> sessionKeeperFactorySpec;
-        private readonly UnitSpec<IMessagerAuthenticator, IEndpointUnitContext> messagerAuthenticatorSpec;
+        private readonly UnitSpec<IContactAuthenticator, IEndpointUnitContext> contactAuthenticatorSpec;
 
         private IServiceCollection UnitContainer { get; }
 
@@ -37,8 +37,8 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
                 .UnitName("DefaultSession").Default(DefaultSessionKeeperSetting));
             // 自定义 SessionKeeper 配置
             customSessionKeeperSettingSpecs = new SessionKeeperSettingSpecs();
-            messagerAuthenticatorSpec = Unit<IMessagerAuthenticator, IEndpointUnitContext>()
-                .UnitName("DefaultMessagerAuthenticator").Default(DefaultMessagerAuthenticator);
+            contactAuthenticatorSpec = Unit<IContactAuthenticator, IEndpointUnitContext>()
+                .UnitName("DefaultContactAuthenticator").Default(DefaultContactAuthenticator);
             Default(DefaultEndpointKeeperManager);
         }
 
@@ -90,9 +90,9 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             return this;
         }
 
-        public IMessagerAuthenticator LoadMessagerAuthenticator()
+        public IContactAuthenticator LoadContactAuthenticator()
         {
-            return messagerAuthenticatorSpec.Load(this, UnitContainer);
+            return contactAuthenticatorSpec.Load(this, UnitContainer);
         }
 
         public ISessionKeeperSetting LoadDefaultSessionKeeperSetting()
@@ -127,9 +127,9 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
             };
         }
 
-        public static IMessagerAuthenticator DefaultMessagerAuthenticator(IEndpointUnitContext context)
+        public static IContactAuthenticator DefaultContactAuthenticator(IEndpointUnitContext context)
         {
-            return new MessagerAuthenticateService(context.LoadEndpointKeeperManager());
+            return new ContactAuthenticateService(context.LoadEndpointKeeperManager());
         }
 
         public static IEndpointKeeperManager DefaultEndpointKeeperManager(IEndpointUnitContext context)

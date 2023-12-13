@@ -17,56 +17,56 @@ namespace TnyFramework.Net.Rpc
 
     public class RpcServicerManager : IRpcInvokeNodeManager
     {
-        private readonly ConcurrentDictionary<IMessagerType, RpcServiceSet> serviceSetMap =
-            new ConcurrentDictionary<IMessagerType, RpcServiceSet>();
+        private readonly ConcurrentDictionary<IContactType, RpcServiceSet> serviceSetMap =
+            new ConcurrentDictionary<IContactType, RpcServiceSet>();
 
-        private readonly ConcurrentDictionary<IMessagerType, IRpcInvokeNodeSet?> invokeNodeSetMap =
-            new ConcurrentDictionary<IMessagerType, IRpcInvokeNodeSet?>();
+        private readonly ConcurrentDictionary<IContactType, IRpcInvokeNodeSet?> invokeNodeSetMap =
+            new ConcurrentDictionary<IContactType, IRpcInvokeNodeSet?>();
 
         public RpcServicerManager()
         {
             EndpointKeeperManager.CreateEventBox.Add(OnCreate);
         }
 
-        public IRpcInvokeNodeSet? LoadInvokeNodeSet(IMessagerType serviceType)
+        public IRpcInvokeNodeSet? LoadInvokeNodeSet(IContactType serviceType)
         {
             return DoLoadInvokeNodeSet(serviceType, null);
         }
 
-        public IRpcInvokeNodeSet? FindInvokeNodeSet(IMessagerType serviceType)
+        public IRpcInvokeNodeSet? FindInvokeNodeSet(IContactType serviceType)
         {
             return serviceSetMap.TryGetValue(serviceType, out var serviceSet) ? serviceSet : null;
         }
 
-        private IRpcInvokeNodeSet? DoLoadInvokeNodeSet(IMessagerType messagerType, Action<MessagerNodeSet>? createHandler)
+        private IRpcInvokeNodeSet? DoLoadInvokeNodeSet(IContactType contactType, Action<ContactNodeSet>? createHandler)
         {
-            if (messagerType is RpcServiceType serviceType)
+            if (contactType is RpcServiceType serviceType)
             {
                 return DoLoadRpcServiceSet(serviceType);
             } else
             {
-                return DoLoadRpcServiceSet(messagerType, createHandler);
+                return DoLoadRpcServiceSet(contactType, createHandler);
             }
         }
 
-        private IRpcInvokeNodeSet? DoLoadRpcServiceSet(IMessagerType messagerType, Action<MessagerNodeSet>? createHandler)
+        private IRpcInvokeNodeSet? DoLoadRpcServiceSet(IContactType contactType, Action<ContactNodeSet>? createHandler)
         {
-            var nodeSet = invokeNodeSetMap.Get(messagerType);
+            var nodeSet = invokeNodeSetMap.Get(contactType);
             if (nodeSet != null)
             {
                 return nodeSet;
             }
-            var newSet = new MessagerNodeSet(messagerType);
-            if (invokeNodeSetMap.PutIfAbsent(messagerType, newSet) == null)
+            var newSet = new ContactNodeSet(contactType);
+            if (invokeNodeSetMap.PutIfAbsent(contactType, newSet) == null)
             {
                 createHandler?.Invoke(newSet);
             }
-            return invokeNodeSetMap.Get(messagerType);
+            return invokeNodeSetMap.Get(contactType);
         }
 
         private RpcServiceSet DoLoadRpcServiceSet(IRpcServiceType serviceType)
         {
-            RpcServiceSet Creator(IMessagerType type) => CreateServiceSet(serviceType);
+            RpcServiceSet Creator(IContactType type) => CreateServiceSet(serviceType);
             return serviceSetMap.GetOrAdd(serviceType, Creator);
         }
 
@@ -74,7 +74,7 @@ namespace TnyFramework.Net.Rpc
 
         private void OnCreate(IEndpointKeeper keeper)
         {
-            if (!(keeper.MessagerType is IRpcServiceType))
+            if (!(keeper.ContactType is IRpcServiceType))
                 return;
             keeper.AddEndpointEvent.Add(OnAddEndpoint);
             keeper.RemoveEndpointEvent.Add(OnRemoveEndpoint);

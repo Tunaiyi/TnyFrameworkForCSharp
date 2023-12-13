@@ -11,6 +11,7 @@ using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Transport;
 using IRpcContext = TnyFramework.Net.Rpc.IRpcContext;
 
 namespace TnyFramework.Net.Base
@@ -36,7 +37,7 @@ namespace TnyFramework.Net.Base
         /// <summary>
         /// 消息者工厂
         /// </summary>
-        IMessagerFactory MessagerFactory { get; }
+        IContactFactory ContactFactory { get; }
 
         /// <summary>
         /// 服务配置¬

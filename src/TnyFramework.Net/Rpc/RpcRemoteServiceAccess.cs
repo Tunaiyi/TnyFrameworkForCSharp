@@ -18,7 +18,7 @@ namespace TnyFramework.Net.Rpc
 
         public IEndpoint Endpoint => endpoint;
 
-        public long AccessId => Endpoint.MessagerId;
+        public long AccessId => Endpoint.ContactId;
 
         public ForwardPoint ForwardPoint { get; }
 

@@ -15,67 +15,79 @@ namespace TnyFramework.Common.Extensions
 
     public static class TaskSchedulerExtensions
     {
-        private const TaskCreationOptions OPTIONS = TaskCreationOptions.None;
+        private static readonly TaskCreationOptions OPTIONS = TaskCreationOptions.None;
         private static readonly CancellationToken TOKEN = CancellationToken.None;
 
-        public static Task StartNew(this TaskScheduler scheduler, Action action)
+        public static Task StartNew(this TaskScheduler scheduler, Action action,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(action, TOKEN, OPTIONS, scheduler);
+            return Task.Factory.StartNew(action, token ?? TOKEN, OPTIONS, scheduler);
         }
 
-        public static Task StartNew(this TaskScheduler scheduler, Action<object?> action, object? state)
+        public static Task StartNew(this TaskScheduler scheduler, Action<object?> action, object? state,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(action, state, TOKEN, OPTIONS, scheduler);
+            return Task.Factory.StartNew(action, state, token ?? TOKEN, OPTIONS, scheduler);
         }
 
-        public static Task<TResult> StartNew<TResult>(this TaskScheduler scheduler, Func<TResult> function)
+        public static Task<TResult> StartNew<TResult>(this TaskScheduler scheduler, Func<TResult> function,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(function, TOKEN, OPTIONS, scheduler);
+            return Task.Factory.StartNew(function, token ?? TOKEN, OPTIONS, scheduler);
         }
 
-        public static Task StartNew<TState>(this TaskScheduler scheduler, Action<TState> action, TState state)
+        public static Task StartNew<TState>(this TaskScheduler scheduler, Action<TState> action, TState state,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(s => action((TState) s!), state, TOKEN, OPTIONS, scheduler);
+            return Task.Factory.StartNew(s => action((TState) s!), state, token ?? TOKEN, OPTIONS, scheduler);
         }
 
-        public static Task<TResult> StartNew<TResult>(this TaskScheduler scheduler, Func<object?, TResult> function, object? state)
+        public static Task<TResult> StartNew<TResult>(this TaskScheduler scheduler, Func<object?, TResult> function, object? state,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(function, state, TOKEN, OPTIONS, scheduler);
+            return Task.Factory.StartNew(function, state, token ?? TOKEN, OPTIONS, scheduler);
         }
 
-        public static Task<TResult> StartNew<TResult, TState>(this TaskScheduler scheduler, Func<TState, TResult> function, TState state)
+        public static Task<TResult> StartNew<TResult, TState>(this TaskScheduler scheduler, Func<TState, TResult> function, TState state,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(s => function((TState) s!), state, TOKEN, OPTIONS, scheduler);
+            return Task.Factory.StartNew(s => function((TState) s!), state, token ?? TOKEN, OPTIONS, scheduler);
         }
 
-        public static Task StartAwaitNew(this TaskScheduler scheduler, Func<Task> action)
+        public static Task StartAwaitNew(this TaskScheduler scheduler, Func<Task> action,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(action, TOKEN, OPTIONS, scheduler).Unwrap();
+            return Task.Factory.StartNew(action, token ?? TOKEN, OPTIONS, scheduler).Unwrap();
         }
 
-        public static Task StartAwaitNew(this TaskScheduler scheduler, Func<object?, Task> action, object? state)
+        public static Task StartAwaitNew(this TaskScheduler scheduler, Func<object?, Task> action, object? state,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(action, state, TOKEN, OPTIONS, scheduler).Unwrap();
+            return Task.Factory.StartNew(action, state, token ?? TOKEN, OPTIONS, scheduler).Unwrap();
         }
 
-        public static Task<TResult> StartAwaitNew<TResult>(this TaskScheduler scheduler, Func<Task<TResult>> function)
+        public static Task<TResult> StartAwaitNew<TResult>(this TaskScheduler scheduler, Func<Task<TResult>> function,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(function, TOKEN, OPTIONS, scheduler).Unwrap();
+            return Task.Factory.StartNew(function, token ?? TOKEN, OPTIONS, scheduler).Unwrap();
         }
 
-        public static Task StartAwaitNew<TState>(this TaskScheduler scheduler, Func<TState, Task> action, TState state)
+        public static Task StartAwaitNew<TState>(this TaskScheduler scheduler, Func<TState, Task> action, TState state,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(s => action((TState) s!), state, TOKEN, OPTIONS, scheduler).Unwrap();
+            return Task.Factory.StartNew(s => action((TState) s!), state, token ?? TOKEN, OPTIONS, scheduler).Unwrap();
         }
 
-        public static Task<TResult> StartAwaitNew<TResult>(this TaskScheduler scheduler, Func<object?, Task<TResult>> function, object? state)
+        public static Task<TResult> StartAwaitNew<TResult>(this TaskScheduler scheduler, Func<object?, Task<TResult>> function, object? state,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(function, state, TOKEN, OPTIONS, scheduler).Unwrap();
+            return Task.Factory.StartNew(function, state, token ?? TOKEN, OPTIONS, scheduler).Unwrap();
         }
 
-        public static Task<TResult> StartAwaitNew<TResult, TState>(this TaskScheduler scheduler, Func<TState, Task<TResult>> function, TState state)
+        public static Task<TResult> StartAwaitNew<TResult, TState>(this TaskScheduler scheduler, Func<TState, Task<TResult>> function, TState state,
+            CancellationToken? token = null)
         {
-            return Task.Factory.StartNew(s => function((TState) s!), state, TOKEN, OPTIONS, scheduler).Unwrap();
+            return Task.Factory.StartNew(s => function((TState) s!), state, token ?? TOKEN, OPTIONS, scheduler).Unwrap();
         }
     }
 

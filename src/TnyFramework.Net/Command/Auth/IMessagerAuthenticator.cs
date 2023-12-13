@@ -12,7 +12,7 @@ using TnyFramework.Net.Command.Dispatcher;
 namespace TnyFramework.Net.Command.Auth
 {
 
-    public interface IMessagerAuthenticator
+    public interface IContactAuthenticator
     {
         void Authenticate(MessageDispatcherContext dispatcherContext, IRpcEnterContext rpcContext, Type type);
     }

@@ -7,28 +7,14 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Runtime.Serialization;
+using System.Buffers.Binary;
+using System.Runtime.InteropServices;
 
-namespace TnyFramework.Codec.Execptions
+namespace TnyFramework.Common.Binary.Extensions
 {
 
-    public class ObjectCodecException : Exception
+    public static partial class ByteSpanReadExtensions
     {
-        public ObjectCodecException()
-        {
-        }
-
-        public ObjectCodecException(string message) : base(message)
-        {
-        }
-
-        public ObjectCodecException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected ObjectCodecException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 
 }

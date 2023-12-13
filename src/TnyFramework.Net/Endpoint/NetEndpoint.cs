@@ -49,7 +49,7 @@ namespace TnyFramework.Net.Endpoint
         public static IEventBox<EndpointClose> CloseEventBox => CLOSE_EVENT_BUS;
     }
 
-    public abstract class NetEndpoint<TUserId> : Communicator<TUserId>, INetEndpoint<TUserId>
+    public abstract class NetEndpoint<TUserId> : Connector<TUserId>, INetEndpoint<TUserId>
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NetEndpoint<TUserId>>();
 
@@ -68,13 +68,9 @@ namespace TnyFramework.Net.Endpoint
         private readonly IEventBus<EndpointOffline> offlineEvent;
 
         private readonly IEventBus<EndpointClose> closeEvent;
-
         public IEventBox<EndpointOnline> OnlineEvent => onlineEvent;
-
         public IEventBox<EndpointOffline> OfflineEvent => offlineEvent;
-
         public IEventBox<EndpointClose> CloseEvent => closeEvent;
-
         public override NetAccessMode AccessMode => tunnel?.AccessMode ?? default!;
 
         public NetEndpoint(ICertificate<TUserId> certificate, IEndpointContext context)
@@ -95,9 +91,9 @@ namespace TnyFramework.Net.Endpoint
 
         public IEndpointContext Context { get; }
 
-        public override EndPoint RemoteAddress => CurrentTunnel.LocalAddress;
+        public override EndPoint? RemoteAddress => CurrentTunnel.LocalAddress;
 
-        public override EndPoint LocalAddress => CurrentTunnel.RemoteAddress;
+        public override EndPoint? LocalAddress => CurrentTunnel.RemoteAddress;
 
         public long OfflineTime { get; private set; }
 

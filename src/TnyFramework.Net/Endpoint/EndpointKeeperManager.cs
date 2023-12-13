@@ -24,11 +24,11 @@ namespace TnyFramework.Net.Endpoint
     {
         // private const string DEFAULT_KEY = "default";
 
-        private readonly ConcurrentDictionary<IMessagerType, IEndpointKeeper?> endpointKeeperMap = new();
+        private readonly ConcurrentDictionary<IContactType, IEndpointKeeper?> endpointKeeperMap = new();
 
         private readonly ISessionKeeperSetting defaultSessionKeeperSetting;
 
-        private readonly IDictionary<IMessagerType, ISessionKeeperSetting> sessionKeeperSettingMap;
+        private readonly IDictionary<IContactType, ISessionKeeperSetting> sessionKeeperSettingMap;
 
         private readonly IDictionary<string, ISessionKeeperFactory> sessionFactoryMap;
 
@@ -47,32 +47,32 @@ namespace TnyFramework.Net.Endpoint
         {
             this.defaultSessionKeeperSetting = defaultSessionKeeperSetting;
             sessionKeeperSettingMap = sessionKeeperSettings
-                .ToDictionary(sessionKeeperSetting => (IMessagerType) MessagerType.ForGroup(sessionKeeperSetting.Name))
+                .ToDictionary(sessionKeeperSetting => (IContactType) ContactType.ForGroup(sessionKeeperSetting.Name))
                 .ToImmutableDictionary();
             sessionFactoryMap = sessionKeeperFactories.ToImmutableDictionary();
             createEventBus = CREATE_EVENT_BUS.ForkChild();
         }
 
-        private IEndpointKeeper Create(IMessagerType messagerType)
+        private IEndpointKeeper Create(IContactType contactType)
         {
-            if (!sessionKeeperSettingMap.TryGetValue(messagerType, out var setting))
+            if (!sessionKeeperSettingMap.TryGetValue(contactType, out var setting))
             {
                 setting = defaultSessionKeeperSetting;
             }
             if (!sessionFactoryMap.TryGetValue(setting.KeeperFactory, out var factory))
                 throw new NullReferenceException($"{setting.KeeperFactory} factory is null");
-            return factory.CreateKeeper(messagerType, setting);
+            return factory.CreateKeeper(contactType, setting);
         }
 
         public IEndpoint? Online(ICertificate certificate, INetTunnel tunnel)
         {
-            var keeper = LoadKeeper(certificate.MessagerType, tunnel.AccessMode);
+            var keeper = LoadKeeper(certificate.ContactType, tunnel.AccessMode);
             return keeper?.Online(certificate, tunnel);
         }
 
-        public IEndpointKeeper? LoadKeeper(IMessagerType messagerType, NetAccessMode accessMode)
+        public IEndpointKeeper? LoadKeeper(IContactType contactType, NetAccessMode accessMode)
         {
-            var keeper = FindKeeper(messagerType);
+            var keeper = FindKeeper(contactType);
             if (keeper != null)
             {
                 return keeper;
@@ -81,17 +81,17 @@ namespace TnyFramework.Net.Endpoint
             // {
             //     throw new ArgumentException();
             // }
-            var newOne = Create(messagerType);
-            if (!endpointKeeperMap.TryAdd(messagerType, newOne))
-                return endpointKeeperMap[messagerType];
+            var newOne = Create(contactType);
+            if (!endpointKeeperMap.TryAdd(contactType, newOne))
+                return endpointKeeperMap[contactType];
             newOne.Start();
             createEventBus.Notify(newOne);
             return newOne;
         }
 
-        public IEndpointKeeper? FindKeeper(IMessagerType messagerType)
+        public IEndpointKeeper? FindKeeper(IContactType contactType)
         {
-            return endpointKeeperMap.TryGetValue(messagerType, out var keeper) ? keeper : default;
+            return endpointKeeperMap.TryGetValue(contactType, out var keeper) ? keeper : default;
         }
     }
 

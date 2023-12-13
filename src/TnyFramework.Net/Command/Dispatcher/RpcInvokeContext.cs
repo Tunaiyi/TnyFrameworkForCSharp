@@ -44,10 +44,10 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public ITunnel Tunnel => RpcContext.NetTunnel;
 
-        public IMessagerType MessagerType {
+        public IContactType ContactType {
             get {
                 var servicer = forward?.From;
-                return servicer != null ? servicer.ServiceType : Tunnel.MessagerType;
+                return servicer != null ? servicer.ServiceType : Tunnel.ContactType;
             }
         }
 

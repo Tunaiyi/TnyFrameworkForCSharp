@@ -15,6 +15,7 @@ using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.DotNetty.Configuration.Guide
 {
@@ -61,9 +62,9 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
             return Self();
         }
 
-        public TSpec MessagerConfigure(Action<IUnitSpec<IMessagerFactory, INetGuideUnitContext<TUserId>>> action)
+        public TSpec ContactConfigure(Action<IUnitSpec<IContactFactory, INetGuideUnitContext<TUserId>>> action)
         {
-            action(context.MessagerFactorySpec);
+            action(context.ContactFactorySpec);
             return Self();
         }
 

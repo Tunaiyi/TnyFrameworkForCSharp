@@ -9,7 +9,8 @@
 using System;
 using System.IO;
 using ProtoBuf;
-using TnyFramework.Codec.Execptions;
+using TnyFramework.Codec.Exceptions;
+using TnyFramework.Common.Binary.Extensions;
 using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
@@ -41,7 +42,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
                 return Array.Empty<byte>();
             }
             var stream = new MemoryStream(256);
-            ByteUtils.WriteFixed32(scheme.Id, stream);
+            stream.WriteFixed32(scheme.Id);
             Serializer.Serialize(stream, value);
             return stream.ToArray();
         }
@@ -55,7 +56,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             var scheme = factory.Load(value.GetType());
             if (scheme.IsNull())
                 return;
-            ByteUtils.WriteFixed32(scheme.Id, output);
+            output.WriteFixed32(scheme.Id);
             Serializer.Serialize(output, value);
         }
 
@@ -66,7 +67,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
                 return default;
             }
             var memory = new MemoryStream(bytes);
-            ByteUtils.ReadFixed32(memory, out int id);
+            memory.ReadFixed32(out int id);
             if (factory.Get(id, out var scheme))
             {
                 return (T) Serializer.Deserialize(scheme.Type, memory);
@@ -80,7 +81,7 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             {
                 return default;
             }
-            ByteUtils.ReadFixed32(input, out int id);
+            input.ReadFixed32(out int id);
             if (factory.Get(id, out var scheme))
             {
                 return (T) Serializer.Deserialize(scheme.Type, input);

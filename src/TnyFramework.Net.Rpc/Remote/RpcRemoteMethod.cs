@@ -28,7 +28,7 @@ namespace TnyFramework.Net.Rpc.Remote
         /// <summary>
         /// 服务类型
         /// </summary>
-        public IMessagerType ServiceType { get; }
+        public IContactType ServiceType { get; }
 
         /// <summary>
         /// 目标
@@ -153,7 +153,7 @@ namespace TnyFramework.Net.Rpc.Remote
             ReturnType = options.Router;
             Forward = !CollectionUtilities.IsNullOrEmpty(rpcService.ForwardService);
             Mode = profile.Mode;
-            ServiceType = MessagerType.ForGroup(rpcService.Service);
+            ServiceType = ContactType.ForGroup(rpcService.Service);
             if (Forward) {
                 TargetServiceType = RpcServiceType.ForService(rpcService.Service);
                 ForwardServiceType = RpcServiceType.ForService(rpcService.ForwardService);
@@ -286,11 +286,11 @@ namespace TnyFramework.Net.Rpc.Remote
                             invokeParams.To = to;
                         break;
                     case ParamMode.Sender:
-                        if (value is IMessager sender)
+                        if (value is IContact sender)
                             invokeParams.Sender = sender;
                         break;
                     case ParamMode.Receiver:
-                        if (value is IMessager receiver)
+                        if (value is IContact receiver)
                             invokeParams.Receiver = receiver;
                         break;
                     case ParamMode.Body:

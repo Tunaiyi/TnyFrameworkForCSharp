@@ -42,20 +42,18 @@ namespace TnyFramework.Net.Transport
         public static IEventBox<TunnelClose> CloseEventBox => CLOSE_EVENT_BUS;
     }
 
-    public abstract class NetTunnel<TUserId, TEndpoint> : Communicator<TUserId>, INetTunnel<TUserId>
+    public abstract class NetTunnel<TUserId, TEndpoint> : Connector<TUserId>, INetTunnel<TUserId>
         where TEndpoint : INetEndpoint<TUserId>
     {
         private int status = TunnelStatus.Init.Value();
 
         private TEndpoint endpoint;
 
-        private readonly ReaderWriterLockSlim endpointLock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim endpointLock = new();
 
         public long Id { get; }
 
         public long AccessId { get; private set; }
-
-        // public NetAccessMode AccessMode { get; }
 
         public TunnelStatus Status {
             get => (TunnelStatus) status;
@@ -123,12 +121,15 @@ namespace TnyFramework.Net.Transport
             endpoint = value;
         }
 
-        public bool Receive(IRpcEnterContext context)
+        public bool Receive(INetMessage message)
         {
             endpointLock.EnterReadLock();
             try
             {
-                return endpoint.Receive(context);
+                var rpcContext = RpcTransactionContext.CreateEnter(this, message);
+                var rpcMonitor = Context.RpcMonitor;
+                rpcMonitor.OnReceive(rpcContext);
+                return endpoint.Receive(rpcContext);
             } finally
             {
                 endpointLock.ExitReadLock();
@@ -190,23 +191,15 @@ namespace TnyFramework.Net.Transport
 
         public bool Open()
         {
-            if (IsClosed())
+            if (IsClosed() || IsActive())
             {
                 return false;
             }
-            if (IsActive())
-            {
-                return true;
-            }
             lock (this)
             {
-                if (IsClosed())
+                if (IsClosed() || IsActive())
                 {
                     return false;
-                }
-                if (IsActive())
-                {
-                    return true;
                 }
                 if (!OnOpen())
                 {

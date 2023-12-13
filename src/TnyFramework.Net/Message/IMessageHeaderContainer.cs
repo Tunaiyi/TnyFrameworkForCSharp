@@ -49,7 +49,7 @@ namespace TnyFramework.Net.Message
         /// <summary>
         /// 获取转发 header
         /// </summary>
-        T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>;
+        T? GetHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader;
 
         /// <summary>
         /// 获取全部 Header
@@ -92,7 +92,7 @@ namespace TnyFramework.Net.Message
         /// </summary>
         /// <param name="key">键值</param>
         /// <return>否则返回 false</return>
-        bool ExistHeader<T>(string key) where T : MessageHeader<T>;
+        bool ExistHeader<T>(string key) where T : MessageHeader;
 
         /// <summary>
         /// 是否存在指定 key 的 Header
@@ -106,21 +106,21 @@ namespace TnyFramework.Net.Message
         /// </summary>
         /// <param name="key">键值</param>
         /// <return>否则返回 false</return>
-        bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>;
+        bool ExistHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader;
 
         /// <summary>
         /// 添加 header
         /// </summary>
         /// <param name="header">头部信息</param>
         /// <return>返回 context 自身</return>
-        T? PutHeader<T>(MessageHeader<T> header) where T : MessageHeader<T>;
+        T? PutHeader<T>(T header) where T : MessageHeader;
 
         /// <summary>
         /// 添加 header, 如果Header 不存在.
         /// </summary>
         /// <param name="header">头部信息</param>
         /// <return>返回 context 自身</return>
-        T? PutHeaderIfAbsent<T>(MessageHeader<T> header) where T : MessageHeader<T>;
+        T? PutHeaderIfAbsent<T>(T header) where T : MessageHeader;
 
         /// <summary>
         /// 删除 header
@@ -130,7 +130,7 @@ namespace TnyFramework.Net.Message
         /// <summary>
         /// 删除 header
         /// </summary>
-        bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader<T>;
+        bool RemoveHeader<T>(MessageHeaderKey<T> key) where T : MessageHeader;
 
         /// <summary>
         /// 删除 header

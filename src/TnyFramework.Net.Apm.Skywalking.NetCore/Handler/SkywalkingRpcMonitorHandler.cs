@@ -37,7 +37,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
         private static readonly StringOrIntValue TNY_RPC_CLIENT = new(165, "tny-rpc-dotnet-client");
 
         private const string ARGUMENTS = "tny-rpc.arguments";
-        private const string MESSAGER = "tny-rpc.messager";
+        private const string CONTACT = "tny-rpc.contact";
         private const string TARGET = "tny-rpc.target";
         private const string FORWARD = "tny-rpc.forward";
         private const string RPC_MODE = "tny-rpc.mode";
@@ -89,8 +89,8 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             var message = rpcContext.MessageSubject;
             var contextCarrier = LoadCarrier(message);
             var rpcSegmentContext = tracingContext.CreateEntrySegmentContext(RpcOperationName(message), contextCarrier);
-            var messager = rpcContext.Messager;
-            TagSpanService(rpcSegmentContext, messager, message);
+            var contact = rpcContext.Contact;
+            TagSpanService(rpcSegmentContext, contact, message);
             var attributes = rpcContext.Attributes;
             attributes.Set(TRACING_RPC_SPAN, rpcSegmentContext);
             var span = rpcSegmentContext.Span;
@@ -125,10 +125,10 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
                 var message = rpcContext.MessageSubject;
                 operationName = RemoteOperationName(rpcContext);
                 var carrierHeader = new TextCarrierHeaderCollection(new Dictionary<string, string>());
-                segmentContext = tracingContext.CreateExitSegmentContext(operationName, Peer(rpcContext.Messager), carrierHeader);
+                segmentContext = tracingContext.CreateExitSegmentContext(operationName, Peer(rpcContext.Contact), carrierHeader);
                 tracingHeader.Attributes.AddRang(carrierHeader);
                 message.PutHeader(tracingHeader);
-                TagSpanRemote(segmentContext, rpcContext.Messager, message);
+                TagSpanRemote(segmentContext, rpcContext.Contact, message);
                 var span = segmentContext.Span;
                 LOGGER.LogInformation("OnBeforeInvoke EXIT Start span {op} {span} | {header}", span.OperationName, Debug(segmentContext),
                     tracingHeader);
@@ -137,7 +137,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
                 var message = rpcContext.MessageSubject;
                 operationName = LocalOperationName(rpcContext);
                 segmentContext = tracingContext.CreateLocalSegmentContext(operationName);
-                TagSpanLocal(segmentContext, rpcContext.Messager, message);
+                TagSpanLocal(segmentContext, rpcContext.Contact, message);
                 var span = segmentContext.Span;
                 LOGGER.LogInformation("OnBeforeInvoke ENTER Start span {op} {span}", span.OperationName, Debug(segmentContext));
             }
@@ -201,31 +201,31 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             return CreateOperationName("local:", rpcContext);
         }
 
-        private static string GetMessagerName(IMessager messager)
+        private static string GetContactName(IContact contact)
         {
-            return $"{messager.MessagerType.Group}[{messager.MessagerId}]";
+            return $"{contact.ContactType.Group}[{contact.ContactId}]";
         }
 
-        private void TagSpanService(SegmentContext segmentContext, INetMessager messager, IMessageSubject message)
+        private void TagSpanService(SegmentContext segmentContext, INetContact contact, IMessageSubject message)
         {
-            TagSpanCommon(segmentContext, messager.AccessMode, message);
-            TagSpanMessager(segmentContext, MESSAGER, messager);
+            TagSpanCommon(segmentContext, contact.AccessMode, message);
+            TagSpanContact(segmentContext, CONTACT, contact);
         }
 
-        private void TagSpanRemote(SegmentContext segmentContext, INetMessager messager, IMessageSubject message)
+        private void TagSpanRemote(SegmentContext segmentContext, INetContact contact, IMessageSubject message)
         {
             TagSpanCommon(segmentContext, NetAccessMode.Client, message);
-            TagSpanMessager(segmentContext, TARGET, messager);
+            TagSpanContact(segmentContext, TARGET, contact);
             TagSpanArguments(segmentContext, message);
             TagSpanForward(segmentContext, message);
         }
 
-        private void TagSpanLocal(SegmentContext span, INetMessager messager, IMessageSubject message)
+        private void TagSpanLocal(SegmentContext span, INetContact contact, IMessageSubject message)
         {
             TagSpanCommon(span, NetAccessMode.Server, message);
             TagSpanArguments(span, message);
             TagSpanForward(span, message);
-            TagSpanMessager(span, MESSAGER, messager);
+            TagSpanContact(span, CONTACT, contact);
         }
 
         private void TagSpanForward(SegmentContext segmentContext, IMessageSubject message)
@@ -236,7 +236,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             {
                 return;
             }
-            TagSpanMessager(segmentContext, FORWARD, forward);
+            TagSpanContact(segmentContext, FORWARD, forward);
         }
 
         private void TagSpanArguments(SegmentContext span, IMessageSubject message)
@@ -271,14 +271,14 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             segmentContext.Span.AddTag(ARGUMENTS, stringBuilder.ToString());
         }
 
-        private void TagSpanMessager(SegmentContext segmentContext, string key, IMessager? messager)
+        private void TagSpanContact(SegmentContext segmentContext, string key, IContact? contact)
         {
-            if (messager == null)
+            if (contact == null)
             {
                 return;
             }
             var span = segmentContext.Span;
-            span.AddTag(key, GetMessagerName(messager));
+            span.AddTag(key, GetContactName(contact));
         }
 
         private void TagSpanCommon(SegmentContext segmentContext, NetAccessMode accessMode, IMessageSchema message)
@@ -341,14 +341,14 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             LOGGER.LogInformation("restore span {mode} {name} {span}", rpcContext.Mode, span.OperationName, Debug(segmentContext));
         }
 
-        private string Peer(IConnection? messager)
+        private string Peer(IAddressPeer? addressPeer)
         {
-            if (messager == null)
+            if (addressPeer == null)
             {
                 return "NA:NA";
             }
-            var address = messager.RemoteAddress;
-            return address.ToString() ?? "NA:NA";
+            var address = addressPeer.RemoteAddress;
+            return address?.ToString() ?? "NA:NA";
         }
 
         private void StopAsyncSpans(IRpcTransactionContext rpcContext, Exception? cause, params AttrKey<SegmentContext>[] keys)

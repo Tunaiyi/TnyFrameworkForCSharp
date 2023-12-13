@@ -17,7 +17,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Endpoint
     {
         IEndpointKeeperManager LoadEndpointKeeperManager();
 
-        IMessagerAuthenticator LoadMessagerAuthenticator();
+        IContactAuthenticator LoadContactAuthenticator();
 
         ISessionKeeperSetting LoadDefaultSessionKeeperSetting();
 

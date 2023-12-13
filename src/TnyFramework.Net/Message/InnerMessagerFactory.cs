@@ -11,16 +11,16 @@ using TnyFramework.Net.Base;
 namespace TnyFramework.Net.Message
 {
 
-    public class InnerMessagerFactory : IMessagerFactory
+    public class InnerContactFactory : IContactFactory
     {
-        public IMessager CreateMessager(IMessagerType type, long messagerId)
+        public IContact CreateContact(IContactType type, long contactId)
         {
-            return new InnerMessager(type, messagerId);
+            return new InnerContact(type, contactId);
         }
 
-        public IMessager CreateMessager(ForwardMessager messager)
+        public IContact CreateContact(ForwardContact contact)
         {
-            return messager;
+            return contact;
         }
     }
 

@@ -67,17 +67,17 @@ namespace TnyFramework.Net.DotNetty.Codec
                 }
                 option = inBuffer.ReadByte();
                 if (CodecConstants.IsOption(option, CodecConstants.DATA_PACK_OPTION_MSG_TYPE_MASK,
-                        CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PING))
+                        CodecConstants.DATA_PACK_OPTION_PING))
                 {
                     return TickMessage.Ping();
                 }
                 if (CodecConstants.IsOption(option, CodecConstants.DATA_PACK_OPTION_MSG_TYPE_MASK,
-                        CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PONG))
+                        CodecConstants.DATA_PACK_OPTION_PONG))
                 {
                     return TickMessage.Pong();
                 }
 
-                ByteBufferUtils.ReadFixed32(inBuffer, out payloadLength);
+                ByteBufferVariantExtensions.ReadFixed32(inBuffer, out payloadLength);
                 if (payloadLength > setting.MaxPayloadLength)
                 {
                     inBuffer.SkipBytes(inBuffer.ReadableBytes);
@@ -110,7 +110,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                 var tunnel = channel.GetAttribute(NettyNetAttrKeys.TUNNEL).Get();
                 // 获取打包器
                 var index = inBuffer.ReaderIndex;
-                ByteBufferUtils.ReadVariant(inBuffer, out long accessId);
+                ByteBufferVariantExtensions.ReadVariant(inBuffer, out long accessId);
                 var packageContext = channel.GetAttribute(NettyNetAttrKeys.READ_PACKAGER).Get();
                 if (packageContext == null)
                 {
@@ -118,7 +118,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                     tunnel.SetAccessId(accessId);
                     channel.GetAttribute(NettyNetAttrKeys.READ_PACKAGER).Set(packageContext);
                 }
-                ByteBufferUtils.ReadVariant(inBuffer, out int number);
+                ByteBufferVariantExtensions.ReadVariant(inBuffer, out int number);
                 // 移动到当前包序号
                 packageContext.GoToAndCheck(number);
                 var verifyEnable = CodecConstants.IsOption(option, CodecConstants.DATA_PACK_OPTION_VERIFY);

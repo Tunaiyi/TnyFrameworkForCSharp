@@ -17,8 +17,15 @@ using TnyFramework.Net.Transport.Event;
 namespace TnyFramework.Net.Transport
 {
 
-    public interface INetTunnel : ITunnel, ITransport, IMessageReceiver, IMessageSender
+    public interface INetTunnel : ITunnel, ITransport, IMessageSender
     {
+        /// <summary>
+        /// 接收消息
+        /// </summary>
+        /// <param name="message"></param>
+        /// <returns>是否接收成功</returns>
+        bool Receive(INetMessage message);
+
         /// <summary>
         /// 访问 id
         /// </summary>
@@ -64,8 +71,14 @@ namespace TnyFramework.Net.Transport
         /// </summary>
         void Reset();
 
+        /// <summary>
+        /// Pong
+        /// </summary>
         void Pong();
 
+        /// <summary>
+        /// Ping
+        /// </summary>
         void Ping();
 
         /// <summary>

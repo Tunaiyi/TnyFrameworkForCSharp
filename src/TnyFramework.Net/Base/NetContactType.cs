@@ -6,25 +6,24 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Base;
-
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Base
 {
 
     /// <summary>
-    /// 消息发送接收者
+    /// 默认消息者类型
     /// </summary>
-    public interface IMessager
+    public class NetContactType : ContactType<NetContactType>
     {
         /// <summary>
-        /// 消息者 Id
+        /// 匿名
         /// </summary>
-        long MessagerId { get; }
+        public static readonly NetContactType ANONYMITY = Of(0, ANONYMITY_USER_TYPE);
 
         /// <summary>
-        /// 消息者类型
+        /// 默认用户
         /// </summary>
-        IMessagerType MessagerType { get; }
+        /// <returns></returns>
+        public static readonly NetContactType DEFAULT_USER = Of(1, DEFAULT_USER_TYPE);
     }
 
 }

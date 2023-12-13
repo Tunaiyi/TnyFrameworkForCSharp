@@ -10,7 +10,7 @@ using System;
 using System.Text;
 using TnyFramework.Codec;
 using TnyFramework.Codec.Attributes;
-using TnyFramework.Codec.Execptions;
+using TnyFramework.Codec.Exceptions;
 using TnyFramework.FreeRedis.NetCore.Attributes;
 
 namespace TnyFramework.FreeRedis.NetCore

@@ -23,15 +23,15 @@ namespace TnyFramework.Net.Endpoint
             factories = sessionFactories.ToImmutableDictionary();
         }
 
-        public IEndpointKeeper CreateKeeper(IMessagerType messagerType, IEndpointKeeperSetting setting)
+        public IEndpointKeeper CreateKeeper(IContactType contactType, IEndpointKeeperSetting setting)
         {
-            return CreateKeeper(messagerType, (ISessionKeeperSetting) setting);
+            return CreateKeeper(contactType, (ISessionKeeperSetting) setting);
         }
 
-        public ISessionKeeper CreateKeeper(IMessagerType messagerType, ISessionKeeperSetting setting)
+        public ISessionKeeper CreateKeeper(IContactType contactType, ISessionKeeperSetting setting)
         {
             return factories.TryGetValue(setting.SessionFactory, out var factory)
-                ? new SessionKeeper<TUserId>(messagerType, factory, setting)
+                ? new SessionKeeper<TUserId>(contactType, factory, setting)
                 : throw new NullReferenceException();
         }
     }

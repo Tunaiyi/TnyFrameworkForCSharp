@@ -36,7 +36,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public override RpcTransactionMode Mode => RpcTransactionMode.Exit;
 
-        public override INetMessager Messager => endpoint;
+        public override INetContact Contact => endpoint;
 
         public override bool Valid => true;
 

@@ -24,7 +24,7 @@ namespace TnyFramework.Net.Base
 
     public class AppType : BaseEnum<AppType>, IAppType
     {
-        private static readonly ConcurrentDictionary<string, AppType> APP_NAME_MAP = new ConcurrentDictionary<string, AppType>();
+        private static readonly ConcurrentDictionary<string, AppType> APP_NAME_MAP = new();
 
         /// <summary>
         /// 应用名字

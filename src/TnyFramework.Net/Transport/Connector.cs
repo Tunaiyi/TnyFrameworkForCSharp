@@ -14,17 +14,17 @@ using TnyFramework.Net.Command;
 namespace TnyFramework.Net.Transport
 {
 
-    public abstract class Communicator<TUserId> : AttributesContext, ICommunicator<TUserId>
+    public abstract class Connector<TUserId> : AttributesContext, IConnector<TUserId>
     {
         public abstract ICertificate<TUserId> Certificate { get; }
 
         public TUserId UserId => Certificate.UserId;
 
-        public long MessagerId => Certificate.MessagerId;
+        public long ContactId => Certificate.ContactId;
 
         public string UserGroup => Certificate.UserGroup;
 
-        public IMessagerType MessagerType => Certificate.MessagerType;
+        public IContactType ContactType => Certificate.ContactType;
 
         public object GetUserId()
         {
@@ -41,9 +41,9 @@ namespace TnyFramework.Net.Transport
             return Certificate.IsAuthenticated();
         }
 
-        public abstract EndPoint RemoteAddress { get; }
+        public abstract EndPoint? RemoteAddress { get; }
 
-        public abstract EndPoint LocalAddress { get; }
+        public abstract EndPoint? LocalAddress { get; }
 
         public abstract NetAccessMode AccessMode { get; }
 

@@ -11,7 +11,7 @@ using System.Collections.Concurrent;
 using System.Reflection;
 using TnyFramework.Codec;
 using TnyFramework.Codec.Attributes;
-using TnyFramework.Codec.Execptions;
+using TnyFramework.Codec.Exceptions;
 using TnyFramework.Common.Extensions;
 using TnyFramework.FreeRedis.NetCore.Attributes;
 

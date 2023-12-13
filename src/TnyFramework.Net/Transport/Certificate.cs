@@ -8,30 +8,29 @@
 
 using System;
 using TnyFramework.Net.Base;
-using TnyFramework.Net.Rpc;
 
-namespace TnyFramework.Net.Command
+namespace TnyFramework.Net.Transport
 {
 
     public class Certificate
     {
-        private const long ANONYMITY_MESSAGER_ID = -1L;
+        private const long ANONYMITY_CONTACT_ID = -1L;
 
-        public static Certificate<T> CreateAuthenticated<T>(long id, T userId, long messagerId, IMessagerType messagerType)
+        public static Certificate<T> CreateAuthenticated<T>(long id, T userId, long contactId, IContactType contactType)
         {
-            return CreateAuthenticated(id, userId, messagerId, messagerType, DateTimeOffset.Now.ToUnixTimeMilliseconds());
+            return CreateAuthenticated(id, userId, contactId, contactType, DateTimeOffset.Now.ToUnixTimeMilliseconds());
         }
 
-        public static Certificate<T> CreateAuthenticated<T>(long id, T userId, long messagerId, IMessagerType messagerType,
+        public static Certificate<T> CreateAuthenticated<T>(long id, T userId, long contactId, IContactType contactType,
             long authenticateAt, bool renew = false)
         {
-            return new Certificate<T>(id, userId, messagerId, messagerType, renew ? CertificateStatus.Renew : CertificateStatus.Authenticated,
+            return new Certificate<T>(id, userId, contactId, contactType, renew ? CertificateStatus.Renew : CertificateStatus.Authenticated,
                 authenticateAt);
         }
 
         public static Certificate<T> CreateUnauthenticated<T>(T? anonymityUserId = default)
         {
-            return new Certificate<T>(-1, anonymityUserId!, ANONYMITY_MESSAGER_ID, NetMessagerType.ANONYMITY, CertificateStatus.Unauthenticated, 0);
+            return new Certificate<T>(-1, anonymityUserId!, ANONYMITY_CONTACT_ID, NetContactType.ANONYMITY, CertificateStatus.Unauthenticated, 0);
         }
     }
 
@@ -45,11 +44,11 @@ namespace TnyFramework.Net.Command
 
         public long Id { get; }
 
-        public long MessagerId { get; }
+        public long ContactId { get; }
 
-        public IMessagerType MessagerType { get; }
+        public IContactType ContactType { get; }
 
-        public string UserGroup => MessagerType.Group;
+        public string UserGroup => ContactType.Group;
 
         public long AuthenticateAt { get; }
 
@@ -57,13 +56,13 @@ namespace TnyFramework.Net.Command
 
         public TUserId UserId { get; }
 
-        public Certificate(long id, TUserId userId, long messagerId, IMessagerType messagerType, CertificateStatus status, long authenticateAt)
+        public Certificate(long id, TUserId userId, long contactId, IContactType contactType, CertificateStatus status, long authenticateAt)
         {
             this.status = status;
             Id = id;
             UserId = userId;
-            MessagerId = messagerId;
-            MessagerType = messagerType;
+            ContactId = contactId;
+            ContactType = contactType;
             AuthenticateAt = authenticateAt;
             Status = status;
             UserId = userId;

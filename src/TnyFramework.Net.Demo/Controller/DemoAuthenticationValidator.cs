@@ -27,7 +27,7 @@ namespace TnyFramework.Net.Demo.Controller
                 throw new AuthFailedException("登录失败");
             var id = (long) paramList[0]!;
             var userId = (long) paramList[1]!;
-            return factory.Authenticate(id, userId, userId, NetMessagerType.DEFAULT_USER, DateTimeOffset.Now.ToUnixTimeMilliseconds());
+            return factory.Authenticate(id, userId, userId, NetContactType.DEFAULT_USER, DateTimeOffset.Now.ToUnixTimeMilliseconds());
             // if (value instanceof LoginDTO) {
             //     LoginDTO dto = as(value);
             //     return factory.certificate(dto.getCertId(), dto.getUserId(), Certificates.DEFAULT_USER_TYPE, Instant.now());

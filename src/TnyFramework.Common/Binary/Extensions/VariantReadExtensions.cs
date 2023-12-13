@@ -1,19 +1,11 @@
-﻿// Copyright (c) 2020 Tunaiyi
-// Tny Framework For CSharp is licensed under Mulan PSL v2.
-// You can use this software according to the terms and conditions of the Mulan PSL v2.
-// You may obtain a copy of Mulan PSL v2 at:
-//          http://license.coscl.org.cn/MulanPSL2
-// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-// See the Mulan PSL v2 for more details.
-
-using System;
+﻿using System;
+using System.Buffers;
 using System.IO;
-using DotNetty.Buffers;
 
-namespace TnyFramework.Net.DotNetty.Common
+namespace TnyFramework.Common.Binary.Extensions
 {
 
-    public static partial class ByteBufferUtils
+    public static partial class VariantExtensions
     {
         /// <summary>
         /// 从字节数组中读取32位固定长度
@@ -22,7 +14,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="index">起始索引</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadFixed32(byte[] bytes, int index, out int value)
+        public static int ReadFixed32(this byte[] bytes, int index, out int value)
         {
             value = bytes[index++] | bytes[index++] << 8 | bytes[index++] << 16 | bytes[index] << 24;
             return 4;
@@ -33,7 +25,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="value"></param>
-        public static void ReadFixed32(Stream stream, out int value)
+        public static void ReadFixed32(this Stream stream, out int value)
         {
             value = stream.ReadByte() | stream.ReadByte() << 8 | stream.ReadByte() << 16 | stream.ReadByte() << 24;
         }
@@ -41,11 +33,11 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer读取32位固定长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="value"></param>
-        public static void ReadFixed32(IByteBuffer buffer, out int value)
+        public static void ReadFixed32(this ref SequenceReader<byte> reader, out int value)
         {
-            value = buffer.ReadByte() | buffer.ReadByte() << 8 | buffer.ReadByte() << 16 | buffer.ReadByte() << 24;
+            value = reader.ReadByte() | reader.ReadByte() << 8 | reader.ReadByte() << 16 | reader.ReadByte() << 24;
         }
 
         /// <summary>
@@ -55,7 +47,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="index">起始索引</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadFixed32(byte[] bytes, int index, out float value)
+        public static int ReadFixed32(this byte[] bytes, int index, out float value)
         {
             var readed = ReadFixed32(bytes, index, out int intValue);
             value = Int2Float(intValue);
@@ -67,7 +59,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="value"></param>
-        public static void ReadFixed32(Stream stream, out float value)
+        public static void ReadFixed32(this Stream stream, out float value)
         {
             ReadFixed32(stream, out int intValue);
             value = Int2Float(intValue);
@@ -76,11 +68,11 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer读取32位固定长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="value"></param>
-        public static void ReadFixed32(IByteBuffer buffer, out float value)
+        public static void ReadFixed32(this ref SequenceReader<byte> reader, out float value)
         {
-            ReadFixed32(buffer, out int intValue);
+            reader.ReadFixed32(out int intValue);
             value = Int2Float(intValue);
         }
 
@@ -91,7 +83,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="index">起始索引</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadFixed64(byte[] bytes, int index, out long value)
+        public static int ReadFixed64(this byte[] bytes, int index, out long value)
         {
             value = bytes[index++]
                     | ((long) bytes[index++] << 8)
@@ -109,7 +101,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="value"></param>
-        public static void ReadFixed64(Stream stream, out long value)
+        public static void ReadFixed64(this Stream stream, out long value)
         {
             value = (long) stream.ReadByte()
                     | ((long) stream.ReadByte() << 8)
@@ -124,18 +116,18 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer读取64位固定长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="value"></param>
-        public static void ReadFixed64(IByteBuffer buffer, out long value)
+        public static void ReadFixed64(this ref SequenceReader<byte> reader, out long value)
         {
-            value = (long) buffer.ReadByte()
-                    | ((long) buffer.ReadByte() << 8)
-                    | ((long) buffer.ReadByte() << 16)
-                    | ((long) buffer.ReadByte() << 24)
-                    | ((long) buffer.ReadByte() << 32)
-                    | ((long) buffer.ReadByte() << 40)
-                    | ((long) buffer.ReadByte() << 48)
-                    | ((long) buffer.ReadByte() << 56);
+            value = reader.ReadByte()
+                    | ((long) reader.ReadByte() << 8)
+                    | ((long) reader.ReadByte() << 16)
+                    | ((long) reader.ReadByte() << 24)
+                    | ((long) reader.ReadByte() << 32)
+                    | ((long) reader.ReadByte() << 40)
+                    | ((long) reader.ReadByte() << 48)
+                    | ((long) reader.ReadByte() << 56);
         }
 
         /// <summary>
@@ -145,7 +137,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="index">起始索引</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadFixed64(byte[] bytes, int index, out double value)
+        public static int ReadFixed64(this byte[] bytes, int index, out double value)
         {
             var readed = ReadFixed64(bytes, index, out long longValue);
             value = Long2Double(longValue);
@@ -157,7 +149,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="value"></param>
-        public static void ReadFixed64(Stream stream, out double value)
+        public static void ReadFixed64(this Stream stream, out double value)
         {
             ReadFixed64(stream, out long longValue);
             value = Long2Double(longValue);
@@ -166,11 +158,11 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer读取64位固定长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="value"></param>
-        public static void ReadFixed64(IByteBuffer buffer, out double value)
+        public static void ReadFixed64(this ref SequenceReader<byte> reader, out double value)
         {
-            ReadFixed64(buffer, out long longValue);
+            reader.ReadFixed64(out long longValue);
             value = Long2Double(longValue);
         }
 
@@ -182,7 +174,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="zigzag">是否采用zigzag压缩</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadVariant(byte[] bytes, int index, bool zigzag, out int value)
+        public static int ReadVariant(this byte[] bytes, int index, bool zigzag, out int value)
         {
             var offset = index;
             var shift = 0;
@@ -203,7 +195,7 @@ namespace TnyFramework.Net.DotNetty.Common
             throw new ArgumentException("error varint!!");
         }
 
-        public static int ReadVariant(byte[] bytes, int index, out int value)
+        public static int ReadVariant(this byte[] bytes, int index, out int value)
         {
             return ReadVariant(bytes, index, false, out value);
         }
@@ -211,17 +203,17 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer中读取动态长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="zigzag"></param>
         /// <param name="value"></param>
-        public static void ReadVariant(IByteBuffer buffer, bool zigzag, out int value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, bool zigzag, out int value)
         {
             var shift = 0;
             var result = 0;
             var time = 0;
             while (time < 10)
             {
-                var b = buffer.ReadByte();
+                var b = reader.ReadByte();
                 result |= (b & 0x7F) << shift;
                 if (shift < 32 && (b & 0x80) == 0)
                 {
@@ -234,9 +226,9 @@ namespace TnyFramework.Net.DotNetty.Common
             throw new ArgumentException("error varint!!");
         }
 
-        public static void ReadVariant(IByteBuffer buffer, out int value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, out int value)
         {
-            ReadVariant(buffer, false, out value);
+            reader.ReadVariant(false, out value);
         }
 
         /// <summary>
@@ -247,14 +239,14 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="zigzag">是否采用zigzag压缩</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadVariant(byte[] bytes, int index, bool zigzag, out bool value)
+        public static int ReadVariant(this byte[] bytes, int index, bool zigzag, out bool value)
         {
             var readed = ReadVariant(bytes, index, zigzag, out int intValue);
             value = Convert.ToBoolean(intValue);
             return readed;
         }
 
-        public static int ReadVariant(byte[] bytes, int index, out bool value)
+        public static int ReadVariant(this byte[] bytes, int index, out bool value)
         {
             var readed = ReadVariant(bytes, index, false, out int intValue);
             value = Convert.ToBoolean(intValue);
@@ -264,18 +256,18 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer中读取动态长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="zigzag"></param>
         /// <param name="value"></param>
-        public static void ReadVariant(IByteBuffer buffer, bool zigzag, out bool value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, bool zigzag, out bool value)
         {
-            ReadVariant(buffer, zigzag, out int intValue);
+            reader.ReadVariant(zigzag, out int intValue);
             value = Convert.ToBoolean(intValue);
         }
 
-        public static void ReadVariant(IByteBuffer buffer, out bool value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, out bool value)
         {
-            ReadVariant(buffer, false, out int intValue);
+            reader.ReadVariant(false, out int intValue);
             value = Convert.ToBoolean(intValue);
         }
 
@@ -287,14 +279,14 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="zigzag">是否采用zigzag压缩</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadVariant(byte[] bytes, int index, bool zigzag, out byte value)
+        public static int ReadVariant(this byte[] bytes, int index, bool zigzag, out byte value)
         {
             var readed = ReadVariant(bytes, index, zigzag, out int intValue);
             value = (byte) intValue;
             return readed;
         }
 
-        public static int ReadVariant(byte[] bytes, int index, out byte value)
+        public static int ReadVariant(this byte[] bytes, int index, out byte value)
         {
             var readed = ReadVariant(bytes, index, false, out int intValue);
             value = (byte) intValue;
@@ -304,18 +296,18 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer中读取动态长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="zigzag"></param>
         /// <param name="value"></param>
-        public static void ReadVariant(IByteBuffer buffer, bool zigzag, out byte value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, bool zigzag, out byte value)
         {
-            ReadVariant(buffer, zigzag, out int intValue);
+            reader.ReadVariant(zigzag, out int intValue);
             value = (byte) intValue;
         }
 
-        public static void ReadVariant(IByteBuffer buffer, out byte value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, out byte value)
         {
-            ReadVariant(buffer, false, out int intValue);
+            reader.ReadVariant(false, out int intValue);
             value = (byte) intValue;
         }
 
@@ -327,14 +319,14 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="zigzag">是否采用zigzag压缩</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadVariant(byte[] bytes, int index, bool zigzag, out sbyte value)
+        public static int ReadVariant(this byte[] bytes, int index, bool zigzag, out sbyte value)
         {
             var readed = ReadVariant(bytes, index, zigzag, out int intValue);
             value = (sbyte) intValue;
             return readed;
         }
 
-        public static int ReadVariant(byte[] bytes, int index, out sbyte value)
+        public static int ReadVariant(this byte[] bytes, int index, out sbyte value)
         {
             var readed = ReadVariant(bytes, index, false, out int intValue);
             value = (sbyte) intValue;
@@ -344,18 +336,18 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer中读取动态长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="zigzag"></param>
         /// <param name="value"></param>
-        public static void ReadVariant(IByteBuffer buffer, bool zigzag, out sbyte value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, bool zigzag, out sbyte value)
         {
-            ReadVariant(buffer, zigzag, out int intValue);
+            reader.ReadVariant(zigzag, out int intValue);
             value = (sbyte) intValue;
         }
 
-        public static void ReadVariant(IByteBuffer buffer, out sbyte value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, out sbyte value)
         {
-            ReadVariant(buffer, false, out int intValue);
+            reader.ReadVariant(false, out int intValue);
             value = (sbyte) intValue;
         }
 
@@ -367,14 +359,14 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="zigzag">是否采用zigzag压缩</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadVariant(byte[] bytes, int index, bool zigzag, out float value)
+        public static int ReadVariant(this byte[] bytes, int index, bool zigzag, out float value)
         {
             var readed = ReadVariant(bytes, index, zigzag, out int intValue);
             value = Int2Float(intValue);
             return readed;
         }
 
-        public static int ReadVariant(byte[] bytes, int index, out float value)
+        public static int ReadVariant(this byte[] bytes, int index, out float value)
         {
             var readed = ReadVariant(bytes, index, false, out int intValue);
             value = Int2Float(intValue);
@@ -384,18 +376,18 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer中读取动态长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="zigzag"></param>
         /// <param name="value"></param>
-        public static void ReadVariant(IByteBuffer buffer, bool zigzag, out float value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, bool zigzag, out float value)
         {
-            ReadVariant(buffer, zigzag, out int intValue);
+            reader.ReadVariant(zigzag, out int intValue);
             value = Int2Float(intValue);
         }
 
-        public static void ReadVariant(IByteBuffer buffer, out float value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, out float value)
         {
-            ReadVariant(buffer, false, out int intValue);
+            reader.ReadVariant(false, out int intValue);
             value = Int2Float(intValue);
         }
 
@@ -407,7 +399,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="zigzag">是否采用zigzag压缩</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadVariant(byte[] bytes, int index, bool zigzag, out long value)
+        public static int ReadVariant(this byte[] bytes, int index, bool zigzag, out long value)
         {
             var offset = index;
             var shift = 0;
@@ -426,7 +418,7 @@ namespace TnyFramework.Net.DotNetty.Common
             throw new ArgumentException("error varint!!");
         }
 
-        public static int ReadVariant(byte[] bytes, int index, out long value)
+        public static int ReadVariant(this byte[] bytes, int index, out long value)
         {
             return ReadVariant(bytes, index, false, out value);
         }
@@ -434,16 +426,16 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer中读取动态长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="zigzag"></param>
         /// <param name="value"></param>
-        public static void ReadVariant(IByteBuffer buffer, bool zigzag, out long value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, bool zigzag, out long value)
         {
             var shift = 0;
             long result = 0;
             while (shift < 64)
             {
-                var b = buffer.ReadByte();
+                var b = reader.ReadByte();
                 result |= (long) (b & 0x7F) << shift;
                 if ((b & 0x80) == 0)
                 {
@@ -455,9 +447,9 @@ namespace TnyFramework.Net.DotNetty.Common
             throw new ArgumentException("error varint!!");
         }
 
-        public static void ReadVariant(IByteBuffer buffer, out long value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, out long value)
         {
-            ReadVariant(buffer, false, out value);
+            reader.ReadVariant(false, out value);
         }
 
         /// <summary>
@@ -468,14 +460,14 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="zigzag">是否采用zigzag压缩</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadVariant(byte[] bytes, int index, bool zigzag, out double value)
+        public static int ReadVariant(this byte[] bytes, int index, bool zigzag, out double value)
         {
             var readed = ReadVariant(bytes, index, zigzag, out long longValue);
             value = Long2Double(longValue);
             return readed;
         }
 
-        public static int ReadVariant(byte[] bytes, int index, out double value)
+        public static int ReadVariant(this byte[] bytes, int index, out double value)
         {
             var readed = ReadVariant(bytes, index, false, out long longValue);
             value = Long2Double(longValue);
@@ -485,18 +477,18 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer中读取动态长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="zigzag"></param>
         /// <param name="value"></param>
-        public static void ReadVariant(IByteBuffer buffer, bool zigzag, out double value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, bool zigzag, out double value)
         {
-            ReadVariant(buffer, zigzag, out long longValue);
+            reader.ReadVariant(zigzag, out long longValue);
             value = Long2Double(longValue);
         }
 
-        public static void ReadVariant(IByteBuffer buffer, out double value)
+        public static void ReadVariant(this ref SequenceReader<byte> reader, out double value)
         {
-            ReadVariant(buffer, false, out long longValue);
+            reader.ReadVariant(false, out long longValue);
             value = Long2Double(longValue);
         }
 
@@ -507,7 +499,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="index">起始索引</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadString(byte[] bytes, int index, out string value)
+        public static int ReadStringWithLength(this byte[] bytes, int index, out string value)
         {
             var readed = ReadVariant(bytes, index, false, out int len);
             if (len == 0)
@@ -522,17 +514,17 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer中读取动态长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="value"></param>
-        public static void ReadString(IByteBuffer buffer, out string value)
+        public static void ReadStringWithLength(this ref SequenceReader<byte> reader, out string value)
         {
-            ReadVariant(buffer, false, out int len);
+            reader.ReadVariant(false, out int len);
             if (len == 0)
             {
                 value = "";
                 return;
             }
-            value = buffer.ReadString(len, ENCODING);
+            value = reader.ReadString(len, ENCODING);
         }
 
         /// <summary>
@@ -542,7 +534,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="index">起始索引</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadBytes(byte[] bytes, int index, out byte[] value)
+        public static int ReadBytesWithLength(this byte[] bytes, int index, out byte[] value)
         {
             var readed = ReadVariant(bytes, index, false, out int len);
             if (len == 0)
@@ -558,18 +550,52 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <summary>
         /// 从IByteBuffer中读取动态长度
         /// </summary>
-        /// <param name="buffer"></param>
+        /// <param name="reader"></param>
         /// <param name="value"></param>
-        public static void ReadBytes(IByteBuffer buffer, out byte[] value)
+        public static void ReadBytesWithLength(this ref SequenceReader<byte> reader, byte[] value)
         {
-            ReadVariant(buffer, false, out int len);
+            reader.ReadVariant(false, out int len);
             if (len == 0)
             {
-                value = new byte[0];
+                value = Array.Empty<byte>();
+                return;
+            }
+            reader.TryCopyTo(value);
+        }
+
+        /// <summary>
+        /// 从IByteBuffer中读取动态长度
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="value"></param>
+        /// <param name="start"></param>
+        /// <param name="count"></param>
+        public static void ReadBytesWithLength(this ref SequenceReader<byte> reader, byte[] value, int start, int count)
+        {
+            reader.ReadVariant(false, out int len);
+            if (len == 0)
+            {
+                value = Array.Empty<byte>();
+                return;
+            }
+            reader.TryCopyTo(value.AsSpan(start, count));
+        }
+
+        /// <summary>
+        /// 从IByteBuffer中读取动态长度
+        /// </summary>
+        /// <param name="reader"></param>
+        /// <param name="value"></param>
+        public static void ReadBytesWithLength(this ref SequenceReader<byte> reader, out byte[] value)
+        {
+            reader.ReadVariant(false, out int len);
+            if (len == 0)
+            {
+                value = Array.Empty<byte>();
                 return;
             }
             value = new byte[len];
-            buffer.ReadBytes(value);
+            reader.TryCopyTo(value);
         }
 
         /// <summary>
@@ -579,35 +605,32 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="index">起始索引</param>
         /// <param name="value">读取的结果</param>
         /// <returns>读取的长度</returns>
-        public static int ReadBytes(byte[] bytes, int index, out ArraySegment<byte> value)
+        public static int ReadBytesWithLength(this byte[] bytes, int index, out ArraySegment<byte> value)
         {
-            var readed = ReadVariant(bytes, index, false, out int len);
+            var read = ReadVariant(bytes, index, false, out int len);
             if (len == 0)
             {
                 value = new ArraySegment<byte>();
-                return readed;
+                return read;
             }
-            value = new ArraySegment<byte>(bytes, index + readed, len);
-            return readed + len;
+            value = new ArraySegment<byte>(bytes, index + read, len);
+            return read + len;
         }
 
         /// <summary>
         /// 从IByteBuffer中读取动态长度
         /// </summary>
+        /// <param name="reader"></param>
         /// <param name="buffer"></param>
-        /// <param name="value"></param>
-        public static void ReadBytes(IByteBuffer buffer, out IByteBuffer value)
+        public static int ReadBytesWithLength(this ref SequenceReader<byte> reader, IBufferWriter<byte> buffer)
         {
-            ReadVariant(buffer, false, out int len);
+            reader.ReadVariant(false, out int len);
             if (len == 0)
             {
-                value = null!;
-                return;
-            } else
-            {
-                value = buffer.Allocator.HeapBuffer(len);
+                return len;
             }
-            buffer.ReadBytes(value, len);
+            reader.ReadBytes(len, buffer);
+            return len;
         }
     }
 

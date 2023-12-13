@@ -27,7 +27,7 @@ namespace TnyFramework.Net.Demo.Controller
     // @AuthenticationRequired({Certificates.DEFAULT_USER_TYPE, "game-client"})
     // @BeforePlugin(SpringBootParamFilterPlugin.class)
     [RpcController]
-    [AuthenticationRequired(MessagerType.DEFAULT_USER_TYPE, "game-client")]
+    [AuthenticationRequired(ContactType.DEFAULT_USER_TYPE, "game-client")]
     public class ServerSpeakController : IController
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<ServerSpeakController>();

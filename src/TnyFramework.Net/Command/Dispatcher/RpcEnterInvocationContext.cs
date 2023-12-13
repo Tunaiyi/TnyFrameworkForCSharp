@@ -31,7 +31,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private volatile int running = CLOSE;
 
-        private INetMessager to;
+        private INetContact to;
 
         private bool forward;
 
@@ -45,7 +45,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public INetTunnel NetTunnel => tunnel;
 
-        public override INetMessager Messager => tunnel;
+        public override INetContact Contact => tunnel;
 
         public IMessage Message => message;
 
@@ -53,9 +53,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public override bool Valid => tunnel.IsNull() && Message.IsNull();
 
-        public INetMessager From => tunnel;
+        public INetContact From => tunnel;
 
-        public INetMessager To => to;
+        public INetContact To => to;
 
         public RpcEnterInvocationContext(INetTunnel tunnel, INetMessage message, bool async, IAttributes? attributes = null)
             : base(message, async, attributes)
@@ -100,10 +100,10 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public bool Running() => running == OPEN;
 
-        bool IRpcTransferContext.Transfer(INetMessager toMessager, string operationName)
+        bool IRpcTransferContext.Transfer(INetContact toContact, string operationName)
         {
             return Prepare(operationName, () => {
-                to = toMessager;
+                to = toContact;
                 forward = true;
             });
         }

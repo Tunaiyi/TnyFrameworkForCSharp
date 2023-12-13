@@ -23,11 +23,11 @@ namespace TnyFramework.Net.Rpc.Remote
 
         public IRpcServicer From { get; internal set; }
 
-        public IMessager Sender { get; internal set; }
+        public IContact Sender { get; internal set; }
 
         public IRpcServicer To { get; internal set; }
 
-        public IMessager Receiver { get; internal set; }
+        public IContact Receiver { get; internal set; }
 
         public object RouteValue { get; internal set; }
 

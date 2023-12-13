@@ -12,25 +12,25 @@ using TnyFramework.Net.Endpoint;
 namespace TnyFramework.Net.Rpc
 {
 
-    public class RpcMessagerAccess : IRpcAccess
+    public class RpcContactAccess : IRpcAccess
     {
-        private static readonly AttrKey<RpcMessagerAccess> REMOTER_ACCESS = AttrKeys.Key<RpcMessagerAccess>("REMOTER_ACCESS");
+        private static readonly AttrKey<RpcContactAccess> REMOTER_ACCESS = AttrKeys.Key<RpcContactAccess>("REMOTER_ACCESS");
 
         private readonly IEndpoint endpoint;
 
-        public static RpcMessagerAccess Of(IEndpoint endpoint)
+        public static RpcContactAccess Of(IEndpoint endpoint)
         {
             var attributes = endpoint.Attributes;
             var access = attributes.Get(REMOTER_ACCESS);
-            return access ?? attributes.Load(REMOTER_ACCESS, () => new RpcMessagerAccess(endpoint));
+            return access ?? attributes.Load(REMOTER_ACCESS, () => new RpcContactAccess(endpoint));
         }
 
-        private RpcMessagerAccess(IEndpoint endpoint)
+        private RpcContactAccess(IEndpoint endpoint)
         {
             this.endpoint = endpoint;
         }
 
-        public long AccessId => endpoint.MessagerId;
+        public long AccessId => endpoint.ContactId;
 
         public bool IsActive() => endpoint.IsActive();
 

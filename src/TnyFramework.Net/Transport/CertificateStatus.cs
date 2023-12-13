@@ -8,7 +8,7 @@
 
 using System;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Transport
 {
 
     [Flags]
