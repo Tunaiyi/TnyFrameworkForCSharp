@@ -121,11 +121,11 @@ namespace TnyFramework.Net.DotNetty.Codec
                     throw new NetException($"payload length {payloadLength} > {CodecConstants.PAYLOAD_BYTES_MAX_SIZE}");
                 }
                 // 写入包长度
-                ByteBufferVariantExtensions.WriteFixed32(payloadLength, outBuffer);
+                outBuffer.WriteFixed32(payloadLength);
                 // 写入 accessId
-                ByteBufferVariantExtensions.WriteVariant(accessId, outBuffer);
+                outBuffer.WriteVariant(accessId);
                 // 写入 number
-                ByteBufferVariantExtensions.WriteVariant(number, outBuffer);
+                outBuffer.WriteVariant(number);
                 // TODO 写入废字节
                 // TODO 写入校验码
                 // 写入包体

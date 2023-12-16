@@ -41,9 +41,15 @@ namespace TnyFramework.Net.Demo.Controller
         }
 
         [RpcRequest(CtrlerIds.SPEAK_4_SAY_FOR_RPC)]
-        public SayContentDTO SayForBody([Identify] RpcAccessIdentify id, string message)
+        public SayContentDTO SayForBody([IdentifyToken] RpcAccessIdentify id, string message)
         {
             return new SayContentDTO(id.Id, "respond " + message);
+        }
+
+        [RpcRequest(CtrlerIds.SPEAK_4_SAY_FOR_CONTENT)]
+        public SayContentDTO SayForContent([IdentifyToken] RpcAccessIdentify id, SayContentDTO content)
+        {
+            return new SayContentDTO(id.Id, "respond " + content.message);
         }
 
         [RpcRequest(CtrlerIds.SPEAK_4_TEST)]

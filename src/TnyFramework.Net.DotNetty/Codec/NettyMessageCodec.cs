@@ -67,7 +67,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                 return;
             }
             //		ProtoExOutputStream stream = new ProtoExOutputStream(1024, 2 * 1024);
-            ByteBufferVariantExtensions.WriteVariant(message.Id, buffer);
+            buffer.WriteVariant(message.Id);
             var head = message.Head;
             var mode = head.Mode;
             var hasHeader = message.IsHasHeaders();
@@ -83,10 +83,10 @@ namespace TnyFramework.Net.DotNetty.Codec
             }
             option = (byte) (option | line << CodecConstants.MESSAGE_HEAD_OPTION_LINE_SHIFT);
             buffer.WriteByte(option);
-            ByteBufferVariantExtensions.WriteVariant(head.ProtocolId, buffer);
-            ByteBufferVariantExtensions.WriteVariant(head.Code, buffer);
-            ByteBufferVariantExtensions.WriteVariant(head.ToMessage, buffer);
-            ByteBufferVariantExtensions.WriteVariant(head.Time, buffer);
+            buffer.WriteVariant(head.ProtocolId);
+            buffer.WriteVariant(head.Code);
+            buffer.WriteVariant(head.ToMessage);
+            buffer.WriteVariant(head.Time);
             if (hasHeader)
             {
                 WriteHeaders(buffer, message.GetAllHeaders());
@@ -143,7 +143,7 @@ namespace TnyFramework.Net.DotNetty.Codec
 
         private void WriteHeaders(IByteBuffer buffer, IList<MessageHeader> headers)
         {
-            ByteBufferVariantExtensions.WriteVariant(headers.Count, buffer);
+            buffer.WriteVariant(headers.Count);
             foreach (var header in headers)
             {
                 try
@@ -178,7 +178,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                         {
                             throw NetCodecException.CauseEncodeFailed("ByteBufMessageBody is released");
                         }
-                        ByteBufferVariantExtensions.WriteVariant(data.ReadableBytes, buffer);
+                        buffer.WriteVariant(data.ReadableBytes);
                         buffer.WriteBytes(data);
                         break;
                     }
@@ -188,7 +188,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                         {
                             bodyBuf = buffer.Allocator.HeapBuffer();
                             coder.Encode(body, bodyBuf);
-                            ByteBufferVariantExtensions.WriteVariant(bodyBuf.ReadableBytes, buffer);
+                            buffer.WriteVariant(bodyBuf.ReadableBytes);
                             buffer.WriteBytes(bodyBuf);
                         } finally
                         {
@@ -207,11 +207,11 @@ namespace TnyFramework.Net.DotNetty.Codec
         {
             if (data != null)
             {
-                ByteBufferVariantExtensions.WriteVariant(data.Length, buffer);
+                buffer.WriteVariant(data.Length);
                 buffer.WriteBytes(data);
             } else
             {
-                ByteBufferVariantExtensions.WriteVariant(0, buffer);
+                buffer.WriteVariant(0);
             }
         }
     }

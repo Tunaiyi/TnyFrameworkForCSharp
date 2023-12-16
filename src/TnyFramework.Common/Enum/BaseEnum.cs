@@ -101,7 +101,7 @@ namespace TnyFramework.Common.Enum
         /// <returns></returns>
         public static T ForId(int id)
         {
-            return GetById(id)!;
+            return GetById(id, false)!;
         }
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace TnyFramework.Common.Enum
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static T? GetById(int id)
+        public static T? FindById(int id)
         {
             return GetById(id, false);
         }
@@ -129,7 +129,7 @@ namespace TnyFramework.Common.Enum
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static T? GetByName(string name)
+        public static T? FindByName(string name)
         {
             return GetByName(name, false);
         }

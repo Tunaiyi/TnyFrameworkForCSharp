@@ -23,7 +23,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="bytes"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static int WriteFixed32(int value, byte[] bytes, int index)
+        public static int WriteFixed32(this byte[] bytes, int value, int index)
         {
             VariantExtensions.VerifySpace(4, bytes, index);
             bytes[index] = (byte) value;
@@ -38,7 +38,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="value"></param>
         /// <param name="stream"></param>
-        public static void WriteFixed32(int value, Stream stream)
+        public static void WriteFixed32(this Stream stream, int value)
         {
             stream.WriteByte((byte) value);
             stream.WriteByte((byte) (value >> 8));
@@ -51,7 +51,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="value"></param>
         /// <param name="buffer"></param>
-        public static void WriteFixed32(int value, IByteBuffer buffer)
+        public static void WriteFixed32(this IByteBuffer buffer, int value)
         {
             buffer.WriteByte((byte) value);
             buffer.WriteByte((byte) (value >> 8));
@@ -66,9 +66,9 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="bytes"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static int WriteFixed32(float value, byte[] bytes, int index)
+        public static int WriteFixed32(this byte[] bytes, float value, int index)
         {
-            return WriteFixed32(VariantExtensions.Float2Int(value), bytes, index);
+            return WriteFixed32(bytes, VariantExtensions.Float2Int(value), index);
         }
 
         /// <summary>
@@ -76,9 +76,9 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="value"></param>
         /// <param name="stream"></param>
-        public static void WriteFixed32(float value, Stream stream)
+        public static void WriteFixed32(this Stream stream, float value)
         {
-            WriteFixed32(VariantExtensions.Float2Int(value), stream);
+            WriteFixed32(stream, VariantExtensions.Float2Int(value));
         }
 
         /// <summary>
@@ -86,9 +86,9 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="value"></param>
         /// <param name="buffer"></param>
-        public static void WriteFixed32(float value, IByteBuffer buffer)
+        public static void WriteFixed32(this IByteBuffer buffer, float value)
         {
-            WriteFixed32(VariantExtensions.Float2Int(value), buffer);
+            WriteFixed32(buffer, VariantExtensions.Float2Int(value));
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="bytes"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static int WriteFixed64(long value, byte[] bytes, int index)
+        public static int WriteFixed64(this byte[] bytes, long value, int index)
         {
             VariantExtensions.VerifySpace(8, bytes, index);
             bytes[index] = (byte) value;
@@ -117,7 +117,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="value"></param>
         /// <param name="stream"></param>
-        public static void WriteFixed64(long value, Stream stream)
+        public static void WriteFixed64(this Stream stream, long value)
         {
             stream.WriteByte((byte) value);
             stream.WriteByte((byte) (value >> 8));
@@ -134,7 +134,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="value"></param>
         /// <param name="buffer"></param>
-        public static void WriteFixed64(long value, IByteBuffer buffer)
+        public static void WriteFixed64(this IByteBuffer buffer, long value)
         {
             buffer.WriteByte((byte) value);
             buffer.WriteByte((byte) (value >> 8));
@@ -153,9 +153,9 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="bytes"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        public static int WriteFixed64(double value, byte[] bytes, int index)
+        public static int WriteFixed64(this byte[] bytes, double value, int index)
         {
-            return WriteFixed64(VariantExtensions.Double2Long(value), bytes, index);
+            return WriteFixed64(bytes, VariantExtensions.Double2Long(value), index);
         }
 
         /// <summary>
@@ -163,9 +163,9 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="value"></param>
         /// <param name="stream"></param>
-        public static void WriteFixed64(double value, Stream stream)
+        public static void WriteFixed64(this Stream stream, double value)
         {
-            WriteFixed64(VariantExtensions.Double2Long(value), stream);
+            WriteFixed64(stream, VariantExtensions.Double2Long(value));
         }
 
         /// <summary>
@@ -173,9 +173,9 @@ namespace TnyFramework.Net.DotNetty.Common
         /// </summary>
         /// <param name="value"></param>
         /// <param name="buffer"></param>
-        public static void WriteFixed64(double value, IByteBuffer buffer)
+        public static void WriteFixed64(this IByteBuffer buffer, double value)
         {
-            WriteFixed64(VariantExtensions.Double2Long(value), buffer);
+            WriteFixed64(buffer, VariantExtensions.Double2Long(value));
         }
 
         /// <summary>
@@ -186,7 +186,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="index"></param>
         /// <param name="zigzag"></param>
         /// <returns></returns>
-        public static int WriteVariant(int value, byte[] bytes, int index, bool zigzag = false)
+        public static int WriteVariant(this byte[] bytes, int value, int index, bool zigzag = false)
         {
             if (zigzag)
             {
@@ -216,7 +216,7 @@ namespace TnyFramework.Net.DotNetty.Common
         /// <param name="value"></param>
         /// <param name="buffer"></param>
         /// <param name="zigzag"></param>
-        public static void WriteVariant(int value, IByteBuffer buffer, bool zigzag = false)
+        public static void WriteVariant(this IByteBuffer buffer, int value, bool zigzag = false)
         {
             if (zigzag)
             {
@@ -238,42 +238,42 @@ namespace TnyFramework.Net.DotNetty.Common
             } while (true);
         }
 
-        public static int WriteVariant(bool value, byte[] bytes, int index, bool zigzag = false)
+        public static int WriteVariant(this byte[] bytes, bool value, int index, bool zigzag = false)
         {
-            return WriteVariant(Convert.ToInt32(value), bytes, index, zigzag);
+            return WriteVariant(bytes, Convert.ToInt32(value), index, zigzag);
         }
 
-        public static void WriteVariant(bool value, IByteBuffer buffer, bool zigzag = false)
+        public static void WriteVariant(this IByteBuffer buffer, bool value, bool zigzag = false)
         {
-            WriteVariant(Convert.ToInt32(value), buffer, zigzag);
+            WriteVariant(buffer, Convert.ToInt32(value), zigzag);
         }
 
-        public static int WriteVariant(byte value, byte[] bytes, int index, bool zigzag = false)
+        public static int WriteVariant(this byte[] bytes, byte value, int index, bool zigzag = false)
         {
-            return WriteVariant((int) value, bytes, index, zigzag);
+            return WriteVariant(bytes, (int) value, index, zigzag);
         }
 
-        public static void WriteVariant(byte value, IByteBuffer buffer, bool zigzag = false)
+        public static void WriteVariant(this IByteBuffer buffer, byte value, bool zigzag = false)
         {
-            WriteVariant((int) value, buffer, zigzag);
+            WriteVariant(buffer, (int) value, zigzag);
         }
 
-        public static int WriteVariant(sbyte value, byte[] bytes, int index, bool zigzag = false)
+        public static int WriteVariant(this byte[] bytes, sbyte value, int index, bool zigzag = false)
         {
-            return WriteVariant((int) value, bytes, index, zigzag);
+            return WriteVariant(bytes, (int) value, index, zigzag);
         }
 
-        public static int WriteVariant(float value, byte[] bytes, int index, bool zigzag = false)
+        public static int WriteVariant(this byte[] bytes, float value, int index, bool zigzag = false)
         {
-            return WriteVariant(VariantExtensions.Float2Int(value), bytes, index, zigzag);
+            return WriteVariant(bytes, VariantExtensions.Float2Int(value), index, zigzag);
         }
 
-        public static void WriteVariant(float value, IByteBuffer buffer, bool zigzag = false)
+        public static void WriteVariant(this IByteBuffer buffer, float value, bool zigzag = false)
         {
-            WriteVariant(VariantExtensions.Float2Int(value), buffer, zigzag);
+            WriteVariant(buffer, VariantExtensions.Float2Int(value), zigzag);
         }
 
-        public static int WriteVariant(long value, byte[] bytes, int index, bool zigzag = false)
+        public static int WriteVariant(this byte[] bytes, long value, int index, bool zigzag = false)
         {
             if (zigzag)
             {
@@ -297,7 +297,7 @@ namespace TnyFramework.Net.DotNetty.Common
             return length;
         }
 
-        public static int WriteVariant(long value, IByteBuffer buffer, bool zigzag = false)
+        public static int WriteVariant(this IByteBuffer buffer, long value, bool zigzag = false)
         {
             if (zigzag)
             {
@@ -321,39 +321,39 @@ namespace TnyFramework.Net.DotNetty.Common
             return buffer.WriterIndex - startIndex;
         }
 
-        public static int WriteVariant(double value, byte[] bytes, int index, bool zigzag = false)
+        public static int WriteVariant(this byte[] bytes, double value, int index, bool zigzag = false)
         {
-            return WriteVariant(VariantExtensions.Double2Long(value), bytes, index, zigzag);
+            return WriteVariant(bytes, VariantExtensions.Double2Long(value), index, zigzag);
         }
 
-        public static int WriteVariant(double value, IByteBuffer buffer, bool zigzag = false)
+        public static int WriteVariant(this IByteBuffer buffer, double value, bool zigzag = false)
         {
-            return WriteVariant(VariantExtensions.Double2Long(value), buffer, zigzag);
+            return buffer.WriteVariant(VariantExtensions.Double2Long(value), zigzag);
         }
 
-        public static void WriteString(string value, IByteBuffer buffer)
+        public static void WriteString(this IByteBuffer buffer, string value)
         {
             var len = value.Length;
             if (len == 0)
             {
-                WriteVariant(0, buffer);
+                WriteVariant(buffer, 0);
                 return;
             }
             // 计算字符串字节长度
             var bytesLength = ENCODING.GetByteCount(value);
             // 写入长度
-            WriteVariant(bytesLength, buffer);
+            WriteVariant(buffer, bytesLength);
             // 写入字符串
             buffer.WriteString(value, ENCODING);
         }
 
-        public static void WriteBytes(byte[] source, int sourceIndex, int length, IByteBuffer buffer)
+        public static void WriteBytes(this byte[] source, int sourceIndex, int length, IByteBuffer buffer)
         {
-            WriteVariant(length, buffer);
+            WriteVariant(buffer, length);
             buffer.WriteBytes(source, sourceIndex, length);
         }
 
-        public static void WriteBytes(ArraySegment<byte> source, IByteBuffer buffer)
+        public static void WriteBytes(this ArraySegment<byte> source, IByteBuffer buffer)
         {
             if (source.Array != null) WriteBytes(source.Array, source.Offset, source.Count, buffer);
         }

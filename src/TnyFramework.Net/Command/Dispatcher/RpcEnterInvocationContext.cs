@@ -51,7 +51,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public INetMessage NetMessage => message;
 
-        public override bool Valid => tunnel.IsNull() && Message.IsNull();
+        public override bool Valid => tunnel.IsNotNull() && Message.IsNotNull();
 
         public IContact From => tunnel;
 

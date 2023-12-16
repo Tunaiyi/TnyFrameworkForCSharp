@@ -28,7 +28,6 @@ namespace TnyFramework.Net.Command.Auth
         {
             var tunnel = context.NetTunnel;
             var message = context.NetMessage;
-            var networkContext = context.NetworkContext;
             if (tunnel.IsAuthenticated())
                 return;
             var validator = GetValidator(dispatcherContext, type);

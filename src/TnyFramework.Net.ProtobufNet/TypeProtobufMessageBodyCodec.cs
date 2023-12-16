@@ -262,13 +262,13 @@ namespace TnyFramework.Net.ProtobufNet
         {
             if (value is int v)
             {
-                ByteBufferVariantExtensions.WriteVariant(v, buffer);
+                buffer.WriteVariant(v);
             }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
         {
-            ByteBufferVariantExtensions.ReadVariant(buffer, out int value);
+            buffer.ReadVariant(out int value);
             return (short) value;
         }
     }
@@ -283,13 +283,13 @@ namespace TnyFramework.Net.ProtobufNet
         {
             if (value is int v)
             {
-                ByteBufferVariantExtensions.WriteVariant(v, buffer);
+                buffer.WriteVariant(v);
             }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
         {
-            ByteBufferVariantExtensions.ReadVariant(buffer, out int value);
+            buffer.ReadVariant(out int value);
             return value;
         }
     }
@@ -304,13 +304,13 @@ namespace TnyFramework.Net.ProtobufNet
         {
             if (value is long v)
             {
-                ByteBufferVariantExtensions.WriteVariant(v, buffer);
+                buffer.WriteVariant(v);
             }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
         {
-            ByteBufferVariantExtensions.ReadVariant(buffer, out long value);
+            buffer.ReadVariant(out long value);
             return value;
         }
     }
@@ -325,13 +325,13 @@ namespace TnyFramework.Net.ProtobufNet
         {
             if (value is float v)
             {
-                ByteBufferVariantExtensions.WriteVariant(v, buffer);
+                buffer.WriteVariant(v);
             }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
         {
-            ByteBufferVariantExtensions.ReadVariant(buffer, out float value);
+            buffer.ReadVariant(out float value);
             return value;
         }
     }
@@ -347,13 +347,13 @@ namespace TnyFramework.Net.ProtobufNet
 
             if (value is double v)
             {
-                ByteBufferVariantExtensions.WriteVariant(v, buffer);
+                buffer.WriteVariant(v);
             }
         }
 
         protected override object DoDecode(IByteBuffer buffer)
         {
-            ByteBufferVariantExtensions.ReadVariant(buffer, out double value);
+            buffer.ReadVariant(out double value);
             return value;
         }
     }
@@ -396,7 +396,7 @@ namespace TnyFramework.Net.ProtobufNet
                         stream.Seek(0, SeekOrigin.Begin);
                         break;
                     }
-                    ByteBufferVariantExtensions.WriteVariant(length, buffer);
+                    buffer.WriteVariant(length);
                     buffer.WriteBytes(stream.GetBuffer(), 0, (int) length);
                     stream.Seek(0, SeekOrigin.Begin);
                     break;
@@ -405,12 +405,13 @@ namespace TnyFramework.Net.ProtobufNet
 
         protected override object? DoDecode(IByteBuffer buffer)
         {
-            ByteBufferVariantExtensions.ReadVariant(buffer, out int bodyLength);
+            buffer.ReadVariant(out int bodyLength);
             if (bodyLength == 0)
             {
                 return "";
             }
-            var bodyBuffer = buffer.Slice(buffer.ReaderIndex, bodyLength);
+            var bodyBuffer = buffer.RetainedSlice(buffer.ReaderIndex, bodyLength);
+            buffer.SkipBytes(bodyLength);
             var bodySegment = bodyBuffer.GetIoBuffer();
             if (bodySegment.Array != null)
             {
@@ -441,7 +442,7 @@ namespace TnyFramework.Net.ProtobufNet
                 codec.Encode(value, stream);
                 if (stream.Position <= 0)
                     return;
-                ByteBufferVariantExtensions.WriteVariant(stream.Position, buffer);
+                buffer.WriteVariant(stream.Position);
                 buffer.WriteBytes(stream.GetBuffer(), 0, (int) stream.Position);
             } finally
             {
@@ -452,8 +453,13 @@ namespace TnyFramework.Net.ProtobufNet
         protected override object? DoDecode(IByteBuffer buffer)
         {
             var codec = factory.CreateCodec(typeof(object));
-            ByteBufferVariantExtensions.ReadVariant(buffer, out int bodyLength);
-            var body = buffer.Slice(buffer.ReaderIndex, bodyLength);
+            buffer.ReadVariant(out int bodyLength);
+            if (bodyLength <= 0)
+            {
+                return null;
+            }
+            var body = buffer.RetainedSlice(buffer.ReaderIndex, bodyLength);
+            buffer.SkipBytes(bodyLength);
             using var stream = new ReadOnlyByteBufferStream(body, true);
             return codec.Decode(stream);
         }

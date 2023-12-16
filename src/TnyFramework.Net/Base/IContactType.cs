@@ -24,9 +24,9 @@ namespace TnyFramework.Net.Base
 
     public class ContactType : BaseEnum<ContactType>, IContactType
     {
-        public const string DEFAULT_USER_TYPE = "#user";
+        public const string DEFAULT_USER_TYPE = "_user";
 
-        public const string ANONYMITY_USER_TYPE = "#anonymity";
+        public const string ANONYMITY_USER_TYPE = "_anonymity";
 
         private static readonly ConcurrentDictionary<string, ContactType> GROUP_MAP = new ConcurrentDictionary<string, ContactType>();
 

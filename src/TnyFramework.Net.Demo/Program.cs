@@ -60,141 +60,17 @@ namespace TnyFramework.Net.Demo
             }
         }
 
-        public interface ITestInterface
-        {
-        }
-
-        public interface ITestOtherInterface
-        {
-            string Name { get; }
-        }
-
-        public class MyTester
-        {
-            private readonly ITestOtherInterface testInterface;
-            private readonly IServiceProvider serviceProvider;
-
-            public MyTester(ITestOtherInterface testInterface, IServiceProvider serviceProvider)
-            {
-                this.testInterface = testInterface;
-                this.serviceProvider = serviceProvider;
-            }
-
-            public void Say()
-            {
-                Console.WriteLine($"MyTester Call {testInterface.Name} : Say " + serviceProvider.GetService<MyTester>());
-            }
-        }
-
-        public class MyClass : ITestInterface, ITestOtherInterface
-        {
-            public string Name { get; }
-
-            public MyClass()
-            {
-                Console.WriteLine("New MyClass");
-                Name = "MyClass";
-            }
-        }
-
-        public class OtherClass : ITestInterface
-        {
-            public string Name { get; }
-
-            public OtherClass()
-            {
-                Console.WriteLine("New OtherClass");
-                Name = "OtherClass";
-            }
-        }
-
-        public class OnlyTestOtherInterfaceClass : ITestOtherInterface
-        {
-            public OnlyTestOtherInterfaceClass()
-            {
-                Name = "OnlyTestOtherInterfaceClass";
-            }
-
-            public string Name { get; }
-        }
-
-        public class OnlyTestInterfaceClass : ITestInterface
-        {
-            public OnlyTestInterfaceClass()
-            {
-                Name = "OnlyTestInterfaceClass";
-            }
-
-            public string Name { get; }
-        }
-
-        public class TestModule : IApplicationModule
-        {
-            public void Initialize(IServiceCollection collection)
-            {
-            }
-
-            public void Close(IServiceCollection collection)
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public class TestAppType : AppType<TestAppType>
-        {
-            public static readonly TestAppType TEST_CLIENT = Of(100, "TestClient");
-            public static readonly TestAppType TEST_SERVICE = Of(200, "TestService");
-        }
-
         public class TestRpcServiceType : RpcServiceType<TestRpcServiceType>
         {
-            public static readonly TestRpcServiceType TEST_CLIENT = Of(100, TestAppType.TEST_CLIENT, "TestClient");
-            public static readonly TestRpcServiceType TEST_SERVICE = Of(200, TestAppType.TEST_SERVICE, "TestService");
+            public static readonly RpcServiceType GAME = Of(100, "game-service");
+            public static readonly RpcServiceType GAME_CLIENT = Of(200, "game-client");
         }
 
         private static async Task Main(string[] args)
         {
-            var rcpResultStringCreator = RpcInvokerFastInvokers.RcpResultCreator(typeof(IRpcResult<string>));
-            var rpcResultString = rcpResultStringCreator.Invoke(null!, ResultCode.SUCCESS, "abc");
-            var rcpResultCreator = RpcInvokerFastInvokers.RcpResultCreator(typeof(IRpcResult));
-            var rpcResult = rcpResultCreator.Invoke(null!, ResultCode.SUCCESS, null!);
 
+            TestRpcServiceType.GetValues();
             NetContactType.GetValues();
-            var test = new ServiceCollection();
-            test.AddSingletonUnit<OtherClass>("OtherClass")
-                .AddSingletonUnit<MyClass>("MyClass")
-                .AddSingletonUnit<MyTester>("MyTester");
-            var testProvider = test.BuildServiceProvider();
-            var testInterfaces = testProvider.GetService<IUnitCollection<ITestInterface>>()!;
-            var myTester = testProvider.GetService<MyTester>();
-            var myInterfaces = testProvider.GetService<IUnitCollection<MyTester>>();
-
-            Console.WriteLine($"{testProvider.GetService<MyClass>() == testInterfaces?["MyClass"]}");
-
-            foreach (var (key, value) in testInterfaces!)
-            {
-                Console.WriteLine($"{key} : {value.GetType()}");
-            }
-            foreach (var (key, value) in myInterfaces!)
-            {
-                Console.WriteLine($"{key} : {value.GetType()}");
-            }
-            Func<string, object> func = value => value;
-            Console.WriteLine(typeof(Func<,>).GetGenericTypeDefinition());
-            Console.WriteLine(func.GetType().GetGenericTypeDefinition() == typeof(Func<,>).GetGenericTypeDefinition());
-
-            LogFactory.Logger<Program>().LogInformation("============");
-            var services = new ServiceCollection();
-            var p = services.BuildServiceProvider();
-            // var onMessage = p.GetService<TestOnMessage>();
-            var user = new RpcAccessIdentify(TestRpcServiceType.TEST_CLIENT, 300, 1);
-            var token = new RpcAccessToken(TestRpcServiceType.TEST_SERVICE, 200, user);
-
-            var json = JsonConvert.SerializeObject(token);
-            Console.WriteLine(json);
-            var newToken = JsonConvert.DeserializeObject<RpcAccessToken>(json);
-            Console.WriteLine(newToken);
-
             RegisterDTOs();
 
             // unitContainer.BindSingleton(new ServerSetting {

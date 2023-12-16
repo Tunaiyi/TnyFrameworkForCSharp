@@ -20,18 +20,11 @@ namespace TnyFramework.Net.Rpc
         /// 用户组
         /// </summary>
         string Service { get; }
-
-        /// <summary>
-        /// app类型
-        /// </summary>
-        AppType AppType { get; }
     }
 
     public class RpcServiceType : ContactType, IRpcServiceType
     {
         private static readonly ConcurrentDictionary<string, RpcServiceType> SERVICE_MAP = new();
-
-        private static readonly ConcurrentDictionary<AppType, RpcServiceType> APP_TYPE_MAP = new();
 
         protected static readonly List<RpcServiceType> SERVICES = new();
 
@@ -40,18 +33,12 @@ namespace TnyFramework.Net.Rpc
         /// </summary>
         public string Service => Group;
 
-        public AppType AppType { get; protected set; } = null!;
-
         protected override void OnCheck()
         {
             base.OnCheck();
             if (!SERVICE_MAP.TryAdd(Service, this) && !ReferenceEquals(SERVICE_MAP[Service], this))
             {
                 throw new ArgumentException($"{SERVICE_MAP[Service]} 与 {this} 存在相同的 Service {Service}");
-            }
-            if (!APP_TYPE_MAP.TryAdd(AppType, this) && !ReferenceEquals(APP_TYPE_MAP[AppType], this))
-            {
-                throw new ArgumentException($"{APP_TYPE_MAP[AppType]} 与 {this} 存在相同的 AppType {Service}");
             }
             SERVICES.Add(this);
         }
@@ -83,13 +70,6 @@ namespace TnyFramework.Net.Rpc
             return obj;
         }
 
-        public static RpcServiceType ForAppType(AppType appType)
-        {
-            if (!APP_TYPE_MAP.TryGetValue(appType, out var obj))
-                throw new ArgumentException($"枚举AppType不存在 -> {appType}");
-            return obj;
-        }
-
         public static implicit operator int(RpcServiceType type) => type.Id;
 
         public static explicit operator RpcServiceType(int type) => ForId(type);
@@ -97,11 +77,10 @@ namespace TnyFramework.Net.Rpc
 
     public abstract class RpcServiceType<T> : RpcServiceType where T : RpcServiceType<T>, new()
     {
-        protected static T Of(int id, AppType appType, string service, Action<T>? builder = null)
+        protected static T Of(int id, string service, Action<T>? builder = null)
         {
             return E(id, new T {
                 Group = service,
-                AppType = appType
             }, builder);
         }
 

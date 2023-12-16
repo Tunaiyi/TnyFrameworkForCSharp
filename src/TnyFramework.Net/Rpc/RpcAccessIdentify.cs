@@ -90,7 +90,8 @@ namespace TnyFramework.Net.Rpc
         public RpcAccessIdentify(long id)
         {
             Id = id;
-            ServiceType = null!;
+            ServiceType = ParseServiceType(id);
+            ServerId = ParseServerId(id);
         }
 
         public RpcAccessIdentify(RpcServiceType serviceType, int serverId, int index)

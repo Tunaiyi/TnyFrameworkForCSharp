@@ -22,6 +22,7 @@ namespace TnyFramework.Net.Demo.Controller
         public const int SPEAK_4_TEST = 200_06;
 
         public const int SPEAK_4_SAY_FOR_RPC = 200_07;
+        public const int SPEAK_4_SAY_FOR_CONTENT = 200_08;
 
         public const int PLAYER = 201;
         public const int PLAYER_4_GET = 201_00;

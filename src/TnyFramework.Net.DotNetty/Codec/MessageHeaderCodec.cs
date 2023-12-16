@@ -52,7 +52,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                 codec.Encode(body, stream);
                 if (stream.Position <= 0)
                     return;
-                ByteBufferVariantExtensions.WriteVariant(stream.Position, buffer);
+                buffer.WriteVariant(stream.Position);
                 buffer.WriteBytes(stream.GetBuffer(), 0, (int) stream.Position);
             } finally
             {

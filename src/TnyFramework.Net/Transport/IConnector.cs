@@ -6,35 +6,28 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Endpoint;
-using TnyFramework.Net.Message;
-using IRpcContext = TnyFramework.Net.Rpc.IRpcContext;
 
-namespace TnyFramework.Net.Base
+namespace TnyFramework.Net.Transport
 {
 
-    public interface INetworkContext : IEndpointContext, IRpcContext
+    public interface IConnector : IConnectIdentity, IAddressPeer
     {
         /// <summary>
-        /// 消息工厂
+        /// 接入模式
         /// </summary>
-        IMessageFactory MessageFactory { get; }
+        public NetAccessMode AccessMode { get; }
 
         /// <summary>
-        /// 消息者工厂
+        /// 认证
         /// </summary>
-        IContactFactory ContactFactory { get; }
+        ICertificate Certificate { get; }
 
         /// <summary>
-        /// 服务配置¬
+        /// 是否登陆认证
         /// </summary>
-        IServerBootstrapSetting Setting { get; }
-
-        /// <summary>
-        /// 服务配置¬
-        /// </summary>
-        RpcMonitor RpcMonitor { get; }
+        /// <returns></returns>
+        bool IsAuthenticated() => Certificate.IsAuthenticated();
     }
 
 }
