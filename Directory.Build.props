@@ -10,7 +10,7 @@
 
 <Project>
     <PropertyGroup>
-        <PackageVersion>5.5.0-x</PackageVersion>
+        <PackageVersion>5.7.0-x</PackageVersion>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <LangVersion>9</LangVersion>
         <Nullable>enable</Nullable>
@@ -21,9 +21,9 @@
         <DebugSymbols>true</DebugSymbols>
 <!--        <PackageOutputPath>$(SolutionDir)nugets</PackageOutputPath>-->
         <!--设置obj文件目录-->
-        <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)/Build/obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+        <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)Build/obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
         <!--设置二进制文件目录-->
-        <BaseOutputPath>$(MSBuildThisFileDirectory)/Build/Bin/$(MSBuildProjectName)/</BaseOutputPath>
+        <BaseOutputPath>$(MSBuildThisFileDirectory)Build/bin/$(MSBuildProjectName)/</BaseOutputPath>
     </PropertyGroup>
     
     <PropertyGroup Condition="'$(Configuration)' == 'Publish' Or '$(Configuration)' == 'Release'">
@@ -44,11 +44,12 @@
     </PropertyGroup>
 
     <PropertyGroup>
-        <NugetDebugOutputDirectory>$(MSBuildProjectDirectory)\..\..\Nuget\Debug</NugetDebugOutputDirectory>
-        <NugetReleaseOutputDirectory>$(MSBuildProjectDirectory)\..\..\Nuget\Release</NugetReleaseOutputDirectory>
+        <NugetDebugOutputDirectory>$(MSBuildProjectDirectory)/../../Nuget/Debug</NugetDebugOutputDirectory>
+        <NugetReleaseOutputDirectory>$(MSBuildProjectDirectory)/../../Nuget/Release</NugetReleaseOutputDirectory>
     </PropertyGroup>
 
     <Target Name="LoaclInstallReleasePackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release' And '$(OutputType)' == 'Library'">
+        <Message Text="Push Nuget To $(OutputPath)"/>
         <MakeDir Directories="$(NugetReleaseOutputDirectory)"/>
         <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetReleaseOutputDirectory)"/>
     </Target>
@@ -63,10 +64,10 @@
         <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetRemoteUrl)"/>
     </Target>
 
-<!--    <Target Name="LoaclInstallPublishPacksSymbolsNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">-->
-<!--        <Message Text="Push Nuget To $(NugetRemoteUrl)"/>-->
-<!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).symbols.nupkg -Source $(NugetRemoteUrl)"/>-->
-<!--    </Target>-->
+    <Target Name="LoaclInstallPublishPacksSymbolsNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">
+        <Message Text="Push Nuget To $(NugetRemoteUrl)"/>
+        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).symbols.nupkg -Source $(NugetRemoteUrl)"/>
+    </Target>
 
 
 </Project>

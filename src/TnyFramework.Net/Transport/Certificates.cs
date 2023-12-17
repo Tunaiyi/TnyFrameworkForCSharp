@@ -26,7 +26,7 @@ namespace TnyFramework.Net.Transport
         public static ICertificate RenewAuthenticated(long id, long identify, long contactId, IContactType contactType, long authenticateAt,
             object? identifyToken = null)
         {
-            return CreateAuthenticated(id, identify, contactId, contactType, CertificateStatus.Unauthenticated, authenticateAt, identifyToken);
+            return CreateAuthenticated(id, identify, contactId, contactType, CertificateStatus.Renew, authenticateAt, identifyToken);
         }
 
         private static ICertificate CreateAuthenticated(long id, long identify, long contactId, IContactType contactType,
