@@ -25,9 +25,9 @@ namespace TnyFramework.Net.Endpoint
         /// <summary>
         /// 接收消息
         /// </summary>
-        /// <param name="rpcContext">消息</param>
+        /// <param name="rpcMessageContext">消息</param>
         /// <returns>是否接收成功</returns>
-        bool Receive(IRpcEnterContext rpcContext);
+        bool Receive(IRpcMessageEnterContext rpcMessageContext);
 
         /// <summary>
         /// 异步发送消息

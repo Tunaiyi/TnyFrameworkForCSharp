@@ -146,6 +146,10 @@ namespace TnyFramework.Net.DotNetty.Codec
             buffer.WriteVariant(headers.Count);
             foreach (var header in headers)
             {
+                if (!header.HeaderKey.Usage.IsTransmissive())
+                {
+                    continue;
+                }
                 try
                 {
                     headersCodec.Encode(header, buffer);

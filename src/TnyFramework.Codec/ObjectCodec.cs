@@ -8,6 +8,9 @@
 
 using System;
 using System.IO;
+#if NET
+using System.Buffers;
+#endif
 
 namespace TnyFramework.Codec
 {
@@ -73,6 +76,28 @@ namespace TnyFramework.Codec
         {
             return Parse(data);
         }
+
+#if NET
+        public abstract void Encode(T? value, IBufferWriter<byte> output);
+
+        public abstract T? Decode(ReadOnlySequence<byte> input);
+
+        object? IObjectCodec.Decode(ReadOnlySequence<byte> input)
+        {
+            return Decode(input);
+        }
+
+        public void Encode(object? value, IBufferWriter<byte> output)
+        {
+            if (value is T data)
+            {
+                Encode(data, output);
+            } else
+            {
+                throw new InvalidCastException($"{value} 无法转位 {nameof(T)}");
+            }
+        }
+#endif
     }
 
 }

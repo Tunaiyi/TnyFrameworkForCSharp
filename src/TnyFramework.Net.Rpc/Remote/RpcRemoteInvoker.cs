@@ -168,8 +168,8 @@ namespace TnyFramework.Net.Rpc.Remote
             var content = MessageContents.Request(Protocol(), invokeParams.Params);
             content.WillRespondAwaiter(timeout)
                 .WithHeaders(invokeParams.GetAllHeaders());
-            var invokeContext = RpcTransactionContext.CreateExit(endpoint, content, rpcMonitor, method.IsAsync());
-            invokeContext.Invoke(RpcTransactionContext.RpcOperation(method.Name, content));
+            var invokeContext = RpcMessageTransactionContext.CreateExit(endpoint, content, rpcMonitor, method.IsAsync());
+            invokeContext.Invoke(RpcMessageTransactionContext.RpcOperation(method.Name, content));
             try
             {
                 content.Respond(out var respondTask);
@@ -212,10 +212,10 @@ namespace TnyFramework.Net.Rpc.Remote
             var content = MessageContents.Push(Protocol(), code)
                 .WithBody(invokeParams.GetBody())
                 .WithHeaders(invokeParams.GetAllHeaders());
-            var invokeContext = RpcTransactionContext.CreateExit(endpoint, content, rpcMonitor, false);
+            var invokeContext = RpcMessageTransactionContext.CreateExit(endpoint, content, rpcMonitor, false);
             try
             {
-                invokeContext.Invoke(RpcTransactionContext.RpcOperation(method.Name, content));
+                invokeContext.Invoke(RpcMessageTransactionContext.RpcOperation(method.Name, content));
                 var sent = endpoint.Send(content, true);
                 invokeContext.Complete();
                 if (method.IsAsync())

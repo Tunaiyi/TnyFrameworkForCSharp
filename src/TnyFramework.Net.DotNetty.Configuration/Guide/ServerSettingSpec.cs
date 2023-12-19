@@ -14,7 +14,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Guide
 
     public class ServerSettingSpec : UnitSpec<IServerSetting, object>, IServerSettingSpec
     {
-        private ServerSetting Setting { get; } = new ServerSetting();
+        private ServerSetting Setting { get; } = new();
 
         public ServerSettingSpec(string unitName = "") : base(unitName)
         {

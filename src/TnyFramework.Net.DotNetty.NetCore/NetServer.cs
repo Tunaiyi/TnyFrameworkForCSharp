@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
+using TnyFramework.Net.Base;
 using TnyFramework.Net.DotNetty.Bootstrap;
 
 namespace TnyFramework.Net.DotNetty.NetCore
@@ -17,9 +18,9 @@ namespace TnyFramework.Net.DotNetty.NetCore
 
     public class NetServer : IServer
     {
-        private readonly INettyServerGuide netServerGuide;
+        private readonly INetServerGuide netServerGuide;
 
-        public NetServer(INettyServerGuide netServerGuide, IFeatureCollection features)
+        public NetServer(INetServerGuide netServerGuide, IFeatureCollection features)
         {
             this.netServerGuide = netServerGuide;
             Features = features;

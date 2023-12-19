@@ -41,6 +41,8 @@ namespace TnyFramework.Common.Binary.Extensions
         }
 
         private static unsafe int SingleToInt32Bits(float value) => *(int*) &value;
+
+        private static unsafe float Int32BitsToSingle(int value) => *(float*) &value;
     }
 
 }

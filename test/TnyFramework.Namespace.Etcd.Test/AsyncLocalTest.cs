@@ -32,7 +32,7 @@ namespace TnyFramework.Namespace.Etcd.Test
         {
             var coroutine = DefaultCoroutineFactory.Default.Create("TestAwaitSelf");
             await coroutine.AsyncExec(async () => {
-                Console.WriteLine("2 - 1 " + Coroutine.CurrentCoroutine.Name + Thread.CurrentThread.ManagedThreadId);
+                Console.WriteLine("2 - 1 " + Coroutine.CurrentCoroutine!.Name + Thread.CurrentThread.ManagedThreadId);
                 await coroutine.AsyncExec(async () => {
                     Console.WriteLine("1 - 1 " + Coroutine.CurrentCoroutine.Name + Thread.CurrentThread.ManagedThreadId);
                     await coroutine.AsyncExec(async () => {

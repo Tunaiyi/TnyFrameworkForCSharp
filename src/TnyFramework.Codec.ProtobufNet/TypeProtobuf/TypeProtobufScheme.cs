@@ -28,7 +28,6 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             this.creator = creator;
             if (creator == null)
             {
-
                 var constructor = type.GetConstructor(Type.EmptyTypes);
                 if (constructor == null)
                 {

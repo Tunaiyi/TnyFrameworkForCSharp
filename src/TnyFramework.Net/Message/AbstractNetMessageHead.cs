@@ -21,21 +21,21 @@ namespace TnyFramework.Net.Message
         {
         }
 
-        public abstract MessageMode Mode { get; }
+        public abstract MessageMode Mode { get; init; }
 
-        public abstract long ToMessage { get; }
+        public abstract long ToMessage { get; init; }
 
-        public abstract int ProtocolId { get; }
+        public abstract int ProtocolId { get; init; }
 
-        public abstract int Line { get; }
+        public abstract int Line { get; init; }
+
+        public abstract long Id { get; init; }
+
+        public abstract int Code { get; init; }
+
+        public abstract long Time { get; init; }
 
         public abstract bool IsOwn(IProtocol protocol);
-
-        public abstract long Id { get; }
-
-        public abstract int Code { get; }
-
-        public abstract long Time { get; }
 
         public abstract void AllotMessageId(long id);
     }

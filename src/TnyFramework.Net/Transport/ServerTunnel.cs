@@ -8,17 +8,11 @@
 
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Common.Logger;
 using TnyFramework.Net.Base;
 using TnyFramework.Net.Endpoint;
 
 namespace TnyFramework.Net.Transport
 {
-
-    public class ServerTunnel
-    {
-        internal static readonly ILogger LOGGER = LogFactory.Logger<ServerTunnel>();
-    }
 
     public class ServerTunnel<TTransporter> : BaseNetTunnel<INetSession, TTransporter>
         where TTransporter : IMessageTransporter

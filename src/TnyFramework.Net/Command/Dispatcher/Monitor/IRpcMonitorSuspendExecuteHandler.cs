@@ -11,7 +11,7 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
 
     public interface IRpcMonitorSuspendExecuteHandler : IRpcMonitorHandler
     {
-        void OnSuspend(IRpcEnterContext rpcContext);
+        void OnSuspend(IRpcMessageEnterContext rpcMessageContext);
     }
 
 }

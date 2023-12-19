@@ -15,15 +15,15 @@ namespace TnyFramework.Net.Command.Dispatcher
 
     public class RpcRespondCommand : Command
     {
-        private readonly IRpcEnterContext rpcContext;
+        private readonly IRpcMessageEnterContext rpcMessageContext;
 
         private readonly IResultCode code;
 
         private readonly object? body;
 
-        public RpcRespondCommand(IRpcEnterContext rpcContext, IResultCode code, object? body)
+        public RpcRespondCommand(IRpcMessageEnterContext rpcMessageContext, IResultCode code, object? body)
         {
-            this.rpcContext = rpcContext;
+            this.rpcMessageContext = rpcMessageContext;
             this.code = code;
             this.body = body;
 
@@ -31,15 +31,15 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         protected override Task Action()
         {
-            RpcContexts.SetCurrent(rpcContext);
+            RpcContexts.SetCurrent(rpcMessageContext);
             try
             {
-                var message = rpcContext.NetMessage;
-                rpcContext.Invoke(RpcTransactionContext.ErrorOperation(message));
-                rpcContext.Complete(code, body);
+                var message = rpcMessageContext.NetMessage;
+                rpcMessageContext.Invoke(RpcMessageTransactionContext.ErrorOperation(message));
+                rpcMessageContext.Complete(code, body);
             } catch (Exception cause)
             {
-                rpcContext.Complete(cause);
+                rpcMessageContext.Complete(cause);
             } finally
             {
                 RpcContexts.Clear();

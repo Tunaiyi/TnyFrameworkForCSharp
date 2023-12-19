@@ -53,11 +53,6 @@ namespace TnyFramework.Net.Message
 
         public IAttributes Attribute => attributes.Attributes;
 
-        public int GetCode()
-        {
-            throw new NotImplementedException();
-        }
-
         public bool ExistBody => Body != null;
 
         public T? GetHeader<T>(string key) where T : MessageHeader => head.GetHeader<T>(key);

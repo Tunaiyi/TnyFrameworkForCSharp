@@ -1,4 +1,12 @@
-﻿using System;
+﻿// Copyright (c) 2020 Tunaiyi
+// Tny Framework For CSharp is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
+using System;
 using System.Buffers;
 using System.IO;
 
@@ -324,7 +332,7 @@ namespace TnyFramework.Common.Binary.Extensions
             return WriteVariant(buffer, Double2Long(value), zigzag);
         }
 
-        public static int WriteString(this byte[] bytes, string value, int index)
+        public static int WriteVariantString(this byte[] bytes, string value, int index)
         {
             var len = value.Length;
             if (len == 0)
@@ -340,7 +348,7 @@ namespace TnyFramework.Common.Binary.Extensions
             return byteWrite;
         }
 
-        public static void WriteString(this IBufferWriter<byte> buffer, string value)
+        public static void WriteVariantString(this IBufferWriter<byte> buffer, string value)
         {
             var len = value.Length;
             if (len == 0)
@@ -351,13 +359,11 @@ namespace TnyFramework.Common.Binary.Extensions
             // 计算字符串字节长度
             var bytesLength = ENCODING.GetByteCount(value);
             // 写入长度
-            WriteVariant(buffer, bytesLength);
-            // 写入字符串
-            ENCODING.GetBytes(value.ToCharArray(), buffer.GetSpan(bytesLength));
-            buffer.Advance(bytesLength);
+            buffer.WriteVariant(bytesLength);
+            buffer.WriteString(value, ENCODING);
         }
 
-        public static int WriteBytes(this byte[] bytes, byte[] source, int sourceIndex, int length, int index)
+        public static int WriteVariantBytes(this byte[] bytes, byte[] source, int sourceIndex, int length, int index)
         {
             var byteWrite = WriteVariant(bytes, length, index);
             index += byteWrite;
@@ -367,23 +373,23 @@ namespace TnyFramework.Common.Binary.Extensions
             return byteWrite;
         }
 
-        public static void WriteBytes(this IBufferWriter<byte> buffer, byte[] source, int sourceIndex, int length)
+        public static void WriteVariantBytes(this IBufferWriter<byte> buffer, byte[] source, int sourceIndex, int length)
         {
             WriteVariant(buffer, length);
             buffer.Write(source.AsSpan(sourceIndex, length));
         }
 
-        public static int WriteBytes(this byte[] bytes, ArraySegment<byte> source, int index)
+        public static int WriteVariantBytes(this byte[] bytes, ArraySegment<byte> source, int index)
         {
-            return source.Array != null ? WriteBytes(bytes, source.Array, source.Offset, source.Count, index) : 0;
+            return source.Array != null ? WriteVariantBytes(bytes, source.Array, source.Offset, source.Count, index) : 0;
         }
 
-        public static void WriteBytes(this IBufferWriter<byte> buffer, ArraySegment<byte> source)
+        public static void WriteVariantBytes(this IBufferWriter<byte> buffer, ArraySegment<byte> source)
         {
-            if (source.Array != null) WriteBytes(buffer, source.Array, source.Offset, source.Count);
+            if (source.Array != null) WriteVariantBytes(buffer, source.Array, source.Offset, source.Count);
         }
 
-        public static void WriteBytes(this IBufferWriter<byte> buffer, ReadOnlySequence<byte> sequence)
+        public static void WriteVariantBytes(this IBufferWriter<byte> buffer, ReadOnlySequence<byte> sequence)
         {
             WriteVariant(buffer, sequence.Length);
             foreach (var span in sequence)

@@ -50,7 +50,7 @@ namespace TnyFramework.Common.Binary.Extensions
 #if NETSTANDARD || NETFRAMEWORK
             value = !BitConverter.IsLittleEndian
                 ? MemoryMarshal.Read<float>(destination)
-                : BitConverter.Int32BitsToSingle(BinaryPrimitives.ReverseEndianness(MemoryMarshal.Read<int>(destination)));
+                : Int32BitsToSingle(BinaryPrimitives.ReverseEndianness(MemoryMarshal.Read<int>(destination)));
 #else
             value = BinaryPrimitives.ReadSingleBigEndian(destination);
 #endif

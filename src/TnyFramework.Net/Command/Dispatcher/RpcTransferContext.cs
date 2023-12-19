@@ -12,7 +12,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
-    public interface IRpcTransferContext : IRpcTransactionContext, IRpcEnterCompletable
+    public interface IRpcMessageTransferContext : IRpcTransactionContext, IRpcEnterCompletable
     {
         /// <summary>
         /// 转发

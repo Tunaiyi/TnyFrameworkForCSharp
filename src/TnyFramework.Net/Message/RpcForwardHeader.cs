@@ -18,7 +18,7 @@ namespace TnyFramework.Net.Message
     [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
     [TypeProtobuf(MessageHeaderKeys.RPC_FORWARD_TYPE_PROTO)]
     [ProtoContract]
-    public class RpcForwardHeader : MessageHeader
+    public class RpcForwardHeader : SelfMessageHeader<RpcForwardHeader>
     {
         /// <summary>
         /// 请求服务

@@ -79,7 +79,7 @@ namespace TnyFramework.Common.Attribute
         /// </summary>
         /// <param name="pair">键值对</param>
         /// <typeparam name="T"></typeparam>
-        void Set<T>(AttrPair<T> pair);
+        void Set<T>(IAttrPair<T> pair);
 
         /// <summary>
         /// 批量设置属性

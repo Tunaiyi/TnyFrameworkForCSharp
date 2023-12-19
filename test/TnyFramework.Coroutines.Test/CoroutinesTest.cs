@@ -63,8 +63,9 @@ namespace TnyFramework.Coroutines.Test
                 Thread.CurrentThread.ManagedThreadId);
         }
 
-        public async Task Exception()
+        private async Task Exception()
         {
+            await Task.CompletedTask;
             throw new Exception();
         }
 

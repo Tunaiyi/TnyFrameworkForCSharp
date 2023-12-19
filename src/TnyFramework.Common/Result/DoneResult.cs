@@ -19,11 +19,11 @@ namespace TnyFramework.Common.Result
 
         public string Message { get; }
 
-        public DoneResult(IResultCode code, TValue value, string message)
+        public DoneResult(IResultCode code, TValue? value, string message)
         {
             Message = message;
             Code = code;
-            Value = value;
+            Value = value!;
         }
 
         public bool IsSuccess()

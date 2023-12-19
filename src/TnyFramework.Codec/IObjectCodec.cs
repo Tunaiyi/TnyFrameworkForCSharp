@@ -6,6 +6,9 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+#if NET
+using System.Buffers;
+#endif
 using System.IO;
 
 namespace TnyFramework.Codec
@@ -24,6 +27,12 @@ namespace TnyFramework.Codec
         string? Format(object value);
 
         object? Parse(string data);
+
+#if NET
+        void Encode(object? value, IBufferWriter<byte> output);
+
+        object? Decode(ReadOnlySequence<byte> input);
+#endif
     }
 
     public interface IObjectCodec<T> : IObjectCodec
@@ -39,6 +48,12 @@ namespace TnyFramework.Codec
         string? Format(T value);
 
         new T? Parse(string data);
+
+#if NET
+        void Encode(T? value, IBufferWriter<byte> output);
+
+        new T? Decode(ReadOnlySequence<byte> input);
+#endif
     }
 
 }

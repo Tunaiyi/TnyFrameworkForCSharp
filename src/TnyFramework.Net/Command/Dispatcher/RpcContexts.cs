@@ -14,11 +14,11 @@ namespace TnyFramework.Net.Command.Dispatcher
 
     public static class RpcContexts
     {
-        private static readonly AsyncLocal<IRpcEnterContext> LOCAL_CONTEXT = new AsyncLocal<IRpcEnterContext>();
+        private static readonly AsyncLocal<IRpcMessageEnterContext> LOCAL_CONTEXT = new AsyncLocal<IRpcMessageEnterContext>();
 
-        private static readonly IRpcEnterContext EMPTY = new RpcEnterInvocationContext(null!, null!, false, EmptyAttributes.GetEmpty());
+        private static readonly IRpcMessageEnterContext EMPTY = new RpcMessageEnterInvocationContext(null!, null!, false, EmptyAttributes.GetEmpty());
 
-        public static IRpcContext Current {
+        public static IRpcMessageContext Current {
             get {
                 var info = LOCAL_CONTEXT.Value;
                 if (info != null)
@@ -30,7 +30,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             }
         }
 
-        internal static void SetCurrent(IRpcEnterContext context)
+        internal static void SetCurrent(IRpcMessageEnterContext context)
         {
             var info = LOCAL_CONTEXT.Value;
             if (info is not {Valid: true})

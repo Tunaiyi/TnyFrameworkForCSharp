@@ -11,7 +11,7 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
 
     public interface IRpcMonitorReceiveHandler : IRpcMonitorHandler
     {
-        void OnReceive(IRpcEnterContext rpcContext);
+        void OnReceive(IRpcMessageEnterContext rpcMessageContext);
     }
 
 }

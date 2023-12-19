@@ -9,7 +9,7 @@
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
-using IRpcContext = TnyFramework.Net.Rpc.IRpcContext;
+using TnyFramework.Net.Rpc;
 
 namespace TnyFramework.Net.Base
 {

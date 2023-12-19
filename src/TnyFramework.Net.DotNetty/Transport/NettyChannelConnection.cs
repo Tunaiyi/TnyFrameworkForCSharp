@@ -24,11 +24,8 @@ namespace TnyFramework.Net.DotNetty.Transport
 
         private volatile int status = STATUS_OPEN;
 
-        public NetAccessMode AccessMode { get; }
-
         protected NettyChannelConnection(NetAccessMode accessMode, IChannel channel)
         {
-            AccessMode = accessMode;
             this.channel = channel;
         }
 

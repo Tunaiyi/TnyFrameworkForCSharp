@@ -13,9 +13,7 @@ using System.IO;
 using System.Text;
 using DotNetty.Buffers;
 using DotNetty.Common;
-using Microsoft.Extensions.Logging;
 using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
-using TnyFramework.Common.Logger;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.Message;
@@ -34,11 +32,15 @@ namespace TnyFramework.Net.ProtobufNet
 
         private readonly NullCoder nullCoder;
         private readonly ComplexCoder complexCoder;
+        private readonly int bodyLengthSize;
 
-        public static readonly ILogger LOGGER = LogFactory.Logger<TypeProtobufMessageBodyCodec>();
-
-        public TypeProtobufMessageBodyCodec()
+        public TypeProtobufMessageBodyCodec() : this(-1)
         {
+        }
+
+        public TypeProtobufMessageBodyCodec(int bodyLengthSize)
+        {
+            this.bodyLengthSize = bodyLengthSize;
             nullCoder = new NullCoder();
             complexCoder = new ComplexCoder();
             Register(new ByteCoder());

@@ -16,19 +16,26 @@ namespace TnyFramework.Net.Message
     {
         private long id;
 
-        public override long Id => id;
+        public override long Id {
+            get => id;
+            init => id = value;
+        }
 
-        public override long ToMessage { get; }
+        public sealed override long ToMessage { get; init; }
 
-        public override int ProtocolId { get; }
+        public sealed override int ProtocolId { get; init; }
 
-        public override int Line { get; }
+        public sealed override int Line { get;  init; }
 
-        public override int Code { get; }
+        public sealed override int Code { get; init; }
 
-        public override long Time { get; }
+        public sealed override long Time { get; init; }
 
-        public override MessageMode Mode { get; }
+        public sealed override MessageMode Mode { get; init; }
+
+        public CommonMessageHead()
+        {
+        }
 
         public CommonMessageHead(long id, MessageMode mode, int line, int protocolId, int code, long toMessage,
             long time, IDictionary<string, MessageHeader> headers) : base(headers)

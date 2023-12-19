@@ -17,9 +17,9 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// 派发消息事件, 派发消息事件到相对应的Controller
         /// </summary>
-        /// <param name="rpcContext">rpc上下文</param>
+        /// <param name="rpcMessageContext">rpc上下文</param>
         /// <returns>命令</returns>
-        ICommand Dispatch(IRpcEnterContext rpcContext);
+        ICommand Dispatch(IRpcMessageEnterContext rpcMessageContext);
 
         /// <summary>
         /// 判断是否可以分发

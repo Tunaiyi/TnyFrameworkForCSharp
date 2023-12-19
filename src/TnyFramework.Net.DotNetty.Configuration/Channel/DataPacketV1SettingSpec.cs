@@ -21,7 +21,7 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
     {
     }
 
-    public class DataPacketV1SettingSpec : UnitSpec<DataPacketV1Setting, INetGuideUnitContext>, IDataPacketV1SettingSpec
+    public class DataPacketV1SettingSpec : UnitSpec<DataPacketV1Setting, INettyGuideUnitContext>, IDataPacketV1SettingSpec
     {
         public DataPacketV1Setting Setting { get; } = new DataPacketV1Setting();
 

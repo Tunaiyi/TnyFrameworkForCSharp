@@ -46,22 +46,22 @@ namespace TnyFramework.Net.Command.Dispatcher
             this.contactAuthenticator = contactAuthenticator;
         }
 
-        public ICommand Dispatch(IRpcEnterContext rpcContext)
+        public ICommand Dispatch(IRpcMessageEnterContext rpcMessageContext)
         {
-            var message = rpcContext.NetMessage;
+            var message = rpcMessageContext.NetMessage;
             // 获取方法持有器
             var controller = SelectController(message.ProtocolId, message.Mode);
             if (controller != null)
             {
-                var handleContext = new RpcInvokeContext(controller, rpcContext, context.AppContext);
+                var handleContext = new RpcInvokeContext(controller, rpcMessageContext, context.AppContext);
                 return new RpcInvokeCommand(context, handleContext, contactAuthenticator);
             }
             if (message.Mode == MessageMode.Request)
             {
                 LOGGER.LogWarning("{Mode} controller [{Name}] not exist", message.Mode, message.ProtocolId);
-                return new RpcRespondCommand(rpcContext, NetResultCode.SERVER_NO_SUCH_PROTOCOL, null);
+                return new RpcRespondCommand(rpcMessageContext, NetResultCode.SERVER_NO_SUCH_PROTOCOL, null);
             }
-            return new RpcNoopCommand(rpcContext);
+            return new RpcNoopCommand(rpcMessageContext);
         }
 
         /// <summary>

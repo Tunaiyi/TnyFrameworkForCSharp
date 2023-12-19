@@ -14,9 +14,9 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
 
     public interface IRpcMonitorTransferHandler : IRpcMonitorHandler
     {
-        void OnTransfer(IRpcTransferContext context);
+        void OnTransfer(IRpcMessageTransferContext context);
 
-        void OnTransferred(IRpcTransferContext context, IMessageSubject? result, Exception? exception);
+        void OnTransferred(IRpcMessageTransferContext context, IMessageSubject? result, Exception? exception);
     }
 
 }

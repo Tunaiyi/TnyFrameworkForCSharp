@@ -9,20 +9,52 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading;
 
 namespace TnyFramework.Common.Attribute
 {
 
     public class DefaultAttributes : IAttributes
     {
+        private static readonly IDictionary<IAttrKey, object> EMPTY = new Dictionary<IAttrKey, object>()
+            .ToImmutableDictionary();
+
         // 属性 map
-        private readonly Dictionary<IAttrKey, object> attributeMap = new Dictionary<IAttrKey, object>();
+        private volatile Dictionary<IAttrKey, object>? attributeMap;
+
+        private IDictionary<IAttrKey, object> GetAttribute(out bool initialized)
+        {
+            var current = attributeMap;
+            initialized = current != null;
+            return current ?? EMPTY;
+        }
+
+        private Dictionary<IAttrKey, object> LoadAttribute()
+        {
+            var instance = attributeMap;
+            if (instance != null)
+            {
+                return instance;
+            }
+            instance = new Dictionary<IAttrKey, object>();
+            var value = Interlocked.CompareExchange(ref attributeMap, instance, null);
+            if (value != null)
+            {
+                instance = value;
+            }
+            return instance;
+        }
 
         public T Get<T>(AttrKey<T> key)
         {
-            lock (this)
+            var attribute = GetAttribute(out var initialized);
+            if (!initialized)
             {
-                if (!attributeMap.TryGetValue(key, out var value))
+                return default!;
+            }
+            lock (attribute)
+            {
+                if (!attribute.TryGetValue(key, out var value))
                     return default!;
                 return (T) value;
             }
@@ -31,9 +63,14 @@ namespace TnyFramework.Common.Attribute
         public T Get<T>(AttrKey<T> key, T defaultValue)
         {
             CheckNotNull(key, "Get Attributes key is null");
-            lock (this)
+            var attribute = GetAttribute(out var initialized);
+            if (!initialized)
             {
-                if (!attributeMap.TryGetValue(key, out var value))
+                return defaultValue;
+            }
+            lock (attribute)
+            {
+                if (!attribute.TryGetValue(key, out var value))
                     return defaultValue;
                 return (T) value;
             }
@@ -43,11 +80,12 @@ namespace TnyFramework.Common.Attribute
         {
             CheckNotNull(key, "TryAdd Attributes key is null");
             CheckNotNull(value!, "TryAdd Attributes value is null");
-            lock (this)
+            var attribute = LoadAttribute();
+            lock (attribute)
             {
-                if (attributeMap.ContainsKey(key))
+                if (attribute.ContainsKey(key))
                     return false;
-                attributeMap.Add(key, value!);
+                attribute.Add(key, value!);
                 return true;
             }
         }
@@ -56,13 +94,14 @@ namespace TnyFramework.Common.Attribute
         {
             CheckNotNull(key, "TryAdd Attributes key is null");
             CheckNotNull(supplier, "TryAdd Attributes supplier is null");
-            lock (this)
+            var attribute = LoadAttribute();
+            lock (attribute)
             {
-                if (attributeMap.ContainsKey(key))
+                if (attribute.ContainsKey(key))
                     return false;
                 var value = supplier.Invoke();
                 CheckNotNull(value, "TryAdd Attributes supplier return value is null");
-                attributeMap[key] = value!;
+                attribute[key] = value!;
                 return true;
             }
         }
@@ -71,13 +110,14 @@ namespace TnyFramework.Common.Attribute
         {
             CheckNotNull(key, "TryAdd Attributes key is null");
             CheckNotNull(supplier, "TryAdd Attributes supplier is null");
-            lock (this)
+            var attribute = LoadAttribute();
+            lock (attribute)
             {
-                if (attributeMap.TryGetValue(key, out var exist))
+                if (attribute.TryGetValue(key, out var exist))
                     return (T) exist;
                 var value = supplier.Invoke();
                 CheckNotNull(value, "TryAdd Attributes supplier return value is null");
-                attributeMap[key] = value!;
+                attribute[key] = value!;
                 return value;
             }
         }
@@ -85,11 +125,16 @@ namespace TnyFramework.Common.Attribute
         public T Remove<T>(AttrKey<T> key)
         {
             CheckNotNull(key, "Remove Attributes key is null");
-            lock (this)
+            var attribute = GetAttribute(out var initialized);
+            if (!initialized)
             {
-                if (!attributeMap.TryGetValue(key, out var exist))
+                return default!;
+            }
+            lock (attribute)
+            {
+                if (!attribute.TryGetValue(key, out var exist))
                     return default!;
-                attributeMap.Remove(key);
+                attribute.Remove(key);
                 return (T) exist;
             }
         }
@@ -98,77 +143,77 @@ namespace TnyFramework.Common.Attribute
         {
             CheckNotNull(key, "Set Attributes key is null");
             CheckNotNull(value, "Set Attributes supplier is null");
-            lock (this)
+            var attribute = LoadAttribute();
+            lock (attribute)
             {
-                attributeMap[key] = value!;
+                attribute[key] = value!;
             }
         }
 
-        public void Set<T>(AttrPair<T> pair)
+        public void Set<T>(IAttrPair<T> pair)
         {
             Set(pair.Key, pair.Value);
         }
 
         public void SetAll(ICollection<IAttrPair> pairs)
         {
-            foreach (var pair in pairs)
+            var attribute = LoadAttribute();
+            lock (attribute)
             {
-                lock (this)
+                foreach (var pair in pairs)
                 {
-                    attributeMap[pair.Key] = pair.Value;
+                    attribute[pair.Key] = pair.Value;
                 }
             }
         }
 
         public void SetAll(params IAttrPair[] pairs)
         {
-            foreach (var pair in pairs)
+            var attribute = LoadAttribute();
+            lock (attribute)
             {
-                lock (this)
+                foreach (var pair in pairs)
                 {
-                    attributeMap[pair.Key] = pair.Value;
+                    attribute[pair.Key] = pair.Value;
                 }
             }
         }
 
         public void RemoveAll(ICollection<IAttrKey> keys)
         {
-            lock (this)
+            var attribute = GetAttribute(out var initialized);
+            if (!initialized)
+            {
+                return;
+            }
+            lock (attribute)
             {
                 foreach (var key in keys)
                 {
-                    lock (this)
-                    {
-                        attributeMap.Remove(key);
-                    }
+                    attribute.Remove(key);
                 }
             }
         }
 
         public IDictionary<IAttrKey, object> AttributeMap()
         {
-            lock (this)
-            {
-                return attributeMap.ToImmutableDictionary();
-            }
+            return GetAttribute(out _);
         }
 
         public void Clear()
         {
+            var attribute = GetAttribute(out var initialized);
+            if (!initialized)
+            {
+                return;
+            }
             lock (this)
             {
-                attributeMap.Clear();
+                attribute.Clear();
             }
         }
 
-        public bool Empty {
-            get {
-                lock (this)
-                {
-                    return attributeMap.Count == 0;
-                }
-            }
-        }
+        public bool Empty => GetAttribute(out _).Count == 0;
 
         private static void CheckNotNull(object? value, string massage)
         {

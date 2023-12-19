@@ -18,25 +18,25 @@ namespace TnyFramework.Net.Command.Dispatcher
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<RpcNoopCommand>();
 
-        private readonly IRpcEnterContext rpcContext;
+        private readonly IRpcMessageEnterContext rpcMessageContext;
 
-        public RpcNoopCommand(IRpcEnterContext rpcContext)
+        public RpcNoopCommand(IRpcMessageEnterContext rpcMessageContext)
         {
-            this.rpcContext = rpcContext;
+            this.rpcMessageContext = rpcMessageContext;
         }
 
         protected override Task Action()
         {
-            RpcContexts.SetCurrent(rpcContext);
+            RpcContexts.SetCurrent(rpcMessageContext);
             try
             {
-                var message = rpcContext.Message;
-                rpcContext.Invoke(RpcTransactionContext.ReturnOperation(message));
-                rpcContext.CompleteSilently();
+                var message = rpcMessageContext.Message;
+                rpcMessageContext.Invoke(RpcMessageTransactionContext.ReturnOperation(message));
+                rpcMessageContext.CompleteSilently();
             } catch (Exception cause)
             {
                 LOGGER.LogError(cause, "");
-                rpcContext.Complete(cause);
+                rpcMessageContext.Complete(cause);
             } finally
             {
                 RpcContexts.Clear();

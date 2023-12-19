@@ -22,18 +22,18 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private readonly INetAppContext appContext;
 
-        public RpcInvokeContext(MethodControllerHolder controller, IRpcEnterContext rpcContext, INetAppContext appContext)
+        public RpcInvokeContext(MethodControllerHolder controller, IRpcMessageEnterContext rpcMessageContext, INetAppContext appContext)
         {
             Controller = controller;
-            RpcContext = rpcContext;
+            RpcMessageContext = rpcMessageContext;
             this.appContext = appContext;
-            var message = rpcContext.NetMessage;
+            var message = rpcMessageContext.NetMessage;
             forward = message.GetHeader(MessageHeaderKeys.RPC_FORWARD_HEADER);
         }
 
         public MethodControllerHolder Controller { get; }
 
-        public IRpcEnterContext RpcContext { get; }
+        public IRpcMessageEnterContext RpcMessageContext { get; }
 
         public string Name => Controller.SimpleName;
 
@@ -41,9 +41,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public string ScopeType => appContext.AppType;
 
-        public IMessage Message => RpcContext.NetMessage;
+        public IMessage Message => RpcMessageContext.NetMessage;
 
-        public ITunnel Tunnel => RpcContext.NetTunnel;
+        public ITunnel Tunnel => RpcMessageContext.NetTunnel;
 
         public IContactType ContactType {
             get {

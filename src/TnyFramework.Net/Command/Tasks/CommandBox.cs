@@ -56,29 +56,29 @@ namespace TnyFramework.Net.Command.Tasks
             }
         }
 
-        public bool AddCommand(IRpcEnterContext rpcContext)
+        public bool AddCommand(IRpcMessageEnterContext rpcMessageContext)
         {
-            return DoAddCommand(() => CreateCommand(rpcContext));
+            return DoAddCommand(() => CreateCommand(rpcMessageContext));
         }
 
-        private ICommand? CreateCommand(IRpcEnterContext rpcContext)
+        private ICommand? CreateCommand(IRpcMessageEnterContext rpcMessageContext)
         {
-            var message = rpcContext.NetMessage;
+            var message = rpcMessageContext.NetMessage;
             switch (message.Mode)
             {
                 case MessageMode.Push:
                 case MessageMode.Request:
                 case MessageMode.Response:
-                    var context = rpcContext.NetworkContext;
+                    var context = rpcMessageContext.NetworkContext;
                     var dispatcher = context.MessageDispatcher;
-                    return dispatcher.Dispatch(rpcContext);
+                    return dispatcher.Dispatch(rpcMessageContext);
                 case MessageMode.Ping:
-                    var tunnel = rpcContext.NetTunnel;
-                    rpcContext.Complete();
+                    var tunnel = rpcMessageContext.NetTunnel;
+                    rpcMessageContext.Complete();
                     return new RunnableCommand(tunnel.Pong);
                 case MessageMode.Pong:
                 default:
-                    rpcContext.CompleteSilently();
+                    rpcMessageContext.CompleteSilently();
                     break;
             }
             return null;

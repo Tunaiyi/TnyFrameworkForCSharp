@@ -118,7 +118,7 @@ namespace TnyFramework.Net.Transport
             endpointLock.EnterReadLock();
             try
             {
-                var rpcContext = RpcTransactionContext.CreateEnter(this, message);
+                var rpcContext = RpcMessageTransactionContext.CreateEnter(this, message);
                 var rpcMonitor = Context.RpcMonitor;
                 rpcMonitor.OnReceive(rpcContext);
                 return endpoint.Receive(rpcContext);
@@ -223,8 +223,8 @@ namespace TnyFramework.Net.Transport
                 {
                     return;
                 }
-                DoDisconnect();
                 Status = TunnelStatus.Suspend;
+                OnDisconnect();
                 netEndpoint = endpoint;
                 OnDisconnected();
             }
@@ -232,13 +232,9 @@ namespace TnyFramework.Net.Transport
             unactivatedEvent.Notify(this);
         }
 
+        protected abstract void OnDisconnect();
+
         protected virtual void OnDisconnected()
-        {
-        }
-
-        protected abstract void DoDisconnect();
-
-        protected virtual void OnDisconnect()
         {
         }
 
@@ -258,8 +254,8 @@ namespace TnyFramework.Net.Transport
                     return false;
                 }
                 Status = TunnelStatus.Closed;
+                OnDisconnect();
                 OnClose();
-                DoDisconnect();
                 netEndpoint = endpoint;
                 OnClosed();
             }

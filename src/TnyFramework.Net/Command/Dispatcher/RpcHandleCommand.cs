@@ -18,15 +18,15 @@ namespace TnyFramework.Net.Command.Dispatcher
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<RpcHandleCommand>();
 
-        protected readonly IRpcEnterContext rpcContext;
+        protected readonly IRpcMessageEnterContext rpcMessageContext;
 
         private Exception? cause;
 
         private bool Done { get; set; }
 
-        protected RpcHandleCommand(IRpcEnterContext rpcContext)
+        protected RpcHandleCommand(IRpcMessageEnterContext rpcMessageContext)
         {
-            this.rpcContext = rpcContext;
+            this.rpcMessageContext = rpcMessageContext;
         }
 
         public async Task Execute()

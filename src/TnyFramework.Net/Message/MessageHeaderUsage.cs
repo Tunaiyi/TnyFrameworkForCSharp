@@ -19,38 +19,70 @@ namespace TnyFramework.Net.Message
         Transient = 1,
 
         /// <summary>
-        /// 传递(单次)
+        /// 本地传递
         /// </summary>
-        Once = 2,
+        LocalFeedback = 2,
 
         /// <summary>
-        /// 返回
+        /// 本地传递
         /// </summary>
-        Feedback = 3,
+        LocalInfect = 3,
 
         /// <summary>
-        /// 传染
+        /// 远程返回
         /// </summary>
-        Infect = 4,
+        RemoteFeedback = 4,
+
+        /// <summary>
+        /// 远程传染
+        /// </summary>
+        RemoteInfect = 5,
     }
 
     public static class MessageHeaderUsageExtensions
     {
-        public static bool IsTransitive(this MessageHeaderUsage usage, MessageMode messageMode)
+        /// <summary>
+        /// 是否传递到关联Message
+        /// </summary>
+        /// <param name="usage"></param>
+        /// <param name="returnMode"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static bool IsInherit(this MessageHeaderUsage usage, MessageMode returnMode)
         {
-            switch (messageMode)
+            switch (returnMode)
             {
                 case MessageMode.Request:
-                    return usage is MessageHeaderUsage.Once or MessageHeaderUsage.Feedback or MessageHeaderUsage.Infect;
+                    return usage is MessageHeaderUsage.LocalFeedback or MessageHeaderUsage.RemoteFeedback or MessageHeaderUsage.RemoteInfect;
                 case MessageMode.Response:
-                    return usage is MessageHeaderUsage.Feedback or MessageHeaderUsage.Infect;
+                    return usage is MessageHeaderUsage.LocalFeedback or MessageHeaderUsage.RemoteFeedback or MessageHeaderUsage.RemoteInfect;
                 case MessageMode.Push:
-                    return usage is MessageHeaderUsage.Infect;
+                    return usage is MessageHeaderUsage.LocalFeedback or MessageHeaderUsage.RemoteInfect;
                 case MessageMode.Ping:
                 case MessageMode.Pong:
                     return false;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(messageMode), messageMode, null);
+                    throw new ArgumentOutOfRangeException(nameof(returnMode), returnMode, null);
+            }
+        }
+
+        /// <summary>
+        /// 是否用于传送
+        /// </summary>
+        /// <param name="usage"></param>
+        /// <returns></returns>
+        public static bool IsTransmissive(this MessageHeaderUsage usage)
+        {
+            switch (usage)
+            {
+                case MessageHeaderUsage.RemoteFeedback:
+                case MessageHeaderUsage.RemoteInfect:
+                    return true;
+                case MessageHeaderUsage.Transient:
+                case MessageHeaderUsage.LocalInfect:
+                case MessageHeaderUsage.LocalFeedback:
+                default:
+                    return false;
             }
         }
     }

@@ -49,7 +49,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public RpcInvokeCommand(MessageDispatcherContext dispatcherContext, RpcInvokeContext handleContext,
             IContactAuthenticator contactAuthenticator)
-            : base(handleContext.RpcContext)
+            : base(handleContext.RpcMessageContext)
         {
             invokeContext = handleContext;
             this.dispatcherContext = dispatcherContext;
@@ -58,7 +58,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         protected override Task OnRun()
         {
-            rpcContext.Invoke(RpcTransactionContext.RpcOperation(invokeContext.Name, rpcContext.NetMessage));
+            rpcMessageContext.Invoke(RpcMessageTransactionContext.RpcOperation(invokeContext.Name, rpcMessageContext.NetMessage));
             // 调用逻辑业务
             return Invoke();
         }
@@ -77,8 +77,8 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private async Task Invoke()
         {
-            var message = rpcContext.NetMessage;
-            var tunnel = rpcContext.NetTunnel;
+            var message = rpcMessageContext.NetMessage;
+            var tunnel = rpcMessageContext.NetTunnel;
             var controller = invokeContext.Controller;
             if (controller.IsNull())
             {
@@ -91,7 +91,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             // 检测登录认证
             if (controller.IsHasAuthValidator && !tunnel.IsAuthenticated())
             {
-                contactAuthenticator.Authenticate(dispatcherContext, rpcContext, controller.AuthValidatorType!);
+                contactAuthenticator.Authenticate(dispatcherContext, rpcMessageContext, controller.AuthValidatorType!);
             }
 
             var appType = invokeContext.AppType;
@@ -227,8 +227,8 @@ namespace TnyFramework.Net.Command.Dispatcher
         private void HandleResult()
         {
             // var controller = invokeContext.Controller;
-            var message = rpcContext.NetMessage;
-            var tunnel = rpcContext.NetTunnel;
+            var message = rpcMessageContext.NetMessage;
+            var tunnel = rpcMessageContext.NetTunnel;
             IResultCode code;
             object? body = null;
             var cause = invokeContext.Cause;
@@ -261,14 +261,14 @@ namespace TnyFramework.Net.Command.Dispatcher
             MessageContent? content = null;
             if (message.Mode == MessageMode.Request || (message.Mode == MessageMode.Push && body != null))
             {
-                content = RpcMessageAide.ToMessage(invokeContext.RpcContext, code, body);
+                content = RpcMessageAide.ToMessage(invokeContext.RpcMessageContext, code, body);
             }
             if (content != null)
             {
-                rpcContext.Complete(content, cause);
+                rpcMessageContext.Complete(content, cause);
             } else
             {
-                rpcContext.CompleteSilently();
+                rpcMessageContext.CompleteSilently();
             }
         }
 

@@ -27,20 +27,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.DotNetty.Bootstrap
 {
 
-    public interface INettyServerGuide : INetServer
-    {
-        /// <summary>
-        /// 打开监听
-        /// </summary>
-        Task Open();
-
-        /// <summary>
-        /// 关闭监听
-        /// </summary>
-        Task Close();
-    }
-
-    public class NettyServerGuide : INettyServerGuide
+    public class NettyServerGuide : INetServerGuide
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NettyServerGuide>();
 

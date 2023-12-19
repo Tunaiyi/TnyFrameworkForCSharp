@@ -25,7 +25,7 @@ namespace TnyFramework.Net.Transport
         /// <param name="code">消息码</param>
         /// <param name="body">消息体</param>
         /// <return>发送回执l</return>
-        public static MessageContent ToMessage(IRpcEnterContext context, IResultCode code, object? body)
+        public static MessageContent ToMessage(IRpcMessageEnterContext context, IResultCode code, object? body)
         {
             var request = context.NetMessage;
             return ToMessage(request, code, body);
@@ -97,7 +97,7 @@ namespace TnyFramework.Net.Transport
             }
             foreach (var header in headers)
             {
-                if (header.HeaderKey.Usage.IsTransitive(content.Mode))
+                if (header.HeaderKey.Usage.IsInherit(content.Mode))
                 {
                     content.WithHeader(header);
                 }

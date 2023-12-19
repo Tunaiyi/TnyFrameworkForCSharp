@@ -41,14 +41,14 @@ namespace TnyFramework.Net.Message
         /// RpcOriginalMessageIdHeader MessageHeaderKey
         /// </summary>
         public static readonly MessageHeaderKey<RpcOriginalMessageIdHeader> RPC_ORIGINAL_MESSAGE_ID_HEADER =
-            MessageHeaderKey<RpcOriginalMessageIdHeader>.Of(RPC_ORIGINAL_MESSAGE_ID_KEY, MessageHeaderUsage.Feedback);
+            MessageHeaderKey<RpcOriginalMessageIdHeader>.Of(RPC_ORIGINAL_MESSAGE_ID_KEY, MessageHeaderUsage.RemoteFeedback);
 
         public const int RPC_TRACING_TYPE_PROTO = 102;
 
         public const string RPC_TRACING_TYPE_PROTO_KEY = "Rpc-Tracing";
 
         public static readonly MessageHeaderKey<RpcTracingHeader> RPC_TRACING_HEADER =
-            MessageHeaderKey<RpcTracingHeader>.Of(RPC_TRACING_TYPE_PROTO_KEY, MessageHeaderUsage.Infect);
+            MessageHeaderKey<RpcTracingHeader>.Of(RPC_TRACING_TYPE_PROTO_KEY, MessageHeaderUsage.RemoteInfect);
     }
 
 }

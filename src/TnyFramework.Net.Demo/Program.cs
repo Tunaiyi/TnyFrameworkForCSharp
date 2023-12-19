@@ -84,7 +84,7 @@ namespace TnyFramework.Net.Demo
             //     .BindSingleton<NettyMessageCodec>();
 
             var unitContainer = new ServiceCollection();
-            RpcServerConfiguration.CreateRpcServer(unitContainer)
+            NettyRpcHostServerConfiguration.CreateRpcServer(unitContainer)
                 .RpcServer("game-service", 17800)
                 .Server("game-server", serverSpec => serverSpec.Server(18800))
                 .EndpointConfigure(endpointSpec => endpointSpec

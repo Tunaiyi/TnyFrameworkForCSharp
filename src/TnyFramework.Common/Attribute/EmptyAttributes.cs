@@ -56,7 +56,7 @@ namespace TnyFramework.Common.Attribute
             throw new NotImplementedException();
         }
 
-        public void Set<T>(AttrPair<T> pair)
+        public void Set<T>(IAttrPair<T> pair)
         {
             throw new NotImplementedException();
         }

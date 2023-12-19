@@ -37,9 +37,6 @@
         <PackageReference Include="DotNetty.Transport.Libuv" Version="0.7.5" />
     </ItemGroup>
     <ItemGroup>
-        <Folder Include="Bootstrap\" />
-    </ItemGroup>
-    <ItemGroup>
         <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
         <ProjectReference Include="..\TnyFramework.Coroutines\TnyFramework.Coroutines.csproj" />
         <ProjectReference Include="..\TnyFramework.DI\TnyFramework.DI.csproj" />

@@ -40,7 +40,7 @@ namespace TnyFramework.Common.Tasks
     }
 
     public class NoneTaskCompletionSource
-#if NETSTANDARD2_1
+#if NETSTANDARD2_1 || NETFRAMEWORK
         : TaskCompletionSource<object>, ITaskCompletionSource
     {
         public new Task Task => base.Task;

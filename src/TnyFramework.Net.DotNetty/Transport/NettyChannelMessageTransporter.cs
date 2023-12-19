@@ -23,54 +23,54 @@ namespace TnyFramework.Net.DotNetty.Transport
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NettyChannelMessageTransporter>();
 
+        private INetTunnel tunnel = null!;
+
         public NettyChannelMessageTransporter(NetAccessMode accessMode, IChannel channel) : base(accessMode, channel)
         {
         }
 
         public void Bind(INetTunnel tunnel)
         {
-            channel?.GetAttribute(NettyNetAttrKeys.TUNNEL).Set(tunnel);
+            channel.GetAttribute(NettyNetAttrKeys.TUNNEL).Set(tunnel);
+            this.tunnel = tunnel;
         }
 
         protected override void DoClose()
         {
-            var tunnelAttr = channel?.GetAttribute(NettyNetAttrKeys.TUNNEL);
-            var tunnel = tunnelAttr?.Get();
-            tunnelAttr?.Remove();
-            if (tunnel != null && (tunnel.IsOpen() || tunnel.IsActive()))
+            var tunnelAttr = channel.GetAttribute(NettyNetAttrKeys.TUNNEL);
+            var current = tunnelAttr.GetAndRemove();
+            if (current != null && (current.IsOpen() || current.IsActive()))
             {
-                tunnel.Disconnect();
+                current.Disconnect();
             }
         }
 
         public ValueTask Write(IMessage message, bool waitWritten = false)
         {
-            return waitWritten ? ValueTask.CompletedTask : new ValueTask(channel.WriteAndFlushAsync(message));
+            var task = channel.WriteAndFlushAsync(message);
+            return waitWritten ? new ValueTask(task) : ValueTask.CompletedTask;
         }
 
-        public ValueTask Write(IMessageAllocator maker, IMessageFactory factory, MessageContent content, bool waitWritten = false)
+        public ValueTask Write(IMessageAllocator maker, MessageContent content, bool waitWritten = false)
         {
-            return waitWritten ? ValueTask.CompletedTask : Write(maker.Allocate, factory, content);
+            return Write(maker.Allocate, content, waitWritten);
         }
 
-        public ValueTask Write(MessageAllocator maker, IMessageFactory factory, MessageContent content, bool waitWritten = false)
+        public ValueTask Write(MessageAllocator maker, MessageContent content, bool waitWritten = false)
         {
-            if (waitWritten)
-            {
-                return ValueTask.CompletedTask;
-            }
-            return new ValueTask(channel.EventLoop.SubmitAsync(() => {
+            var task = channel.EventLoop.SubmitAsync(() => {
                 IMessage? message = null;
                 try
                 {
-                    message = maker(factory, content);
+                    message = maker(tunnel.MessageFactory, content);
                 } catch (Exception e)
                 {
                     content.Cancel(e);
                     LOGGER.LogError(e, "");
                 }
                 return channel.WriteAndFlushAsync(message);
-            }).Unwrap());
+            }).Unwrap();
+            return waitWritten ? new ValueTask(task) : ValueTask.CompletedTask;
         }
     }
 

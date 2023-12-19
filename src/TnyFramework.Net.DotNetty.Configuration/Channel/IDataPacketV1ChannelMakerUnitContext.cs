@@ -15,15 +15,15 @@ namespace TnyFramework.Net.DotNetty.Configuration.Channel
 
     public interface IDataPacketV1ChannelMakerUnitContext
     {
-        IList<IChannelPipelineChain> LoadPipelineChains(INetGuideUnitContext context);
+        IList<IChannelPipelineChain> LoadPipelineChains(INettyGuideUnitContext context);
 
-        INetPacketDecoder LoadPackDecoder(INetGuideUnitContext context);
+        INetPacketDecoder LoadPackDecoder(INettyGuideUnitContext context);
 
-        INetPacketEncoder LoadPackEncoder(INetGuideUnitContext context);
+        INetPacketEncoder LoadPackEncoder(INettyGuideUnitContext context);
 
-        ICodecVerifier LoadCodecVerifier(INetGuideUnitContext context);
+        ICodecVerifier LoadCodecVerifier(INettyGuideUnitContext context);
 
-        ICodecCrypto LoadCodecCrypto(INetGuideUnitContext context);
+        ICodecCrypto LoadCodecCrypto(INettyGuideUnitContext context);
 
         bool LoadCloseOnEncodeError();
 

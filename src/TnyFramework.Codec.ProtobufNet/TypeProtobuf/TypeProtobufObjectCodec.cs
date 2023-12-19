@@ -12,6 +12,9 @@ using ProtoBuf;
 using TnyFramework.Codec.Exceptions;
 using TnyFramework.Common.Binary.Extensions;
 using TnyFramework.Common.Extensions;
+#if NET
+using System.Buffers;
+#endif
 
 namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
 {
@@ -88,6 +91,37 @@ namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
             }
             throw new ObjectCodecException($"Unknown ${id} TypeProtobufScheme");
         }
+
+#if NET
+        public override void Encode(T? value, IBufferWriter<byte> output)
+        {
+            if (value == null)
+            {
+                return;
+            }
+            var scheme = factory.Load(value.GetType());
+            if (scheme.IsNull())
+                return;
+            output.WriteFixed32(scheme.Id);
+            Serializer.Serialize(output, value);
+        }
+
+        public override T? Decode(ReadOnlySequence<byte> input)
+        {
+            if (input.IsNull() || input.Length == 0)
+            {
+                return default;
+            }
+            var reader = new SequenceReader<byte>(input);
+            reader.ReadFixed32(out int id);
+            if (factory.Get(id, out var scheme))
+            {
+                var instance = (T) scheme.Create();
+                return Serializer.Deserialize(input.Slice(reader.Position), instance);
+            }
+            throw new ObjectCodecException($"Unknown ${id} TypeProtobufScheme");
+        }
+#endif
     }
 
 }

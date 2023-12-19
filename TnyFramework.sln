@@ -67,6 +67,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Coroutines.Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Demo.Test", "test\TnyFramework.Demo.Test\TnyFramework.Demo.Test.csproj", "{2D0EFA0C-D4E0-4D3C-9A81-917AD83E2015}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Net.Configuration", "src\TnyFramework.Net.Configuration\TnyFramework.Net.Configuration.csproj", "{1EB163DA-8122-4F5A-BA0C-0C4032F0EE64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -254,6 +256,12 @@ Global
 		{2D0EFA0C-D4E0-4D3C-9A81-917AD83E2015}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2D0EFA0C-D4E0-4D3C-9A81-917AD83E2015}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
 		{2D0EFA0C-D4E0-4D3C-9A81-917AD83E2015}.Publish|Any CPU.Build.0 = Debug|Any CPU
+		{1EB163DA-8122-4F5A-BA0C-0C4032F0EE64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EB163DA-8122-4F5A-BA0C-0C4032F0EE64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1EB163DA-8122-4F5A-BA0C-0C4032F0EE64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1EB163DA-8122-4F5A-BA0C-0C4032F0EE64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1EB163DA-8122-4F5A-BA0C-0C4032F0EE64}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{1EB163DA-8122-4F5A-BA0C-0C4032F0EE64}.Publish|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -292,5 +300,6 @@ Global
 		{1474B5CE-AD19-4F97-A7F9-05553E60CA25} = {CE345C58-8EB5-4E4F-A8DF-79246B383485}
 		{B2327DA5-5722-4570-83D2-DA8436D786D4} = {CE345C58-8EB5-4E4F-A8DF-79246B383485}
 		{2D0EFA0C-D4E0-4D3C-9A81-917AD83E2015} = {CE345C58-8EB5-4E4F-A8DF-79246B383485}
+		{1EB163DA-8122-4F5A-BA0C-0C4032F0EE64} = {A626F27B-46F7-4579-8700-342439C930F0}
 	EndGlobalSection
 EndGlobal

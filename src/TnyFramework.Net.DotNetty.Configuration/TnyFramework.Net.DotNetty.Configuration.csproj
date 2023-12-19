@@ -19,16 +19,12 @@
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
-    <ItemGroup>
-        <AssemblyAttribute Include="TnyFramework.Common.Scanner.Attributes.AssemblyTypeSelectorAttributes">
-            <_Parameter1>TnyFramework.Net.DotNetty.Configuration.RpcTypeSelector</_Parameter1>
-        </AssemblyAttribute>
-    </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\TnyFramework.Net.Configuration\TnyFramework.Net.Configuration.csproj" />
+        <ProjectReference Include="..\TnyFramework.Net.ProtobufNet\TnyFramework.Net.ProtobufNet.csproj"/>
         <ProjectReference Include="..\TnyFramework.Net.DotNetty\TnyFramework.Net.DotNetty.csproj"/>
         <ProjectReference Include="..\TnyFramework.Net.Rpc\TnyFramework.Net.Rpc.csproj"/>
-        <ProjectReference Include="..\TnyFramework.Net.ProtobufNet\TnyFramework.Net.ProtobufNet.csproj"/>
     </ItemGroup>
 
 

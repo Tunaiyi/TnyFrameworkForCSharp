@@ -67,7 +67,7 @@ namespace TnyFramework.Net.Transport
                 }
                 if (!IsActive())
                 {
-                    DoDisconnect();
+                    OnDisconnect();
                 }
                 Status = TunnelStatus.Init;
             }
@@ -96,10 +96,10 @@ namespace TnyFramework.Net.Transport
             }
             if (waitWritten)
             {
-                await Transporter.Write(allocator, MessageFactory, messageContent);
+                await Transporter.Write(allocator, messageContent);
             } else
             {
-                _ = Transporter.Write(allocator, MessageFactory, messageContent);
+                _ = Transporter.Write(allocator, messageContent);
             }
         }
 
@@ -108,7 +108,7 @@ namespace TnyFramework.Net.Transport
 
         }
 
-        protected override void DoDisconnect()
+        protected override void OnDisconnect()
         {
             var transporter = Transporter;
             if (transporter.IsNull() || !transporter.IsActive())

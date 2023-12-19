@@ -7,6 +7,9 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
+#if NET
+using System.Buffers;
+#endif
 using System.IO;
 using ProtoBuf;
 
@@ -38,6 +41,18 @@ namespace TnyFramework.Codec.ProtobufNet.Protobuf
         {
             return Serializer.Deserialize<T>(input);
         }
+
+#if NET
+        public override void Encode(T? value, IBufferWriter<byte> output)
+        {
+            Serializer.Serialize(output, value);
+        }
+
+        public override T? Decode(ReadOnlySequence<byte> input)
+        {
+            return Serializer.Deserialize<T>(input);
+        }
+        #endif
     }
 
 }

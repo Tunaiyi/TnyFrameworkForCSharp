@@ -49,7 +49,7 @@ namespace TnyFramework.Common.Binary.Extensions
         {
 #if NETSTANDARD || NETFRAMEWORK
             value = !BitConverter.IsLittleEndian
-                ? BitConverter.Int32BitsToSingle(BinaryPrimitives.ReverseEndianness(MemoryMarshal.Read<int>(destination)))
+                ? Int32BitsToSingle(BinaryPrimitives.ReverseEndianness(MemoryMarshal.Read<int>(destination)))
                 : MemoryMarshal.Read<float>(destination);
 #else
             value = BinaryPrimitives.ReadSingleLittleEndian(destination);
@@ -105,7 +105,7 @@ namespace TnyFramework.Common.Binary.Extensions
         {
 #if NETSTANDARD || NETFRAMEWORK
             return !BitConverter.IsLittleEndian
-                ? BitConverter.Int32BitsToSingle(BinaryPrimitives.ReverseEndianness(MemoryMarshal.Read<int>(destination)))
+                ? Int32BitsToSingle(BinaryPrimitives.ReverseEndianness(MemoryMarshal.Read<int>(destination)))
                 : MemoryMarshal.Read<float>(destination);
 #else
             return BinaryPrimitives.ReadSingleLittleEndian(destination);

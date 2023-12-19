@@ -14,7 +14,7 @@ namespace TnyFramework.Net.Command.Dispatcher.Monitor
 
     public interface IRpcMonitorAfterInvokeHandler : IRpcMonitorHandler
     {
-        void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject? result, Exception? exception);
+        void OnAfterInvoke(IRpcTransactionContext rpcMessageContext, IMessageSubject? result, Exception? exception);
     }
 
 }

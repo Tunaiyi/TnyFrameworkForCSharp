@@ -6,9 +6,13 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+#if NET
+using System.Buffers;
+#endif
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Codec.Newtonsoft.Json
 {
@@ -75,6 +79,25 @@ namespace TnyFramework.Codec.Newtonsoft.Json
         {
             return DeserializeObject(data);
         }
+
+#if NET
+        public override void Encode(T? value, IBufferWriter<byte> output)
+        {
+            var json = SerializeObject(value);
+            var data = Encoding.UTF8.GetBytes(json);
+            output.Write(data);
+        }
+
+        public override T? Decode(ReadOnlySequence<byte> input)
+        {
+            if (input.IsNull() || input.Length == 0)
+            {
+                return default;
+            }
+            var json = Encoding.UTF8.GetString(input);
+            return DeserializeObject(json);
+        }
+#endif
     }
 
 }

@@ -13,7 +13,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
-    public interface IRpcTransactionContext : IRpcContext
+    public interface IRpcTransactionContext : IRpcMessageContext
     {
         /// <summary>
         /// 请求模式

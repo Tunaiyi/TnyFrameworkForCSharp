@@ -14,7 +14,7 @@ namespace TnyFramework.Common.Binary.Extensions
 
     public static partial class VariantExtensions
     {
-        private static readonly UTF8Encoding ENCODING = new();
+        private static readonly Encoding ENCODING = Encoding.UTF8;
         private const long INT64_MSB = 1L << 63;
         private const int INT32_MSB = 1 << 31;
 

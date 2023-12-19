@@ -86,25 +86,25 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             }
         }
 
-        public void OnReceive(IRpcEnterContext rpcContext)
+        public void OnReceive(IRpcMessageEnterContext rpcMessageContext)
         {
-            var message = rpcContext.MessageSubject;
+            var message = rpcMessageContext.MessageSubject;
             var contextCarrier = LoadCarrier(message);
             var rpcSegmentContext = tracingContext.CreateEntrySegmentContext(RpcOperationName(message), contextCarrier);
-            var contact = rpcContext.Connector;
+            var contact = rpcMessageContext.Connector;
             TagSpanService(rpcSegmentContext, contact, message);
-            var attributes = rpcContext.Attributes;
+            var attributes = rpcMessageContext.Attributes;
             attributes.Set(TRACING_RPC_SPAN, rpcSegmentContext);
             var span = rpcSegmentContext.Span;
             LOGGER.LogInformation("OnReceive span {mode} {opName}  | {span}",
-                rpcContext.Mode, span.OperationName, Debug(rpcSegmentContext));
+                rpcMessageContext.Mode, span.OperationName, Debug(rpcSegmentContext));
         }
 
-        public void OnBeforeInvoke(IRpcTransactionContext rpcContext)
+        public void OnBeforeInvoke(IRpcTransactionContext rpcMessageContext)
         {
-            var segmentContext = TraceOnBefore(rpcContext);
+            var segmentContext = TraceOnBefore(rpcMessageContext);
             var span = segmentContext.Span;
-            LOGGER.LogInformation("invoke span {mode} {op} {span}", rpcContext.Mode, span.OperationName, Debug(segmentContext));
+            LOGGER.LogInformation("invoke span {mode} {op} {span}", rpcMessageContext.Mode, span.OperationName, Debug(segmentContext));
             // if (!rpcContext.Async)
             //     return;
             if (span.SpanType == SpanType.Local)
@@ -112,34 +112,34 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
                 tracingContext.Release(segmentContext);
             } else
             {
-                rpcContext.Attributes.Set(TRACING_INVOKE_SPAN, segmentContext);
+                rpcMessageContext.Attributes.Set(TRACING_INVOKE_SPAN, segmentContext);
             }
         }
 
-        private SegmentContext TraceOnBefore(IRpcTransactionContext rpcContext)
+        private SegmentContext TraceOnBefore(IRpcTransactionContext rpcMessageContext)
         {
             SegmentContext segmentContext;
             string operationName;
-            RestoreAll(rpcContext);
-            if (rpcContext.Mode == RpcTransactionMode.Exit)
+            RestoreAll(rpcMessageContext);
+            if (rpcMessageContext.Mode == RpcTransactionMode.Exit)
             {
                 var tracingHeader = new RpcTracingHeader();
-                var message = rpcContext.MessageSubject;
-                operationName = RemoteOperationName(rpcContext);
+                var message = rpcMessageContext.MessageSubject;
+                operationName = RemoteOperationName(rpcMessageContext);
                 var carrierHeader = new TextCarrierHeaderCollection(new Dictionary<string, string>());
-                segmentContext = tracingContext.CreateExitSegmentContext(operationName, Peer(rpcContext.Connector), carrierHeader);
+                segmentContext = tracingContext.CreateExitSegmentContext(operationName, Peer(rpcMessageContext.Connector), carrierHeader);
                 tracingHeader.Attributes.AddRang(carrierHeader);
                 message.PutHeader(tracingHeader);
-                TagSpanRemote(segmentContext, rpcContext.Connector, message);
+                TagSpanRemote(segmentContext, rpcMessageContext.Connector, message);
                 var span = segmentContext.Span;
                 LOGGER.LogInformation("OnBeforeInvoke EXIT Start span {op} {span} | {header}", span.OperationName, Debug(segmentContext),
                     tracingHeader);
             } else
             {
-                var message = rpcContext.MessageSubject;
-                operationName = LocalOperationName(rpcContext);
+                var message = rpcMessageContext.MessageSubject;
+                operationName = LocalOperationName(rpcMessageContext);
                 segmentContext = tracingContext.CreateLocalSegmentContext(operationName);
-                TagSpanLocal(segmentContext, rpcContext.Connector, message);
+                TagSpanLocal(segmentContext, rpcMessageContext.Connector, message);
                 var span = segmentContext.Span;
                 LOGGER.LogInformation("OnBeforeInvoke ENTER Start span {op} {span}", span.OperationName, Debug(segmentContext));
             }
@@ -159,22 +159,22 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             }
         }
 
-        public void OnAfterInvoke(IRpcTransactionContext rpcContext, IMessageSubject? result, Exception? exception)
+        public void OnAfterInvoke(IRpcTransactionContext rpcMessageContext, IMessageSubject? result, Exception? exception)
         {
             if (setting.Disable)
             {
                 return;
             }
             // RestoreAll(rpcContext);
-            StopAsyncSpans(rpcContext, exception, TRACING_INVOKE_SPAN, TRACING_RPC_SPAN);
-            LOGGER.LogInformation("OnAfterInvoke invoke end span {op}", rpcContext.OperationName);
+            StopAsyncSpans(rpcMessageContext, exception, TRACING_INVOKE_SPAN, TRACING_RPC_SPAN);
+            LOGGER.LogInformation("OnAfterInvoke invoke end span {op}", rpcMessageContext.OperationName);
         }
 
-        public void OnResume(IRpcEnterContext rpcContext)
+        public void OnResume(IRpcMessageEnterContext rpcMessageContext)
         {
         }
 
-        public void OnSuspend(IRpcEnterContext rpcContext)
+        public void OnSuspend(IRpcMessageEnterContext rpcMessageContext)
         {
         }
 
@@ -198,9 +198,9 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             return CreateOperationName("remote:", context);
         }
 
-        private string LocalOperationName(IRpcTransactionContext rpcContext)
+        private string LocalOperationName(IRpcTransactionContext rpcMessageContext)
         {
-            return CreateOperationName("local:", rpcContext);
+            return CreateOperationName("local:", rpcMessageContext);
         }
 
         private static string GetContactName(IContact contact)
@@ -309,17 +309,17 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             return new TextCarrierHeaderCollection(headers);
         }
 
-        private void RestoreAll(IRpcTransactionContext rpcContext)
+        private void RestoreAll(IRpcTransactionContext rpcMessageContext)
         {
-            if (rpcContext is not {Valid: true})
+            if (rpcMessageContext is not {Valid: true})
             {
                 return;
             }
-            Restore(rpcContext, rpcContext.Attributes.Get(TRACING_INVOKE_SPAN));
-            Restore(rpcContext, rpcContext.Attributes.Get(TRACING_RPC_SPAN));
+            Restore(rpcMessageContext, rpcMessageContext.Attributes.Get(TRACING_INVOKE_SPAN));
+            Restore(rpcMessageContext, rpcMessageContext.Attributes.Get(TRACING_RPC_SPAN));
         }
 
-        private void Restore(IRpcTransactionContext rpcContext, SegmentContext segmentContext)
+        private void Restore(IRpcTransactionContext rpcMessageContext, SegmentContext segmentContext)
         {
             if (segmentContext.IsNull())
             {
@@ -340,7 +340,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
                 default:
                     return;
             }
-            LOGGER.LogInformation("restore span {mode} {name} {span}", rpcContext.Mode, span.OperationName, Debug(segmentContext));
+            LOGGER.LogInformation("restore span {mode} {name} {span}", rpcMessageContext.Mode, span.OperationName, Debug(segmentContext));
         }
 
         private string Peer(IAddressPeer? addressPeer)
@@ -353,17 +353,17 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
             return address?.ToString() ?? "NA:NA";
         }
 
-        private void StopAsyncSpans(IRpcTransactionContext rpcContext, Exception? cause, params AttrKey<SegmentContext>[] keys)
+        private void StopAsyncSpans(IRpcTransactionContext rpcMessageContext, Exception? cause, params AttrKey<SegmentContext>[] keys)
         {
             foreach (var key in keys)
             {
-                StopAsyncSpan(rpcContext, cause, key);
+                StopAsyncSpan(rpcMessageContext, cause, key);
             }
         }
 
-        private void StopAsyncSpan(IRpcTransactionContext rpcContext, Exception? cause, AttrKey<SegmentContext> key)
+        private void StopAsyncSpan(IRpcTransactionContext rpcMessageContext, Exception? cause, AttrKey<SegmentContext> key)
         {
-            var segmentContext = rpcContext.Attributes.Remove(key);
+            var segmentContext = rpcMessageContext.Attributes.Remove(key);
             if (segmentContext.IsNull())
                 return;
             var span = segmentContext.Span;
@@ -372,7 +372,7 @@ namespace TnyFramework.Net.Apm.Skywalking.NetCore.Handler
                 span.ErrorOccurred(cause, tracingConfig);
             }
 
-            LOGGER.LogInformation("OnAfterInvoke - StopAsyncSpan {mode} Stop {key} span {op} {span}", rpcContext.Mode, key.Name, span.OperationName,
+            LOGGER.LogInformation("OnAfterInvoke - StopAsyncSpan {mode} Stop {key} span {op} {span}", rpcMessageContext.Mode, key.Name, span.OperationName,
                 Debug(segmentContext));
             tracingContext.Release(segmentContext);
         }

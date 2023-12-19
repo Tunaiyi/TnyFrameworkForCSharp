@@ -26,12 +26,12 @@ namespace TnyFramework.Common.Result
 
         public static IDoneResult<T> Failure<TM, T>(IDoneResult<TM> result)
         {
-            throw new NotImplementedException();
+            return new DoneResult<T>(result.Code, default!, result.Message);
         }
 
         public static IDoneResult<T> Map<TM, T>(IDoneResult<TM> done, T mapper)
         {
-            throw new NotImplementedException();
+            return new DoneResult<T>(done.Code, mapper, done.Message);
         }
 
         /// <summary>
@@ -131,6 +131,16 @@ namespace TnyFramework.Common.Result
          *
          * @return
          */
+        public static IDoneResult Failure()
+        {
+            return new DoneResult<object>(ResultCode.FAILURE, default!, null!);
+        }
+
+        /**
+         * 返回结果
+         *
+         * @return
+         */
         public static IDoneResult<TM> Failure<TM>()
         {
             return new DoneResult<TM>(ResultCode.FAILURE, default!, null!);
@@ -148,7 +158,7 @@ namespace TnyFramework.Common.Result
             {
                 throw new IllegalArgumentException($"code [{code}] is success");
             }
-            return new DoneResult<object>(code, default!, null!);
+            return new DoneResult<object>(code, default!, message);
         }
 
         /**
@@ -163,7 +173,7 @@ namespace TnyFramework.Common.Result
             {
                 throw new IllegalArgumentException($"code [{code}] is success");
             }
-            return new DoneResult<TM>(code, default!, null!);
+            return new DoneResult<TM>(code, default!, message);
         }
 
         /**

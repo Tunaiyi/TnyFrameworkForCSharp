@@ -14,6 +14,7 @@ using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
 using TnyFramework.DI.Container;
 using TnyFramework.Net.Base;
+using TnyFramework.Net.Configuration.Rpc;
 using TnyFramework.Net.DotNetty.Configuration;
 using TnyFramework.Net.DotNetty.Configuration.Guide;
 using TnyFramework.Net.DotNetty.NetCore.Configurations;
@@ -30,13 +31,13 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
         }
 
         public static IHostBuilder ConfigureNetHost(this IHostBuilder builder,
-            Action<INettyServerConfiguration> configure)
+            Action<INettyNetHostServerConfiguration> configure)
         {
             return builder.ConfigureNetHost(null, configure);
         }
 
         public static IHostBuilder ConfigureNetHost(this IHostBuilder builder,
-            Action<INetServerGuideSpec> guideConfigure)
+            Action<INettyServerGuideSpec> guideConfigure)
         {
             return builder.ConfigureNetHost(guideConfigure, null);
         }
@@ -47,13 +48,13 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
         }
 
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
-            Action<INettyServerConfiguration> configure)
+            Action<INettyRpcHostServerConfiguration> configure)
         {
             return builder.ConfigureRpcHost(null, configure);
         }
 
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
-            Action<INetServerGuideSpec> guideConfigure)
+            Action<INettyServerGuideSpec> guideConfigure)
         {
             return builder.ConfigureRpcHost(guideConfigure, null);
         }
@@ -64,8 +65,8 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
         }
 
         public static IHostBuilder ConfigureRpcHost(this IHostBuilder builder,
-            Action<INetServerGuideSpec>? serverGuideSpec,
-            Action<INettyServerConfiguration>? configure)
+            Action<INettyServerGuideSpec>? serverGuideSpec,
+            Action<INettyRpcHostServerConfiguration>? configure)
         {
             builder.ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
@@ -74,7 +75,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
                 if (options.RpcServer.IsNull())
                     throw new IllegalArgumentException("NetApplicationHostOptions RpcServer 未配置");
                 var serverSetting = options.RpcServer;
-                var serverConfiguration = RpcServerConfiguration.CreateRpcServer(services);
+                var serverConfiguration = NettyRpcHostServerConfiguration.CreateRpcServer(services);
                 serverConfiguration
                     .RpcServer(serverSetting, serverGuideSpec)
                     .AppContextConfigure(spec => {
@@ -92,7 +93,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
         }
         
         public static IHostBuilder ConfigureNetHost(this IHostBuilder builder,
-            Action<INetServerGuideSpec>? serverGuideSpec, Action<INettyServerConfiguration>? configure)
+            Action<INettyServerGuideSpec>? serverGuideSpec, Action<INettyNetHostServerConfiguration>? configure)
         {
             return builder.ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
@@ -101,7 +102,7 @@ namespace TnyFramework.Net.DotNetty.NetCore.Extensions
                 if (options.Server == null)
                     throw new IllegalArgumentException("NetApplicationHostOptions Server 未配置");
                 var serverSetting = options.Server;
-                var serverConfiguration = NettyServerConfiguration.CreateNetServer(services)
+                var serverConfiguration = NettyNetHostServerConfiguration.CreateNetServer(services)
                     .AppContextConfigure(spec => {
                         spec.ServerId(options.ServerId)
                             .AppName(options.Name)
