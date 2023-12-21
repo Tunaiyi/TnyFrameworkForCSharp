@@ -23,8 +23,7 @@ namespace TnyFramework.Common.Binary.Extensions
             {
                 var tmp = BinaryPrimitives.ReverseEndianness(BitConverter.DoubleToInt64Bits(value));
                 MemoryMarshal.Write(destination, ref tmp);
-            }
-            else
+            } else
             {
                 MemoryMarshal.Write(destination, ref value);
             }
@@ -59,8 +58,7 @@ namespace TnyFramework.Common.Binary.Extensions
             {
                 var tmp = BinaryPrimitives.ReverseEndianness(SingleToInt32Bits(value));
                 MemoryMarshal.Write(destination, ref tmp);
-            }
-            else
+            } else
             {
                 MemoryMarshal.Write(destination, ref value);
             }

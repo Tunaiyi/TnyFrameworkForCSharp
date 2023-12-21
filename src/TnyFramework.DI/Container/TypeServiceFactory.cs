@@ -24,19 +24,18 @@ namespace TnyFramework.DI.Container
         private readonly ConstructorInfo constructor;
         private readonly List<Type> parameterTypes;
 
-        public Type Type { get; }
+        private Type Type { get; }
 
         public TypeServiceFactory(Type type)
         {
             Type = type;
             var constructors = type.GetConstructors();
-            if (constructors.Length > 1)
+            switch (constructors.Length)
             {
-                throw new IllegalArgumentException($"{type} constructor size > 1");
-            }
-            if (constructors.Length == 0)
-            {
-                throw new IllegalArgumentException($"{type} constructor is empty");
+                case > 1:
+                    throw new IllegalArgumentException($"{type} constructor size > 1");
+                case 0:
+                    throw new IllegalArgumentException($"{type} constructor is empty");
             }
             constructor = constructors[0];
             var parameters = constructor.GetParameters();

@@ -8,7 +8,7 @@
 
 using System.Net;
 using TnyFramework.Common.Attribute;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 
 namespace TnyFramework.Net.Transport
 {

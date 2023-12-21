@@ -19,7 +19,6 @@ namespace TnyFramework.Coroutines.TaskSchedulers
         public OrderedTaskScheduler() : base(1)
         {
         }
-
     }
 
 }

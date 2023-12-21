@@ -7,7 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using ProtoBuf;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 
 namespace TnyFramework.Net.Message
 {
@@ -25,7 +25,7 @@ namespace TnyFramework.Net.Message
             get => contactTypeId;
             set {
                 contactTypeId = value;
-                ContactType = Base.ContactType.ForId(contactTypeId);
+                ContactType = Application.ContactType.ForId(contactTypeId);
             }
         }
 

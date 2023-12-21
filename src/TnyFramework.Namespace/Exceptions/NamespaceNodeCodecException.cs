@@ -26,9 +26,7 @@ namespace TnyFramework.Namespace.Exceptions
         {
         }
 
-        protected NamespaceNodeCodecException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+
     }
 
 }

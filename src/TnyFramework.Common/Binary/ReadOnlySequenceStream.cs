@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace TnyFramework.Common.Binary
 {
+
     public class ReadOnlySequenceStream : Stream
     {
         private static readonly Task<int> TASK_OF_ZERO = Task.FromResult(0);

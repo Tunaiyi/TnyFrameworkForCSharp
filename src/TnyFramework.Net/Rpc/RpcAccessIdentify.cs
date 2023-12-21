@@ -8,7 +8,7 @@
 
 using Newtonsoft.Json;
 using TnyFramework.Common.Exceptions;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Rpc

@@ -17,6 +17,7 @@ using TnyFramework.Coroutines.Async;
 
 namespace TnyFramework.Namespace.Etcd.Test
 {
+
     public class AsyncLocalTest
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<AsyncLocalTest>();

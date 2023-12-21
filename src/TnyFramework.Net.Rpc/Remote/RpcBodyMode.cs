@@ -15,7 +15,6 @@ using TnyFramework.Common.Assemblies;
 using TnyFramework.Common.Enum;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Attributes;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Rpc.Remote

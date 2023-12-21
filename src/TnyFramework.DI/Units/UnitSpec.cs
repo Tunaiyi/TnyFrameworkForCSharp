@@ -9,11 +9,14 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.Common.Extensions;
-using TnyFramework.DI.Container;
+using TnyFramework.DI.Extensions;
 
 namespace TnyFramework.DI.Units
 {
 
+    /// <summary>
+    /// 组件规格配置
+    /// </summary>
     public class UnitSpec
     {
         public static UnitSpec<TUnit, TContext> Unit<TUnit, TContext>()
@@ -22,16 +25,36 @@ namespace TnyFramework.DI.Units
         }
     }
 
+    /// <summary>
+    /// 组件规格配置
+    /// </summary>
+    /// <typeparam name="TUnit">配置组件</typeparam>
+    /// <typeparam name="TContext">配置容器</typeparam>
     public class UnitSpec<TUnit, TContext> : UnitSpec, IUnitSpec<TUnit, TContext>
     {
+        /// <summary>
+        /// 组件命名
+        /// </summary>
         private string unitName;
 
+        /// <summary>
+        /// 组件默认构造器
+        /// </summary>
         private UnitCreator<TUnit, TContext>? defaultCreator;
 
+        /// <summary>
+        /// 组件构造器
+        /// </summary>
         private UnitCreator<TUnit, TContext>? creator;
 
+        /// <summary>
+        /// 构建的组件
+        /// </summary>
         private TUnit? unit;
 
+        /// <summary>
+        /// 是否创建
+        /// </summary>
         private bool created;
 
         public string GetUnitName()
@@ -115,7 +138,7 @@ namespace TnyFramework.DI.Units
             return this;
         }
 
-        public TUnit Load(TContext context, IServiceCollection services)
+        public virtual TUnit Load(TContext context, IServiceCollection services)
         {
             try
             {
@@ -125,13 +148,14 @@ namespace TnyFramework.DI.Units
                 }
                 if (creator != null)
                 {
-                    var newOne =  creator.Invoke(context);;
+                    var newOne = creator.Invoke(context);
+                    ;
                     unit = newOne;
                     return newOne;
                 }
                 if (defaultCreator != null)
                 {
-                    var newOne =  defaultCreator.Invoke(context);
+                    var newOne = defaultCreator.Invoke(context);
                     unit = newOne;
                     return newOne;
                 }

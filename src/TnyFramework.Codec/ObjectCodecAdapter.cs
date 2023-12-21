@@ -254,7 +254,7 @@ namespace TnyFramework.Codec
 
             private void AddCodec(IMimeType mimeType, IObjectCodec codec)
             {
-                
+
                 lockSlim.EnterUpgradeableReadLock();
                 try
                 {

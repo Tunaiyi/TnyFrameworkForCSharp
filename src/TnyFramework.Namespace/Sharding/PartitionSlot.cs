@@ -21,7 +21,6 @@ namespace TnyFramework.Namespace.Sharding
     {
         public int Seed { get; set; }
 
-
         public PartitionSlot(int index, TNode node) : base(index, node)
         {
         }

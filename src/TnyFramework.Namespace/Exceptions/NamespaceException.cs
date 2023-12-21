@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Runtime.Serialization;
 
 namespace TnyFramework.Namespace.Exceptions
 {
@@ -15,10 +14,6 @@ namespace TnyFramework.Namespace.Exceptions
     public class NamespaceException : Exception
     {
         public NamespaceException()
-        {
-        }
-
-        protected NamespaceException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
 

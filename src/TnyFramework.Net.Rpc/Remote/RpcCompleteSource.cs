@@ -15,7 +15,6 @@ using TnyFramework.Common.Extensions;
 using TnyFramework.Common.FastInvoke;
 using TnyFramework.Common.FastInvoke.FuncInvoke;
 using TnyFramework.Common.Result;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Exceptions;
@@ -25,8 +24,6 @@ namespace TnyFramework.Net.Rpc.Remote
 
     public static class RpcInvokerFastInvokers
     {
-
-
         /// <summary>
         /// 请求结果
         /// </summary>
@@ -35,7 +32,6 @@ namespace TnyFramework.Net.Rpc.Remote
         {
             return RpcResults.Result(code, body);
         }
-
 
         private static readonly MethodInfo RCP_RESULT_CREATE_METHOD = typeof(RpcInvokerFastInvokers).GetMethods()
             .First(info => info is {Name: "Result", IsGenericMethod: true});

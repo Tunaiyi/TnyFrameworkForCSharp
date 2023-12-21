@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 
 namespace TnyFramework.Net.Endpoint
 {

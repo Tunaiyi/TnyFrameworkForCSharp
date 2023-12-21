@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;

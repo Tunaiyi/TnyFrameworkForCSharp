@@ -23,6 +23,7 @@
     
     <ItemGroup>
       <ProjectReference Include="..\..\src\TnyFramework.Coroutines\TnyFramework.Coroutines.csproj" />
+      <ProjectReference Include="..\..\src\TnyFramework.DI.Hosting\TnyFramework.DI.Hosting.csproj" />
     </ItemGroup>
     
 </Project>

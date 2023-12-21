@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using TnyFramework.Common.Event;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint.Event;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;

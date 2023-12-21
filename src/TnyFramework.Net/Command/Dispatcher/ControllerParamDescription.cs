@@ -14,7 +14,6 @@ using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Attributes;
-using TnyFramework.Net.Base;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Exceptions;
@@ -68,10 +67,11 @@ namespace TnyFramework.Net.Command.Dispatcher
             AttributeHolder = new AttributeHolder(info.GetCustomAttributes());
             var optional = AttributeHolder.GetAttribute<RpcOptionalAttribute>();
             Require = optional == null;
-            if (typeof(IServerBootstrapSetting).IsAssignableFrom(ParamType))
-            {
-                Mode = ParamMode.Setting;
-            } else if (typeof(ISession).IsAssignableFrom(ParamType))
+            // if (typeof(IEndPointServerSetting).IsAssignableFrom(ParamType))
+            // {
+            //     Mode = ParamMode.Setting;
+            // } else
+            if (typeof(ISession).IsAssignableFrom(ParamType))
             {
                 Mode = ParamMode.Session;
             } else if (typeof(IEndpoint).IsAssignableFrom(ParamType))
@@ -201,10 +201,10 @@ namespace TnyFramework.Net.Command.Dispatcher
                 case ParamMode.Tunnel:
                     value = tunnel;
                     break;
-                case ParamMode.Setting: {
-                    value = context.Setting;
-                    break;
-                }
+                // case ParamMode.Setting: {
+                //     value = context.Setting;
+                //     break;
+                // }
                 case ParamMode.Body:
                     value = body;
                     break;

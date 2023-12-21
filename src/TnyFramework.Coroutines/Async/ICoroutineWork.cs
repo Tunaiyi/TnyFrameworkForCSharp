@@ -38,8 +38,14 @@ namespace TnyFramework.Coroutines.Async
 
         protected void HandleException(Exception cause)
         {
-            var name = Coroutine.CurrentCoroutine.Name;
-            var id = Coroutine.CurrentCoroutine.CoroutineId;
+            var current = Coroutine.CurrentCoroutine;
+            if (current == null)
+            {
+                logger.LogWarning(cause, "HandleException current coroutine is null");
+                return;
+            }
+            var name = current.Name;
+            var id = current.CoroutineId;
             logger.LogWarning(cause, "Coroutine {Name} [{Id}] Invoke exception", name, id);
         }
 

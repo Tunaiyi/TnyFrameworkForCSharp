@@ -15,7 +15,7 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Result;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.Message;

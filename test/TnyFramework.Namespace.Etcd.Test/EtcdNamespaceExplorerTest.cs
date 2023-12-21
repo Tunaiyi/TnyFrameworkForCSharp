@@ -1,3 +1,11 @@
+// Copyright (c) 2020 Tunaiyi
+// Tny Framework For CSharp is licensed under Mulan PSL v2.
+// You can use this software according to the terms and conditions of the Mulan PSL v2.
+// You may obtain a copy of Mulan PSL v2 at:
+//          http://license.coscl.org.cn/MulanPSL2
+// THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+// See the Mulan PSL v2 for more details.
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -722,7 +730,8 @@ namespace TnyFramework.Namespace.Etcd.Test
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
 
             // 0 -> 1
-            var nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, 100, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1);
+            var nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, 100, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE,
+                player1);
             Assert.IsNull(nameNode);
 
             nameNode = await _EXPLORER.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
@@ -768,49 +777,60 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsNull(nameNode);
 
             // 3 -> 4
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Open, 4, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Open, 4, RangeBorder.Unlimited, MINE_TYPE,
+                player2);
             Assert.AreEqual(player2, nameNode.Value);
 
             await _EXPLORER.Remove(PLAYER_NODE_1_KEY);
             nameNode = await _EXPLORER.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
             id = nameNode.Id;
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE,
+                player1);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 1, RangeBorder.Close, 0, RangeBorder.Unlimited, MINE_TYPE,
+                player2);
             Assert.AreEqual(player2, nameNode.Value);
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 3, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE,
+                player1);
             Assert.IsNull(nameNode);
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 2, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE, player1);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 2, RangeBorder.Open, 0, RangeBorder.Unlimited, MINE_TYPE,
+                player1);
             Assert.AreEqual(player1, nameNode.Value);
 
             await _EXPLORER.Remove(PLAYER_NODE_1_KEY);
             nameNode = await _EXPLORER.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
             id = nameNode.Id;
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 1, RangeBorder.Close, MINE_TYPE, player1);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 1, RangeBorder.Close, MINE_TYPE,
+                player1);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Close, MINE_TYPE, player2);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Close, MINE_TYPE,
+                player2);
             Assert.AreEqual(player2, nameNode.Value);
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Open, MINE_TYPE, player1);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 3, RangeBorder.Open, MINE_TYPE,
+                player1);
             Assert.IsNull(nameNode);
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 4, RangeBorder.Open, MINE_TYPE, player1);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 4, RangeBorder.Open, MINE_TYPE,
+                player1);
             Assert.AreEqual(player1, nameNode.Value);
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 4, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 4, RangeBorder.Unlimited, MINE_TYPE,
+                player2);
             Assert.AreEqual(player2, nameNode.Value);
 
             await _EXPLORER.Remove(PLAYER_NODE_1_KEY);
             nameNode = await _EXPLORER.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
             id = nameNode.Id;
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 0, RangeBorder.Unlimited, MINE_TYPE, player2);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Unlimited, 0, RangeBorder.Unlimited, MINE_TYPE,
+                player2);
             Assert.AreEqual(player2, nameNode.Value);
 
         }
@@ -826,7 +846,8 @@ namespace TnyFramework.Namespace.Etcd.Test
             var nameNode = await _EXPLORER.Save(PLAYER_NODE_1_KEY, MINE_TYPE, player2);
             var id = nameNode.Id;
 
-            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1, lessee);
+            nameNode = await _EXPLORER.UpdateByIdAndIfVersion(PLAYER_NODE_1_KEY, id, 0, RangeBorder.Close, 2, RangeBorder.Close, MINE_TYPE, player1,
+                lessee);
             Assert.AreEqual(player1, nameNode.Value);
 
             await lessee.Shutdown();
@@ -1155,10 +1176,10 @@ namespace TnyFramework.Namespace.Etcd.Test
         public void DicTest()
         {
             var dictionary = new Dictionary<string, Player>();
-            var p1= new Player("A", 1);
-            var p2= new Player("B", 2);
-            var p3= new Player("C", 3);
-            var p4= new Player("CC", 4);
+            var p1 = new Player("A", 1);
+            var p2 = new Player("B", 2);
+            var p3 = new Player("C", 3);
+            var p4 = new Player("CC", 4);
             dictionary["a"] = p1;
             dictionary["b"] = p2;
             dictionary["c"] = p3;
@@ -1180,32 +1201,29 @@ namespace TnyFramework.Namespace.Etcd.Test
             return node!;
         }
 
-
-
         // [Test]
-        public async Task  HashingTest()
+        public async Task HashingTest()
         {
             const int maxSlots = 32;
             const int partitionCount = 6;
             var keyHash = HashAlgorithmHasher.Hasher<string>(maxSlots, XxHash3HashAlgorithm.XXH3_HASH_32);
             var nodeHash = HashAlgorithmHasher.Hasher<IPartitionSlot<TestShadingNode>>(p => p.NodeKey, maxSlots, XxHash3HashAlgorithm.XXH3_HASH_32);
             var hashing1 = _EXPLORER.NodeHashing("/T2/Nodes", keyHash.Max, keyHash, nodeHash, EtcdNodeHashingMultimapFactory.Default, options => {
-                    options.Name = "Harding1";
-                    options.PartitionCount = partitionCount;
-                })!;
+                options.Name = "Harding1";
+                options.PartitionCount = partitionCount;
+            })!;
             var hashing2 = _EXPLORER.NodeHashing("/T2/Nodes", keyHash.Max, keyHash, nodeHash, EtcdNodeHashingMultimapFactory.Default, options => {
                 options.Name = "Harding2";
                 options.PartitionCount = partitionCount;
             })!;
-            
+
             await hashing1.Start();
             await hashing2.Start();
 
             await hashing1.Register(new TestShadingNode("Server1"));
             await hashing2.Register(new TestShadingNode("Server2"));
-            
-        }
 
+        }
     }
 
     public class Player

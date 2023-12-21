@@ -41,7 +41,6 @@ namespace TnyFramework.Coroutines.Executors
         {
             Task.Factory.StartNew(action, CancellationToken.None, TaskCreationOptions.None, threadPool);
         }
-
     }
 
 }

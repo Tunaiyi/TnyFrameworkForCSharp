@@ -8,9 +8,8 @@
 
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Attributes;
-using TnyFramework.Net.Base;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Command.Dispatcher;
 
 namespace TnyFramework.Net.Rpc.Auth
@@ -30,7 +29,7 @@ namespace TnyFramework.Net.Rpc.Auth
 
         [RpcRequest(RpcProtocol.RPC_AUTH_4_AUTHENTICATE)]
         [AuthenticationRequired(typeof(RpcPasswordValidator))]
-        public IRpcResult<string> Authenticate(IServerBootstrapSetting setting, [IdentifyToken] RpcAccessIdentify id)
+        public IRpcResult<string> Authenticate(IEndPointServerSetting setting, [IdentifyToken] RpcAccessIdentify id)
         {
             var serviceType = RpcServiceType.ForService(setting.ServiceName());
             var token = rpcAuthService.CreateToken(serviceType, id);

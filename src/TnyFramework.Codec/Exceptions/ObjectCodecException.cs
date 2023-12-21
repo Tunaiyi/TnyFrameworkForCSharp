@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Runtime.Serialization;
 
 namespace TnyFramework.Codec.Exceptions
 {
@@ -26,9 +25,6 @@ namespace TnyFramework.Codec.Exceptions
         {
         }
 
-        protected ObjectCodecException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
     }
 
 }

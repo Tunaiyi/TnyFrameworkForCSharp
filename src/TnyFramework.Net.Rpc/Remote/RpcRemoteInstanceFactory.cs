@@ -45,14 +45,15 @@ namespace TnyFramework.Net.Rpc.Remote
         private static readonly ILogger LOGGER = LogFactory.Logger<RpcInvokeHandler>();
 
         private readonly RpcRemoteSetting setting;
-        
+
         private readonly RpcMonitor rpcMonitor;
 
         private readonly IRpcInvokeNodeManager rpcInvokeNode;
 
         private readonly IRpcRemoteRouteManager rpcRouteManager;
 
-        public RpcRemoteInstanceFactory(RpcRemoteSetting setting, IRpcInvokeNodeManager rpcInvokeNode, IRpcRemoteRouteManager rpcRouteManager, RpcMonitor rpcMonitor)
+        public RpcRemoteInstanceFactory(RpcRemoteSetting setting, IRpcInvokeNodeManager rpcInvokeNode, IRpcRemoteRouteManager rpcRouteManager,
+            RpcMonitor rpcMonitor)
         {
             this.setting = setting;
             this.rpcInvokeNode = rpcInvokeNode;

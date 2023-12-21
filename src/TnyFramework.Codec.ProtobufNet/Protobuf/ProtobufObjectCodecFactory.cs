@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
+using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 
 namespace TnyFramework.Codec.ProtobufNet.Protobuf
 {
@@ -16,7 +17,7 @@ namespace TnyFramework.Codec.ProtobufNet.Protobuf
     /// </summary>
     public class ProtobufObjectCodecFactory : ObjectCodecFactory
     {
-        public ProtobufObjectCodecFactory() : base(TypeProtobuf.ProtobufMimeType.PROTOBUF)
+        public ProtobufObjectCodecFactory() : base(ProtobufMimeType.PROTOBUF)
         {
         }
 

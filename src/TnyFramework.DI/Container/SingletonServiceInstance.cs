@@ -11,13 +11,9 @@ using System;
 namespace TnyFramework.DI.Container
 {
 
-    public class SingletonServiceInstance : BaseServiceInstance
+    public class SingletonServiceInstance(IServiceFactory factory) : BaseServiceInstance(factory)
     {
         private volatile object? instance;
-
-        public SingletonServiceInstance(IServiceFactory factory) : base(factory)
-        {
-        }
 
         public override object Get(IServiceProvider provider)
         {

@@ -52,6 +52,7 @@ namespace TnyFramework.Net.DotNetty.Codec
                     return MessageType.Message;
             }
         }
+
         public void EncodeObject(IChannelHandlerContext ctx, IMessage message, IByteBuffer outBuffer)
         {
             var channel = ctx.Channel;

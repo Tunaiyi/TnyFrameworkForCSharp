@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 

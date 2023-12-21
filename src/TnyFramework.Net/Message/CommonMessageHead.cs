@@ -25,7 +25,7 @@ namespace TnyFramework.Net.Message
 
         public sealed override int ProtocolId { get; init; }
 
-        public sealed override int Line { get;  init; }
+        public sealed override int Line { get; init; }
 
         public sealed override int Code { get; init; }
 

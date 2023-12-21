@@ -6,8 +6,6 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Common.Result;
-
 namespace TnyFramework.Net.Message
 {
 
@@ -20,7 +18,6 @@ namespace TnyFramework.Net.Message
         /// 结果码
         /// </summary>
         int Code { get; }
-
 
         /// <summary>
         /// 响应消息, -1 为无

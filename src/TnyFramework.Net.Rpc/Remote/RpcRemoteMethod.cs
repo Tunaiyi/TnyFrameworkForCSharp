@@ -14,8 +14,8 @@ using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Attributes;
-using TnyFramework.Net.Base;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Attributes;
@@ -154,7 +154,8 @@ namespace TnyFramework.Net.Rpc.Remote
             Forward = !CollectionUtilities.IsNullOrEmpty(rpcService.ForwardService);
             Mode = profile.Mode;
             ServiceType = ContactType.ForGroup(rpcService.Service);
-            if (Forward) {
+            if (Forward)
+            {
                 TargetServiceType = RpcServiceType.ForService(rpcService.Service);
                 ForwardServiceType = RpcServiceType.ForService(rpcService.ForwardService);
             } else

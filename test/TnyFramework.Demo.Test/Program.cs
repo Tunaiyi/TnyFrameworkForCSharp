@@ -7,11 +7,13 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Coroutines.Async;
+using TnyFramework.DI.Extensions;
+using TnyFramework.DI.Units;
 
 namespace TnyFramework.Demo.Test;
 
@@ -57,9 +59,38 @@ public class Program
         }
     }
 
+    public interface IPlayer
+    {
+        string Name { get; }
+    }
+
+    public class PlayerA : IPlayer
+    {
+        public PlayerA(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
+    public class PlayerB : IPlayer
+    {
+        public PlayerB(string name)
+        {
+            Name = name;
+        }
+
+        public string Name { get; }
+    }
+
     public static void Main(string[] args)
     {
-
+        var services = new ServiceCollection();
+        services.AddSingletonUnit<IPlayer>("PlayerA", new PlayerA("A"));
+        services.AddSingletonUnit<IPlayer, PlayerA>("PlayerB", new PlayerA("B"));
+        var provider = services.BuildServiceProvider();
+        var playerUnits = provider.GetService<IUnitCollection<IPlayer>>();
 
         // AppDomain.CurrentDomain.UnhandledException += (o, eventArgs) => { Console.WriteLine($"{eventArgs.ExceptionObject}"); };
         TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;

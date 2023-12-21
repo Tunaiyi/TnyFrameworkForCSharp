@@ -8,7 +8,7 @@
 
 using Newtonsoft.Json;
 using TnyFramework.Common.Result;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Common;
 
 namespace TnyFramework.Net.Rpc.Auth

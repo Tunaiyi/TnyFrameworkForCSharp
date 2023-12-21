@@ -19,7 +19,8 @@ using Nacos.V2.Naming.Core;
 using Nacos.V2.Naming.Dtos;
 using Newtonsoft.Json;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
+using TnyFramework.Net.Extensions;
 
 namespace TnyFramework.Net.Cloud.Nacos
 {
@@ -77,7 +78,7 @@ namespace TnyFramework.Net.Cloud.Nacos
         {
 
             Exception? exception = null;
-            var setting = server.Setting;
+            var setting = (IServiceServerSetting)server.Setting;
             for (var i = 0; i < 3; i++)
             {
                 var times = i + 1;
@@ -99,7 +100,7 @@ namespace TnyFramework.Net.Cloud.Nacos
                 throw exception;
         }
 
-        private static string GetIp(IServerSetting setting)
+        private static string GetIp(IServiceServerSetting setting)
         {
             var host = setting.ServeHost;
             if (host.IsBlank())
@@ -120,7 +121,7 @@ namespace TnyFramework.Net.Cloud.Nacos
             return host;
         }
 
-        private static int GetPort(IServerSetting setting)
+        private static int GetPort(IServiceServerSetting setting)
         {
             var port = setting.ServePort;
             if (port <= 0)
@@ -141,7 +142,7 @@ namespace TnyFramework.Net.Cloud.Nacos
             {
                 metadata.TryAdd(key, value);
             }
-            var setting = server.Setting;
+            var setting = (IServiceServerSetting)server.Setting;
             var instance = new Instance {
                 Ephemeral = true,
                 ServiceName = setting.DiscoverService(),

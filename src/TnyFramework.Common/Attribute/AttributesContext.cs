@@ -38,7 +38,6 @@ namespace TnyFramework.Common.Attribute
                 }
             }
         }
-
     }
 
 }

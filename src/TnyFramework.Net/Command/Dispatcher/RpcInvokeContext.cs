@@ -8,7 +8,7 @@
 
 using System;
 using TnyFramework.Common.Result;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;

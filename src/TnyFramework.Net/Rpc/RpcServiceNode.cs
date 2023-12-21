@@ -12,7 +12,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint;
 
 namespace TnyFramework.Net.Rpc
@@ -26,7 +26,7 @@ namespace TnyFramework.Net.Rpc
 
         private volatile IList<IRpcAccess> orderAccessPoints = ImmutableList.Create<IRpcAccess>();
 
-        private readonly ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
+        private readonly ReaderWriterLockSlim rwLock = new();
 
         public long ServerId { get; }
 

@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 using Nacos.AspNetCore.V2;
 using Nacos.Microsoft.Extensions.Configuration;
 using Nacos.V2.DependencyInjection;
-using TnyFramework.DI.Container;
+using TnyFramework.DI.Extensions;
 
 namespace TnyFramework.Net.Cloud.Nacos.Extensions
 {

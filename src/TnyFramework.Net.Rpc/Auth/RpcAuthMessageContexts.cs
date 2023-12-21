@@ -8,7 +8,6 @@
 
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Net.Message;
-using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Rpc.Auth
 {

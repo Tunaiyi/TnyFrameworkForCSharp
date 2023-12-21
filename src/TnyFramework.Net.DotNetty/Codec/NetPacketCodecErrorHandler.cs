@@ -6,6 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
 using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Exceptions;
@@ -18,17 +19,17 @@ namespace TnyFramework.Net.DotNetty.Codec
 
     internal static class NetPacketCodecErrorHandler
     {
-        public static void HandleOnDecodeError(ILogger logger, IChannelHandlerContext ctx, System.Exception exception, bool close)
+        public static void HandleOnDecodeError(ILogger logger, IChannelHandlerContext ctx, Exception exception, bool close)
         {
             HandleOnError("Message解码", logger, ctx, exception, close);
         }
 
-        public static void HandleOnEncodeError(ILogger logger, IChannelHandlerContext ctx, System.Exception exception, bool close)
+        public static void HandleOnEncodeError(ILogger logger, IChannelHandlerContext ctx, Exception exception, bool close)
         {
             HandleOnError("Message编码", logger, ctx, exception, close);
         }
 
-        private static void HandleOnError(string action, ILogger logger, IChannelHandlerContext? ctx, System.Exception exception, bool close)
+        private static void HandleOnError(string action, ILogger logger, IChannelHandlerContext? ctx, Exception exception, bool close)
         {
             ITunnel? tunnel = null;
             IChannel? channel = null;

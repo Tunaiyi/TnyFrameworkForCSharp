@@ -21,8 +21,7 @@ namespace TnyFramework.Common.Binary.Extensions
             if (!BitConverter.IsLittleEndian)
             {
                 MemoryMarshal.Write(destination, ref value);
-            }
-            else
+            } else
             {
                 var tmp = BinaryPrimitives.ReverseEndianness(BitConverter.DoubleToInt64Bits(value));
                 MemoryMarshal.Write(destination, ref tmp);
@@ -57,8 +56,7 @@ namespace TnyFramework.Common.Binary.Extensions
             if (!BitConverter.IsLittleEndian)
             {
                 MemoryMarshal.Write(destination, ref value);
-            }
-            else
+            } else
             {
                 var tmp = BinaryPrimitives.ReverseEndianness(SingleToInt32Bits(value));
                 MemoryMarshal.Write(destination, ref tmp);

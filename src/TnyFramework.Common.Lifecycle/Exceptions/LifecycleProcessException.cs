@@ -19,10 +19,6 @@ namespace TnyFramework.Common.Lifecycle.Exceptions
         {
         }
 
-        protected LifecycleProcessException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
-
         public LifecycleProcessException(string message) : base(message)
         {
         }

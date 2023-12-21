@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Runtime.Serialization;
 using TnyFramework.Common.Exceptions;
 
 namespace TnyFramework.Coroutines.Exceptions
@@ -19,9 +18,6 @@ namespace TnyFramework.Coroutines.Exceptions
         {
         }
 
-        public CoroutineException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
 
         public CoroutineException(string message) : base(message)
         {

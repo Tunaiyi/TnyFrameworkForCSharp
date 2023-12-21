@@ -8,8 +8,9 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Rpc.Extensions;
 
@@ -18,11 +19,9 @@ namespace TnyFramework.Net.Rpc
 
     public class RpcServicerManager : IRpcInvokeNodeManager
     {
-        private readonly ConcurrentDictionary<IContactType, RpcServiceSet> serviceSetMap =
-            new ConcurrentDictionary<IContactType, RpcServiceSet>();
+        private readonly ConcurrentDictionary<IContactType, RpcServiceSet> serviceSetMap = new();
 
-        private readonly ConcurrentDictionary<IContactType, IRpcInvokeNodeSet?> invokeNodeSetMap =
-            new ConcurrentDictionary<IContactType, IRpcInvokeNodeSet?>();
+        private readonly ConcurrentDictionary<IContactType, IRpcInvokeNodeSet?> invokeNodeSetMap = new();
 
         public RpcServicerManager()
         {
@@ -36,7 +35,7 @@ namespace TnyFramework.Net.Rpc
 
         public IRpcInvokeNodeSet? FindInvokeNodeSet(IContactType serviceType)
         {
-            return serviceSetMap.TryGetValue(serviceType, out var serviceSet) ? serviceSet : null;
+            return serviceSetMap.GetValueOrDefault(serviceType);
         }
 
         private IRpcInvokeNodeSet? DoLoadInvokeNodeSet(IContactType contactType, Action<ContactNodeSet>? createHandler)
@@ -71,7 +70,7 @@ namespace TnyFramework.Net.Rpc
             return serviceSetMap.GetOrAdd(serviceType, Creator);
         }
 
-        private static RpcServiceSet CreateServiceSet(IRpcServiceType serviceType) => new RpcServiceSet(serviceType);
+        private static RpcServiceSet CreateServiceSet(IRpcServiceType serviceType) => new(serviceType);
 
         private void OnCreate(IEndpointKeeper keeper)
         {

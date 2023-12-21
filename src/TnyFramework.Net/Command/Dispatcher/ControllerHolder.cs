@@ -10,8 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Attributes;
-using TnyFramework.Net.Base;
 using TnyFramework.Net.Plugin;
 
 namespace TnyFramework.Net.Command.Dispatcher

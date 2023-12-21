@@ -10,7 +10,7 @@ using System;
 using System.Threading;
 using TnyFramework.Common.Attribute;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;

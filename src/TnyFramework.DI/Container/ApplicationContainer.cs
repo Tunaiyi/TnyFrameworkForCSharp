@@ -26,9 +26,9 @@ namespace TnyFramework.DI.Container
 
         private volatile int status = STATUS_INIT;
 
-        private readonly List<IApplicationModule> modules = new List<IApplicationModule>();
+        private readonly List<IApplicationModule> modules = new();
 
-        private readonly ServiceCollection serviceCollection = new ServiceCollection();
+        private readonly ServiceCollection serviceCollection = new();
 
         /// <summary>
         /// 获取服务提供器

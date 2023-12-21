@@ -11,14 +11,9 @@ using System;
 namespace TnyFramework.DI.Container
 {
 
-    public abstract class BaseServiceInstance : IServiceInstance
+    public abstract class BaseServiceInstance(IServiceFactory factory) : IServiceInstance
     {
-        private volatile IServiceFactory factory;
-
-        protected BaseServiceInstance(IServiceFactory factory)
-        {
-            this.factory = factory;
-        }
+        private volatile IServiceFactory factory = factory;
 
         public abstract object Get(IServiceProvider provider);
 

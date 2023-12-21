@@ -21,7 +21,6 @@ namespace TnyFramework.Coroutines.Executors
         }
 
         public abstract void Summit(Action action);
-
     }
 
 }

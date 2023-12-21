@@ -7,11 +7,11 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
+using System.IO;
+using ProtoBuf;
 #if NET
 using System.Buffers;
 #endif
-using System.IO;
-using ProtoBuf;
 
 namespace TnyFramework.Codec.ProtobufNet.Protobuf
 {
@@ -52,7 +52,7 @@ namespace TnyFramework.Codec.ProtobufNet.Protobuf
         {
             return Serializer.Deserialize<T>(input);
         }
-        #endif
+#endif
     }
 
 }

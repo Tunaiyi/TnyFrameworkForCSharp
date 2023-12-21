@@ -121,7 +121,7 @@ namespace TnyFramework.Coroutines.Async
 
         private readonly object? state;
 
-#if NETSTANDARD2_1
+#if NETSTANDARD2_1 || NETFRAMEWORK
         private readonly TaskCompletionSource<object> completion;
 #else
         private readonly TaskCompletionSource completion;
@@ -134,7 +134,7 @@ namespace TnyFramework.Coroutines.Async
             this.context = context;
             this.callback = callback;
             this.state = state;
-#if NETSTANDARD2_1
+#if NETSTANDARD2_1 || NETFRAMEWORK
             completion = new TaskCompletionSource<object>();
 #else
             completion = new TaskCompletionSource();
@@ -150,7 +150,7 @@ namespace TnyFramework.Coroutines.Async
             {
                 SynchronizationContext.SetSynchronizationContext(context);
                 callback(state);
-#if NETSTANDARD2_1
+#if NETSTANDARD2_1 || NETFRAMEWORK
                 completion.SetResult(null!);
 #else
                 completion.SetResult();

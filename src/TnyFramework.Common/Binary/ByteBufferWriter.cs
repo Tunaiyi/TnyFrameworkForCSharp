@@ -21,7 +21,8 @@ namespace TnyFramework.Common.Binary
 
     public class ByteBufferWriter : IByteBufferWriter
     {
-        private static readonly ObjectPool<ByteBufferWriter> POOL = new DefaultObjectPool<ByteBufferWriter>(new DefaultPooledObjectPolicy<ByteBufferWriter>());
+        private static readonly ObjectPool<ByteBufferWriter> POOL =
+            new DefaultObjectPool<ByteBufferWriter>(new DefaultPooledObjectPolicy<ByteBufferWriter>());
 
         private IBufferWriter<byte> writer = null!;
         private volatile int length = 0;

@@ -18,9 +18,7 @@ namespace TnyFramework.Namespace.Exceptions
         {
         }
 
-        protected NamespaceNodeException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+
 
         public NamespaceNodeException(string message) : base(message)
         {

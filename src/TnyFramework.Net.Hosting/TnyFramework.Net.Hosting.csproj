@@ -1,0 +1,39 @@
+<!--
+  - Copyright (c) 2020 Tunaiyi
+  - Tny Framework For Sharp is licensed under Mulan PSL v2.
+  - You can use this software according to the terms and conditions of the Mulan PSL v2.
+  - You may obtain a copy of Mulan PSL v2 at:
+  -          http://license.coscl.org.cn/MulanPSL2
+  - THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+  - See the Mulan PSL v2 for more details.
+  -->
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <Configurations>Debug;Release;Publish</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AssemblyAttribute Include="TnyFramework.Common.Scanner.Attributes.AssemblyTypeSelectorAttributes">
+            <_Parameter1>TnyFramework.Net.Configuration.Selectors.RpcTypeSelector</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\TnyFramework.Common.Lifecycle\TnyFramework.Common.Lifecycle.csproj" />
+        <ProjectReference Include="..\TnyFramework.Hosting\TnyFramework.Hosting.csproj" />
+      <ProjectReference Include="..\TnyFramework.Net.Rpc\TnyFramework.Net.Rpc.csproj" />
+      <ProjectReference Include="..\TnyFramework.Net\TnyFramework.Net.csproj" />
+    </ItemGroup>
+    
+
+</Project>

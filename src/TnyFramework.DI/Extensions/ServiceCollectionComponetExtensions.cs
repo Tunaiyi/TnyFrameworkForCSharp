@@ -13,7 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.DI.Attributes;
-using TnyFramework.DI.Container;
 
 namespace TnyFramework.DI.Extensions
 {

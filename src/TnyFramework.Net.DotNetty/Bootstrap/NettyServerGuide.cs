@@ -19,7 +19,7 @@ using DotNetty.Transport.Libuv;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Transport;
@@ -27,7 +27,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.DotNetty.Bootstrap
 {
 
-    public class NettyServerGuide : INetServerGuide
+    public class NettyServerGuide : INettyServerGuide
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NettyServerGuide>();
 
@@ -50,7 +50,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         private IEventLoopGroup? workerGroup;
 
-        private readonly IServerSetting setting;
+        private readonly INettyServerSetting setting;
 
         private readonly INettyTunnelFactory tunnelFactory;
 
@@ -58,7 +58,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         private int status = STATUS_STOP;
 
-        public NettyServerGuide(IServerSetting setting, INettyTunnelFactory tunnelFactory,
+        public NettyServerGuide(INettyServerSetting setting, INettyTunnelFactory tunnelFactory,
             INetworkContext context, IChannelMaker channelMaker)
         {
             this.tunnelFactory = tunnelFactory;
@@ -73,7 +73,9 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
         /// </summary>
         public string Name => setting.Name;
 
-        public IServerSetting Setting => setting;
+        IServerSetting INetServer.Setting => Setting;
+
+        public INettyServerSetting Setting => setting;
 
         /// <summary>
         /// 打开监听

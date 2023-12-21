@@ -13,7 +13,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using TnyFramework.Common.Assemblies;
 using TnyFramework.Common.Enum;
-using TnyFramework.Net.Command;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Attributes;
 

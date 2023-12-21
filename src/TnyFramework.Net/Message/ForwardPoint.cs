@@ -8,7 +8,7 @@
 
 using ProtoBuf;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Rpc;
 
 namespace TnyFramework.Net.Message

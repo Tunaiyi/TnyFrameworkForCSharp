@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using TnyFramework.Common.Event;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Plugin;
 

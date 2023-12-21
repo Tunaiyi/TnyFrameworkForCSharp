@@ -7,7 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 
 namespace TnyFramework.Net.Transport
 {

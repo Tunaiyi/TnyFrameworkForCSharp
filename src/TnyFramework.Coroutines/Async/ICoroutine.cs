@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace TnyFramework.Coroutines.Async

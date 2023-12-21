@@ -72,9 +72,7 @@ namespace TnyFramework.Coroutines.Test
         [Fact]
         public void TestTaskSchedulerNoWait()
         {
-            TaskScheduler.UnobservedTaskException += (o, args) => {
-                logger.LogError(args.Exception, "");
-            };
+            TaskScheduler.UnobservedTaskException += (o, args) => { logger.LogError(args.Exception, ""); };
             var executor = TaskScheduler.Default;
             var factory = new DefaultCoroutineFactory("Actor", executor);
             var coroutine1 = factory.Create();

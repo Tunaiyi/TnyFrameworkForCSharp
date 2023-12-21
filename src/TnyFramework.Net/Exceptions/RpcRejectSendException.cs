@@ -32,10 +32,6 @@ namespace TnyFramework.Net.Exceptions
         {
         }
 
-        public RpcRejectSendException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
-            : base(info, context, code ?? CODE, body)
-        {
-        }
     }
 
 }

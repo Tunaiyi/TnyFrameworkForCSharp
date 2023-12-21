@@ -23,10 +23,7 @@ namespace TnyFramework.Namespace.Etcd.Exceptions
             Code = code;
         }
 
-        protected EtcdException(StatusCode code, SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-            Code = code;
-        }
+
 
         public EtcdException(StatusCode code, string message) : base(message)
         {

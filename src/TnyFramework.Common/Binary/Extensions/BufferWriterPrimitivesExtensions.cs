@@ -62,7 +62,8 @@ namespace TnyFramework.Common.Binary.Extensions
             fixed (byte* bytesPtr = &MemoryMarshal.GetReference(buffer))
             {
                 int length = encoding.GetBytes(charsPtr, value.Length, bytesPtr, buffer.Length);
-                if (length > 0) {
+                if (length > 0)
+                {
                     writer.Advance(byteCount);
                 }
                 return length;

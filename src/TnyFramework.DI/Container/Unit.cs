@@ -8,18 +8,19 @@
 
 using System;
 using System.Collections.Concurrent;
+using TnyFramework.DI.Units;
 
 namespace TnyFramework.DI.Container
 {
 
     public abstract class Unit
     {
-        private static readonly ConcurrentDictionary<Type, Type> UNIT_TYPES = new ConcurrentDictionary<Type, Type>();
-        private static readonly ConcurrentDictionary<Type, Type> I_UNIT_TYPES = new ConcurrentDictionary<Type, Type>();
+        private static readonly ConcurrentDictionary<Type, Type> UNIT_TYPES = new();
+        private static readonly ConcurrentDictionary<Type, Type> UNIT_INTERFACE_TYPES = new();
 
         internal static Type UnitType(Type type)
         {
-            return I_UNIT_TYPES.GetOrAdd(type, key => typeof(IUnit<>).MakeGenericType(key));
+            return UNIT_INTERFACE_TYPES.GetOrAdd(type, key => typeof(IUnit<>).MakeGenericType(key));
         }
 
         private static Type GetUnitType(Type type)

@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Runtime.Serialization;
 using TnyFramework.Common.Result;
 
 namespace TnyFramework.Common.Exceptions
@@ -15,12 +14,6 @@ namespace TnyFramework.Common.Exceptions
 
     public class ResultCodeException : CommonException
     {
-        public ResultCodeException(IResultCode code, SerializationInfo info, StreamingContext context) :
-            base(info, context)
-        {
-            Code = code;
-        }
-
         public ResultCodeException(IResultCode code, string message = "") : this(code, null, message)
         {
         }
@@ -32,7 +25,6 @@ namespace TnyFramework.Common.Exceptions
         }
 
         public IResultCode Code { get; }
-
     }
 
 }

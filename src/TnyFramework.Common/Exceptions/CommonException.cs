@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Runtime.Serialization;
 
 namespace TnyFramework.Common.Exceptions
 {
@@ -15,10 +14,6 @@ namespace TnyFramework.Common.Exceptions
     public class CommonException : Exception
     {
         public CommonException()
-        {
-        }
-
-        public CommonException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
 

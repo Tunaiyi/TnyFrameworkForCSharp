@@ -22,12 +22,6 @@ namespace TnyFramework.Namespace.Etcd.Exceptions
             this.CompactedRevision = compactedRevision;
         }
 
-        protected EtcdCompactedException(StatusCode code, SerializationInfo info, StreamingContext context, long compactedRevision) : base(code, info,
-            context)
-        {
-            this.CompactedRevision = compactedRevision;
-        }
-
         public EtcdCompactedException(StatusCode code, string message, long compactedRevision) : base(code, message)
         {
             this.CompactedRevision = compactedRevision;

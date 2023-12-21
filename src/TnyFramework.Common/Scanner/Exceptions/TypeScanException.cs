@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Runtime.Serialization;
 
 namespace TnyFramework.Common.Scanner.Exceptions
 {
@@ -23,10 +22,6 @@ namespace TnyFramework.Common.Scanner.Exceptions
         }
 
         public TypeScanException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected TypeScanException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }

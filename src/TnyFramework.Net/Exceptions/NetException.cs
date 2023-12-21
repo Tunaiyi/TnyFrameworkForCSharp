@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Runtime.Serialization;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Common;
@@ -35,12 +34,6 @@ namespace TnyFramework.Net.Exceptions
 
         public NetException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
             : base(code ?? CODE, innerException, message)
-        {
-            Body = body!;
-        }
-
-        public NetException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
-            : base(code ?? CODE, info, context)
         {
             Body = body!;
         }

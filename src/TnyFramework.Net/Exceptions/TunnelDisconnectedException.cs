@@ -29,10 +29,6 @@ namespace TnyFramework.Net.Exceptions
         {
         }
 
-        public TunnelDisconnectedException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
-            : base(info, context, code, body)
-        {
-        }
     }
 
 }

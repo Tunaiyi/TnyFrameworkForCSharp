@@ -19,9 +19,7 @@ namespace TnyFramework.Namespace.Etcd.Exceptions
         {
         }
 
-        protected EtcdClosedWatcherException(SerializationInfo info, StreamingContext context) : base(StatusCode.Cancelled, info, context)
-        {
-        }
+
 
         public EtcdClosedWatcherException(string message) : base(StatusCode.Cancelled, message)
         {

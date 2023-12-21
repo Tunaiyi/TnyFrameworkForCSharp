@@ -8,7 +8,7 @@
 
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Net.Base;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint;
 
 namespace TnyFramework.Net.Transport

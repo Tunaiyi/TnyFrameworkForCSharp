@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Runtime.Serialization;
 using TnyFramework.Common.Result;
 
 namespace TnyFramework.Net.Exceptions
@@ -26,15 +25,6 @@ namespace TnyFramework.Net.Exceptions
 
         public EndpointClosedException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
             : base(innerException, code, body, message)
-        {
-        }
-
-        public EndpointClosedException(SerializationInfo info, StreamingContext context, IResultCode? code = null, object? body = null)
-            : base(info, context, code, body)
-        {
-        }
-
-        public EndpointClosedException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
