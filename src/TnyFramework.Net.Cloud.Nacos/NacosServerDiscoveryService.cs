@@ -162,7 +162,7 @@ namespace TnyFramework.Net.Cloud.Nacos
                 netMetadata = JsonConvert.SerializeObject(setting.Metadata);
             }
             metadata.Add(NET_SERVE_NAME, setting.ServeName);
-            metadata.Add(NET_SERVICE, setting.Name);
+            metadata.Add(NET_SERVICE, setting.Service);
             metadata.Add(NET_SERVER_ID, appContext.ServerId + "");
             metadata.Add(NET_APP_TYPE, appContext.AppType);
             metadata.Add(NET_SCOPE_TYPE, appContext.ScopeType);

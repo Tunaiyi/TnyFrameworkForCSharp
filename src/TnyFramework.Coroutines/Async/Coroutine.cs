@@ -62,10 +62,7 @@ namespace TnyFramework.Coroutines.Async
 
         public abstract Task<bool> Shutdown(long millisecondsTimeout);
 
-        public TaskScheduler TaskScheduler()
-        {
-            throw new NotImplementedException();
-        }
+        public TaskScheduler TaskScheduler() => this;
 
         internal abstract void Tracked();
 

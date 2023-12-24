@@ -7,23 +7,8 @@
 // See the Mulan PSL v2 for more details.
 
 using System.Threading.Tasks;
+using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Application;
 
-public interface INetServerGuide : INetServer
-{
-    /// <summary>
-    /// 打开监听
-    /// </summary>
-    Task Open();
-
-    /// <summary>
-    /// 关闭监听
-    /// </summary>
-    Task Close();
-}
-
-public interface INetServerGuide<out TSetting> : INetServerGuide, INetServer<TSetting>
-    where TSetting : IServiceSetting
-{
-}
+public delegate ValueTask<bool> ConnectedHandle(INetTunnel tunnel);

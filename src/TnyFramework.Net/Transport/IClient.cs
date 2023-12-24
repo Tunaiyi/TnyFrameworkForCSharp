@@ -6,24 +6,16 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
 using System.Threading.Tasks;
 
-namespace TnyFramework.Net.Application;
+namespace TnyFramework.Net.Transport;
 
-public interface INetServerGuide : INetServer
+public interface IClient : IConnection
 {
-    /// <summary>
-    /// 打开监听
-    /// </summary>
-    Task Open();
+    Uri Url();
 
-    /// <summary>
-    /// 关闭监听
-    /// </summary>
-    Task Close();
-}
+    ValueTask<bool> Open();
 
-public interface INetServerGuide<out TSetting> : INetServerGuide, INetServer<TSetting>
-    where TSetting : IServiceSetting
-{
+    ValueTask<bool> Reconnect();
 }

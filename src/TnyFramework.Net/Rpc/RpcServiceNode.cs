@@ -18,17 +18,17 @@ using TnyFramework.Net.Endpoint;
 namespace TnyFramework.Net.Rpc
 {
 
-    public class RpcServiceNode : IRpcInvokeNode, IComparable<RpcServiceNode>
+    public class RpcServiceNode(long serverId, RpcServiceSet service)
+        : IRpcInvokeNode, IComparable<RpcServiceNode>
     {
-        private readonly RpcServiceSet service;
-
-        private readonly IDictionary<long, RpcRemoteServiceAccess> remoteServiceAccessMap = new Dictionary<long, RpcRemoteServiceAccess>();
+        private readonly IDictionary<long, RpcRemoteServiceAccess> remoteServiceAccessMap =
+            new Dictionary<long, RpcRemoteServiceAccess>();
 
         private volatile IList<IRpcAccess> orderAccessPoints = ImmutableList.Create<IRpcAccess>();
 
         private readonly ReaderWriterLockSlim rwLock = new();
 
-        public long ServerId { get; }
+        public long ServerId { get; } = (int) serverId;
 
         public bool IsActive() => !orderAccessPoints.IsEmpty();
 
@@ -43,12 +43,6 @@ namespace TnyFramework.Net.Rpc
         private void WriteLock() => rwLock.EnterWriteLock();
 
         private void WriteUnlock() => rwLock.ExitWriteLock();
-
-        public RpcServiceNode(long serverId, RpcServiceSet service)
-        {
-            this.service = service;
-            ServerId = (int) serverId;
-        }
 
         public IList<IRpcAccess> GetOrderAccesses()
         {

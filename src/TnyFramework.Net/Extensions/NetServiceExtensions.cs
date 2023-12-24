@@ -6,24 +6,23 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Threading.Tasks;
+using TnyFramework.Common.Extensions;
+using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Application;
-
-public interface INetServerGuide : INetServer
+namespace TnyFramework.Net.Extensions
 {
-    /// <summary>
-    /// 打开监听
-    /// </summary>
-    Task Open();
 
-    /// <summary>
-    /// 关闭监听
-    /// </summary>
-    Task Close();
-}
+    public static class NetServiceExtensions
+    {
+        public static string ServiceName(this INetService setting)
+        {
+            return setting.Service.IsBlank() ? setting.ServeName : setting.Service;
+        }
 
-public interface INetServerGuide<out TSetting> : INetServerGuide, INetServer<TSetting>
-    where TSetting : IServiceSetting
-{
+        public static string DiscoverService(this INetService setting)
+        {
+            return setting.ServeName.IsBlank() ? setting.Service : setting.ServeName;
+        }
+    }
+
 }

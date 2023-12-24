@@ -22,12 +22,18 @@ using TnyFramework.Common.Logger;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Exceptions;
+using TnyFramework.Net.Extensions;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.DotNetty.Bootstrap
 {
 
-    public class NettyServerGuide : INettyServerGuide
+    public class NettyServerGuide(
+        INettyServerSetting setting,
+        INettyTunnelFactory tunnelFactory,
+        INetworkContext context,
+        IChannelMaker channelMaker)
+        : INettyServerGuide
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NettyServerGuide>();
 
@@ -36,11 +42,11 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
         private const int STATUS_CLOSING = 2;
         private const int STATUS_CLOSE = 3;
 
-        private readonly NettyMessageHandler messageHandler;
+        private readonly NettyMessageHandler messageHandler = new(context);
 
         private readonly IIdGenerator idGenerator = new AutoIncrementIdGenerator();
 
-        private readonly IChannelMaker? channelMaker;
+        private readonly IChannelMaker? channelMaker = channelMaker;
 
         private volatile ConcurrentDictionary<string, IChannel> channels = new ConcurrentDictionary<string, IChannel>();
 
@@ -50,32 +56,23 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         private IEventLoopGroup? workerGroup;
 
-        private readonly INettyServerSetting setting;
-
-        private readonly INettyTunnelFactory tunnelFactory;
-
-        private readonly INetworkContext context;
-
         private int status = STATUS_STOP;
 
-        public NettyServerGuide(INettyServerSetting setting, INettyTunnelFactory tunnelFactory,
-            INetworkContext context, IChannelMaker channelMaker)
-        {
-            this.tunnelFactory = tunnelFactory;
-            this.context = context;
-            this.channelMaker = channelMaker;
-            this.setting = setting;
-            messageHandler = new NettyMessageHandler(context);
-        }
+        public string Service => setting.Service;
 
-        /// <summary>
-        /// 服务名
-        /// </summary>
-        public string Name => setting.Name;
+        public string ServeName => setting.ServeName;
+        // /// <summary>
+        // /// 服务名
+        // /// </summary>
+        // public string Name => setting.Service;
+        //
+        // IServiceSetting INetServer.Setting => Setting;
 
-        IServerSetting INetServer.Setting => Setting;
+        // public INettyServerSetting Setting => setting;
 
-        public INettyServerSetting Setting => setting;
+        public IServiceSetting Setting => setting;
+
+        INettyServerSetting INetServer<INettyServerSetting>.Setting => setting;
 
         /// <summary>
         /// 打开监听
@@ -112,8 +109,10 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 await Task.WhenAll(closeTasks);
                 Interlocked.Exchange(ref status, STATUS_CLOSE);
                 await Task.WhenAll(
-                    bossGroup?.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)) ?? Task.CompletedTask,
-                    workerGroup?.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)) ?? Task.CompletedTask);
+                    bossGroup?.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)) ??
+                    Task.CompletedTask,
+                    workerGroup?.ShutdownGracefullyAsync(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(1)) ??
+                    Task.CompletedTask);
             }
         }
 
@@ -125,7 +124,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 await exist.CloseAsync();
             }
 
-            LOGGER.LogInformation("#NettyServer [ {Name} ] | 正在打开监听{Host}:{Port}", Name, host, port);
+            LOGGER.LogInformation("#NettyServer [ {Name} ] | 正在打开监听{Host}:{Port}", this.ServiceName(), host, port);
             if (IPAddress.Loopback.IsNotNull())
             {
                 IPAddress address;
@@ -144,10 +143,12 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 if (newChannel != null)
                 {
                     channels.TryAdd(addressString, newChannel);
-                    LOGGER.LogInformation("#NettyServer [ {Name} ] | {Host}:{Port} 端口已监听", Name, host, port);
+                    LOGGER.LogInformation("#NettyServer [ {Name} ] | {Host}:{Port} 端口已监听", this.ServiceName(), host,
+                        port);
                 } else
                 {
-                    LOGGER.LogInformation("#NettyServer [ {Name} ] | {Host}:{Port} 端口监听失败", Name, host, port);
+                    LOGGER.LogInformation("#NettyServer [ {Name} ] | {Host}:{Port} 端口监听失败", this.ServiceName(), host,
+                        port);
                 }
             }
         }

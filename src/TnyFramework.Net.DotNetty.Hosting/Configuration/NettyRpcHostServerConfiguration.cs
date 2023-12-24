@@ -15,9 +15,8 @@ using TnyFramework.Net.Hosting.Rpc;
 namespace TnyFramework.Net.DotNetty.Hosting.Configuration
 {
 
-    public class NettyRpcHostServerConfiguration :
-        RpcEndPointHostServerConfiguration<INettyRpcHostServerConfiguration, INettyServerGuideUnitContext, INettyServerGuide, INettyServerSetting,
-            INettyServerGuideSpec>,
+    public class NettyRpcHostServerConfiguration
+        : RpcEndPointHostServerConfiguration<INettyRpcHostServerConfiguration, INettyServerGuideUnitContext, INettyServerGuide, INettyServerSetting, INettyServerGuideSpec>,
         INettyRpcHostServerConfiguration
     {
         public static NettyRpcHostServerConfiguration CreateRpcServer(IServiceCollection unitContainer)
@@ -32,11 +31,11 @@ namespace TnyFramework.Net.DotNetty.Hosting.Configuration
 
         public override INettyRpcHostServerConfiguration RpcServer(INettyServerSetting setting, Action<INettyServerGuideSpec>? action = null)
         {
-            Server(setting.Name, spec => {
+            Server(setting.Service, spec => {
                 spec.Server(setting);
                 action?.Invoke(spec);
             });
-            OnAddRpcServer(setting.Name);
+            OnAddRpcServer(setting.Service);
             return this;
         }
 

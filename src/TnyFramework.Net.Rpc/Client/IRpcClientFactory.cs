@@ -6,17 +6,13 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Hosting.App;
+using System;
+using System.Threading.Tasks;
+using TnyFramework.Net.Transport;
 
-public interface INetAppHostOptions
+namespace TnyFramework.Net.Rpc.Client;
+
+public interface IRpcClientFactory
 {
-    string Name { get; }
-
-    int ServerId { get; }
-
-    string AppType { get; }
-
-    string ScopeType { get; }
-
-    string Locale { get; }
+    public ValueTask<IClient?> Create(Uri uri, int index);
 }

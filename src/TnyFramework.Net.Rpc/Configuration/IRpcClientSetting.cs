@@ -6,24 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
-namespace TnyFramework.Net.Application;
+namespace TnyFramework.Net.Rpc.Configuration;
 
-public interface INetServerGuide : INetServer
+public interface IRpcClientSetting
 {
-    /// <summary>
-    /// 打开监听
-    /// </summary>
-    Task Open();
-
-    /// <summary>
-    /// 关闭监听
-    /// </summary>
-    Task Close();
-}
-
-public interface INetServerGuide<out TSetting> : INetServerGuide, INetServer<TSetting>
-    where TSetting : IServiceSetting
-{
+    List<IRpcServiceSetting> Services { get; }
 }

@@ -13,7 +13,12 @@ namespace TnyFramework.Net.Application
 
     public class ServiceServerSetting : IServiceServerSetting
     {
-        public string Name { get; set; } = "";
+        public string Name {
+            get => Service;
+            set => Service = value;
+        }
+
+        public string Service { get; private set; } = "";
 
         public string ServeName { get; set; } = "";
 

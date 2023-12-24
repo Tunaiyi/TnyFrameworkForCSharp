@@ -73,7 +73,7 @@ namespace TnyFramework.Net.DotNetty.Hosting.Extensions
         {
             builder.ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
-                var appOptions = configuration.BindOptions<NetAppHostOptions>(NetAppHostOptions.APP_ROOT_PATH);
+                var appOptions = configuration.BindOptions<NetApplicationOptions>(NetApplicationOptions.APP_ROOT_PATH);
                 var nettyOptions = configuration.BindOptions<NettyAppHostOptions>(NettyAppHostOptions.NETTY_ROOT_PATH);
                 if (nettyOptions.RpcServer.IsNull())
                     throw new IllegalArgumentException($"NettyAppHostOptions RpcServer 未配置, 配置路径 {NettyAppHostOptions.NETTY_ROOT_PATH}:{nameof(nettyOptions.RpcServer)}");
@@ -100,7 +100,7 @@ namespace TnyFramework.Net.DotNetty.Hosting.Extensions
         {
             return builder.ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
-                var appOptions = configuration.BindOptions<NetAppHostOptions>(NetAppHostOptions.APP_ROOT_PATH);
+                var appOptions = configuration.BindOptions<NetApplicationOptions>(NetApplicationOptions.APP_ROOT_PATH);
                 var nettyOptions = configuration.BindOptions<NettyAppHostOptions>(NettyAppHostOptions.NETTY_ROOT_PATH);
                 if (nettyOptions.NetServer.IsNull())
                     throw new IllegalArgumentException($"NettyAppHostOptions NetServer 未配置, 配置路径 {NettyAppHostOptions.NETTY_ROOT_PATH}:{nameof(nettyOptions.NetServer)}");

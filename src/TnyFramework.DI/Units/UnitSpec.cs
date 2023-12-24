@@ -149,7 +149,6 @@ namespace TnyFramework.DI.Units
                 if (creator != null)
                 {
                     var newOne = creator.Invoke(context);
-                    ;
                     unit = newOne;
                     return newOne;
                 }
@@ -164,10 +163,15 @@ namespace TnyFramework.DI.Units
                 if (!created && unit != null)
                 {
                     services.AddSingletonUnit(unitName, unit);
+                    OnRegister(services, unitName, unit);
                     created = true;
                 }
             }
             throw new NullReferenceException($"{nameof(TUnit)} is null");
+        }
+
+        protected virtual void OnRegister(IServiceCollection services, string unitName, TUnit unit)
+        {
         }
     }
 

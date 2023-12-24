@@ -6,24 +6,22 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Threading.Tasks;
-
-namespace TnyFramework.Net.Application;
-
-public interface INetServerGuide : INetServer
+namespace TnyFramework.Net.Application
 {
-    /// <summary>
-    /// 打开监听
-    /// </summary>
-    Task Open();
 
-    /// <summary>
-    /// 关闭监听
-    /// </summary>
-    Task Close();
-}
+    public class NetApplicationOptions : INetApplicationOptions
+    {
+        public static readonly string APP_ROOT_PATH = "Tny:App";
 
-public interface INetServerGuide<out TSetting> : INetServerGuide, INetServer<TSetting>
-    where TSetting : IServiceSetting
-{
+        public string Name { get; set; } = "";
+
+        public int ServerId { get; set; }
+
+        public string AppType { get; set; } = "default";
+
+        public string ScopeType { get; set; } = "online";
+
+        public string Locale { get; set; } = "zh-CN";
+    }
+
 }

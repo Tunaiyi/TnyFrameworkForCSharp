@@ -182,8 +182,9 @@ namespace TnyFramework.DI.Extensions
             foreach (var type in types)
             {
                 services.AddSingletonServiceInstance(instance, type);
-                var unit = Unit.Create(type, instance, name);
-                services.AddSingleton(Unit.UnitType(type), unit);
+                // var unit = Unit.Create(type, instance, name);
+                // services.AddSingleton(Unit.UnitType(type), unit);
+                services.AddKeyedSingleton(type, name, instance);
             }
             return services;
         }

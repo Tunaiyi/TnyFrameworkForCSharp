@@ -66,13 +66,13 @@ public class NetHostedService : IHostedService
                 {
                     try
                     {
-                        logger.LogInformation("[{Ins}] RegisterInstance", server.Name);
+                        logger.LogInformation("[{Ins}] RegisterInstance", server.Service);
                         await serverDiscoveryService.RegisterInstance(application, server);
-                        logger.LogInformation("[{Ins}] RegisterInstance success", server.Name);
+                        logger.LogInformation("[{Ins}] RegisterInstance success", server.Service);
                         break;
                     } catch (Exception e)
                     {
-                        logger.LogError(e, "{Ins} RegisterInstance exception", server.Name);
+                        logger.LogError(e, "{Ins} RegisterInstance exception", server.Service);
                         await Task.Delay(3000, cancellationToken);
                     }
                 }
@@ -95,12 +95,12 @@ public class NetHostedService : IHostedService
         {
             try
             {
-                logger.LogInformation("[{Ins}] DeregisterInstance", server.Name);
+                logger.LogInformation("[{Ins}] DeregisterInstance", server.Service);
                 await serverDiscoveryService.DeregisterInstance(server);
-                logger.LogInformation("[{Ins}] DeregisterInstance success", server.Name);
+                logger.LogInformation("[{Ins}] DeregisterInstance success", server.Service);
             } catch (Exception e)
             {
-                logger.LogError(e, "{Ins} DeregisterInstance exception", server.Name);
+                logger.LogError(e, "{Ins} DeregisterInstance exception", server.Service);
             }
 
         }

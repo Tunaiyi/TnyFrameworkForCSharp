@@ -9,12 +9,11 @@
 namespace TnyFramework.Net.Application
 {
 
-    public interface INetServer
+    public interface INetServer : INetService
     {
-        /// <summary>
-        /// 服务名
-        /// </summary>
-        string Name { get; }
+        string INetService.Service => Setting.Service;
+
+        string INetService.ServeName => Setting.ServeName;
 
         /// <summary>
         /// 是否启动
@@ -22,11 +21,11 @@ namespace TnyFramework.Net.Application
         /// <returns></returns>
         bool IsOpen();
 
-        IServerSetting Setting { get; }
+        IServiceSetting Setting { get; }
     }
 
     public interface INetServer<out TSetting> : INetServer
-        where TSetting : IServerSetting
+        where TSetting : IServiceSetting
     {
         /// <summary>
         /// 设置

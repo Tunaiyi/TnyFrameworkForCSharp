@@ -11,7 +11,7 @@ using TnyFramework.Common.Extensions;
 namespace TnyFramework.Net.Application
 {
 
-    public interface IEndPointServerSetting : IServerSetting
+    public interface IEndPointServerSetting : IServiceSetting
     {
         /// <summary>
         /// 绑定域名
@@ -29,12 +29,5 @@ namespace TnyFramework.Net.Application
         string Scheme { get; }
     }
 
-    public static class ServerBootstrapSettingExtensions
-    {
-        public static string ServiceName(this IEndPointServerSetting self)
-        {
-            return self.Name.IsBlank() ? self.ServeName : self.Name;
-        }
-    }
 
 }

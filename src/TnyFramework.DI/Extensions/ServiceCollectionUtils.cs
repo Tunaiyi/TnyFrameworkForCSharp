@@ -18,7 +18,7 @@ namespace TnyFramework.DI.Extensions
 
     public static class ServiceCollectionUtils
     {
-        public static IList<Type> FindRegisterTypes(Type checkType, bool force = true)
+        public static IList<Type> FindRegisterTypes(Type? checkType, bool force = true)
         {
             if (checkType == null || checkType == typeof(object))
             {

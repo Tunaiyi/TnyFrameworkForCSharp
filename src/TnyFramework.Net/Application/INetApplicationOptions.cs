@@ -6,22 +6,17 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Hosting.App
+namespace TnyFramework.Net.Application;
+
+public interface INetApplicationOptions
 {
+    string Name { get; }
 
-    public class NetAppHostOptions : INetAppHostOptions
-    {
-        public static readonly string APP_ROOT_PATH = "Tny:Net:App";
+    int ServerId { get; }
 
-        public string Name { get; set; } = "";
+    string AppType { get; }
 
-        public int ServerId { get; set; }
+    string ScopeType { get; }
 
-        public string AppType { get; set; } = "default";
-
-        public string ScopeType { get; set; } = "online";
-
-        public string Locale { get; set; } = "zh-CN";
-    }
-
+    string Locale { get; }
 }

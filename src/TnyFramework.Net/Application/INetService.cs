@@ -6,20 +6,17 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Application
+namespace TnyFramework.Net.Application;
+
+public interface INetService
 {
+    /// <summary>
+    /// 服务名
+    /// </summary>
+    string Service { get; }
 
-    public interface IServerSetting
-    {
-        /// <summary>
-        /// 服务名
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// 服务发现名
-        /// </summary>
-        string ServeName { get; }
-    }
-
+    /// <summary>
+    /// 服务发现名
+    /// </summary>
+    string ServeName { get; }
 }

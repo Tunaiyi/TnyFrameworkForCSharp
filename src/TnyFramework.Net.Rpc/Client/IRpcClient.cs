@@ -7,23 +7,17 @@
 // See the Mulan PSL v2 for more details.
 
 using System.Threading.Tasks;
+using TnyFramework.Net.Endpoint;
 
-namespace TnyFramework.Net.Application;
+namespace TnyFramework.Net.Rpc.Client;
 
-public interface INetServerGuide : INetServer
+public interface IRpcClient : IEndpoint
 {
-    /// <summary>
-    /// 打开监听
-    /// </summary>
     Task Open();
 
-    /// <summary>
-    /// 关闭监听
-    /// </summary>
-    Task Close();
-}
+    Task Reconnect();
 
-public interface INetServerGuide<out TSetting> : INetServerGuide, INetServer<TSetting>
-    where TSetting : IServiceSetting
-{
+    Task Disconnect();
+
+    new Task Close();
 }

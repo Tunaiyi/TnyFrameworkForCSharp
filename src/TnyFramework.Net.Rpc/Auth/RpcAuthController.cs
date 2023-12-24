@@ -11,6 +11,7 @@ using TnyFramework.Common.Logger;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Command.Dispatcher;
+using TnyFramework.Net.Extensions;
 
 namespace TnyFramework.Net.Rpc.Auth
 {

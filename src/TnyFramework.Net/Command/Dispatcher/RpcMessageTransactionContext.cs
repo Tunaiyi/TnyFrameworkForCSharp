@@ -30,7 +30,8 @@ namespace TnyFramework.Net.Command.Dispatcher
             return new RpcMessageEnterInvocationContext(tunnel, message, async);
         }
 
-        public static IRpcMessageConsumerContext CreateExit(IEndpoint endpoint, MessageContent content, RpcMonitor rpcMonitor, bool async = true)
+        public static IRpcMessageConsumerContext CreateExit(IEndpoint endpoint, MessageContent content,
+            RpcMonitor rpcMonitor, bool async = true)
         {
             return new RpcMessageExitInvocationContext(endpoint, content, async, rpcMonitor);
         }
@@ -50,9 +51,14 @@ namespace TnyFramework.Net.Command.Dispatcher
         //     return $"[{message.ProtocolId}@{message.Mode.Mark()}]{operation.Name}.{method}";
         // }
 
+        public static string RpcOperation(Type type, string method, IMessageSubject message)
+        {
+            return "[" + message.ProtocolId + "@" + message.Mode.Mark() + "]" + type.Name + "." + method;
+        }
+
         public static string RpcOperation(string method, IMessageSubject message)
         {
-            return $"[{message.ProtocolId}@{message.Mode.Mark()}]{method}";
+            return "[" + message.ProtocolId + "@" + message.Mode.Mark() + "]" + method;
         }
 
         public static string ReturnOperation(IMessageSubject message)

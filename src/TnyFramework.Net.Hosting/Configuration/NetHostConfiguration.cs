@@ -236,13 +236,18 @@ namespace TnyFramework.Net.Hosting.Configuration
             foreach (var builder in netServerGuideBuilders)
             {
                 var guide = builder.BuildGuide();
+                OnPostInitialize(guide);
                 guides.Add(guide);
-                UnitContainer.AddSingletonUnit(guide.Name, guide);
+                UnitContainer.AddSingletonUnit(guide.Service, guide);
             }
 
             UnitContainer.BindSingleton(provider => new NetApplication(provider, guides.Select(g => (INetServerGuide) g).ToList()));
             initialized = true;
             return Self;
+        }
+
+        protected virtual void OnPostInitialize(TGuide guide)
+        {
         }
     }
 
