@@ -36,7 +36,7 @@ public class EventsTest
         private readonly IListenEvent<ITestListener, TestObject, int> @event =
             Events.Create<ITestListener, TestObject, int>((l, p) => l.OnTest(p.source, p.arg1));
 
-        public IEvent<ITestListener> Event => @event;
+        public IEventWatch<ITestListener> Event => @event;
 
         public void Handle(int value)
         {
@@ -68,7 +68,7 @@ public class EventsTest
             foreach (var l in listener)
             {
                 _LOGGER.LogInformation("{source} OnTest {value} Remove {listen}", source, value, l);
-                source.Event.RemoveListener(l);
+                source.Event.Remove(l);
             }
         }
     }
@@ -85,12 +85,12 @@ public class EventsTest
         var p6 = new Print("p6");
         var remove = new Remove(p4, p5);
         remove.Listener.Add(remove);
-        obj.Event.AddListener(p1);
-        obj.Event.AddListener(p2);
-        obj.Event.AddListener(p3);
-        obj.Event.AddListener(remove);
-        obj.Event.AddListener(p5);
-        obj.Event.AddListener(p6);
+        obj.Event.Add(p1);
+        obj.Event.Add(p2);
+        obj.Event.Add(p3);
+        obj.Event.Add(remove);
+        obj.Event.Add(p5);
+        obj.Event.Add(p6);
 
         obj.Handle(-1);
         _LOGGER.LogInformation("========================================================================");

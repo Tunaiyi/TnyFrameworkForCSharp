@@ -6,13 +6,12 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 
 namespace TnyFramework.Common.Event.Notices;
 
-public abstract class BaseEvent<TListener, TEvent> : IEvent<TListener>, IDisposable
+public abstract class BaseEvent<TListener, TEvent> : IEvent<TListener, TEvent>
     where TEvent : BaseEvent<TListener, TEvent>
 {
     protected static readonly ILogger LOGGER = LogFactory.Logger<TEvent>();
@@ -30,7 +29,7 @@ public abstract class BaseEvent<TListener, TEvent> : IEvent<TListener>, IDisposa
         this.parent = parent;
     }
 
-    public void AddListener(TListener listener)
+    public void Add(TListener listener)
     {
         var newNode = EventListenerNode<TListener>.Create(listener);
         if (firstNode == null)
@@ -43,7 +42,7 @@ public abstract class BaseEvent<TListener, TEvent> : IEvent<TListener>, IDisposa
         }
     }
 
-    public void RemoveListener(TListener listener)
+    public void Remove(TListener listener)
     {
         if (HasHandler)
         {
@@ -51,7 +50,7 @@ public abstract class BaseEvent<TListener, TEvent> : IEvent<TListener>, IDisposa
         }
     }
 
-    public void RemoveAllListener()
+    public void RemoveAll()
     {
         if (!HasHandler)
         {
@@ -81,7 +80,7 @@ public abstract class BaseEvent<TListener, TEvent> : IEvent<TListener>, IDisposa
 
     public void Dispose()
     {
-        RemoveAllListener();
+        RemoveAll();
         parent = null;
         OnDispose();
     }

@@ -10,28 +10,27 @@ using System;
 
 namespace TnyFramework.Common.Event.Notices;
 
-public interface IEvent<in TListener>
+public interface IEventWatch<in TListener>
 {
     /// <summary>
     /// 添加监听
     /// </summary>
     /// <param name="listenerRef"></param>
-    void AddListener(TListener listenerRef);
+    void Add(TListener listenerRef);
 
     /// <summary>
     /// 移除监听
     /// </summary>
     /// <param name="listener"></param>
-    void RemoveListener(TListener listener);
+    void Remove(TListener listener);
 
     /// <summary>
     /// 移除所有监听
     /// </summary>
-    void RemoveAllListener();
+    void RemoveAll();
 }
 
-public interface IEvent<in TListener, out TEvent> : IEvent<TListener>, IDisposable
+public interface IEvent<in TListener, out TEvent> : IEventWatch<TListener>, IDisposable
     where TEvent : IEvent<TListener, TEvent>
 {
-    public TEvent ForkChild();
 }

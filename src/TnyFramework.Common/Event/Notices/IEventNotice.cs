@@ -8,7 +8,13 @@
 
 namespace TnyFramework.Common.Event.Notices;
 
-public interface IEventNotice<in TSource >
+public interface IEventNotice<out TEvent>
+{
+    public TEvent ForkChild();
+}
+
+public interface IEventNotice<in TSource, out TEvent>
+    : IEventNotice<TEvent>
 {
     /// <summary>
     /// trigger
@@ -16,7 +22,8 @@ public interface IEventNotice<in TSource >
     public void Notify(TSource source);
 }
 
-public interface IEventNotice<in TSource, in TArg1>
+public interface IEventNotice<in TSource, in TArg1, out TEvent>
+    : IEventNotice<TEvent>
 {
     /// <summary>
     /// trigger
@@ -24,7 +31,8 @@ public interface IEventNotice<in TSource, in TArg1>
     public void Notify(TSource source, TArg1 arg1);
 }
 
-public interface IEventNotice<in TSource, in TArg1, in TArg2>
+public interface IEventNotice<in TSource, in TArg1, in TArg2, out TEvent>
+    : IEventNotice<TEvent>
 {
     /// <summary>
     /// trigger
@@ -32,7 +40,8 @@ public interface IEventNotice<in TSource, in TArg1, in TArg2>
     public void Notify(TSource source, TArg1 arg1, TArg2 arg2);
 }
 
-public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3>
+public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3, out TEvent>
+    : IEventNotice<TEvent>
 {
     /// <summary>
     /// trigger
@@ -40,7 +49,8 @@ public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3>
     public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3);
 }
 
-public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3, in TArg4>
+public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3, in TArg4, out TEvent>
+    : IEventNotice<TEvent>
 {
     /// <summary>
     /// trigger
@@ -48,7 +58,8 @@ public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3, in TArg4
     public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4);
 }
 
-public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3, in TArg4, in TArg5>
+public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3, in TArg4, in TArg5, out TEvent>
+    : IEventNotice<TEvent>
 {
     /// <summary>
     /// trigger
@@ -56,7 +67,8 @@ public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3, in TArg4
     public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, TArg5 arg5);
 }
 
-public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3, in TArg4, in TArg5, in TArg6>
+public interface IEventNotice<in TSource, in TArg1, in TArg2, in TArg3, in TArg4, in TArg5, in TArg6, out TEvent>
+    : IEventNotice<TEvent>
 {
     /// <summary>
     /// trigger
