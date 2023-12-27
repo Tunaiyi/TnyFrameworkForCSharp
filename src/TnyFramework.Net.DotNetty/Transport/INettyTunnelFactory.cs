@@ -18,7 +18,7 @@ namespace TnyFramework.Net.DotNetty.Transport
     /// </summary>
     public interface INettyTunnelFactory
     {
-        INetTunnel Create(long id, IChannel channel, INetworkContext context);
+        INetTunnel Create(long id, IChannel channel, INetworkContext context, INetService service);
     }
 
 }

@@ -7,6 +7,7 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Event.Buses;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;

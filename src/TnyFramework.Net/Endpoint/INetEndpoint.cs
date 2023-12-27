@@ -8,6 +8,7 @@
 
 using System.Threading.Tasks;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Event.Buses;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Endpoint.Event;

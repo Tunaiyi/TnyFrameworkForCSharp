@@ -19,7 +19,7 @@
 
     <ItemGroup>
         <AssemblyAttribute Include="TnyFramework.Common.Scanner.Attributes.AssemblyTypeSelectorAttributes">
-            <_Parameter1>TnyFramework.Net.Configuration.Selectors.RpcTypeSelector</_Parameter1>
+            <_Parameter1>TnyFramework.Net.Hosting.Selectors.RpcTypeSelector</_Parameter1>
         </AssemblyAttribute>
     </ItemGroup>
     

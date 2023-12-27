@@ -10,6 +10,6 @@ using TnyFramework.Net.Application;
 
 namespace TnyFramework.Net.DotNetty.Bootstrap;
 
-public interface INettyServerGuide : INetServerGuide<INettyServerSetting>
+public interface INettyServerGuide : IServerGuide<INettyServerSetting>
 {
 }

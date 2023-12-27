@@ -14,7 +14,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
 
-namespace TnyFramework.Common.Event
+namespace TnyFramework.Common.Event.Buses
 {
 
     internal class EventBus<THandler> : IEventBus<THandler>

@@ -28,7 +28,7 @@ namespace TnyFramework.Net.Rpc
 
         private readonly ReaderWriterLockSlim rwLock = new();
 
-        public long ServerId { get; } = (int) serverId;
+        public long ServerId { get; } = serverId;
 
         public bool IsActive() => !orderAccessPoints.IsEmpty();
 

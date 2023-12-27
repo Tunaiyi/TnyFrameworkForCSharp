@@ -13,17 +13,25 @@ using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher;
-using TnyFramework.Net.Extensions;
 using TnyFramework.Net.Rpc.Auth;
 using TnyFramework.Net.Rpc.Configuration;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Rpc.Client;
 
-public class RpcClientFactory(IRpcServiceSetting setting, INetApplicationOptions application, INetClientGuide guide)
-    : IRpcClientFactory
+public class RpcClientFactory : IRpcClientFactory
 {
     private readonly ILogger logger = LogFactory.Logger<RpcClientFactory>();
+    private readonly IRpcRemoteServiceSetting setting;
+    private readonly INetApplicationOptions application;
+    private readonly IClientGuide guide;
+
+    public RpcClientFactory(IRpcRemoteServiceSetting setting, INetApplicationOptions application, IClientGuide guide)
+    {
+        this.setting = setting;
+        this.application = application;
+        this.guide = guide;
+    }
 
     public async ValueTask<IClient?> Create(Uri uri, int index)
     {
@@ -34,12 +42,12 @@ public class RpcClientFactory(IRpcServiceSetting setting, INetApplicationOptions
             {
                 return null;
             }
-            logger.LogInformation("Rpc [{service}] Client {uri} connect success", guide.ServiceName(), uri);
+            logger.LogInformation("Rpc [{service}] Client {uri} connect success", guide.Service, uri);
             return client;
         } catch (Exception e)
         {
-            logger.LogError(e, "Rpc [{service}] Client {uri} connect failed", guide.ServiceName(), uri);
-            Console.WriteLine(e);
+            logger.LogError(e, "Rpc [{service}] Client {uri} connect failed", guide.Service, uri);
+            client.Close();
             throw;
         }
     }
@@ -51,7 +59,7 @@ public class RpcClientFactory(IRpcServiceSetting setting, INetApplicationOptions
 
     private async ValueTask<bool> ConnectedHandle(INetTunnel tunnel, int index)
     {
-        var username = setting.Username.IsNotBlank() ? setting.Username : guide.ServiceName();
+        var username = setting.Username.IsNotBlank() ? setting.Username : guide.Service;
         var serviceType = RpcServiceType.ForService(username);
         var serverId = application.ServerId;
         var id = RpcAccessIdentify.FormatId(serviceType, serverId, index);

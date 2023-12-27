@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using Etcdserverpb;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Event.Buses;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Namespace.Exceptions;

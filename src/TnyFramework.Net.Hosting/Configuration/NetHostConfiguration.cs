@@ -32,7 +32,7 @@ namespace TnyFramework.Net.Hosting.Configuration
 {
 
     public abstract class NetHostConfiguration<TConfiguration, TContext, TGuide, TSpec> : INetHostConfiguration<TConfiguration>
-        where TGuide : INetServerGuide
+        where TGuide : IServerGuide
         where TContext : INetGuideUnitContext
         where TConfiguration : INetHostConfiguration<TConfiguration>
         where TSpec : INetGuideSpec<TGuide, TContext, TSpec>
@@ -241,7 +241,7 @@ namespace TnyFramework.Net.Hosting.Configuration
                 UnitContainer.AddSingletonUnit(guide.Service, guide);
             }
 
-            UnitContainer.BindSingleton(provider => new NetApplication(provider, guides.Select(g => (INetServerGuide) g).ToList()));
+            UnitContainer.BindSingleton(provider => new NetApplication(provider, guides.Select(g => (IServerGuide) g).ToList()));
             initialized = true;
             return Self;
         }

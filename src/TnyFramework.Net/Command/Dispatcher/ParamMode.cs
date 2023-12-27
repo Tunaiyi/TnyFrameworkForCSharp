@@ -23,8 +23,6 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         Endpoint,
 
-        Setting,
-
         Identify,
 
         IdentifyToken,

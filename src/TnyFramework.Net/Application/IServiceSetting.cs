@@ -9,8 +9,17 @@
 namespace TnyFramework.Net.Application
 {
 
-    public interface IServiceSetting : INetService
+    public interface IServiceSetting
     {
+        /// <summary>
+        /// 服务名
+        /// </summary>
+        string Service { get; }
+
+        /// <summary>
+        /// 服务发现名
+        /// </summary>
+        string ServeName { get; }
     }
 
 }

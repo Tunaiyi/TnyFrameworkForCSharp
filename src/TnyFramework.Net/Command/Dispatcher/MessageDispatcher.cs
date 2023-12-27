@@ -10,6 +10,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Event.Buses;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Command.Auth;

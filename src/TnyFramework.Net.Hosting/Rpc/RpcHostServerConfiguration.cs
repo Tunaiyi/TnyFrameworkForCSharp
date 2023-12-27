@@ -23,7 +23,7 @@ namespace TnyFramework.Net.Hosting.Rpc
         : NetHostConfiguration<TConfiguration, TContext, TGuide, TSpec>,
             IRpcHostConfiguration<TGuide, TSetting, TContext, TConfiguration, TSpec>
         where TSetting : IServiceServerSetting
-        where TGuide : INetServerGuide<TSetting>
+        where TGuide : IServerGuide<TSetting>
         where TContext : INetGuideUnitContext
         where TConfiguration : IRpcHostConfiguration<TGuide, TSetting, TContext, TConfiguration, TSpec>
         where TSpec : INetGuideSpec<TGuide, TContext, TSpec>

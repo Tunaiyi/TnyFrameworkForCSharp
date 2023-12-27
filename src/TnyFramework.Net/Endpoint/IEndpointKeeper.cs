@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Event.Buses;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint.Event;
 using TnyFramework.Net.Message;

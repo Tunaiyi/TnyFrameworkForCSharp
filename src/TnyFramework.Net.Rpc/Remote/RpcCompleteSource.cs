@@ -24,17 +24,17 @@ namespace TnyFramework.Net.Rpc.Remote
 
     public static class RpcInvokerFastInvokers
     {
+        private static readonly MethodInfo RCP_RESULT_CREATE_METHOD = typeof(RpcInvokerFastInvokers).GetMethods()
+            .First(info => info is {Name: "Result", IsGenericMethod: true});
+
         /// <summary>
         /// 请求结果
         /// </summary>
         /// <returns>结果</returns>
-        public static IRpcResult<TBody> Result<TBody>(IResultCode code, TBody body)
+        public static IRpcResult<TBody> Result<TBody>(IResultCode code, IMessage body)
         {
-            return RpcResults.Result(code, body);
+            return RpcResults.Result<TBody>(code, body);
         }
-
-        private static readonly MethodInfo RCP_RESULT_CREATE_METHOD = typeof(RpcInvokerFastInvokers).GetMethods()
-            .First(info => info is {Name: "Result", IsGenericMethod: true});
 
         public static IFastInvoker RcpResultCreator(Type resultType)
         {
@@ -60,6 +60,7 @@ namespace TnyFramework.Net.Rpc.Remote
         void SetResult(IMessage? message);
 
         Task Task { get; }
+
     }
 
     public class RpcCompleteSource<TBody> : IRpcCompleteSource

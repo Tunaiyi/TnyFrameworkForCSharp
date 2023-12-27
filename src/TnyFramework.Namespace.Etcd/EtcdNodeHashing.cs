@@ -16,6 +16,7 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Codec;
 using TnyFramework.Codec.Newtonsoft.Json;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Event.Buses;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;

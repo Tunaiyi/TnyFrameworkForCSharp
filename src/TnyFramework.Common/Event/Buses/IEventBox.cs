@@ -9,7 +9,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace TnyFramework.Common.Event
+namespace TnyFramework.Common.Event.Buses
 {
 
     public interface IEventBox<in THandler> : IEventBus

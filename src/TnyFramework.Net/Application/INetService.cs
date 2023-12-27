@@ -15,8 +15,4 @@ public interface INetService
     /// </summary>
     string Service { get; }
 
-    /// <summary>
-    /// 服务发现名
-    /// </summary>
-    string ServeName { get; }
 }

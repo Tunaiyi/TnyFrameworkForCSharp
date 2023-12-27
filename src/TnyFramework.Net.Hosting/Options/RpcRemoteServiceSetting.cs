@@ -10,15 +10,13 @@ using TnyFramework.Net.Rpc.Configuration;
 
 namespace TnyFramework.Net.Hosting.Options;
 
-public class RpcServiceSetting : IRpcServiceSetting
+public class RpcRemoteServiceSetting : IRpcRemoteServiceSetting
 {
     // rpc服务名
     public string Service { get; set; } = "";
 
     // 服务发现-服务器服务名
     public string ServeName { get; set; } = "";
-
-    public bool Discovery { get; set; }
 
     public string Username { get; set; } = "";
 
@@ -30,9 +28,9 @@ public class RpcServiceSetting : IRpcServiceSetting
 
     public string Guide { get; set; } = "";
 
-    public int ConnectSize { get; set; }
+    public int ConnectSize { get; set; } = 1;
 
-    public long ConnectTimeout { get; set; }
+    public long ConnectTimeout { get; set; } = 10000;
 
-    public long AuthenticateTimeout { get; set; }
+    public long AuthenticateTimeout { get; set; } = 30000;
 }

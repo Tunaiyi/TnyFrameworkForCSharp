@@ -33,7 +33,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
         INettyTunnelFactory tunnelFactory,
         INetworkContext context,
         IChannelMaker channelMaker)
-        : INettyServerGuide
+        : NetServer<INettyServerSetting>, INettyServerGuide
     {
         private static readonly ILogger LOGGER = LogFactory.Logger<NettyServerGuide>();
 
@@ -58,21 +58,9 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
 
         private int status = STATUS_STOP;
 
-        public string Service => setting.Service;
+        public string Service => setting.ServiceName();
 
-        public string ServeName => setting.ServeName;
-        // /// <summary>
-        // /// 服务名
-        // /// </summary>
-        // public string Name => setting.Service;
-        //
-        // IServiceSetting INetServer.Setting => Setting;
-
-        // public INettyServerSetting Setting => setting;
-
-        public IServiceSetting Setting => setting;
-
-        INettyServerSetting INetServer<INettyServerSetting>.Setting => setting;
+        public override INettyServerSetting ServiceSetting => setting;
 
         /// <summary>
         /// 打开监听
@@ -88,7 +76,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
             }
         }
 
-        public bool IsOpen()
+        public override bool IsOpen()
         {
             return channels.Values.Any(channel => channel.Active);
         }
@@ -124,7 +112,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 await exist.CloseAsync();
             }
 
-            LOGGER.LogInformation("#NettyServer [ {Name} ] | 正在打开监听{Host}:{Port}", this.ServiceName(), host, port);
+            LOGGER.LogInformation("#NettyServer [ {Name} ] | 正在打开监听{Host}:{Port}", Discovery, host, port);
             if (IPAddress.Loopback.IsNotNull())
             {
                 IPAddress address;
@@ -143,11 +131,11 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                 if (newChannel != null)
                 {
                     channels.TryAdd(addressString, newChannel);
-                    LOGGER.LogInformation("#NettyServer [ {Name} ] | {Host}:{Port} 端口已监听", this.ServiceName(), host,
+                    LOGGER.LogInformation("#NettyServer [ {Name} ] | {Host}:{Port} 端口已监听", Discovery, host,
                         port);
                 } else
                 {
-                    LOGGER.LogInformation("#NettyServer [ {Name} ] | {Host}:{Port} 端口监听失败", this.ServiceName(), host,
+                    LOGGER.LogInformation("#NettyServer [ {Name} ] | {Host}:{Port} 端口监听失败", Discovery, host,
                         port);
                 }
             }
@@ -180,7 +168,7 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                         channelMaker?.InitChannel(channel);
                         channel.Pipeline.AddLast("MessageHandler", messageHandler);
                         var id = idGenerator.Generate();
-                        var tunnel = tunnelFactory.Create(id, channel, context);
+                        var tunnel = tunnelFactory.Create(id, channel, context, this);
                         tunnel.Open();
                     } catch (Exception e)
                     {
@@ -188,7 +176,6 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                         channel.CloseAsync();
                         throw;
                     }
-
                 }));
             return serverBootstrap;
         }

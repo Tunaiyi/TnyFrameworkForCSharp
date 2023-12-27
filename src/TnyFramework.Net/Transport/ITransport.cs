@@ -39,8 +39,7 @@ namespace TnyFramework.Net.Transport
         /// <param name="messageContent">消息上下文</param>
         /// <param name="waitWritten"></param>
         /// <returns></returns>
-        ValueTask Write(IMessageAllocator allocator, MessageContent messageContent, bool waitWritten = false) =>
-            Write(allocator.Allocate, messageContent, waitWritten);
+        ValueTask Write(IMessageAllocator allocator, MessageContent messageContent, bool waitWritten = false) => Write(allocator.Allocate, messageContent, waitWritten);
     }
 
 }

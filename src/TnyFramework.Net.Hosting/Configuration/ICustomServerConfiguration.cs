@@ -17,16 +17,10 @@ namespace TnyFramework.Net.Hosting.Configuration
         void Configure(THostConfiguration configuration);
     }
 
-    public class ActionCustomServerConfiguration<THostConfiguration> : ICustomServerConfiguration<THostConfiguration>
+    public class ActionCustomServerConfiguration<THostConfiguration>(Action<THostConfiguration> configurator)
+        : ICustomServerConfiguration<THostConfiguration>
         where THostConfiguration : INetHostConfiguration<THostConfiguration>
     {
-        private readonly Action<THostConfiguration> configurator;
-
-        public ActionCustomServerConfiguration(Action<THostConfiguration> configurator)
-        {
-            this.configurator = configurator;
-        }
-
         public void Configure(THostConfiguration configuration)
         {
             configurator.Invoke(configuration);

@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Event.Buses;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Auth;
@@ -55,7 +56,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     continue;
                 foreach (var protocol in limit)
                 {
-                    this.authenticationValidators.Add(protocol, authenticateValidator);
+                    authenticationValidators.Add(protocol, authenticateValidator);
                 }
             }
             // commandExecuteEvent = COMMAND_EXECUTE_EVENT_BUS.ForkChild();

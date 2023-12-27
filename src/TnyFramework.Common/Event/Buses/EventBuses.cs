@@ -8,7 +8,7 @@
 
 using System;
 
-namespace TnyFramework.Common.Event
+namespace TnyFramework.Common.Event.Buses
 {
 
     /// <summary>
@@ -22,7 +22,7 @@ namespace TnyFramework.Common.Event
             return new EventBus<THandler>();
         }
 
-        public static IEventBus<T> Event<T>(this object invoker, ref IEventBus<T> eventBus) where T : Delegate
+        public static IEventBus<T> Event<T>(this object invoker, ref IEventBus<T>? eventBus) where T : Delegate
         {
             if (eventBus != null)
             {
@@ -37,7 +37,7 @@ namespace TnyFramework.Common.Event
             return eventBus;
         }
 
-        public static IEventBus<T> ForkEvent<T>(this object invoker, IEventBus<T> parentBus, ref IEventBus<T> eventBus)
+        public static IEventBus<T> ForkEvent<T>(this object invoker, IEventBus<T> parentBus, ref IEventBus<T>? eventBus)
             where T : Delegate
         {
             if (eventBus != null)

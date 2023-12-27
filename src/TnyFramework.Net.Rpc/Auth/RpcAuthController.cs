@@ -8,31 +8,23 @@
 
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
-using TnyFramework.Net.Application;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Command.Dispatcher;
-using TnyFramework.Net.Extensions;
+using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Rpc.Auth
 {
 
     [RpcController]
-    public class RpcAuthController : IController
+    public class RpcAuthController(IRpcAuthService rpcAuthService) : IController
     {
-        private readonly IRpcAuthService rpcAuthService;
-
         private static readonly ILogger LOGGER = LogFactory.Logger<RpcAuthController>();
-
-        public RpcAuthController(IRpcAuthService rpcAuthService)
-        {
-            this.rpcAuthService = rpcAuthService;
-        }
 
         [RpcRequest(RpcProtocol.RPC_AUTH_4_AUTHENTICATE)]
         [AuthenticationRequired(typeof(RpcPasswordValidator))]
-        public IRpcResult<string> Authenticate(IEndPointServerSetting setting, [IdentifyToken] RpcAccessIdentify id)
+        public IRpcResult<string> Authenticate(ITunnel tunnel, [IdentifyToken] RpcAccessIdentify id)
         {
-            var serviceType = RpcServiceType.ForService(setting.ServiceName());
+            var serviceType = RpcServiceType.ForService(tunnel.Service);
             var token = rpcAuthService.CreateToken(serviceType, id);
             LOGGER.LogInformation("Rpc执行 << [{id}] 认证成功", id);
             return RpcResults.Success(token);

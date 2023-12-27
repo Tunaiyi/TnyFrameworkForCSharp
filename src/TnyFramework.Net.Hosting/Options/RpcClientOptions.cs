@@ -13,16 +13,16 @@ using TnyFramework.Net.Rpc.Configuration;
 
 namespace TnyFramework.Net.Hosting.Options;
 
-public class RpcClientOptions : IRpcClientSetting
+public class RpcClientOptions : IRpcClientOptions
 {
-    public static readonly string RPC_CLIENT_ROOT_PATH = ConfigurationPath.Combine("Tny", "Net", "Rpc", "Client");
+    public static readonly string RPC_CLIENT_ROOT_PATH = ConfigurationPath.Combine("Tny", "Rpc", "Client");
 
-    private List<RpcServiceSetting> services = [];
+    private List<RpcRemoteServiceSetting> services = [];
 
-    public List<RpcServiceSetting> Services {
+    public List<RpcRemoteServiceSetting> Services {
         get => services;
         set => services = value;
     }
 
-    List<IRpcServiceSetting> IRpcClientSetting.Services => services.Select(s => s as IRpcServiceSetting).ToList();
+    List<IRpcRemoteServiceSetting> IRpcClientOptions.Services => services.Select(s => s as IRpcRemoteServiceSetting).ToList();
 }

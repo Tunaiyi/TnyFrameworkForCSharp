@@ -17,7 +17,7 @@ namespace TnyFramework.Net.Hosting.Rpc
         : IRpcHostConfiguration<TUnit, TSetting, TContext, TConfiguration, TSpec>
         where TConfiguration : IRpcEndPointHostConfiguration<TUnit, TSetting, TContext, TConfiguration, TSpec>
         where TSetting : IServiceServerSetting
-        where TUnit : INetServerGuide
+        where TUnit : IServerGuide
         where TContext : INetGuideUnitContext
         where TSpec : INetGuideSpec<TUnit, TContext, TSpec>
     {

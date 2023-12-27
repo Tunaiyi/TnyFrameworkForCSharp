@@ -19,7 +19,7 @@ namespace TnyFramework.Net.Hosting.Rpc
     public interface IRpcHostConfiguration<TUnit, in TSetting, TContext, out TConfiguration, out TSpec> : INetHostConfiguration<TConfiguration>
         where TConfiguration : IRpcHostConfiguration<TUnit, TSetting, TContext, TConfiguration, TSpec>
         where TSetting : IServiceServerSetting
-        where TUnit : INetServerGuide
+        where TUnit : IServerGuide
         where TContext : INetGuideUnitContext
         where TSpec : INetGuideSpec<TUnit, TContext, TSpec>
     {

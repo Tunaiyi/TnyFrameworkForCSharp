@@ -18,6 +18,7 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Prefer32Bit>false</Prefer32Bit>
+<!--        <DebugType>portable</DebugType>-->
         <DebugType>embedded</DebugType>
         <DebugSymbols>true</DebugSymbols>
         <!--设置obj文件目录-->
@@ -30,13 +31,15 @@
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
         <Deterministic>true</Deterministic>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
-        <IncludeSource>True</IncludeSource>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <NoPackageAnalysis>true</NoPackageAnalysis>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <PropertyGroup>
-        <TnyRemoteUrl>https://m2.tunaiyi.com/repository/nuget-hosted/</TnyRemoteUrl>
+<!--        <TnyRemoteUrl>https://m2.tunaiyi.com/repository/nuget-hosted/</TnyRemoteUrl>-->
+        <TnyRemoteUrl>https://nuget.tnydev.com/v3/index.json</TnyRemoteUrl>
         <NugetRemoteUrl>https://api.nuget.org/v3/index.json</NugetRemoteUrl>
     </PropertyGroup>
 
@@ -63,13 +66,11 @@
     <Target Name="LoaclInstallPublishPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">
         <Message Text="Push Nuget To $(TnyRemoteUrl)"/>
         <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(TnyRemoteUrl)"/>
-<!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetRemoteUrl)"/>-->
     </Target>
 
     <Target Name="LoaclInstallPublishPacksSymbolsNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">
         <Message Text="Push Nuget To $(TnyRemoteUrl)"/>
-        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).symbols.nupkg -Source $(TnyRemoteUrl)"/>
-<!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).symbols.nupkg -Source $(NugetRemoteUrl)"/>-->
+<!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).snupkg -Source $(TnyRemoteUrl)"/>-->
     </Target>
 
 

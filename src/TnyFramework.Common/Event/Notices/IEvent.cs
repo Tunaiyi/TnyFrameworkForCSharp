@@ -7,33 +7,31 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Threading.Tasks;
-using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Application;
+namespace TnyFramework.Common.Event.Notices;
 
-public interface INetClientGuide : INetService
+public interface IEvent<in TListener>
 {
     /// <summary>
-    /// 打开监听
+    /// 添加监听
     /// </summary>
-    Task Open();
+    /// <param name="listenerRef"></param>
+    void AddListener(TListener listenerRef);
 
     /// <summary>
-    /// 关闭监听
+    /// 移除监听
     /// </summary>
-    Task Close();
+    /// <param name="listener"></param>
+    void RemoveListener(TListener listener);
 
     /// <summary>
-    /// 关闭监听
+    /// 移除所有监听
     /// </summary>
-    bool IsClose();
+    void RemoveAllListener();
+}
 
-    /// <summary>
-    /// 创建客户端
-    /// </summary>
-    /// <param name="url"></param>
-    /// <param name="postConnect"></param>
-    /// <returns></returns>
-    ValueTask<IClient> Client(Uri url, ConnectedHandle? postConnect = null);
+public interface IEvent<in TListener, out TEvent> : IEvent<TListener>, IDisposable
+    where TEvent : IEvent<TListener, TEvent>
+{
+    public TEvent ForkChild();
 }

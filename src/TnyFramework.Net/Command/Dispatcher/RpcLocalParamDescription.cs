@@ -13,6 +13,7 @@ using System.Reflection;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Result;
+using TnyFramework.Net.Application;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Endpoint;
@@ -24,7 +25,7 @@ using TnyFramework.Net.Transport;
 namespace TnyFramework.Net.Command.Dispatcher
 {
 
-    public class ControllerParamDescription
+    public class RpcLocalParamDescription
     {
         /// <summary>
         /// body 为List时 索引
@@ -60,17 +61,13 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public MethodControllerHolder Method { get; }
 
-        public ControllerParamDescription(MethodControllerHolder method, ParameterInfo info, ParamIndexCreator indexCreator)
+        public RpcLocalParamDescription(MethodControllerHolder method, ParameterInfo info, ParamIndexCreator indexCreator)
         {
             Method = method;
             ParamType = info.ParameterType;
             AttributeHolder = new AttributeHolder(info.GetCustomAttributes());
             var optional = AttributeHolder.GetAttribute<RpcOptionalAttribute>();
             Require = optional == null;
-            // if (typeof(IEndPointServerSetting).IsAssignableFrom(ParamType))
-            // {
-            //     Mode = ParamMode.Setting;
-            // } else
             if (typeof(ISession).IsAssignableFrom(ParamType))
             {
                 Mode = ParamMode.Session;
@@ -201,10 +198,6 @@ namespace TnyFramework.Net.Command.Dispatcher
                 case ParamMode.Tunnel:
                     value = tunnel;
                     break;
-                // case ParamMode.Setting: {
-                //     value = context.Setting;
-                //     break;
-                // }
                 case ParamMode.Body:
                     value = body;
                     break;

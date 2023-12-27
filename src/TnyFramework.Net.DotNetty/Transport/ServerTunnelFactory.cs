@@ -15,10 +15,10 @@ namespace TnyFramework.Net.DotNetty.Transport
 
     public class ServerTunnelFactory : INettyTunnelFactory
     {
-        public INetTunnel Create(long id, IChannel channel, INetworkContext context)
+        public INetTunnel Create(long id, IChannel channel, INetworkContext context, INetService service)
         {
             var transport = new NettyChannelMessageTransporter(NetAccessMode.Server, channel);
-            return new ServerTunnel<NettyChannelMessageTransporter>(id, transport, context); // 创建 Tunnel 已经transport.bind
+            return new ServerTunnel<NettyChannelMessageTransporter>(id, transport, context, service); // 创建 Tunnel 已经transport.bind
         }
     }
 

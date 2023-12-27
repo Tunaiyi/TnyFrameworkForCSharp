@@ -9,12 +9,8 @@
 namespace TnyFramework.Net.Application
 {
 
-    public interface INetServer : INetService
+    public interface INetServer : IProvidedService
     {
-        string INetService.Service => Setting.Service;
-
-        string INetService.ServeName => Setting.ServeName;
-
         /// <summary>
         /// 是否启动
         /// </summary>
@@ -30,7 +26,7 @@ namespace TnyFramework.Net.Application
         /// <summary>
         /// 设置
         /// </summary>
-        new TSetting Setting { get; }
+        TSetting ServiceSetting { get; }
     }
 
 }

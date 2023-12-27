@@ -19,9 +19,9 @@ using TnyFramework.Extensions.Configuration.Configuration;
 
 namespace TnyFramework.Hosting.Extensions;
 
-public static class TnyHostExtensions
+public static class AppHostExtensions
 {
-    public static IHostBuilder UseTnyHost(this IHostBuilder builder, string[] assembles)
+    public static IHostBuilder UseAppHost(this IHostBuilder builder, string[] assembles)
     {
         return builder
             .ConfigureHostConfiguration(CreateAppConfiguration(assembles)) // 构建配置

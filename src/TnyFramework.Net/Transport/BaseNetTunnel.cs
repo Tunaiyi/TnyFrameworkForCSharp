@@ -32,8 +32,8 @@ namespace TnyFramework.Net.Transport
 
         protected readonly ILogger logger;
 
-        protected BaseNetTunnel(long id, TTransporter transporter, NetAccessMode accessMode, INetworkContext context)
-            : base(id, accessMode, context)
+        protected BaseNetTunnel(long id, TTransporter transporter, NetAccessMode accessMode, INetworkContext context, INetService service)
+            : base(id, accessMode, context, service)
         {
             logger = LogFactory.Logger(GetType());
             if (transporter.IsNotNull())
@@ -46,11 +46,24 @@ namespace TnyFramework.Net.Transport
             }
         }
 
+        protected sealed override bool ReplaceEndpoint(INetEndpoint newEndpoint)
+        {
+            var certificate = Certificate;
+            if (certificate.IsAuthenticated())
+                return false;
+            var commandTaskBox = Endpoint.CommandBox;
+            SetEndpoint((TEndpoint)newEndpoint);
+            Endpoint.TakeOver(commandTaskBox);
+            return true;
+        }
+
         public override bool IsActive()
         {
             var transporter = Transporter;
             return Status == TunnelStatus.Open && transporter.IsNotNull() && transporter.IsActive();
         }
+
+
 
         public override void Reset()
         {
@@ -79,13 +92,7 @@ namespace TnyFramework.Net.Transport
             {
                 return;
             }
-            if (waitWritten)
-            {
-                await Transporter.Write(message);
-            } else
-            {
-                _ = Transporter.Write(message);
-            }
+            await Transporter.Write(message, waitWritten);
         }
 
         public override async ValueTask Write(MessageAllocator allocator, MessageContent messageContent, bool waitWritten = false)
@@ -94,13 +101,7 @@ namespace TnyFramework.Net.Transport
             {
                 return;
             }
-            if (waitWritten)
-            {
-                await Transporter.Write(allocator, messageContent);
-            } else
-            {
-                _ = Transporter.Write(allocator, messageContent);
-            }
+            await Transporter.Write(allocator, messageContent, waitWritten);
         }
 
         protected virtual void OnWriteUnavailable()

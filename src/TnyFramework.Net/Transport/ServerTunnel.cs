@@ -14,25 +14,13 @@ using TnyFramework.Net.Endpoint;
 namespace TnyFramework.Net.Transport
 {
 
-    public class ServerTunnel<TTransporter> : BaseNetTunnel<INetSession, TTransporter>
+    public class ServerTunnel<TTransporter> : BaseNetTunnel<INetEndpoint, TTransporter>
         where TTransporter : IMessageTransporter
     {
-        public ServerTunnel(long id, TTransporter transporter, INetworkContext context)
-            : base(id, transporter, NetAccessMode.Server, context)
+        public ServerTunnel(long id, TTransporter transporter, INetworkContext context, INetService service)
+            : base(id, transporter, NetAccessMode.Server, context, service)
         {
             Bind(new AnonymityEndpoint(context, this));
-        }
-
-        protected sealed override bool ReplaceEndpoint(INetEndpoint newEndpoint)
-        {
-
-            var certificate = Certificate;
-            if (certificate.IsAuthenticated())
-                return false;
-            var commandTaskBox = Endpoint.CommandBox;
-            SetEndpoint((INetSession) newEndpoint);
-            Endpoint.TakeOver(commandTaskBox);
-            return true;
         }
 
         protected override void OnDisconnect()

@@ -18,7 +18,7 @@ using TnyFramework.Net.Hosting.Guide;
 namespace TnyFramework.Net.DotNetty.Hosting.Configuration.Spec;
 
 public interface INettyGuideSpec<TGuide, TContext, out TSpec> : INetGuideSpec<TGuide, TContext, TSpec>
-    where TGuide : INetServerGuide<IServiceServerSetting>
+    where TGuide : IServerGuide<IServiceServerSetting>
     where TContext : INettyGuideUnitContext
     where TSpec : INetGuideSpec<TGuide, TContext, TSpec>
 {

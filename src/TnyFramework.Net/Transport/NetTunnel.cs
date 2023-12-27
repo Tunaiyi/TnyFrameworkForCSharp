@@ -8,7 +8,7 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using TnyFramework.Common.Event;
+using TnyFramework.Common.Event.Buses;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher;
@@ -22,7 +22,9 @@ namespace TnyFramework.Net.Transport
     public interface ITunnelEventSource
     {
         protected static readonly IEventBus<TunnelActivate> ACTIVATE_GLOBAL_EVENT = EventBuses.Create<TunnelActivate>();
+
         protected static readonly IEventBus<TunnelUnactivated> UNACTIVATED_GLOBAL_EVENT = EventBuses.Create<TunnelUnactivated>();
+
         protected static readonly IEventBus<TunnelClose> CLOSE_GLOBAL_EVENT = EventBuses.Create<TunnelClose>();
 
         /// <summary>
@@ -48,6 +50,8 @@ namespace TnyFramework.Net.Transport
 
         private TEndpoint endpoint;
 
+        private readonly INetService service;
+
         private readonly ReaderWriterLockSlim endpointLock = new();
 
         public long Id { get; }
@@ -60,15 +64,13 @@ namespace TnyFramework.Net.Transport
             protected set => status = value.Value();
         }
 
+        public string Service => service.Service;
+
         public override ICertificate Certificate => endpoint.IsNull() ? null! : endpoint.Certificate;
 
         public INetworkContext Context { get; }
 
         public IMessageFactory MessageFactory => Context.MessageFactory;
-
-        // public abstract override EndPoint RemoteAddress { get; }
-        //
-        // public abstract override EndPoint LocalAddress { get; }
 
         public INetEndpoint Endpoint => endpoint;
 
@@ -90,8 +92,9 @@ namespace TnyFramework.Net.Transport
 
         public IEventBox<TunnelClose> CloseEvent => closeEvent;
 
-        protected NetTunnel(long id, NetAccessMode accessMode, INetworkContext context)
+        protected NetTunnel(long id, NetAccessMode accessMode, INetworkContext context, INetService service)
         {
+            this.service = service;
             Id = id;
             Context = context;
             endpoint = default!;

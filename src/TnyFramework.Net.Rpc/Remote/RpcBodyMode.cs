@@ -34,7 +34,7 @@ namespace TnyFramework.Net.Rpc.Remote
 
         public static readonly RpcBodyMode RESULT_CODE = Of(5, typeof(IResultCode));
 
-        public static readonly RpcBodyMode BODY = Of<RpcBodyAttribute>(6, typeof(IResultCode));
+        public static readonly RpcBodyMode BODY = Of<RpcBodyAttribute>(6);
 
         public Type? BodyAttribute { get; private set; }
 

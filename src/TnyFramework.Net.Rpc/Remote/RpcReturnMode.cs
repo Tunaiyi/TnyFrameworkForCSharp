@@ -47,9 +47,18 @@ namespace TnyFramework.Net.Rpc.Remote
             RpcInvokeMode.Async);
 
         /// <summary>
+        /// Task 类型
+        /// </summary>
+        public static readonly RpcReturnMode VALUE_TASK = Of(2,
+            Params(MessageMode.Request),
+            Params(typeof(ValueTask), typeof(ValueTask<>)),
+            TaskReturnType,
+            RpcInvokeMode.Async);
+
+        /// <summary>
         /// 结果
         /// </summary>
-        public static readonly RpcReturnMode RESULT = Of(2,
+        public static readonly RpcReturnMode RESULT = Of(3,
             Params(MessageMode.Request),
             Params(typeof(IRpcResult), typeof(IRpcResult<>)),
             ResultReturnType,
@@ -59,7 +68,7 @@ namespace TnyFramework.Net.Rpc.Remote
         /// void 对象
         /// </summary>
         /// <returns></returns>
-        public static readonly RpcReturnMode VOID = Of(3,
+        public static readonly RpcReturnMode VOID = Of(4,
             Params(MessageMode.Request, MessageMode.Push),
             Params(typeof(void)),
             MethodReturnType,
@@ -68,7 +77,7 @@ namespace TnyFramework.Net.Rpc.Remote
         /// <summary>
         /// 普通对象
         /// </summary>
-        public static readonly RpcReturnMode OBJECT = Of(4,
+        public static readonly RpcReturnMode OBJECT = Of(5,
             Params(MessageMode.Request),
             EmptyType,
             MethodReturnType,

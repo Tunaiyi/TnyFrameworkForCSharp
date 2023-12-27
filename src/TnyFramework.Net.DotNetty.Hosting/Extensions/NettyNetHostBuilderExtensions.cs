@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TnyFramework.Common.Exceptions;
@@ -18,18 +17,18 @@ using TnyFramework.Net.Application;
 using TnyFramework.Net.DotNetty.Hosting.Configuration;
 using TnyFramework.Net.DotNetty.Hosting.Guide;
 using TnyFramework.Net.DotNetty.Hosting.Options;
-using TnyFramework.Net.Hosting.App;
 using TnyFramework.Net.Hosting.Host;
 using TnyFramework.Net.Hosting.Rpc;
 
 namespace TnyFramework.Net.DotNetty.Hosting.Extensions
 {
 
-    public static class TnyNettyHostBuilderExtensions
+    public static class NettyNetHostBuilderExtensions
     {
         public static IHostBuilder ConfigureNetHost(this IHostBuilder builder)
         {
-            return builder.ConfigureNetHost(null, null);
+            return builder
+                .ConfigureNetHost(null, null);
         }
 
         public static IHostBuilder ConfigureNetHost(this IHostBuilder builder,
@@ -88,6 +87,7 @@ namespace TnyFramework.Net.DotNetty.Hosting.Extensions
                             .ScopeType(appOptions.ScopeType)
                             .Locale(appOptions.Locale);
                     })
+                    .AddControllers()
                     .Initialize();
                 services.AddHostedService<NetHostedService>();
                 configure?.Invoke(serverConfiguration);
@@ -99,6 +99,7 @@ namespace TnyFramework.Net.DotNetty.Hosting.Extensions
             Action<INettyServerGuideSpec>? serverGuideSpec, Action<INettyNetHostServerConfiguration>? configure)
         {
             return builder.ConfigureServices((hostBuilder, services) => {
+
                 var configuration = hostBuilder.Configuration;
                 var appOptions = configuration.BindOptions<NetApplicationOptions>(NetApplicationOptions.APP_ROOT_PATH);
                 var nettyOptions = configuration.BindOptions<NettyAppHostOptions>(NettyAppHostOptions.NETTY_ROOT_PATH);
@@ -124,16 +125,16 @@ namespace TnyFramework.Net.DotNetty.Hosting.Extensions
             });
         }
 
-        public static IHostBuilder ConfigureRpcRemote(this IHostBuilder builder, Action<IRpcRemoteServiceConfiguration>? configure = null)
-        {
-            builder.ConfigureServices((_, services) => {
-                var serverConfiguration = RpcRemoteServiceConfiguration.CreateRpcRemoteService(services)
-                    .AddRemoteServices();
-                configure?.Invoke(serverConfiguration);
-                serverConfiguration.Initialize();
-            });
-            return builder;
-        }
+        // public static IHostBuilder ConfigureRpcRemote(this IHostBuilder builder, Action<IRpcRemoteServiceConfiguration>? configure = null)
+        // {
+        //     builder.ConfigureServices((_, services) => {
+        //         var serverConfiguration = RpcRemoteServiceConfiguration.CreateRpcRemoteService(services)
+        //             .AddRemoteServices();
+        //         configure?.Invoke(serverConfiguration);
+        //         serverConfiguration.Initialize();
+        //     });
+        //     return builder;
+        // }
     }
 
 }

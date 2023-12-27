@@ -21,7 +21,7 @@ namespace TnyFramework.Net.DotNetty.Hosting.Guide
 
     public abstract class NettyGuideSpec<TGuide, TContext, TImplContext, TSpec>
         : NetGuideSpec<TGuide, TContext, TImplContext, TSpec>, INettyGuideSpec<TGuide, TContext, TSpec>
-        where TGuide : INetServerGuide<IServiceServerSetting>
+        where TGuide : IServerGuide<IServiceServerSetting>
         where TContext : INettyGuideUnitContext
         where TImplContext : NettyGuideUnitContext<TContext>, TContext
         where TSpec : INettyGuideSpec<TGuide, TContext, TSpec>

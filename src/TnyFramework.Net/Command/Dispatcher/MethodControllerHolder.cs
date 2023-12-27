@@ -107,18 +107,18 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         }
 
-        private IList<ControllerParamDescription> InitParamDescriptions(
+        private IList<RpcLocalParamDescription> InitParamDescriptions(
             IDictionary<Type, IDictionary<int, Attribute>> paramAnnotationsMap,
             IEnumerable<ParameterInfo> parameterInfos, StringBuilder nameBuilder, MethodInfo method)
         {
             var indexCreator = new ParamIndexCreator(method);
-            var paramDescriptions = new List<ControllerParamDescription>();
+            var paramDescriptions = new List<RpcLocalParamDescription>();
             var index = 0;
             foreach (var parameterInfo in parameterInfos)
             {
                 nameBuilder.Append(index > 0 ? ", " : "(");
                 nameBuilder.Append(parameterInfo.ParameterType);
-                var paramDescription = new ControllerParamDescription(this, parameterInfo, indexCreator);
+                var paramDescription = new RpcLocalParamDescription(this, parameterInfo, indexCreator);
                 paramDescriptions.Add(paramDescription);
                 foreach (var attribute in paramDescription.Attributes)
                 {
@@ -174,7 +174,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// 参数
         /// </summary>
-        public IList<ControllerParamDescription> ParamDescriptions { get; }
+        public IList<RpcLocalParamDescription> ParamDescriptions { get; }
 
         /// <summary>
         /// 参数个数

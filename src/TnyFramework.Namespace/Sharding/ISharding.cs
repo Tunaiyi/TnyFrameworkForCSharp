@@ -8,6 +8,7 @@
 
 using System.Collections.Generic;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Event.Buses;
 using TnyFramework.Namespace.Sharding.Listener;
 
 namespace TnyFramework.Namespace.Sharding

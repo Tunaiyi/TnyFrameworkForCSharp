@@ -8,6 +8,7 @@
 
 using System.Threading.Tasks;
 using TnyFramework.Common.Event;
+using TnyFramework.Common.Event.Buses;
 using TnyFramework.Namespace.Listener;
 
 namespace TnyFramework.Namespace

@@ -14,12 +14,12 @@ namespace TnyFramework.Net.Extensions
 
     public static class NetServiceExtensions
     {
-        public static string ServiceName(this INetService setting)
+        public static string ServiceName(this IServiceSetting setting)
         {
             return setting.Service.IsBlank() ? setting.ServeName : setting.Service;
         }
 
-        public static string DiscoverService(this INetService setting)
+        public static string DiscoverService(this IServiceSetting setting)
         {
             return setting.ServeName.IsBlank() ? setting.Service : setting.ServeName;
         }

@@ -14,14 +14,10 @@ using TnyFramework.Net.Hosting.Configuration;
 namespace TnyFramework.Net.DotNetty.Hosting.Configuration
 {
 
-    public class NettyNetHostServerConfiguration :
-        NetHostConfiguration<INettyNetHostServerConfiguration, INettyServerGuideUnitContext, INettyServerGuide, INettyServerGuideSpec>,
+    public class NettyNetHostServerConfiguration(IServiceCollection unitContainer) :
+        NetHostConfiguration<INettyNetHostServerConfiguration, INettyServerGuideUnitContext, INettyServerGuide, INettyServerGuideSpec>(unitContainer),
         INettyNetHostServerConfiguration
     {
-        public NettyNetHostServerConfiguration(IServiceCollection unitContainer) : base(unitContainer)
-        {
-        }
-
         public static NettyNetHostServerConfiguration CreateNetServer(IServiceCollection unitContainer)
         {
             return new NettyNetHostServerConfiguration(unitContainer);

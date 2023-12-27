@@ -21,10 +21,10 @@ namespace TnyFramework.Net.Application
     public class NetApplication : INetApplication
     {
         private readonly IServiceProvider serviceProvider;
-        private readonly IList<INetServerGuide> serverGuides;
+        private readonly IList<IServerGuide> serverGuides;
         private bool registered;
 
-        public NetApplication(IServiceProvider serviceProvider, IEnumerable<INetServerGuide> serverGuides)
+        public NetApplication(IServiceProvider serviceProvider, IEnumerable<IServerGuide> serverGuides)
         {
             this.serviceProvider = serviceProvider;
             this.serverGuides = serverGuides.ToImmutableList();
