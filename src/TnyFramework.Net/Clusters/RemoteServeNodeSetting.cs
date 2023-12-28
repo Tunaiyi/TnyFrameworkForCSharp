@@ -6,11 +6,9 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Rpc.Configuration;
+namespace TnyFramework.Net.Clusters;
 
-namespace TnyFramework.Net.Hosting.Options;
-
-public class RpcRemoteServiceSetting : IRpcRemoteServiceSetting
+public class RemoteServeNodeSetting : IRemoteServeNodeSetting
 {
     // rpc服务名
     public string Service { get; set; } = "";

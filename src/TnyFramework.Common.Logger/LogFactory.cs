@@ -23,16 +23,11 @@ namespace TnyFramework.Common.Logger
                 var current = Read(ref _DEFAULT_FACTORY);
                 if (current != null)
                     return current;
-                current = CreateNoopFactory();
+                current = new NoopLoggerFactory();
                 var old = Interlocked.CompareExchange(ref _DEFAULT_FACTORY, current, null);
                 return old ?? current;
             }
             set => Write(ref _DEFAULT_FACTORY, value);
-        }
-
-        private static ILoggerFactory CreateNoopFactory()
-        {
-            return LoggerFactory.Create(builder => { builder.AddProvider(new NoopLoggerProvider()); });
         }
 
         /// <summary>

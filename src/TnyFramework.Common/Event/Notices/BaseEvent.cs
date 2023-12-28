@@ -9,83 +9,102 @@
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 
-namespace TnyFramework.Common.Event.Notices;
-
-public abstract class BaseEvent<TListener, TEvent> : IEvent<TListener, TEvent>
-    where TEvent : BaseEvent<TListener, TEvent>
+namespace TnyFramework.Common.Event.Notices
 {
-    protected static readonly ILogger LOGGER = LogFactory.Logger<TEvent>();
 
-    protected EventListenerNode<TListener>? firstNode;
-
-    protected TEvent? parent;
-
-    protected BaseEvent()
+    public abstract class BaseEvent<THandle, TEvent> : BaseEvent<THandle, THandle, TEvent>
+        where TEvent : BaseEvent<THandle, TEvent>
     {
+        protected BaseEvent()
+        {
+        }
+
+        protected BaseEvent(TEvent parent) : base(parent)
+        {
+        }
+
+        protected override THandle GetHandle(THandle target) => target;
     }
 
-    protected BaseEvent(TEvent parent)
+    public abstract class BaseEvent<TTarget, THandle, TEvent> : IEvent<TTarget, TEvent>
+        where TEvent : BaseEvent<TTarget, THandle, TEvent>
     {
-        this.parent = parent;
-    }
+        protected static readonly ILogger LOGGER = LogFactory.Logger<TEvent>();
 
-    public void Add(TListener listener)
-    {
-        var newNode = EventListenerNode<TListener>.Create(listener);
-        if (firstNode == null)
+        protected EventHandleNode<TTarget, THandle>? firstNode;
+
+        protected TEvent? parent;
+
+        protected BaseEvent()
         {
-            firstNode = newNode;
-        } else
+        }
+
+        protected BaseEvent(TEvent parent)
         {
-            firstNode.Enqueue(newNode);
-            firstNode = newNode.FirstNode;
+            this.parent = parent;
+        }
+
+        protected abstract THandle GetHandle(TTarget target);
+
+        public void Add(TTarget listener)
+        {
+            var newNode = EventHandleNode<TTarget, THandle>.Create(listener);
+            if (firstNode == null)
+            {
+                firstNode = newNode;
+            } else
+            {
+                firstNode.Enqueue(newNode);
+                firstNode = newNode.FirstNode;
+            }
+        }
+
+        public void Remove(TTarget listener)
+        {
+            if (HasHandler)
+            {
+                RemoveNode(firstNode?.Find(listener));
+            }
+        }
+
+        public void RemoveAll()
+        {
+            if (!HasHandler)
+            {
+                return;
+            }
+            firstNode?.Clear();
+            firstNode = null;
+        }
+
+        protected void RemoveNode(EventHandleNode<TTarget, THandle>? node)
+        {
+            if (node == null)
+            {
+                return;
+            }
+            if (node.Dequeue(out var first))
+            {
+                firstNode = first;
+                node.Dispose();
+            } else // 如果当前节点正在分发中， 则标记为死亡， 不移除
+            {
+                node.DelayDequeue();
+            }
+        }
+
+        private bool HasHandler => firstNode != null;
+
+        public void Dispose()
+        {
+            RemoveAll();
+            parent = null;
+            OnDispose();
+        }
+
+        protected virtual void OnDispose()
+        {
         }
     }
 
-    public void Remove(TListener listener)
-    {
-        if (HasHandler)
-        {
-            RemoveNode(firstNode?.Find(listener));
-        }
-    }
-
-    public void RemoveAll()
-    {
-        if (!HasHandler)
-        {
-            return;
-        }
-        firstNode?.Clear();
-        firstNode = null;
-    }
-
-    protected void RemoveNode(EventListenerNode<TListener>? node)
-    {
-        if (node == null)
-        {
-            return;
-        }
-        if (node.Dequeue(out var first))
-        {
-            firstNode = first;
-            node.Dispose();
-        } else // 如果当前节点正在分发中， 则标记为死亡， 不移除
-        {
-            node.DelayDequeue();
-        }
-    }
-
-    private bool HasHandler => firstNode != null;
-
-    public void Dispose()
-    {
-        RemoveAll();
-        parent = null;
-        OnDispose();
-    }
-
-    protected virtual void OnDispose()
-    {
-    }
 }

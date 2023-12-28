@@ -8,9 +8,9 @@
 
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Rpc.Configuration;
+namespace TnyFramework.Net.Clusters;
 
-public interface IRpcRemoteServiceSetting : IServiceSetting
+public interface IRemoteServeNodeSetting : IServiceSetting
 {
     string Host { get; }
 

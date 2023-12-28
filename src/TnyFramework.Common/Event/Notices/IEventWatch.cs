@@ -8,29 +8,36 @@
 
 using System;
 
-namespace TnyFramework.Common.Event.Notices;
-
-public interface IEventWatch<in TListener>
+namespace TnyFramework.Common.Event.Notices
 {
-    /// <summary>
-    /// 添加监听
-    /// </summary>
-    /// <param name="listenerRef"></param>
-    void Add(TListener listenerRef);
 
-    /// <summary>
-    /// 移除监听
-    /// </summary>
-    /// <param name="listener"></param>
-    void Remove(TListener listener);
+    public interface IEventWatch<in TListener>
+    {
+        /// <summary>
+        /// 添加监听
+        /// </summary>
+        /// <param name="listenerRef"></param>
+        void Add(TListener listenerRef);
 
-    /// <summary>
-    /// 移除所有监听
-    /// </summary>
-    void RemoveAll();
-}
+        /// <summary>
+        /// 移除监听
+        /// </summary>
+        /// <param name="listener"></param>
+        void Remove(TListener listener);
 
-public interface IEvent<in TListener, out TEvent> : IEventWatch<TListener>, IDisposable
-    where TEvent : IEvent<TListener, TEvent>
-{
+        /// <summary>
+        /// 移除所有监听
+        /// </summary>
+        void RemoveAll();
+    }
+
+    public interface IEvent
+    {
+    }
+
+    public interface IEvent<in TListener, out TEvent> : IEvent, IEventWatch<TListener>, IDisposable
+        where TEvent : IEvent<TListener, TEvent>
+    {
+    }
+
 }

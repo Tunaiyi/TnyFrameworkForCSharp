@@ -10,7 +10,7 @@ using TnyFramework.Net.Application;
 
 namespace TnyFramework.Net.DotNetty.Bootstrap;
 
-public interface INettyServerSetting : IServiceServerSetting
+public interface INettyServerSetting : IServedServerSetting
 {
     /// <summary>
     /// 是否是使用 libuv

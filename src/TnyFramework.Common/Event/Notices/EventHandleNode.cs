@@ -12,33 +12,34 @@ using Microsoft.Extensions.ObjectPool;
 namespace TnyFramework.Common.Event.Notices
 {
 
-    public class EventListenerNode<TListener> : IResettable
+    public class EventHandleNode<TTarget, THandle> : IResettable
     {
-        private static readonly ObjectPool<EventListenerNode<TListener>> OBJECT_POOL =
-            new DefaultObjectPool<EventListenerNode<TListener>>(new DefaultPooledObjectPolicy<EventListenerNode<TListener>>());
+        private static readonly ObjectPool<EventHandleNode<TTarget, THandle>> OBJECT_POOL =
+            new DefaultObjectPool<EventHandleNode<TTarget, THandle>>(new DefaultPooledObjectPolicy<EventHandleNode<TTarget, THandle>>());
 
-        private TListener? listener;
+        private TTarget? target;
+        private THandle? handle;
 
-        public static EventListenerNode<TListener> Create(TListener listener)
+        public static EventHandleNode<TTarget, THandle> Create(TTarget target)
         {
             var node = OBJECT_POOL.Get();
-            node.listener = listener;
+            node.target = target;
             return node;
         }
 
-        public EventListenerNode()
+        public EventHandleNode()
         {
         }
 
         /// <summary>
         /// 上一个节点
         /// </summary>
-        public EventListenerNode<TListener>? Previous { get; private set; }
+        public EventHandleNode<TTarget, THandle>? Previous { get; private set; }
 
         /// <summary>
         /// 下一个节点
         /// </summary>
-        public EventListenerNode<TListener>? Next { get; private set; }
+        public EventHandleNode<TTarget, THandle>? Next { get; private set; }
 
         /// <summary>
         /// 是否有上一个节点
@@ -65,9 +66,14 @@ namespace TnyFramework.Common.Event.Notices
         /// </summary>
         public bool IsDelayDequeue { get; private set; }
 
-        public TListener? Listener => listener;
+        public THandle? Handle {
+            get => handle;
+            set => handle = value;
+        }
 
-        public EventListenerNode<TListener> FirstNode {
+        public TTarget? Target => target;
+
+        public EventHandleNode<TTarget, THandle> FirstNode {
             get {
                 if (IsFirst)
                 {
@@ -77,7 +83,7 @@ namespace TnyFramework.Common.Event.Notices
             }
         }
 
-        public EventListenerNode<TListener> LastNode {
+        public EventHandleNode<TTarget, THandle> LastNode {
             get {
                 if (IsLast)
                 {
@@ -89,9 +95,9 @@ namespace TnyFramework.Common.Event.Notices
 
         internal bool Locked { get; set; }
 
-        public EventListenerNode<TListener> Find(TListener listener1)
+        public EventHandleNode<TTarget, THandle> Find(TTarget listener1)
         {
-            if (ReferenceEquals(listener, listener1))
+            if (ReferenceEquals(target, listener1))
             {
                 return this;
             }
@@ -103,7 +109,7 @@ namespace TnyFramework.Common.Event.Notices
         /// </summary>
         /// <param name="newNode">新节点</param>
         /// <returns>原样返回新节点</returns>
-        public EventListenerNode<TListener> Enqueue(EventListenerNode<TListener> newNode)
+        public EventHandleNode<TTarget, THandle> Enqueue(EventHandleNode<TTarget, THandle> newNode)
         {
             if (newNode == this)
             {
@@ -130,7 +136,7 @@ namespace TnyFramework.Common.Event.Notices
         /// 将此节点出队
         /// </summary>
         /// <returns>当前节点出队后，原链的首节点（如果是唯一节点将返回null）</returns>
-        public bool Dequeue(out EventListenerNode<TListener> first)
+        public bool Dequeue(out EventHandleNode<TTarget, THandle> first)
         {
             if (IsFirst && IsLast)
             {
@@ -143,7 +149,7 @@ namespace TnyFramework.Common.Event.Notices
                 first = null!;
                 return false;
             }
-            EventListenerNode<TListener>? newFirst;
+            EventHandleNode<TTarget, THandle>? newFirst;
             if (IsFirst)
             {
                 newFirst = Next;
@@ -205,7 +211,8 @@ namespace TnyFramework.Common.Event.Notices
         {
             Next = null;
             Previous = null;
-            listener = default!;
+            target = default!;
+            handle = default!;
             return true;
         }
     }

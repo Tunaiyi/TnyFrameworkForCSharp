@@ -8,10 +8,10 @@
 
 namespace TnyFramework.Net.Application;
 
-public interface IProvidedService : INetService
+public interface IServedService : INetService
 {
     /// <summary>
     /// 服务发现名
     /// </summary>
-    string Discovery { get; }
+    string ServeName { get; }
 }

@@ -6,73 +6,74 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Common.Event.Notices;
-
-/// <summary>
-/// 无参数
-/// </summary>
-/// <typeparam name="TListener"></typeparam>
-/// <typeparam name="TSource"></typeparam>
-public class HandleEvent<TSource>
-    : HandleBaseEvent<EventHandle<TSource>, HandleEvent<TSource>>,
-        IHandleEvent<TSource>
+namespace TnyFramework.Common.Event.Notices
 {
-    public HandleEvent()
+
+    /// <summary>
+    /// 无参数
+    /// </summary>
+    /// <typeparam name="TListener"></typeparam>
+    /// <typeparam name="TSource"></typeparam>
+    public class HandleEvent<TSource>
+        : HandleBaseEvent<EventHandle<TSource>, HandleEvent<TSource>>,
+            IHandleEvent<TSource>
+    {
+        public HandleEvent()
     {
     }
 
-    public HandleEvent(HandleEvent<TSource> parent) : base(parent)
+        public HandleEvent(HandleEvent<TSource> parent) : base(parent)
     {
     }
 
-    public void Notify(TSource source)
+        public void Notify(TSource source)
     {
         parent?.Notify(source);
         DoNotify(Invoke, source);
     }
 
-    private void Invoke(
-        EventHandle<TSource> handler,
-        TSource tuple)
+        private void Invoke(
+            EventHandle<TSource> handler,
+            TSource tuple)
     {
         handler(tuple);
     }
 
-    public IHandleEvent<TSource> ForkChild()
+        public IHandleEvent<TSource> ForkChild()
     {
         return new HandleEvent<TSource>(this);
     }
-}
-
-/// <summary>
-/// 1个参数
-/// </summary>
-/// <typeparam name="TSource"></typeparam>
-/// <typeparam name="TArg1"></typeparam>
-public class HandleEvent<TSource, TArg1>
-    : HandleBaseEvent<EventHandle<TSource, TArg1>, HandleEvent<TSource, TArg1>>,
-        IHandleEvent<TSource, TArg1>
-{
-    public HandleEvent()
-    {
-    }
-
-    private HandleEvent(HandleEvent<TSource, TArg1> parent) : base(parent)
-    {
     }
 
     /// <summary>
-    /// trigger
+    /// 1个参数
     /// </summary>
-    public void Notify(TSource source, TArg1 arg1)
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TArg1"></typeparam>
+    public class HandleEvent<TSource, TArg1>
+        : HandleBaseEvent<EventHandle<TSource, TArg1>, HandleEvent<TSource, TArg1>>,
+            IHandleEvent<TSource, TArg1>
+    {
+        public HandleEvent()
+    {
+    }
+
+        private HandleEvent(HandleEvent<TSource, TArg1> parent) : base(parent)
+    {
+    }
+
+        /// <summary>
+        /// trigger
+        /// </summary>
+        public void Notify(TSource source, TArg1 arg1)
     {
         parent?.Notify(source, arg1);
         DoNotify(Invoke, (source, arg1));
     }
 
-    private void Invoke(
-        EventHandle<TSource, TArg1> handle,
-        (TSource source, TArg1 arg1) tuple)
+        private void Invoke(
+            EventHandle<TSource, TArg1> handle,
+            (TSource source, TArg1 arg1) tuple)
     {
         handle(
             tuple.Item1,
@@ -80,42 +81,42 @@ public class HandleEvent<TSource, TArg1>
         );
     }
 
-    public IHandleEvent<TSource, TArg1> ForkChild()
+        public IHandleEvent<TSource, TArg1> ForkChild()
     {
         return new HandleEvent<TSource, TArg1>(this);
     }
-}
-
-/// <summary>
-/// 2个参数
-/// </summary>
-/// <typeparam name="TSource"></typeparam>
-/// <typeparam name="TArg1"></typeparam>
-/// <typeparam name="TArg2"></typeparam>
-public class HandleEvent<TSource, TArg1, TArg2>
-    : HandleBaseEvent<EventHandle<TSource, TArg1, TArg2>, HandleEvent<TSource, TArg1, TArg2>>,
-        IHandleEvent<TSource, TArg1, TArg2>
-{
-    public HandleEvent()
-    {
-    }
-
-    private HandleEvent(HandleEvent<TSource, TArg1, TArg2> parent) : base(parent)
-    {
     }
 
     /// <summary>
-    /// trigger
+    /// 2个参数
     /// </summary>
-    public void Notify(TSource source, TArg1 arg1, TArg2 arg2)
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TArg1"></typeparam>
+    /// <typeparam name="TArg2"></typeparam>
+    public class HandleEvent<TSource, TArg1, TArg2>
+        : HandleBaseEvent<EventHandle<TSource, TArg1, TArg2>, HandleEvent<TSource, TArg1, TArg2>>,
+            IHandleEvent<TSource, TArg1, TArg2>
+    {
+        public HandleEvent()
+    {
+    }
+
+        private HandleEvent(HandleEvent<TSource, TArg1, TArg2> parent) : base(parent)
+    {
+    }
+
+        /// <summary>
+        /// trigger
+        /// </summary>
+        public void Notify(TSource source, TArg1 arg1, TArg2 arg2)
     {
         parent?.Notify(source, arg1, arg2);
         DoNotify(Invoke, (source, arg1, arg2));
     }
 
-    private void Invoke(
-        EventHandle<TSource, TArg1, TArg2> handle,
-        (TSource, TArg1, TArg2) tuple)
+        private void Invoke(
+            EventHandle<TSource, TArg1, TArg2> handle,
+            (TSource, TArg1, TArg2) tuple)
     {
         handle(
             tuple.Item1,
@@ -124,36 +125,36 @@ public class HandleEvent<TSource, TArg1, TArg2>
         );
     }
 
-    public IHandleEvent<TSource, TArg1, TArg2> ForkChild()
+        public IHandleEvent<TSource, TArg1, TArg2> ForkChild()
     {
         return new HandleEvent<TSource, TArg1, TArg2>(this);
     }
-}
+    }
 
-public class HandleEvent<TSource, TArg1, TArg2, TArg3>
-    : HandleBaseEvent<EventHandle<TSource, TArg1, TArg2, TArg3>, HandleEvent<TSource, TArg1, TArg2, TArg3>>,
-        IHandleEvent<TSource, TArg1, TArg2, TArg3>
-{
-    public HandleEvent()
+    public class HandleEvent<TSource, TArg1, TArg2, TArg3>
+        : HandleBaseEvent<EventHandle<TSource, TArg1, TArg2, TArg3>, HandleEvent<TSource, TArg1, TArg2, TArg3>>,
+            IHandleEvent<TSource, TArg1, TArg2, TArg3>
+    {
+        public HandleEvent()
     {
     }
 
-    private HandleEvent(HandleEvent<TSource, TArg1, TArg2, TArg3> parent) : base(parent)
+        private HandleEvent(HandleEvent<TSource, TArg1, TArg2, TArg3> parent) : base(parent)
     {
     }
 
-    /// <summary>
-    /// trigger
-    /// </summary>
-    public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3)
+        /// <summary>
+        /// trigger
+        /// </summary>
+        public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3)
     {
         parent?.Notify(source, arg1, arg2, arg3);
         DoNotify(Invoke, (source, arg1, arg2, arg3));
     }
 
-    private void Invoke(
-        EventHandle<TSource, TArg1, TArg2, TArg3> handle,
-        (TSource, TArg1, TArg2, TArg3) tuple)
+        private void Invoke(
+            EventHandle<TSource, TArg1, TArg2, TArg3> handle,
+            (TSource, TArg1, TArg2, TArg3) tuple)
     {
         handle(
             tuple.Item1,
@@ -163,36 +164,36 @@ public class HandleEvent<TSource, TArg1, TArg2, TArg3>
         );
     }
 
-    public IHandleEvent<TSource, TArg1, TArg2, TArg3> ForkChild()
+        public IHandleEvent<TSource, TArg1, TArg2, TArg3> ForkChild()
     {
         return new HandleEvent<TSource, TArg1, TArg2, TArg3>(this);
     }
-}
+    }
 
-public class HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4>
-    : HandleBaseEvent<EventHandle<TSource, TArg1, TArg2, TArg3, TArg4>, HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4>>,
-        IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4>
-{
-    public HandleEvent()
+    public class HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4>
+        : HandleBaseEvent<EventHandle<TSource, TArg1, TArg2, TArg3, TArg4>, HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4>>,
+            IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4>
+    {
+        public HandleEvent()
     {
     }
 
-    private HandleEvent(HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4> parent) : base(parent)
+        private HandleEvent(HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4> parent) : base(parent)
     {
     }
 
-    /// <summary>
-    /// trigger
-    /// </summary>
-    public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4)
+        /// <summary>
+        /// trigger
+        /// </summary>
+        public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4)
     {
         parent?.Notify(source, arg1, arg2, arg3, arg4);
         DoNotify(Invoke, (source, arg1, arg2, arg3, arg4));
     }
 
-    private void Invoke(
-        EventHandle<TSource, TArg1, TArg2, TArg3, TArg4> handle,
-        (TSource, TArg1, TArg2, TArg3, TArg4) tuple)
+        private void Invoke(
+            EventHandle<TSource, TArg1, TArg2, TArg3, TArg4> handle,
+            (TSource, TArg1, TArg2, TArg3, TArg4) tuple)
     {
         handle(
             tuple.Item1,
@@ -203,36 +204,36 @@ public class HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4>
         );
     }
 
-    public IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4> ForkChild()
+        public IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4> ForkChild()
     {
         return new HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4>(this);
     }
-}
+    }
 
-public class HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>
-    : HandleBaseEvent<EventHandle<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>, HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>>,
-        IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>
-{
-    public HandleEvent()
+    public class HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>
+        : HandleBaseEvent<EventHandle<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>, HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>>,
+            IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>
+    {
+        public HandleEvent()
     {
     }
 
-    private HandleEvent(HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5> parent) : base(parent)
+        private HandleEvent(HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5> parent) : base(parent)
     {
     }
 
-    /// <summary>
-    /// trigger
-    /// </summary>
-    public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, TArg5 arg5)
+        /// <summary>
+        /// trigger
+        /// </summary>
+        public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, TArg5 arg5)
     {
         parent?.Notify(source, arg1, arg2, arg3, arg4, arg5);
         DoNotify(Invoke, (source, arg1, arg2, arg3, arg4, arg5));
     }
 
-    private void Invoke(
-        EventHandle<TSource, TArg1, TArg2, TArg3, TArg4, TArg5> handle,
-        (TSource, TArg1, TArg2, TArg3, TArg4, TArg5) tuple)
+        private void Invoke(
+            EventHandle<TSource, TArg1, TArg2, TArg3, TArg4, TArg5> handle,
+            (TSource, TArg1, TArg2, TArg3, TArg4, TArg5) tuple)
     {
         handle(
             tuple.Item1,
@@ -244,37 +245,37 @@ public class HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>
         );
     }
 
-    public IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5> ForkChild()
+        public IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5> ForkChild()
     {
         return new HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>(this);
     }
-}
+    }
 
-public class HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>
-    : HandleBaseEvent<EventHandle<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>,
-            HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>>,
-        IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>
-{
-    public HandleEvent()
+    public class HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>
+        : HandleBaseEvent<EventHandle<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>,
+                HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>>,
+            IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>
+    {
+        public HandleEvent()
     {
     }
 
-    private HandleEvent(HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6> parent) : base(parent)
+        private HandleEvent(HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6> parent) : base(parent)
     {
     }
 
-    /// <summary>
-    /// trigger
-    /// </summary>
-    public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, TArg5 arg5, TArg6 arg6)
+        /// <summary>
+        /// trigger
+        /// </summary>
+        public void Notify(TSource source, TArg1 arg1, TArg2 arg2, TArg3 arg3, TArg4 arg4, TArg5 arg5, TArg6 arg6)
     {
         parent?.Notify(source, arg1, arg2, arg3, arg4, arg5, arg6);
         DoNotify(Invoke, (source, arg1, arg2, arg3, arg4, arg5, arg6));
     }
 
-    private void Invoke(
-        EventHandle<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6> handle,
-        (TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6) tuple)
+        private void Invoke(
+            EventHandle<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6> handle,
+            (TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6) tuple)
     {
         handle(
             tuple.Item1,
@@ -287,8 +288,10 @@ public class HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>
         );
     }
 
-    public IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6> ForkChild()
+        public IHandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6> ForkChild()
     {
         return new HandleEvent<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>(this);
     }
+    }
+
 }

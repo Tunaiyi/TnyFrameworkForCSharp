@@ -9,25 +9,26 @@
 using System;
 using Microsoft.Extensions.Logging;
 
-namespace TnyFramework.Common.Event.Notices;
-
-public abstract class HandleBaseEvent<THandler, TEvent> : BaseEvent<THandler, TEvent>
-    where TEvent : HandleBaseEvent<THandler, TEvent>
-    where THandler : Delegate
+namespace TnyFramework.Common.Event.Notices
 {
-    protected HandleBaseEvent()
+
+    public abstract class HandleBaseEvent<THandler, TEvent> : BaseEvent<THandler, TEvent>
+        where TEvent : HandleBaseEvent<THandler, TEvent>
+        where THandler : Delegate
+    {
+        protected HandleBaseEvent()
     {
     }
 
-    protected HandleBaseEvent(TEvent parent)
-        : base(parent)
+        protected HandleBaseEvent(TEvent parent)
+            : base(parent)
     {
     }
 
-    /// <summary>
-    /// trigger
-    /// </summary>
-    protected void DoNotify<TParam>(Action<THandler, TParam> invoker, TParam param)
+        /// <summary>
+        /// trigger
+        /// </summary>
+        protected void DoNotify<TParam>(Action<THandler, TParam> invoker, TParam param)
     {
         var node = firstNode;
         while (node != null)
@@ -35,13 +36,13 @@ public abstract class HandleBaseEvent<THandler, TEvent> : BaseEvent<THandler, TE
             try
             {
                 node.Locked = true;
-                if (node.Listener != null)
+                if (node.Target != null)
                 {
-                    invoker(node.Listener, param);
+                    invoker(node.Target, param);
                 }
             } catch (Exception e)
             {
-                LOGGER.LogError(e, "{listener} trigger exception", node.Listener);
+                LOGGER.LogError(e, "{listener} trigger exception", node.Target);
             } finally
             {
                 node.Locked = false;
@@ -54,4 +55,6 @@ public abstract class HandleBaseEvent<THandler, TEvent> : BaseEvent<THandler, TE
             node = next;
         }
     }
+    }
+
 }

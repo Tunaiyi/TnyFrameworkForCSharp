@@ -11,7 +11,7 @@ using System.Collections.Generic;
 namespace TnyFramework.Net.Application
 {
 
-    public class ServiceServerSetting : IServiceServerSetting
+    public class ServiceServerSetting : IServedServerSetting
     {
         public string Name {
             get => Service;

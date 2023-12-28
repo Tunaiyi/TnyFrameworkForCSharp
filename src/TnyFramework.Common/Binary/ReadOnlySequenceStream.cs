@@ -153,16 +153,16 @@ namespace TnyFramework.Common.Binary
         }
 
 #if NETFRAMEWORK
-        private static ValueTask WriteAsync(Stream destination, ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+        private static Task WriteAsync(Stream destination, ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
         {
             if (MemoryMarshal.TryGetArray(buffer, out var array))
             {
-                return new ValueTask(destination.WriteAsync(array.Array!, array.Offset, array.Count, cancellationToken));
+                return destination.WriteAsync(array.Array!, array.Offset, array.Count, cancellationToken);
             }
 
             var sharedBuffer = ArrayPool<byte>.Shared.Rent(buffer.Length);
             buffer.Span.CopyTo(sharedBuffer);
-            return new ValueTask(FinishWriteAsync(destination.WriteAsync(sharedBuffer, 0, buffer.Length, cancellationToken), sharedBuffer));
+            return FinishWriteAsync(destination.WriteAsync(sharedBuffer, 0, buffer.Length, cancellationToken), sharedBuffer);
         }
 
         private static async Task FinishWriteAsync(Task writeTask, byte[] localBuffer)

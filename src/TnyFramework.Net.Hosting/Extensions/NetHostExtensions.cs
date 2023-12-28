@@ -13,12 +13,12 @@ using TnyFramework.DI.Extensions;
 using TnyFramework.Extensions.Configuration.Configuration;
 using TnyFramework.Hosting.Extensions;
 using TnyFramework.Net.Application;
+using TnyFramework.Net.Clusters;
 using TnyFramework.Net.Extensions;
 using TnyFramework.Net.Hosting.Host;
-using TnyFramework.Net.Hosting.Options;
 using TnyFramework.Net.Hosting.Rpc;
 using TnyFramework.Net.Rpc.Client;
-using TnyFramework.Net.Rpc.Configuration;
+using RemoteServeClusterOptions = TnyFramework.Net.Hosting.Options.RemoteServeClusterOptions;
 
 namespace TnyFramework.Net.Hosting.Extensions;
 
@@ -45,12 +45,12 @@ public static class NetHostExtensions
             .ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
                 var clientServiceOptions =
-                    configuration.BindOptionsIfExists<RpcClientOptions>(RpcClientOptions.RPC_CLIENT_ROOT_PATH);
+                    configuration.BindOptionsIfExists<RemoteServeClusterOptions>(RemoteServeClusterOptions.RPC_CLIENT_ROOT_PATH);
                 if (clientServiceOptions == null)
                 {
                     return;
                 }
-                services.AddSingleton<IRpcClientOptions>(clientServiceOptions);
+                services.AddSingleton<IRemoteServeClusterSetting>(clientServiceOptions);
                 foreach (var setting in clientServiceOptions.Services)
                 {
                     var beanName = setting.ServiceName() + nameof(IRpcClientFactory)[1..];

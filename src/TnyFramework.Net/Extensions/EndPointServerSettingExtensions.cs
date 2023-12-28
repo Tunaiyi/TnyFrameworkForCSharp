@@ -15,17 +15,17 @@ namespace TnyFramework.Net.Extensions
 
     public static class EndPointServerSettingExtensions
     {
-        public static bool IsHasEndPoint(this IEndPointServerSetting setting)
+        public static bool IsHasEndPoint(this IServerSetting setting)
         {
             return setting.Host.IsNotBlank() && setting.Port > 0;
         }
 
-        public static Uri GetUri(this IEndPointServerSetting setting)
+        public static Uri GetUri(this IServerSetting setting)
         {
             return new Uri(setting.Url());
         }
 
-        public static string Url(this IEndPointServerSetting setting)
+        public static string Url(this IServerSetting setting)
         {
             return $"{setting.Scheme}://{setting.Host}:{setting.Port}";
         }

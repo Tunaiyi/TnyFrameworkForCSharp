@@ -6,27 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Application
+using System.Collections.Generic;
+
+namespace TnyFramework.Net.Clusters;
+
+public interface IRemoteServeClusterSetting
 {
-
-    public interface INetServer : IServedService
-    {
-        /// <summary>
-        /// 是否启动
-        /// </summary>
-        /// <returns></returns>
-        bool IsOpen();
-
-        IServiceSetting Setting { get; }
-    }
-
-    public interface INetServer<out TSetting> : INetServer
-        where TSetting : IServiceSetting
-    {
-        /// <summary>
-        /// 设置
-        /// </summary>
-        TSetting ServiceSetting { get; }
-    }
-
+    List<IRemoteServeNodeSetting> Services { get; }
 }

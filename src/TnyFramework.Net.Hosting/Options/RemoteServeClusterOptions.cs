@@ -6,28 +6,12 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Common.Extensions;
+using Microsoft.Extensions.Configuration;
+using TnyFramework.Net.Clusters;
 
-namespace TnyFramework.Net.Application
+namespace TnyFramework.Net.Hosting.Options;
+
+public class RemoteServeClusterOptions : RemoteServeClusterSetting
 {
-
-    public interface IEndPointServerSetting : IServiceSetting
-    {
-        /// <summary>
-        /// 绑定域名
-        /// </summary>
-        string Host { get; }
-
-        /// <summary>
-        /// 绑定端口
-        /// </summary>
-        int Port { get; }
-
-        /// <summary>
-        /// 协议
-        /// </summary>
-        string Scheme { get; }
-    }
-
-
+    public static readonly string RPC_CLIENT_ROOT_PATH = ConfigurationPath.Combine("Tny", "Rpc", "Client");
 }

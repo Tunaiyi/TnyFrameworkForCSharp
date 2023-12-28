@@ -23,4 +23,20 @@ namespace TnyFramework.Common.Logger
         }
     }
 
+    public class NoopLoggerFactory : ILoggerFactory
+    {
+        public void Dispose()
+        {
+        }
+
+        public ILogger CreateLogger(string categoryName)
+        {
+            return NoopLogger.INSTANCE;
+        }
+
+        public void AddProvider(ILoggerProvider provider)
+        {
+        }
+    }
+
 }

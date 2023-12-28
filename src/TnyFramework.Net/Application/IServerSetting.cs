@@ -6,27 +6,28 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using System.Collections.Generic;
+using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Net.Application
 {
 
-    public interface IServiceServerSetting : IEndPointServerSetting
+    public interface IServerSetting : IServiceSetting
     {
         /// <summary>
-        /// 上报绑定域名
+        /// 绑定域名
         /// </summary>
-        string ServeHost { get; }
+        string Host { get; }
 
         /// <summary>
-        /// 上报绑定端口
+        /// 绑定端口
         /// </summary>
-        int ServePort { get; }
+        int Port { get; }
 
         /// <summary>
-        /// 信息
+        /// 协议
         /// </summary>
-        IDictionary<string, string>? Metadata { get; }
+        string Scheme { get; }
     }
+
 
 }

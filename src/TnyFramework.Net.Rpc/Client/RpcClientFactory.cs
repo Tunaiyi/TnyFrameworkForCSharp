@@ -12,9 +12,9 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Application;
+using TnyFramework.Net.Clusters;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Rpc.Auth;
-using TnyFramework.Net.Rpc.Configuration;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Rpc.Client;
@@ -22,11 +22,11 @@ namespace TnyFramework.Net.Rpc.Client;
 public class RpcClientFactory : IRpcClientFactory
 {
     private readonly ILogger logger = LogFactory.Logger<RpcClientFactory>();
-    private readonly IRpcRemoteServiceSetting setting;
+    private readonly IRemoteServeNodeSetting setting;
     private readonly INetApplicationOptions application;
     private readonly IClientGuide guide;
 
-    public RpcClientFactory(IRpcRemoteServiceSetting setting, INetApplicationOptions application, IClientGuide guide)
+    public RpcClientFactory(IRemoteServeNodeSetting setting, INetApplicationOptions application, IClientGuide guide)
     {
         this.setting = setting;
         this.application = application;

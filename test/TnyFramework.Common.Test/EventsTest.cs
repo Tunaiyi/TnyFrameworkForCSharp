@@ -28,27 +28,39 @@ public class EventsTest
 
     public interface ITestListener
     {
-        public void OnTest(TestObject source, int value);
+        public void OnTest(TestObject source, MoveEventArgs args);
+    }
+
+    public readonly struct MoveEventArgs(int value, int x, int y)
+    {
+        public int Value { get; } = value;
+
+        public int X { get; } = x;
+
+        public int Y { get; } = y;
     }
 
     public class TestObject
     {
-        private readonly IListenEvent<ITestListener, TestObject, int> @event =
-            Events.Create<ITestListener, TestObject, int>((l, p) => l.OnTest(p.source, p.arg1));
+        private readonly IListenEvent<ITestListener, TestObject, MoveEventArgs> @event =
+            Events.Create<ITestListener, TestObject, MoveEventArgs>(lt => lt.OnTest);
 
         public IEventWatch<ITestListener> Event => @event;
 
-        public void Handle(int value)
+        public void Handle(int value, int x, int y)
         {
-            @event.Notify(this, value);
+
+            // 移动
+            // 伤害
+            @event.Notify(this, new MoveEventArgs(value, x, y));
         }
     }
 
     private class Print(string content) : ITestListener
     {
-        public void OnTest(TestObject source, int value)
+        public void OnTest(TestObject source, MoveEventArgs args)
         {
-            _LOGGER.LogInformation("Print {source} OnTest {value} : {content}", source, value, content);
+            _LOGGER.LogInformation("Print {source} OnTest {x} {y} : {content}", source, args.X, args.Y, content);
         }
     }
 
@@ -58,16 +70,16 @@ public class EventsTest
 
         public List<ITestListener> Listener => listener;
 
-        public void OnTest(TestObject source, int value)
+        public void OnTest(TestObject source, MoveEventArgs args)
         {
-            if (value != 100)
+            if (args.Value != 100)
             {
-                _LOGGER.LogInformation("{source} OnTest {value} No Remove ", source, value);
+                _LOGGER.LogInformation("{source} OnTest {value} No Remove ", source, args.Value);
                 return;
             }
             foreach (var l in listener)
             {
-                _LOGGER.LogInformation("{source} OnTest {value} Remove {listen}", source, value, l);
+                _LOGGER.LogInformation("{source} OnTest {value} Remove {listen}", source, args.Value, l);
                 source.Event.Remove(l);
             }
         }
@@ -76,13 +88,14 @@ public class EventsTest
     [Fact]
     public void Test1()
     {
-        TestObject obj = new TestObject();
+        var obj = new TestObject();
         var p1 = new Print("p1");
         var p2 = new Print("p2");
         var p3 = new Print("p3");
         var p4 = new Print("p4");
         var p5 = new Print("p5");
         var p6 = new Print("p6");
+
         var remove = new Remove(p4, p5);
         remove.Listener.Add(remove);
         obj.Event.Add(p1);
@@ -92,10 +105,10 @@ public class EventsTest
         obj.Event.Add(p5);
         obj.Event.Add(p6);
 
-        obj.Handle(-1);
+        obj.Handle(-1, 100, 200);
         _LOGGER.LogInformation("========================================================================");
-        obj.Handle(100);
+        obj.Handle(100, 100, 200);
         _LOGGER.LogInformation("========================================================================");
-        obj.Handle(100);
+        obj.Handle(100, 100, 200);
     }
 }

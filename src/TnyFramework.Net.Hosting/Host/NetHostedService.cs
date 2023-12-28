@@ -57,7 +57,7 @@ public class NetHostedService : IHostedService
         IList<Task> tasks = new List<Task>();
         foreach (var server in application.Servers)
         {
-            if (server.Setting is not IServiceServerSetting)
+            if (server.Setting is not IServedServerSetting)
             {
                 continue;
             }

@@ -8,21 +8,17 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Extensions.Configuration;
-using TnyFramework.Net.Rpc.Configuration;
 
-namespace TnyFramework.Net.Hosting.Options;
+namespace TnyFramework.Net.Clusters;
 
-public class RpcClientOptions : IRpcClientOptions
+public class RemoteServeClusterSetting : IRemoteServeClusterSetting
 {
-    public static readonly string RPC_CLIENT_ROOT_PATH = ConfigurationPath.Combine("Tny", "Rpc", "Client");
+    private List<RemoteServeNodeSetting> services = [];
 
-    private List<RpcRemoteServiceSetting> services = [];
-
-    public List<RpcRemoteServiceSetting> Services {
+    public List<RemoteServeNodeSetting> Services {
         get => services;
         set => services = value;
     }
 
-    List<IRpcRemoteServiceSetting> IRpcClientOptions.Services => services.Select(s => s as IRpcRemoteServiceSetting).ToList();
+    List<IRemoteServeNodeSetting> IRemoteServeClusterSetting.Services => services.Select(s => s as IRemoteServeNodeSetting).ToList();
 }

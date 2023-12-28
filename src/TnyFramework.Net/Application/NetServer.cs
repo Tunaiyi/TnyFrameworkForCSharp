@@ -17,7 +17,7 @@ public abstract class NetServer : INetServer
     /// <summary>
     /// 服务发现名
     /// </summary>
-    public string Discovery => Setting.DiscoverService();
+    public string ServeName => Setting.DiscoverService();
 
     public abstract bool IsOpen();
 

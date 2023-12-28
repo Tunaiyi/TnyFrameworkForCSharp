@@ -6,49 +6,53 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
+using System;
+
 namespace TnyFramework.Common.Event.Notices
 {
 
     public static partial class Events
     {
-        public static IListenEvent<TListener, TSource> Create<TListener, TSource>(EventListen<TListener, TSource> listen)
+        public static IListenEvent<TListener, TSource> Create<TListener, TSource>(
+            Func<TListener, Action<TSource>> factory)
         {
-            return new ListenEvent<TListener, TSource>(listen);
+            return new ListenerActionEvent<TListener, TSource>(factory);
         }
 
-        public static IListenEvent<TListener, TSource, TArg1> Create<TListener, TSource, TArg1>(EventListen<TListener, TSource, TArg1> listen)
+        public static IListenEvent<TListener, TSource, TArg1> Create<TListener, TSource, TArg1>(
+            Func<TListener, Action<TSource, TArg1>> factory)
         {
-            return new ListenEvent<TListener, TSource, TArg1>(listen);
+            return new ListenerActionEvent<TListener, TSource, TArg1>(factory);
         }
 
         public static IListenEvent<TListener, TSource, TArg1, TArg2> Create<TListener, TSource, TArg1, TArg2>(
-            EventListen<TListener, TSource, TArg1, TArg2> listen)
+            Func<TListener, Action<TSource, TArg1, TArg2>> factory)
         {
-            return new ListenEvent<TListener, TSource, TArg1, TArg2>(listen);
+            return new ListenerActionEvent<TListener, TSource, TArg1, TArg2>(factory);
         }
 
         public static IListenEvent<TListener, TSource, TArg1, TArg2, TArg3> Create<TListener, TSource, TArg1, TArg2, TArg3>(
-            EventListen<TListener, TSource, TArg1, TArg2, TArg3> handler)
+            Func<TListener, Action<TSource, TArg1, TArg2, TArg3>> factory)
         {
-            return new ListenEvent<TListener, TSource, TArg1, TArg2, TArg3>(handler);
+            return new ListenerActionEvent<TListener, TSource, TArg1, TArg2, TArg3>(factory);
         }
 
         public static IListenEvent<TListener, TSource, TArg1, TArg2, TArg3, TArg4> Create<TListener, TSource, TArg1, TArg2, TArg3, TArg4>(
-            EventListen<TListener, TSource, TArg1, TArg2, TArg3, TArg4> handler)
+            Func<TListener, Action<TSource, TArg1, TArg2, TArg3, TArg4>> factory)
         {
-            return new ListenEvent<TListener, TSource, TArg1, TArg2, TArg3, TArg4>(handler);
+            return new ListenerActionEvent<TListener, TSource, TArg1, TArg2, TArg3, TArg4>(factory);
         }
 
         public static IListenEvent<TListener, TSource, TArg1, TArg2, TArg3, TArg4, TArg5> Create<TListener, TSource, TArg1, TArg2, TArg3, TArg4,
-            TArg5>(EventListen<TListener, TSource, TArg1, TArg2, TArg3, TArg4, TArg5> handler)
+            TArg5>(Func<TListener, Action<TSource, TArg1, TArg2, TArg3, TArg4, TArg5>> factory)
         {
-            return new ListenEvent<TListener, TSource, TArg1, TArg2, TArg3, TArg4, TArg5>(handler);
+            return new ListenerActionEvent<TListener, TSource, TArg1, TArg2, TArg3, TArg4, TArg5>(factory);
         }
 
         public static IListenEvent<TListener, TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6> Create<TListener, TSource, TArg1, TArg2, TArg3,
-            TArg4, TArg5, TArg6>(EventListen<TListener, TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6> handler)
+            TArg4, TArg5, TArg6>(Func<TListener, Action<TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>> factory)
         {
-            return new ListenEvent<TListener, TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>(handler);
+            return new ListenerActionEvent<TListener, TSource, TArg1, TArg2, TArg3, TArg4, TArg5, TArg6>(factory);
         }
     }
 

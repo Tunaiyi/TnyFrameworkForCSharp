@@ -17,7 +17,7 @@ namespace TnyFramework.Net.Hosting.Rpc
     public abstract class RpcEndPointHostServerConfiguration<TConfiguration, TContext, TGuide, TSetting, TSpec>
         : RpcHostServerConfiguration<TConfiguration, TContext, TGuide, TSetting, TSpec>,
             IRpcEndPointHostConfiguration<TGuide, TSetting, TContext, TConfiguration, TSpec>
-        where TSetting : IServiceServerSetting
+        where TSetting : IServedServerSetting
         where TGuide : IServerGuide<TSetting>
         where TContext : INetGuideUnitContext
         where TConfiguration : IRpcEndPointHostConfiguration<TGuide, TSetting, TContext, TConfiguration, TSpec>

@@ -11,11 +11,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-namespace TnyFramework.Common.Extensions;
-
-public static class UriExtensions
+namespace TnyFramework.Common.Extensions
 {
-    public static IDictionary<string, string> GetQueryParameters(this Uri uri)
+
+    public static class UriExtensions
+    {
+        public static IDictionary<string, string> GetQueryParameters(this Uri uri)
     {
         var query = uri.Query;
         if (string.IsNullOrEmpty(query))
@@ -31,8 +32,10 @@ public static class UriExtensions
                 parts => WebUtility.UrlDecode(parts[1]));
     }
 
-    public static string[] GetPathSegments(this Uri uri)
+        public static string[] GetPathSegments(this Uri uri)
     {
         return uri.AbsolutePath.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries);
     }
+    }
+
 }

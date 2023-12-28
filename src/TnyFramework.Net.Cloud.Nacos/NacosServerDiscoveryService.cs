@@ -78,7 +78,7 @@ namespace TnyFramework.Net.Cloud.Nacos
         {
 
             Exception? exception = null;
-            var setting = (IServiceServerSetting)server.Setting;
+            var setting = (IServedServerSetting)server.Setting;
             for (var i = 0; i < 3; i++)
             {
                 var times = i + 1;
@@ -100,7 +100,7 @@ namespace TnyFramework.Net.Cloud.Nacos
                 throw exception;
         }
 
-        private static string GetIp(IServiceServerSetting setting)
+        private static string GetIp(IServedServerSetting setting)
         {
             var host = setting.ServeHost;
             if (host.IsBlank())
@@ -121,7 +121,7 @@ namespace TnyFramework.Net.Cloud.Nacos
             return host;
         }
 
-        private static int GetPort(IServiceServerSetting setting)
+        private static int GetPort(IServedServerSetting setting)
         {
             var port = setting.ServePort;
             if (port <= 0)
@@ -142,7 +142,7 @@ namespace TnyFramework.Net.Cloud.Nacos
             {
                 metadata.TryAdd(key, value);
             }
-            var setting = (IServiceServerSetting)server.Setting;
+            var setting = (IServedServerSetting)server.Setting;
             var instance = new Instance {
                 Ephemeral = true,
                 ServiceName = setting.DiscoverService(),
