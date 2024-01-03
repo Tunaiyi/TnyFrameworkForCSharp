@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
+using TnyFramework.Common.EventBus;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint.Event;
 using TnyFramework.Net.Message;
@@ -29,12 +29,12 @@ namespace TnyFramework.Net.Endpoint
         /// <summary>
         /// 激活事件总线, 可监听到所有 EndpointKeeper 的事件
         /// </summary>
-        public static IEventBox<EndpointKeeperAddEndpoint> AddEndpointEventBox => AddEndpointEventBus;
+        public static IEventWatch<EndpointKeeperAddEndpoint> AddEndpointEventBox => AddEndpointEventBus;
 
         /// <summary>
         /// 断线事件总线, 可监听到所有 EndpointKeeper 的事件
         /// </summary>
-        public static IEventBox<EndpointKeeperRemoveEndpoint> RemoveEndpointEventBox => RemoveEndpointEventBus;
+        public static IEventWatch<EndpointKeeperRemoveEndpoint> RemoveEndpointEventBox => RemoveEndpointEventBus;
     }
 
     public abstract class EndpointKeeper<TEndpoint> : IEndpointKeeper<TEndpoint>, INetEndpointKeeper
@@ -46,9 +46,9 @@ namespace TnyFramework.Net.Endpoint
 
         private readonly IEventBus<EndpointKeeperRemoveEndpoint> removeEndpointEvent;
 
-        public IEventBox<EndpointKeeperAddEndpoint> AddEndpointEvent => addEndpointEvent;
+        public IEventWatch<EndpointKeeperAddEndpoint> AddEndpointEvent => addEndpointEvent;
 
-        public IEventBox<EndpointKeeperRemoveEndpoint> RemoveEndpointEvent => removeEndpointEvent;
+        public IEventWatch<EndpointKeeperRemoveEndpoint> RemoveEndpointEvent => removeEndpointEvent;
 
         public IContactType ContactType { get; }
 

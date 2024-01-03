@@ -13,7 +13,7 @@ using Etcdserverpb;
 using Grpc.Core;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
+using TnyFramework.Common.EventBus;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Tasks;
@@ -67,13 +67,13 @@ namespace TnyFramework.Namespace.Etcd
             revision = option.Revision;
         }
 
-        public IEventBox<EtcdWatchOnWatch> WatchEvent => watchEvent;
+        public IEventWatch<EtcdWatchOnWatch> WatchEvent => watchEvent;
 
-        public IEventBox<EtcdWatchOnChange> ChangeEvent => changeEvent;
+        public IEventWatch<EtcdWatchOnChange> ChangeEvent => changeEvent;
 
-        public IEventBox<EtcdWatchOnError> ErrorEvent => errorEvent;
+        public IEventWatch<EtcdWatchOnError> ErrorEvent => errorEvent;
 
-        public IEventBox<EtcdWatchOnCompleted> CompletedEvent => completedEvent;
+        public IEventWatch<EtcdWatchOnCompleted> CompletedEvent => completedEvent;
 
         public bool IsClosed() => closed;
 

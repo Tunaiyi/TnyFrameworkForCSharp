@@ -8,7 +8,8 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using TnyFramework.Common.Event.Buses;
+using TnyFramework.Common.Event;
+using TnyFramework.Common.EventBus;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher;
@@ -30,17 +31,17 @@ namespace TnyFramework.Net.Transport
         /// <summary>
         /// 激活事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<TunnelActivate> ActivateGlobalEvent => ACTIVATE_GLOBAL_EVENT;
+        public static IEventWatch<TunnelActivate> ActivateGlobalEvent => ACTIVATE_GLOBAL_EVENT;
 
         /// <summary>
         /// 断线事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<TunnelUnactivated> UnactivatedGlobalEvent => UNACTIVATED_GLOBAL_EVENT;
+        public static IEventWatch<TunnelUnactivated> UnactivatedGlobalEvent => UNACTIVATED_GLOBAL_EVENT;
 
         /// <summary>
         /// 关闭事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<TunnelClose> CloseGlobalEvent => CLOSE_GLOBAL_EVENT;
+        public static IEventWatch<TunnelClose> CloseGlobalEvent => CLOSE_GLOBAL_EVENT;
     }
 
     public abstract class NetTunnel<TEndpoint> : Connector, ITunnelEventSource, INetTunnel
@@ -86,11 +87,11 @@ namespace TnyFramework.Net.Transport
         private readonly IEventBus<TunnelUnactivated> unactivatedEvent;
         private readonly IEventBus<TunnelClose> closeEvent;
 
-        public IEventBox<TunnelActivate> ActivateEvent => activateEvent;
+        public IEventWatch<TunnelActivate> ActivateEvent => activateEvent;
 
-        public IEventBox<TunnelUnactivated> UnactivatedEvent => unactivatedEvent;
+        public IEventWatch<TunnelUnactivated> UnactivatedEvent => unactivatedEvent;
 
-        public IEventBox<TunnelClose> CloseEvent => closeEvent;
+        public IEventWatch<TunnelClose> CloseEvent => closeEvent;
 
         protected NetTunnel(long id, NetAccessMode accessMode, INetworkContext context, INetService service)
         {
@@ -102,6 +103,8 @@ namespace TnyFramework.Net.Transport
             activateEvent = ITunnelEventSource.ACTIVATE_GLOBAL_EVENT.ForkChild();
             unactivatedEvent = ITunnelEventSource.UNACTIVATED_GLOBAL_EVENT.ForkChild();
             closeEvent = ITunnelEventSource.CLOSE_GLOBAL_EVENT.ForkChild();
+            // EventHandle<ITunnel, int> handle = (_, _) => { };
+            // Action<ITunnel> action = new Action<ITunnel>(handle);
         }
 
         public IEndpoint GetEndpoint()

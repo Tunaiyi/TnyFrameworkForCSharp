@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using Etcdserverpb;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
+using TnyFramework.Common.EventBus;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Namespace.Exceptions;
@@ -73,15 +73,15 @@ namespace TnyFramework.Namespace.Etcd
 
         public long Ttl { get; private set; }
 
-        public IEventBox<LesseeOnRenew> RenewEvent => renewEvent;
+        public IEventWatch<LesseeOnRenew> RenewEvent => renewEvent;
 
-        public IEventBox<LesseeOnCompleted> CompletedEvent => completedEvent;
+        public IEventWatch<LesseeOnCompleted> CompletedEvent => completedEvent;
 
-        public IEventBox<LesseeOnError> ErrorEvent => errorEvent;
+        public IEventWatch<LesseeOnError> ErrorEvent => errorEvent;
 
-        public IEventBox<LesseeOnLease> LeaseEvent => leaseEvent;
+        public IEventWatch<LesseeOnLease> LeaseEvent => leaseEvent;
 
-        public IEventBox<LesseeOnResume> ResumeEvent => resumeEvent;
+        public IEventWatch<LesseeOnResume> ResumeEvent => resumeEvent;
 
         public int nextKeepAlive;
 

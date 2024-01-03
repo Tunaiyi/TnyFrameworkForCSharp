@@ -8,7 +8,6 @@
 
 using System.Collections.Generic;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
 using TnyFramework.Namespace.Sharding.Listener;
 
 namespace TnyFramework.Namespace.Sharding
@@ -91,13 +90,13 @@ namespace TnyFramework.Namespace.Sharding
         /// 分区改变事件
         /// </summary>
         /// <returns>分区改变事件</returns>
-        IEventBox<ShardingOnChange<TNode>> ChangeEvent { get; }
+        IEventWatch<ShardingOnChange<TNode>> ChangeEvent { get; }
 
         ///  <summary>
         /// 分区删除事件
         /// </summary>
         /// <returns>分区改变事件</returns>
-        IEventBox<ShardingOnRemove<TNode>> RemoveEvent { get; }
+        IEventWatch<ShardingOnRemove<TNode>> RemoveEvent { get; }
     }
 
 }

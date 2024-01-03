@@ -8,7 +8,6 @@
 
 using System.Collections.Generic;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint.Event;
 using TnyFramework.Net.Message;
@@ -109,12 +108,12 @@ namespace TnyFramework.Net.Endpoint
         /// <summary>
         /// 添加 Endpoint 事件
         /// </summary>
-        IEventBox<EndpointKeeperAddEndpoint> AddEndpointEvent { get; }
+        IEventWatch<EndpointKeeperAddEndpoint> AddEndpointEvent { get; }
 
         /// <summary>
         /// 移出 Endpoint 事件
         /// </summary>
-        IEventBox<EndpointKeeperRemoveEndpoint> RemoveEndpointEvent { get; }
+        IEventWatch<EndpointKeeperRemoveEndpoint> RemoveEndpointEvent { get; }
 
         /// <summary>
         /// 启动

@@ -21,6 +21,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\TnyFramework.Codec\TnyFramework.Codec.csproj" />
+        <ProjectReference Include="..\TnyFramework.Common.EventBus\TnyFramework.Common.EventBus.csproj" />
         <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
         <ProjectReference Include="..\TnyFramework.Namespace.Algorithm\TnyFramework.Namespace.Algorithm.csproj" />
     </ItemGroup>

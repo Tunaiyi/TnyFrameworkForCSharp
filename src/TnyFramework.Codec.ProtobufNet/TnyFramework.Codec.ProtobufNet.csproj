@@ -21,6 +21,9 @@
 
     <ItemGroup>
         <ProjectReference Include="..\TnyFramework.Codec\TnyFramework.Codec.csproj" />
+        <ProjectReference Include="..\TnyFramework.Common.Binary\TnyFramework.Common.Binary.csproj" />
+        <ProjectReference Include="..\TnyFramework.Common.Reflection\TnyFramework.Common.Reflection.csproj" />
+        <ProjectReference Include="..\TnyFramework.Common.Scanner\TnyFramework.Common.Scanner.csproj" />
     </ItemGroup>
 
     <ItemGroup>

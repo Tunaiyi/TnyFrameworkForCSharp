@@ -10,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using TnyFramework.Common.Extensions;
 using TnyFramework.Coroutines.ThreadPools;
 
 namespace TnyFramework.Coroutines.TaskSchedulers
@@ -44,7 +43,7 @@ namespace TnyFramework.Coroutines.TaskSchedulers
         /// <param name="threadFactory"></param>
         public WorkStealingTaskScheduler(int concurrencyLevel, string name = "", IThreadFactory? threadFactory = null)
         {
-            this.name = name.IsNullOrEmpty() ? "WorkStealingTaskScheduler" : name;
+            this.name = string.IsNullOrEmpty(name) ? "WorkStealingTaskScheduler" : name;
             // Store the concurrency level
             if (concurrencyLevel <= 0) throw new ArgumentOutOfRangeException("concurrencyLevel");
             mConcurrencyLevel = concurrencyLevel;
@@ -68,7 +67,7 @@ namespace TnyFramework.Coroutines.TaskSchedulers
             if (threadFactory != null)
             {
                 thread = threadFactory.Create(index, start);
-                if (thread.Name.IsNullOrEmpty())
+                if (string.IsNullOrEmpty(thread.Name))
                 {
                     thread.Name = $"{name}-[Core]-{index}";
                 }

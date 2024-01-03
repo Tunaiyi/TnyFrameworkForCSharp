@@ -36,6 +36,7 @@ namespace TnyFramework.Net.Rpc.Auth
         {
             LOGGER.LogInformation("Rpc响应 >> [{id}] 认证完成", id);
         }
+
     }
 
 }

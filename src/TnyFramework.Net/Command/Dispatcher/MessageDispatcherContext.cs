@@ -9,11 +9,11 @@
 using System;
 using System.Collections.Generic;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
-using TnyFramework.Common.Extensions;
+using TnyFramework.Common.EventBus;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Plugin;
+using CollectionExtensions = TnyFramework.Common.Extensions.CollectionExtensions;
 
 namespace TnyFramework.Net.Command.Dispatcher
 {
@@ -28,18 +28,18 @@ namespace TnyFramework.Net.Command.Dispatcher
         // /// <summary>
         // /// 激活事件总线, 可监听到所有 Command 的事件
         // /// </summary>
-        // public static IEventBox<CommandExecute> CommandExecuteEventBox => COMMAND_EXECUTE_EVENT_BUS;
+        // public static IEventWatch<CommandExecute> CommandExecuteEventBox => COMMAND_EXECUTE_EVENT_BUS;
 
         /// <summary>
         /// 断线事件总线, 可监听到所有 Command 的事件
         /// </summary>
-        public static IEventBox<CommandDone> CommandDoneEventBox => COMMAND_DONE_EVENT_BUS;
+        public static IEventWatch<CommandDone> CommandDoneEventBox => COMMAND_DONE_EVENT_BUS;
 
         private readonly IDictionary<object, IAuthenticationValidator> authenticationValidators = new Dictionary<object, IAuthenticationValidator>();
 
         private readonly IEventBus<CommandDone> commandDoneEvent;
 
-        public IEventBox<CommandDone> CommandDoneEvent => commandDoneEvent;
+        public IEventWatch<CommandDone> CommandDoneEvent => commandDoneEvent;
 
         public MessageDispatcherContext(
             INetAppContext appContext,
@@ -52,7 +52,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             {
                 this.authenticationValidators.Add(authenticateValidator.GetType(), authenticateValidator);
                 var limit = authenticateValidator.AuthProtocolLimit;
-                if (limit.IsEmpty())
+                if (CollectionExtensions.IsNullOrEmpty(limit))
                     continue;
                 foreach (var protocol in limit)
                 {

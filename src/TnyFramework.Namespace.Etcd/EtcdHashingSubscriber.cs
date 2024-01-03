@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Codec;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
+using TnyFramework.Common.EventBus;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Common.Tasks;
@@ -179,13 +179,13 @@ namespace TnyFramework.Namespace.Etcd
             });
         }
 
-        public IEventBox<OnNodeLoad<TValue>> LoadEvent => loadEvent;
+        public IEventWatch<OnNodeLoad<TValue>> LoadEvent => loadEvent;
 
-        public IEventBox<OnNodeCreate<TValue>> CreateEvent => createEvent;
+        public IEventWatch<OnNodeCreate<TValue>> CreateEvent => createEvent;
 
-        public IEventBox<OnNodeUpdate<TValue>> UpdateEvent => updateEvent;
+        public IEventWatch<OnNodeUpdate<TValue>> UpdateEvent => updateEvent;
 
-        public IEventBox<OnNodeDelete<TValue>> DeleteEvent => deleteEvent;
+        public IEventWatch<OnNodeDelete<TValue>> DeleteEvent => deleteEvent;
 
         internal void OnLoad(INameNodesWatcher<TValue> watcher, List<NameNode<TValue>> nameNodes)
         {

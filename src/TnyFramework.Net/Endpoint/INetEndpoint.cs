@@ -8,7 +8,6 @@
 
 using System.Threading.Tasks;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Endpoint.Event;
@@ -79,17 +78,17 @@ namespace TnyFramework.Net.Endpoint
         /// <summary>
         /// 上线事件总线, 可监听到当前 Endpoint 的事件
         /// </summary>
-        IEventBox<EndpointOnline> OnlineEvent { get; }
+        IEventWatch<EndpointOnline> OnlineEvent { get; }
 
         /// <summary>
         /// 下线事件总线, 可监听到当前 Endpoint 的事件
         /// </summary>
-        IEventBox<EndpointOffline> OfflineEvent { get; }
+        IEventWatch<EndpointOffline> OfflineEvent { get; }
 
         /// <summary>
         /// 关闭事件总线, 可监听到当前 Endpoint 的事件
         /// </summary>
-        IEventBox<EndpointClose> CloseEvent { get; }
+        IEventWatch<EndpointClose> CloseEvent { get; }
     }
 
 }

@@ -10,10 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
-using Microsoft.IdentityModel.Tokens;
-using TnyFramework.Common.Assemblies;
 using TnyFramework.Common.Enum;
+using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Result;
+using TnyFramework.Common.Scanner.Assemblies;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Message;
 

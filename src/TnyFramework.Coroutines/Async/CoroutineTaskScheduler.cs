@@ -10,7 +10,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.Extensions.ObjectPool;
+using TnyFramework.Common.Pools;
 
 namespace TnyFramework.Coroutines.Async
 {
@@ -53,14 +53,14 @@ namespace TnyFramework.Coroutines.Async
 
         private sealed class TaskQueueNode : ICoroutineWork
         {
-            private class TaskQueueNodePoolPolicy : PooledObjectPolicy<TaskQueueNode>
+            private class TaskQueueNodePoolPolicy : PooledPolicy<TaskQueueNode>
             {
                 public override TaskQueueNode Create() => new();
 
                 public override bool Return(TaskQueueNode obj) => true;
             }
 
-            private static readonly DefaultObjectPool<TaskQueueNode> POOL = new(new TaskQueueNodePoolPolicy());
+            private static readonly AnyPool<TaskQueueNode> POOL = new DefaultPool<TaskQueueNode>(new TaskQueueNodePoolPolicy());
 
             static TaskQueueNode()
             {

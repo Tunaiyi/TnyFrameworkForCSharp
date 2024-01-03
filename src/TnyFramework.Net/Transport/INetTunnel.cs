@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
@@ -81,17 +80,17 @@ namespace TnyFramework.Net.Transport
         /// <summary>
         /// 激活事件总线, 可监听到当前 Tunnel 的事件
         /// </summary>
-        IEventBox<TunnelActivate> ActivateEvent { get; }
+        IEventWatch<TunnelActivate> ActivateEvent { get; }
 
         /// <summary>
         /// 断线事件总线, 可监听到当前 Tunnel 的事件
         /// </summary>
-        IEventBox<TunnelUnactivated> UnactivatedEvent { get; }
+        IEventWatch<TunnelUnactivated> UnactivatedEvent { get; }
 
         /// <summary>
         /// 关闭事件总线, 可监听到当前 Tunnel 的事件
         /// </summary>
-        IEventBox<TunnelClose> CloseEvent { get; }
+        IEventWatch<TunnelClose> CloseEvent { get; }
     }
 
 }

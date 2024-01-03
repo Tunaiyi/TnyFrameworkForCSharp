@@ -8,7 +8,6 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using TnyFramework.Common.Extensions;
 
 namespace TnyFramework.Coroutines.Async
 {
@@ -31,7 +30,7 @@ namespace TnyFramework.Coroutines.Async
         /// <param name="executor">执行器</param>
         public DefaultCoroutineFactory(string name, TaskScheduler? executor = null)
         {
-            Name = name.IsNullOrEmpty() ? "CoroutineFactory" : name;
+            Name = string.IsNullOrEmpty(name) ? "CoroutineFactory" : name;
             this.executor = executor ?? TaskScheduler.Default;
         }
 

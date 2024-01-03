@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using TnyFramework.Codec;
-using TnyFramework.Common.Extensions;
 using TnyFramework.Namespace.Sharding;
+using CollectionExtensions = TnyFramework.Common.Extensions.CollectionExtensions;
 
 namespace TnyFramework.Namespace.Etcd
 {
@@ -83,7 +83,7 @@ namespace TnyFramework.Namespace.Etcd
             try
             {
                 var addList = partitions.Where(DoAddPartition).ToList();
-                if (addList.IsEmpty())
+                if (CollectionExtensions.IsNullOrEmpty(addList))
                     return;
                 ResetRange();
                 FireChange(this, addList);

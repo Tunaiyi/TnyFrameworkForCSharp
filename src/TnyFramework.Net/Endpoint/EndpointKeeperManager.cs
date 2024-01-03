@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
+using TnyFramework.Common.EventBus;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint.Event;
 using TnyFramework.Net.Transport;
@@ -34,11 +34,11 @@ namespace TnyFramework.Net.Endpoint
 
         private static readonly IEventBus<EndpointKeeperCreate> CREATE_EVENT_BUS = EventBuses.Create<EndpointKeeperCreate>();
 
-        public static IEventBox<EndpointKeeperCreate> CreateEventBox => CREATE_EVENT_BUS;
+        public static IEventWatch<EndpointKeeperCreate> CreateEventBox => CREATE_EVENT_BUS;
 
         private readonly IEventBus<EndpointKeeperCreate> createEventBus;
 
-        private IEventBox<EndpointKeeperCreate> CreateEvent => createEventBus;
+        private IEventWatch<EndpointKeeperCreate> CreateEvent => createEventBus;
 
         public EndpointKeeperManager(
             ISessionKeeperSetting defaultSessionKeeperSetting,

@@ -18,7 +18,6 @@ using TnyFramework.Net.DotNetty.Hosting.Configuration;
 using TnyFramework.Net.DotNetty.Hosting.Guide;
 using TnyFramework.Net.DotNetty.Hosting.Options;
 using TnyFramework.Net.Hosting.Host;
-using TnyFramework.Net.Hosting.Rpc;
 
 namespace TnyFramework.Net.DotNetty.Hosting.Extensions
 {

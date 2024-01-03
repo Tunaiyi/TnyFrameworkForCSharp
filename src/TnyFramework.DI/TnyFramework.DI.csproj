@@ -33,6 +33,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj" />
+        <ProjectReference Include="..\TnyFramework.Common.Scanner\TnyFramework.Common.Scanner.csproj" />
         <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
         <ProjectReference Include="..\TnyFramework.DI.Attributes\TnyFramework.DI.Attributes.csproj" />
     </ItemGroup>

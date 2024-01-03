@@ -10,10 +10,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
-using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Message;
+using CollectionExtensions = TnyFramework.Common.Extensions.CollectionExtensions;
 
 namespace TnyFramework.Net.Command.Dispatcher
 {
@@ -91,7 +91,7 @@ namespace TnyFramework.Net.Command.Dispatcher
                     profiles.AddRange(defaultModes.Select(mode => new RpcProfile(rpc, mode)));
                 }
             }
-            if (profiles.IsEmpty())
+            if (CollectionExtensions.IsNullOrEmpty(profiles))
             {
                 LOGGER.LogWarning("{Method} 没有存在注解 {RpcRequest}, {RpcPush}, {RpcResponse}, {Rpc} 中的一个",
                     method, typeof(RpcRequestAttribute), typeof(RpcPushAttribute), typeof(RpcResponseAttribute), typeof(RpcAttribute));

@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection;
 using System.Threading.Tasks;
-using TnyFramework.Common.Assemblies;
 using TnyFramework.Common.Enum;
+using TnyFramework.Common.Scanner.Assemblies;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Attributes;
 

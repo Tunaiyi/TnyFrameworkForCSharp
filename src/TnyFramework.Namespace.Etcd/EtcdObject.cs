@@ -17,8 +17,8 @@ using Google.Protobuf;
 using Google.Protobuf.Collections;
 using Mvccpb;
 using TnyFramework.Codec;
-using TnyFramework.Common.Extensions;
 using TnyFramework.Namespace.Exceptions;
+using CollectionExtensions = TnyFramework.Common.Extensions.CollectionExtensions;
 
 namespace TnyFramework.Namespace.Etcd
 {
@@ -56,7 +56,7 @@ namespace TnyFramework.Namespace.Etcd
 
         public NameNode<TValue>? DecodeKeyValue<TValue>(RepeatedField<KeyValue> pairs, ObjectMimeType<TValue> type)
         {
-            if (pairs.IsEmpty())
+            if (CollectionExtensions.IsNullOrEmpty(pairs))
             {
                 return null;
             }

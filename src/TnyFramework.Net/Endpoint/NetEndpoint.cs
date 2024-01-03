@@ -12,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
+using TnyFramework.Common.EventBus;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
@@ -36,17 +36,17 @@ namespace TnyFramework.Net.Endpoint
         /// <summary>
         /// 激活事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<EndpointOnline> OnlineGlobalEvent => ONLINE_GLOBAL_EVENT_BUS;
+        public static IEventWatch<EndpointOnline> OnlineGlobalEvent => ONLINE_GLOBAL_EVENT_BUS;
 
         /// <summary>
         /// 断线事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<EndpointOffline> OfflineGlobalBox => OFFLINE_GLOBAL_BUS;
+        public static IEventWatch<EndpointOffline> OfflineGlobalBox => OFFLINE_GLOBAL_BUS;
 
         /// <summary>
         /// 关闭事件总线, 可监听到所有 Tunnel 的事件
         /// </summary>
-        public static IEventBox<EndpointClose> CloseGlobalBox => CLOSE_GLOBAL_BUS;
+        public static IEventWatch<EndpointClose> CloseGlobalBox => CLOSE_GLOBAL_BUS;
 
         private static readonly ILogger LOGGER = LogFactory.Logger<NetEndpoint>();
 
@@ -68,11 +68,11 @@ namespace TnyFramework.Net.Endpoint
 
         private readonly IEventBus<EndpointClose> closeEvent;
 
-        public IEventBox<EndpointOnline> OnlineEvent => onlineEvent;
+        public IEventWatch<EndpointOnline> OnlineEvent => onlineEvent;
 
-        public IEventBox<EndpointOffline> OfflineEvent => offlineEvent;
+        public IEventWatch<EndpointOffline> OfflineEvent => offlineEvent;
 
-        public IEventBox<EndpointClose> CloseEvent => closeEvent;
+        public IEventWatch<EndpointClose> CloseEvent => closeEvent;
 
         public override NetAccessMode AccessMode => tunnel?.AccessMode ?? default!;
 

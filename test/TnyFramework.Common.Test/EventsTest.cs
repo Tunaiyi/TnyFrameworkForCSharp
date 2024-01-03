@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Logging;
-using TnyFramework.Common.Event.Notices;
+using TnyFramework.Common.Event;
 using TnyFramework.Common.Logger;
 using Xunit;
 using Xunit.Abstractions;
@@ -42,17 +42,17 @@ public class EventsTest
 
     public class TestObject
     {
-        private readonly IListenEvent<ITestListener, TestObject, MoveEventArgs> @event =
-            Events.Create<ITestListener, TestObject, MoveEventArgs>(lt => lt.OnTest);
+        private static readonly IListenEvent<ITestListener, TestObject, MoveEventArgs> EVENT =
+            Events.Create<ITestListener, TestObject, MoveEventArgs>( listener => listener.OnTest);
 
-        public IEventWatch<ITestListener> Event => @event;
+        public IEventWatch<ITestListener> Event => EVENT;
 
         public void Handle(int value, int x, int y)
         {
 
             // 移动
             // 伤害
-            @event.Notify(this, new MoveEventArgs(value, x, y));
+            EVENT.Notify(this, new MoveEventArgs(value, x, y));
         }
     }
 

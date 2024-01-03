@@ -8,7 +8,6 @@
 
 using System.Threading.Tasks;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
 using TnyFramework.Namespace.Listener;
 
 namespace TnyFramework.Namespace
@@ -81,15 +80,15 @@ namespace TnyFramework.Namespace
         /// <returns>返回 task </returns>
         Task Shutdown();
 
-        IEventBox<LesseeOnRenew> RenewEvent { get; }
+        IEventWatch<LesseeOnRenew> RenewEvent { get; }
 
-        IEventBox<LesseeOnLease> LeaseEvent { get; }
+        IEventWatch<LesseeOnLease> LeaseEvent { get; }
 
-        IEventBox<LesseeOnResume> ResumeEvent { get; }
+        IEventWatch<LesseeOnResume> ResumeEvent { get; }
 
-        IEventBox<LesseeOnCompleted> CompletedEvent { get; }
+        IEventWatch<LesseeOnCompleted> CompletedEvent { get; }
 
-        IEventBox<LesseeOnError> ErrorEvent { get; }
+        IEventWatch<LesseeOnError> ErrorEvent { get; }
 
 //    /**
 // * @return 租约事件

@@ -12,7 +12,7 @@ using Etcdserverpb;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Codec;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
+using TnyFramework.Common.EventBus;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
@@ -61,11 +61,11 @@ namespace TnyFramework.Namespace.Etcd
 
         public abstract Task Unwatch();
 
-        public IEventBox<OnWatch> WatchEvent => watchEvent;
+        public IEventWatch<OnWatch> WatchEvent => watchEvent;
 
-        public IEventBox<OnComplete> CompleteEvent => completeEvent;
+        public IEventWatch<OnComplete> CompleteEvent => completeEvent;
 
-        public IEventBox<OnError> ErrorEvent => errorEvent;
+        public IEventWatch<OnError> ErrorEvent => errorEvent;
     }
 
     public class EtcdNameNodesWatcher<TValue> : EtcdNameNodeWatcher, INameNodesWatcher<TValue>
@@ -105,13 +105,13 @@ namespace TnyFramework.Namespace.Etcd
             coroutine = DefaultCoroutineFactory.Default.Create("EtcdNameNodeWatcher");
         }
 
-        public IEventBox<OnNodeLoad<TValue>> LoadEvent => loadEvent;
+        public IEventWatch<OnNodeLoad<TValue>> LoadEvent => loadEvent;
 
-        public IEventBox<OnNodeCreate<TValue>> CreateEvent => createEvent;
+        public IEventWatch<OnNodeCreate<TValue>> CreateEvent => createEvent;
 
-        public IEventBox<OnNodeUpdate<TValue>> UpdateEvent => updateEvent;
+        public IEventWatch<OnNodeUpdate<TValue>> UpdateEvent => updateEvent;
 
-        public IEventBox<OnNodeDelete<TValue>> DeleteEvent => deleteEvent;
+        public IEventWatch<OnNodeDelete<TValue>> DeleteEvent => deleteEvent;
 
         public Task<INameNodesWatcher<TValue>> Watch()
         {

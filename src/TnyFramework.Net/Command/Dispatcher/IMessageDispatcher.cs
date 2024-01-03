@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
 using TnyFramework.Net.Message;
 
 namespace TnyFramework.Net.Command.Dispatcher
@@ -32,12 +31,12 @@ namespace TnyFramework.Net.Command.Dispatcher
         // /// <summary>
         // /// Command执行事件
         // /// </summary>
-        // IEventBox<CommandExecute> CommandExecuteEvent { get; }
+        // IEventWatch<CommandExecute> CommandExecuteEvent { get; }
 
         /// <summary>
         /// Command执行完成事件
         /// </summary>
-        IEventBox<CommandDone> CommandDoneEvent { get; }
+        IEventWatch<CommandDone> CommandDoneEvent { get; }
 
         /// <summary>
         /// 注册 Controller

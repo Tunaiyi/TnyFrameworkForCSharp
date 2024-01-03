@@ -555,7 +555,7 @@ namespace TnyFramework.Namespace.Etcd
                     Result = Compare.Types.CompareResult.Equal
                 });
             }
-            if (compares.IsEmpty())
+            if (compares.IsNullOrEmpty())
             {
                 compares.Add(new Compare {
                     Key = key,

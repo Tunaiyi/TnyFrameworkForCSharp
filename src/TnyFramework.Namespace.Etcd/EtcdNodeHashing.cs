@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Codec;
 using TnyFramework.Codec.Newtonsoft.Json;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
+using TnyFramework.Common.EventBus;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
@@ -163,9 +163,9 @@ namespace TnyFramework.Namespace.Etcd
             });
         }
 
-        public IEventBox<ShardingOnChange<TNode>> ChangeEvent => onChangeEvent;
+        public IEventWatch<ShardingOnChange<TNode>> ChangeEvent => onChangeEvent;
 
-        public IEventBox<ShardingOnRemove<TNode>> RemoveEvent => onRemoveEvent;
+        public IEventWatch<ShardingOnRemove<TNode>> RemoveEvent => onRemoveEvent;
 
         /// <summary>
         /// 键值 Hash 值

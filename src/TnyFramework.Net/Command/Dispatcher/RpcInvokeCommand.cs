@@ -12,9 +12,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Common.FastInvoke;
-using TnyFramework.Common.FastInvoke.FuncInvoke;
 using TnyFramework.Common.Logger;
+using TnyFramework.Common.Reflection.FastInvoke;
+using TnyFramework.Common.Reflection.FastInvoke.FuncInvoke;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Common;
@@ -33,8 +33,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <summary>
         /// Task 结果获取调用器
         /// </summary>
-        private static readonly ConcurrentDictionary<Type, IFastInvoker> TASK_RESULT_INVOKER =
-            new ConcurrentDictionary<Type, IFastInvoker>();
+        private static readonly ConcurrentDictionary<Type, IFastInvoker> TASK_RESULT_INVOKER = new();
 
         /// <summary>
         /// Task 结果的名字

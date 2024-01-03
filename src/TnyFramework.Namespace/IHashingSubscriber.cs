@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TnyFramework.Codec;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
 using TnyFramework.Namespace.Listener;
 using TnyFramework.Namespace.Sharding;
 
@@ -33,13 +32,13 @@ namespace TnyFramework.Namespace
 
         void Close();
 
-        IEventBox<OnNodeLoad<TValue>> LoadEvent { get; }
+        IEventWatch<OnNodeLoad<TValue>> LoadEvent { get; }
 
-        IEventBox<OnNodeCreate<TValue>> CreateEvent { get; }
+        IEventWatch<OnNodeCreate<TValue>> CreateEvent { get; }
 
-        IEventBox<OnNodeUpdate<TValue>> UpdateEvent { get; }
+        IEventWatch<OnNodeUpdate<TValue>> UpdateEvent { get; }
 
-        IEventBox<OnNodeDelete<TValue>> DeleteEvent { get; }
+        IEventWatch<OnNodeDelete<TValue>> DeleteEvent { get; }
     }
 
 }

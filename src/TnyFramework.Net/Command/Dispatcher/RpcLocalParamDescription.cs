@@ -13,7 +13,6 @@ using System.Reflection;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Result;
-using TnyFramework.Net.Application;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Common;
 using TnyFramework.Net.Endpoint;

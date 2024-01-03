@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0;net8.0;netstandard2.1</TargetFrameworks>
+        <Configurations>Debug;Release;Publish</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <RootNamespace>TnyFramework.Common.Scanner</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+    </ItemGroup>
+    <ItemGroup>
+        <AssemblyAttribute Include="TnyFramework.Common.Scanner.Attributes.AssemblyTypeSelectorAttributes">
+            <_Parameter1>TnyFramework.Common.Scanner.Enum.EnumLoaderTypeSelector</_Parameter1>
+        </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj" />
+        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
+    </ItemGroup>
+</Project>

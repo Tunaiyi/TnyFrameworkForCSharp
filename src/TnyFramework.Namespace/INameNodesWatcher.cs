@@ -8,7 +8,6 @@
 
 using System.Threading.Tasks;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
 using TnyFramework.Namespace.Listener;
 
 namespace TnyFramework.Namespace
@@ -44,11 +43,11 @@ namespace TnyFramework.Namespace
         /// <returns></returns>
         bool IsWatch();
 
-        IEventBox<OnWatch> WatchEvent { get; }
+        IEventWatch<OnWatch> WatchEvent { get; }
 
-        IEventBox<OnComplete> CompleteEvent { get; }
+        IEventWatch<OnComplete> CompleteEvent { get; }
 
-        IEventBox<OnError> ErrorEvent { get; }
+        IEventWatch<OnError> ErrorEvent { get; }
     }
 
     public interface INameNodesWatcher<TValue> : INameNodesWatcher
@@ -59,13 +58,13 @@ namespace TnyFramework.Namespace
         /// <returns>返回 Task</returns>
         Task<INameNodesWatcher<TValue>> Watch();
 
-        IEventBox<OnNodeLoad<TValue>> LoadEvent { get; }
+        IEventWatch<OnNodeLoad<TValue>> LoadEvent { get; }
 
-        IEventBox<OnNodeCreate<TValue>> CreateEvent { get; }
+        IEventWatch<OnNodeCreate<TValue>> CreateEvent { get; }
 
-        IEventBox<OnNodeUpdate<TValue>> UpdateEvent { get; }
+        IEventWatch<OnNodeUpdate<TValue>> UpdateEvent { get; }
 
-        IEventBox<OnNodeDelete<TValue>> DeleteEvent { get; }
+        IEventWatch<OnNodeDelete<TValue>> DeleteEvent { get; }
     }
 
 }

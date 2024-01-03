@@ -14,6 +14,7 @@ using System.Threading;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Endpoint;
+using CollectionExtensions = TnyFramework.Common.Extensions.CollectionExtensions;
 
 namespace TnyFramework.Net.Rpc
 {
@@ -30,7 +31,7 @@ namespace TnyFramework.Net.Rpc
 
         public long ServerId { get; } = serverId;
 
-        public bool IsActive() => !orderAccessPoints.IsEmpty();
+        public bool IsActive() => !CollectionExtensions.IsNullOrEmpty(orderAccessPoints);
 
         public long NodeId => ServerId;
 

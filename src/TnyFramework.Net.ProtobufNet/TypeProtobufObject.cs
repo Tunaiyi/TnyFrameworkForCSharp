@@ -9,7 +9,7 @@
 using System;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Extensions;
-using TnyFramework.Common.FastInvoke.FuncInvoke;
+using TnyFramework.Common.Reflection.FastInvoke.FuncInvoke;
 
 namespace TnyFramework.Net.ProtobufNet
 {

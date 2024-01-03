@@ -8,7 +8,7 @@
 
 using System;
 using TnyFramework.Common.Exceptions;
-using TnyFramework.Common.FastInvoke.FuncInvoke;
+using TnyFramework.Common.Reflection.FastInvoke.FuncInvoke;
 
 namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
 {

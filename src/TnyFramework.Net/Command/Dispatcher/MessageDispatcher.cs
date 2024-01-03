@@ -10,7 +10,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Event;
-using TnyFramework.Common.Event.Buses;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Command.Auth;
@@ -37,9 +36,9 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private readonly IContactAuthenticator contactAuthenticator;
 
-        // public IEventBox<CommandExecute> CommandExecuteEvent => context.CommandExecuteEvent;
+        // public IEventWatch<CommandExecute> CommandExecuteEvent => context.CommandExecuteEvent;
 
-        public IEventBox<CommandDone> CommandDoneEvent => context.CommandDoneEvent;
+        public IEventWatch<CommandDone> CommandDoneEvent => context.CommandDoneEvent;
 
         public MessageDispatcher(MessageDispatcherContext context, IContactAuthenticator contactAuthenticator)
         {

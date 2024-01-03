@@ -7,7 +7,6 @@
 // See the Mulan PSL v2 for more details.
 
 using System;
-using System.Runtime.Serialization;
 using Grpc.Core;
 
 namespace TnyFramework.Namespace.Etcd.Exceptions

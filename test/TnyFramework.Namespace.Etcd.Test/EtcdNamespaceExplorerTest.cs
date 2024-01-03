@@ -14,10 +14,10 @@ using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using TnyFramework.Codec;
 using TnyFramework.Codec.Newtonsoft.Json;
-using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Namespace.Algorithm.XXHash3;
 using TnyFramework.Namespace.Sharding;
+using CollectionExtensions = TnyFramework.Common.Extensions.CollectionExtensions;
 
 namespace TnyFramework.Namespace.Etcd.Test
 {
@@ -887,7 +887,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             await _EXPLORER.RemoveAll(PLAYER_NODE);
 
             var players = await _EXPLORER.FindAll(PLAYER_NODE, MINE_TYPE);
-            Assert.IsTrue(players.IsEmpty());
+            Assert.IsTrue(CollectionExtensions.IsNullOrEmpty(players));
 
             var otherPlayers = await _EXPLORER.FindAll(OTHER_PLAYER_NODE, MINE_TYPE);
             Assert.AreEqual(5, otherPlayers.Count);
@@ -920,7 +920,7 @@ namespace TnyFramework.Namespace.Etcd.Test
             }
 
             var players = await _EXPLORER.FindAll(PLAYER_NODE, MINE_TYPE);
-            Assert.IsTrue(players.IsEmpty());
+            Assert.IsTrue(CollectionExtensions.IsNullOrEmpty(players));
 
             var otherPlayers = await _EXPLORER.FindAll(OTHER_PLAYER_NODE, MINE_TYPE);
             Assert.AreEqual(players2.Count, otherPlayers.Count);

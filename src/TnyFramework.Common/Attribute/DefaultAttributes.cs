@@ -8,16 +8,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Threading;
+using TnyFramework.Common.Collections;
 
 namespace TnyFramework.Common.Attribute
 {
 
     public class DefaultAttributes : IAttributes
     {
-        private static readonly IDictionary<IAttrKey, object> EMPTY = new Dictionary<IAttrKey, object>()
-            .ToImmutableDictionary();
+        private static readonly IDictionary<IAttrKey, object> EMPTY = new EmptyDictionary<IAttrKey, object>();
 
         // 属性 map
         private volatile Dictionary<IAttrKey, object>? attributeMap;
