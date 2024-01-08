@@ -68,7 +68,7 @@ public class RpcClientFactory : IRpcClientFactory
             .WillRespondAwaiter(setting.AuthenticateTimeout);
         var networkContext = tunnel.Context;
         var invokeContext =
-            RpcMessageTransactionContext.CreateExit(tunnel.Endpoint, content, networkContext.RpcMonitor, false);
+            RpcMessageTransactionContext.CreateExit(tunnel.Session, content, networkContext.RpcMonitor, false);
         invokeContext.Invoke(
             RpcMessageTransactionContext.RpcOperation(nameof(RpcAuthController.Authenticate), content));
         try

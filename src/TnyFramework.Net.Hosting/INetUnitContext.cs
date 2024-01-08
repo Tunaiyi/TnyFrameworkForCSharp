@@ -11,7 +11,7 @@ using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
-using TnyFramework.Net.Hosting.Endpoint;
+using TnyFramework.Net.Hosting.Session;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
 
@@ -28,7 +28,7 @@ namespace TnyFramework.Net.Hosting
 
         ICommandBoxFactory LoadCommandBoxFactory();
 
-        IEndpointUnitContext EndpointUnitContext { get; }
+        ISessionUnitContext SessionUnitContext { get; }
 
         INetAppContext LoadAppContext();
 

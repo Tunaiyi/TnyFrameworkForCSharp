@@ -18,8 +18,7 @@
         <ImplicitUsings>disable</ImplicitUsings>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <Prefer32Bit>false</Prefer32Bit>
-<!--        <DebugType>portable</DebugType>-->
-        <DebugType>embedded</DebugType>
+        <DebugType>portable</DebugType>
         <DebugSymbols>true</DebugSymbols>
         <!--设置obj文件目录-->
         <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)Build/obj/$(MSBuildProjectName)/</BaseIntermediateOutputPath>
@@ -30,11 +29,12 @@
     <PropertyGroup Condition="'$(Configuration)' == 'Publish' Or '$(Configuration)' == 'Release'">
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
         <Deterministic>true</Deterministic>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+<!--        <EmbedUntrackedSources>true</EmbedUntrackedSources>-->
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <NoPackageAnalysis>true</NoPackageAnalysis>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -70,7 +70,7 @@
 
     <Target Name="LoaclInstallPublishPacksSymbolsNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">
         <Message Text="Push Nuget To $(TnyRemoteUrl)"/>
-<!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).snupkg -Source $(TnyRemoteUrl)"/>-->
+        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).snupkg -Source $(TnyRemoteUrl)"/>
     </Target>
 
 

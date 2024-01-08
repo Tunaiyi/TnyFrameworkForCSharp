@@ -10,6 +10,7 @@ using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Application
 {
@@ -22,6 +23,8 @@ namespace TnyFramework.Net.Application
 
         public IMessageFactory MessageFactory { get; }
 
+        public ISessionFactory SessionFactory { get; }
+
         public IContactFactory ContactFactory { get; }
 
         public RpcMonitor RpcMonitor { get; }
@@ -33,6 +36,7 @@ namespace TnyFramework.Net.Application
             MessageDispatcher = null!;
             CommandBoxFactory = null!;
             MessageFactory = null!;
+            SessionFactory = null!;
             ContactFactory = null!;
             RpcMonitor = null!;
         }
@@ -41,6 +45,7 @@ namespace TnyFramework.Net.Application
             IMessageDispatcher messageDispatcher,
             ICommandBoxFactory commandBoxFactory,
             IMessageFactory messageFactory,
+            ISessionFactory sessionFactory,
             IContactFactory contactFactory,
             RpcMonitor rpcMonitor,
             IRpcForwarder? rpcForwarder = null)
@@ -48,6 +53,7 @@ namespace TnyFramework.Net.Application
             MessageDispatcher = messageDispatcher;
             CommandBoxFactory = commandBoxFactory;
             MessageFactory = messageFactory;
+            SessionFactory = sessionFactory;
             ContactFactory = contactFactory;
             RpcMonitor = rpcMonitor;
             RpcForwarder = rpcForwarder;

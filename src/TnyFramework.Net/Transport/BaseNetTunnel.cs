@@ -13,15 +13,15 @@ using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.Application;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Transport
 {
 
-    public abstract class BaseNetTunnel<TEndpoint, TTransporter> : NetTunnel<TEndpoint>
-        where TEndpoint : INetEndpoint
+    public abstract class BaseNetTunnel<TSession, TTransporter> : NetTunnel<TSession>
+        where TSession : INetSession
         where TTransporter : IMessageTransporter
     {
         protected TTransporter Transporter { get; }
@@ -46,14 +46,14 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-        protected sealed override bool ReplaceEndpoint(INetEndpoint newEndpoint)
+        protected sealed override bool ResetSession(INetSession newSession)
         {
             var certificate = Certificate;
             if (certificate.IsAuthenticated())
                 return false;
-            var commandTaskBox = Endpoint.CommandBox;
-            SetEndpoint((TEndpoint)newEndpoint);
-            Endpoint.TakeOver(commandTaskBox);
+            var commandTaskBox = Session.CommandBox;
+            SetSession((TSession)newSession);
+            Session.TakeOver(commandTaskBox);
             return true;
         }
 

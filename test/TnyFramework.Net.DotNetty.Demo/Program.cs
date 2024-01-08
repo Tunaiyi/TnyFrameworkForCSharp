@@ -82,9 +82,9 @@ namespace TnyFramework.Net.DotNetty.Demo
 
             var unitContainer = new ServiceCollection();
             NettyRpcHostServerConfiguration.CreateRpcServer(unitContainer)
-                .Server("game-server", serverSpec => serverSpec.Server(18800))
+                .Server("game-server", serverSpec => serverSpec.Server(16800))
                 .RpcServer("game-service", 17800)
-                .EndpointConfigure(endpointSpec => endpointSpec
+                .SessionConfigure(sessionSpec => sessionSpec
                     .SessionKeeperFactory("defaultSessionKeeperFactory")
                     .CustomSessionConfigure(settingSpec => settingSpec
                         .UserType(ContactType.DEFAULT_USER_TYPE)

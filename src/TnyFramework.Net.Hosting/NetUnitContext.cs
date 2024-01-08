@@ -14,7 +14,7 @@ using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Hosting.App;
-using TnyFramework.Net.Hosting.Endpoint;
+using TnyFramework.Net.Hosting.Session;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
 
@@ -27,9 +27,9 @@ namespace TnyFramework.Net.Hosting
 
         public NetAppContextSpec AppContextSpec { get; }
 
-        public EndpointSpec EndpointSpec { get; }
+        public SessionSpec SessionSpec { get; }
 
-        public IEndpointUnitContext EndpointUnitContext => EndpointSpec;
+        public ISessionUnitContext SessionUnitContext => SessionSpec;
 
         public UnitSpec<MessageDispatcherContext, INetUnitContext> MessageDispatcherContextSpec { get; }
 
@@ -68,7 +68,7 @@ namespace TnyFramework.Net.Hosting
             AuthenticateValidatorSpecs = UnitCollectionSpec.Units<IAuthenticationValidator, INetUnitContext>();
 
             // Endpoint
-            EndpointSpec = new EndpointSpec(UnitContainer);
+            SessionSpec = new SessionSpec(UnitContainer);
 
             // AppContext
             AppContextSpec = new NetAppContextSpec();
@@ -131,7 +131,7 @@ namespace TnyFramework.Net.Hosting
 
         private static MessageDispatcher DefaultMessageDispatcher(INetUnitContext context)
         {
-            return new MessageDispatcher(context.LoadMessageDispatcherContext(), context.EndpointUnitContext.LoadContactAuthenticator());
+            return new MessageDispatcher(context.LoadMessageDispatcherContext(), context.SessionUnitContext.LoadContactAuthenticator());
         }
 
         private static RpcServicerManager DefaultRpcRemoteServiceManager(INetUnitContext context)

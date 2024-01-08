@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
-using TnyFramework.Net.Endpoint;
+using TnyFramework.Net.Session;
 using CollectionExtensions = TnyFramework.Common.Extensions.CollectionExtensions;
 
 namespace TnyFramework.Net.Rpc
@@ -62,13 +62,13 @@ namespace TnyFramework.Net.Rpc
             }
         }
 
-        internal void AddEndpoint(IEndpoint endpoint)
+        internal void AddSession(ISession session)
         {
             WriteLock();
             try
             {
                 var activate = remoteServiceAccessMap.IsEmpty();
-                remoteServiceAccessMap[endpoint.Identify] = new RpcRemoteServiceAccess(endpoint);
+                remoteServiceAccessMap[session.Identify] = new RpcRemoteServiceAccess(session);
                 Order(activate);
             } finally
             {
@@ -76,18 +76,18 @@ namespace TnyFramework.Net.Rpc
             }
         }
 
-        internal void RemoveEndpoint(IEndpoint endpoint)
+        internal void RemoveSession(ISession session)
         {
             WriteLock();
             try
             {
                 var activate = remoteServiceAccessMap.IsEmpty();
-                if (!remoteServiceAccessMap.TryGetValue(endpoint.Identify, out var accessPoint))
+                if (!remoteServiceAccessMap.TryGetValue(session.Identify, out var accessPoint))
                     return;
-                var exist = accessPoint.Endpoint;
-                if (!ReferenceEquals(endpoint, exist))
+                var exist = accessPoint.Session;
+                if (!ReferenceEquals(session, exist))
                     return;
-                if (remoteServiceAccessMap.Remove(endpoint.Identify))
+                if (remoteServiceAccessMap.Remove(session.Identify))
                 {
                     Order(activate);
                 }

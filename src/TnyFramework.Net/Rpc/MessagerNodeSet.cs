@@ -9,7 +9,7 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using TnyFramework.Net.Application;
-using TnyFramework.Net.Endpoint;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Rpc
 {
@@ -18,7 +18,7 @@ namespace TnyFramework.Net.Rpc
     {
         private readonly IList<IRpcInvokeNode> remoterList;
 
-        private IEndpointKeeper? keeper;
+        private ISessionKeeper? keeper;
 
         public ContactNodeSet(IContactType contactType)
         {
@@ -26,7 +26,7 @@ namespace TnyFramework.Net.Rpc
             remoterList = ImmutableList.Create((IRpcInvokeNode) this);
         }
 
-        internal void Bind(IEndpointKeeper keeper)
+        internal void Bind(ISessionKeeper keeper)
         {
             this.keeper = keeper;
         }
@@ -48,8 +48,8 @@ namespace TnyFramework.Net.Rpc
 
         public IRpcAccess? GetAccess(long accessId)
         {
-            var endpoint = keeper?.GetEndpoint(accessId);
-            return endpoint != null ? RpcContactAccess.Of(endpoint) : null;
+            var session = keeper?.GetSession(accessId);
+            return session != null ? RpcContactAccess.Of(session) : null;
         }
 
         public bool IsActive() => true;

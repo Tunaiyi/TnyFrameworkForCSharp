@@ -14,9 +14,9 @@ using TnyFramework.Common.Result;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Common;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Exceptions;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Rpc.Remote
 {
@@ -89,11 +89,11 @@ namespace TnyFramework.Net.Rpc.Remote
                 {
                     throw new RpcInvokeException(NetResultCode.REMOTE_EXCEPTION, $"调用 {method} 异常, 未找到有效的远程服务节点");
                 }
-                var endpoint = accessPoint.Endpoint;
+                var session = accessPoint.Session;
                 var timeout = Timeout;
                 return method.Mode switch {
-                    MessageMode.Push => Push(endpoint, timeout, invokeParams),
-                    MessageMode.Request => Request(endpoint, timeout, invokeParams),
+                    MessageMode.Push => Push(session, timeout, invokeParams),
+                    MessageMode.Request => Request(session, timeout, invokeParams),
                     _ => throw new RpcInvokeException(NetResultCode.REMOTE_EXCEPTION, $"调用 {method} 异常, 非法 rpc 模式")
                 };
             } catch (Exception e)
@@ -163,12 +163,12 @@ namespace TnyFramework.Net.Rpc.Remote
             return source?.Task ?? Task.CompletedTask;
         }
 
-        private object? Request(IEndpoint endpoint, long timeout, RpcRemoteInvokeParams invokeParams)
+        private object? Request(ISession session, long timeout, RpcRemoteInvokeParams invokeParams)
         {
             var content = MessageContents.Request(Protocol(), invokeParams.Params);
             content.WillRespondAwaiter(timeout)
                 .WithHeaders(invokeParams.GetAllHeaders());
-            var invokeContext = RpcMessageTransactionContext.CreateExit(endpoint, content, rpcMonitor, method.IsAsync());
+            var invokeContext = RpcMessageTransactionContext.CreateExit(session, content, rpcMonitor, method.IsAsync());
             invokeContext.Invoke(RpcMessageTransactionContext.RpcOperation(method.Name, content));
             try
             {
@@ -182,7 +182,7 @@ namespace TnyFramework.Net.Rpc.Remote
                         invokeContext.Complete(task.Result);
                     }
                 });
-                _ = endpoint.Send(content, true);
+                _ = session.Send(content, true);
                 if (method.IsAsync())
                 {
                     return ToReturnTask(respondTask);
@@ -206,17 +206,17 @@ namespace TnyFramework.Net.Rpc.Remote
         //     }
         // }
 
-        private object? Push(IEndpoint endpoint, int timeout, RpcRemoteInvokeParams invokeParams)
+        private object? Push(ISession session, int timeout, RpcRemoteInvokeParams invokeParams)
         {
             var code = invokeParams.Code;
             var content = MessageContents.Push(Protocol(), code)
                 .WithBody(invokeParams.GetBody())
                 .WithHeaders(invokeParams.GetAllHeaders());
-            var invokeContext = RpcMessageTransactionContext.CreateExit(endpoint, content, rpcMonitor, false);
+            var invokeContext = RpcMessageTransactionContext.CreateExit(session, content, rpcMonitor, false);
             try
             {
                 invokeContext.Invoke(RpcMessageTransactionContext.RpcOperation(method.Name, content));
-                var sent = endpoint.Send(content, true);
+                var sent = session.Send(content, true);
                 invokeContext.Complete();
                 if (method.IsAsync())
                 {

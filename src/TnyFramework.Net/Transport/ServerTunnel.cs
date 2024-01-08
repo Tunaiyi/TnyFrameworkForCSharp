@@ -9,18 +9,17 @@
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
-using TnyFramework.Net.Endpoint;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Transport
 {
 
-    public class ServerTunnel<TTransporter> : BaseNetTunnel<INetEndpoint, TTransporter>
+    public class ServerTunnel<TTransporter> : BaseNetTunnel<INetSession, TTransporter>
         where TTransporter : IMessageTransporter
     {
         public ServerTunnel(long id, TTransporter transporter, INetworkContext context, INetService service)
             : base(id, transporter, NetAccessMode.Server, context, service)
         {
-            Bind(new AnonymityEndpoint(context, this));
         }
 
         protected override void OnDisconnect()

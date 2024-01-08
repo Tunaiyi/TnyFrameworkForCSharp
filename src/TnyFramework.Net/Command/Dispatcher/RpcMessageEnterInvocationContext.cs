@@ -12,9 +12,9 @@ using TnyFramework.Common.Attribute;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
+using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Command.Dispatcher
@@ -45,7 +45,7 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public INetTunnel NetTunnel => tunnel;
 
-        public override IConnector Connector => tunnel;
+        public override ICommunicator Communicator => tunnel;
 
         public IMessage Message => message;
 
@@ -76,7 +76,7 @@ namespace TnyFramework.Net.Command.Dispatcher
             return Prepare(operationName);
         }
 
-        public override IEndpoint GetEndpoint() => tunnel.Endpoint;
+        public override ISession GetSession() => tunnel.Session;
 
         public bool Resume()
         {

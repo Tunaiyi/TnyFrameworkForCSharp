@@ -74,9 +74,9 @@ namespace TnyFramework.Net.Common
         public static readonly IResultCode CONNECT_FAILED = Of(184, "连接失败", ResultLevel.Warn);
 
         /// <summary>
-        /// 终端关闭
+        /// 会话关闭
         /// </summary>
-        public static readonly IResultCode ENDPOINT_CLOSE = Of(185, "终端关闭", ResultLevel.Warn);
+        public static readonly IResultCode SESSION_CLOSE = Of(185, "会话关闭", ResultLevel.Warn);
 
         /// <summary>
         /// 服务端接受请求异常

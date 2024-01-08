@@ -7,12 +7,12 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Application;
-using TnyFramework.Net.Endpoint;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Transport
 {
 
-    public interface ITunnel : IConnector, IConnection, ISender, INetService
+    public interface ITunnel : ICommunicator, IConnection, ISender, INetService
     {
         /// <summary>
         /// 通道 Id
@@ -39,7 +39,7 @@ namespace TnyFramework.Net.Transport
         /// <summary>
         /// 会话
         /// </summary>
-        IEndpoint Endpoint { get; }
+        ISession Session { get; }
     }
 
 }

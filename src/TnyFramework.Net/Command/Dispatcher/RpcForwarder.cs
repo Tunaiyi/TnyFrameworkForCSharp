@@ -26,7 +26,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         /// <param name="to">目标 Rpc 服务</param>
         /// <param name="receiver">接受者(可选)</param>
         /// <returns></returns>
-        IRpcRemoteAccessPoint Forward(IMessage message, IRpcServicer from, IContact sender, IRpcServicer to, IContact receiver);
+        IRpcForwardAccess Forward(IMessage message, IRpcServicer from, IContact sender, IRpcServicer to, IContact receiver);
     }
 
 }

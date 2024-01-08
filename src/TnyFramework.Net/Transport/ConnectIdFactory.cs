@@ -17,11 +17,11 @@ namespace TnyFramework.Net.Transport
 
         private static volatile int _TRANSPORT_ID_CREATOR = 0;
 
-        private static volatile int _ENDPOINT_ID_CREATOR = 0;
+        private static volatile int _SESSION_ID_CREATOR = 0;
 
-        public static long NewEndpointId()
+        public static long NewSessionId()
         {
-            return Interlocked.Increment(ref _ENDPOINT_ID_CREATOR);
+            return Interlocked.Increment(ref _SESSION_ID_CREATOR);
         }
 
         public static long NewTunnelId()

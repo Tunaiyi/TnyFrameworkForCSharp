@@ -7,8 +7,8 @@
 // See the Mulan PSL v2 for more details.
 
 using System.Threading.Tasks;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Transport
 {

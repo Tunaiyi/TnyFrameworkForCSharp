@@ -40,7 +40,7 @@ namespace TnyFramework.Net.Hosting.Rpc
             AddController<RpcAuthController>()
                 .AddAuthenticateValidators(spec => spec.Creator(DefaultRpcPasswordValidator))
                 .AddAuthenticateValidators(spec => spec.Creator(DefaultRpcTokenValidator))
-                .EndpointConfigure(spec => spec.SessionKeeperFactory(RPC_SESSION_KEEPER_NAME)
+                .SessionConfigure(spec => spec.SessionKeeperFactory(RPC_SESSION_KEEPER_NAME)
                     .DefaultSessionConfigure(keeper => keeper.KeeperFactory(RPC_SESSION_KEEPER_NAME))
                 );
             IdGeneratorSpec = UnitSpec.Unit<IIdGenerator, IRpcUnitContext>()

@@ -6,35 +6,35 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Extensions;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Rpc
 {
 
     public class RpcRemoteServiceAccess : IRpcServiceAccess
     {
-        private readonly IEndpoint endpoint;
+        private readonly ISession session;
 
-        public IEndpoint Endpoint => endpoint;
+        public ISession Session => session;
 
-        public long AccessId => Endpoint.ContactId;
+        public long AccessId => Session.ContactId;
 
         public ForwardPoint ForwardPoint { get; }
 
-        public RpcRemoteServiceAccess(IEndpoint endpoint)
+        public RpcRemoteServiceAccess(ISession session)
         {
-            this.endpoint = endpoint;
-            ForwardPoint = new ForwardPoint(endpoint.GetRpcAccessIdentify());
+            this.session = session;
+            ForwardPoint = new ForwardPoint(session.GetRpcAccessIdentify());
         }
 
         public bool IsActive()
         {
-            return Endpoint.IsActive();
+            return Session.IsActive();
         }
 
-        public RpcAccessIdentify Identify => endpoint.GetRpcAccessIdentify();
+        public RpcAccessIdentify Identify => session.GetRpcAccessIdentify();
     }
 
 }

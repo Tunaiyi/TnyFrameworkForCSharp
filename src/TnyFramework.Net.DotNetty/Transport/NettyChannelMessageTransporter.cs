@@ -12,8 +12,8 @@ using DotNetty.Transport.Channels;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 using TnyFramework.Net.DotNetty.Common;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.DotNetty.Transport

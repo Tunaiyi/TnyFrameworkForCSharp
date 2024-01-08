@@ -11,9 +11,9 @@ using System.Threading;
 using TnyFramework.Common.Attribute;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
+using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Command.Dispatcher
@@ -30,10 +30,10 @@ namespace TnyFramework.Net.Command.Dispatcher
             return new RpcMessageEnterInvocationContext(tunnel, message, async);
         }
 
-        public static IRpcMessageConsumerContext CreateExit(IEndpoint endpoint, MessageContent content,
+        public static IRpcMessageConsumerContext CreateExit(ISession session, MessageContent content,
             RpcMonitor rpcMonitor, bool async = true)
         {
-            return new RpcMessageExitInvocationContext(endpoint, content, async, rpcMonitor);
+            return new RpcMessageExitInvocationContext(session, content, async, rpcMonitor);
         }
 
         // public static string ForwardOperation(IMessageSubject message)
@@ -92,13 +92,13 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public abstract RpcTransactionMode Mode { get; }
 
-        public abstract IConnector Connector { get; }
+        public abstract ICommunicator Communicator { get; }
 
         public abstract bool Valid { get; }
 
         public abstract bool Complete();
 
-        public abstract IEndpoint GetEndpoint();
+        public abstract ISession GetSession();
 
         public bool Prepare(string? operationName, Action? action = null)
         {

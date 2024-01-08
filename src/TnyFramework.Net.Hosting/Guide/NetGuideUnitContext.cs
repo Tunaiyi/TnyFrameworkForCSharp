@@ -12,6 +12,7 @@ using TnyFramework.DI.Units;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Hosting.Guide
 {
@@ -24,6 +25,8 @@ namespace TnyFramework.Net.Hosting.Guide
         public INetUnitContext UnitContext { get; }
 
         public UnitSpec<IMessageFactory, TGuideContext> MessageFactorySpec { get; }
+
+        public UnitSpec<ISessionFactory, TGuideContext> SessionFactorySpec { get; }
 
         public UnitSpec<IContactFactory, TGuideContext> ContactFactorySpec { get; }
 
@@ -51,6 +54,10 @@ namespace TnyFramework.Net.Hosting.Guide
             MessageFactorySpec = UnitSpec.Unit<IMessageFactory, TGuideContext>()
                 .Default<CommonMessageFactory>();
 
+            // SessionFactory
+            SessionFactorySpec = UnitSpec.Unit<ISessionFactory, TGuideContext>()
+                .Default<SessionFactory>();
+
             // ContactFactory
             ContactFactorySpec = UnitSpec.Unit<IContactFactory, TGuideContext>()
                 .Default<InnerContactFactory>();
@@ -63,7 +70,6 @@ namespace TnyFramework.Net.Hosting.Guide
                 .Default(DefaultNetworkContext);
         }
 
-
         private static INetworkContext DefaultNetworkContext(TGuideContext context)
         {
             var unitContext = context.UnitContext;
@@ -71,6 +77,7 @@ namespace TnyFramework.Net.Hosting.Guide
                 unitContext.LoadMessageDispatcher(),
                 unitContext.LoadCommandBoxFactory(),
                 context.LoadMessageFactory(),
+                context.LoadSessionFactory(),
                 context.LoadContactFactory(),
                 context.LoadRpcMonitor());
         }
@@ -97,6 +104,11 @@ namespace TnyFramework.Net.Hosting.Guide
         public IMessageFactory LoadMessageFactory()
         {
             return MessageFactorySpec.Load(Self, UnitContainer);
+        }
+
+        public ISessionFactory LoadSessionFactory()
+        {
+            return SessionFactorySpec.Load(Self, UnitContainer);
         }
 
         public IContactFactory LoadContactFactory()

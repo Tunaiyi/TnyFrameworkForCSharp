@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
-using TnyFramework.Net.Endpoint;
+using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Rpc
@@ -57,17 +57,17 @@ namespace TnyFramework.Net.Rpc
             Interlocked.Increment(ref version);
         }
 
-        internal void AddEndpoint(IEndpoint endpoint)
+        internal void AddSession(ISession session)
         {
-            var node = LoadOrCreate(endpoint);
-            node.AddEndpoint(endpoint);
+            var node = LoadOrCreate(session);
+            node.AddSession(session);
             RefreshNodes(node);
         }
 
-        internal void RemoveEndpoint(IEndpoint endpoint)
+        internal void RemoveSession(ISession session)
         {
-            var node = LoadOrCreate(endpoint);
-            node.RemoveEndpoint(endpoint);
+            var node = LoadOrCreate(session);
+            node.RemoveSession(session);
             RefreshNodes(node);
         }
 
@@ -81,9 +81,9 @@ namespace TnyFramework.Net.Rpc
             RefreshNodes(rpcServiceNode);
         }
 
-        private RpcServiceNode LoadOrCreate(IConnector endpoint)
+        private RpcServiceNode LoadOrCreate(ICommunicator session)
         {
-            return remoteNodeMap.GetOrAdd(endpoint.ContactId, CreateNode);
+            return remoteNodeMap.GetOrAdd(session.ContactId, CreateNode);
         }
 
         private RpcServiceNode CreateNode(long serverId)

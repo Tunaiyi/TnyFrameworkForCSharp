@@ -11,8 +11,8 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Rpc.Extensions;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Rpc
 {
@@ -25,7 +25,7 @@ namespace TnyFramework.Net.Rpc
 
         public RpcServicerManager()
         {
-            EndpointKeeperManager.CreateEventBox.Add(OnCreate);
+            SessionKeeperManager.CreateEventBox.Add(OnCreate);
         }
 
         public IRpcInvokeNodeSet? LoadInvokeNodeSet(IContactType serviceType)
@@ -72,34 +72,34 @@ namespace TnyFramework.Net.Rpc
 
         private static RpcServiceSet CreateServiceSet(IRpcServiceType serviceType) => new(serviceType);
 
-        private void OnCreate(IEndpointKeeper keeper)
+        private void OnCreate(ISessionKeeper keeper)
         {
             if (keeper.ContactType is not IRpcServiceType)
                 return;
-            keeper.AddEndpointEvent.Add(OnAddEndpoint);
-            keeper.RemoveEndpointEvent.Add(OnRemoveEndpoint);
+            keeper.AddSessionEvent.Add(OnAddSession);
+            keeper.RemoveSessionEvent.Add(OnRemoveSession);
         }
 
-        private void OnRemoveEndpoint(IEndpointKeeper keeper, IEndpoint endpoint)
+        private void OnRemoveSession(ISessionKeeper keeper, ISession session)
         {
-            var rpcIdentify = endpoint.GetRpcAccessIdentify();
+            var rpcIdentify = session.GetRpcAccessIdentify();
             if (rpcIdentify.IsNull())
             {
                 return;
             }
             var servicer = DoLoadRpcServiceSet(rpcIdentify.ServiceType);
-            servicer.RemoveEndpoint(endpoint);
+            servicer.RemoveSession(session);
         }
 
-        private void OnAddEndpoint(IEndpointKeeper keeper, IEndpoint endpoint)
+        private void OnAddSession(ISessionKeeper keeper, ISession session)
         {
-            var rpcIdentify = endpoint.GetRpcAccessIdentify();
+            var rpcIdentify = session.GetRpcAccessIdentify();
             if (rpcIdentify.IsNull())
             {
                 return;
             }
             var servicer = DoLoadRpcServiceSet(rpcIdentify.ServiceType);
-            servicer.AddEndpoint(endpoint);
+            servicer.AddSession(session);
         }
     }
 

@@ -9,19 +9,19 @@
 using System;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Common;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Exceptions;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Command.Auth
 {
 
     public class ContactAuthenticateService : IContactAuthenticator
     {
-        private readonly IEndpointKeeperManager endpointKeeperManager;
+        private readonly ISessionKeeperManager sessionKeeperManager;
 
-        public ContactAuthenticateService(IEndpointKeeperManager endpointKeeperManager)
+        public ContactAuthenticateService(ISessionKeeperManager sessionKeeperManager)
         {
-            this.endpointKeeperManager = endpointKeeperManager;
+            this.sessionKeeperManager = sessionKeeperManager;
         }
 
         public void Authenticate(MessageDispatcherContext dispatcherContext, IRpcMessageEnterContext context, Type type)
@@ -39,9 +39,9 @@ namespace TnyFramework.Net.Command.Auth
             // 是否需要做登录校验,判断是否已经登录
             if (!certificate.IsAuthenticated())
                 return;
-            var endpointKeeper = endpointKeeperManager
+            var sessionKeeper = sessionKeeperManager
                 .LoadKeeper(certificate.ContactType, tunnel.AccessMode);
-            endpointKeeper?.Online(certificate, tunnel);
+            sessionKeeper?.Online(certificate, tunnel);
         }
 
         private IAuthenticationValidator? GetValidator(MessageDispatcherContext dispatcherContext, Type validatorClass)

@@ -15,10 +15,10 @@ using TnyFramework.Common.Extensions;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Common;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
+using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Command.Dispatcher
@@ -70,9 +70,6 @@ namespace TnyFramework.Net.Command.Dispatcher
             if (typeof(ISession).IsAssignableFrom(ParamType))
             {
                 Mode = ParamMode.Session;
-            } else if (typeof(IEndpoint).IsAssignableFrom(ParamType))
-            {
-                Mode = ParamMode.Endpoint;
             } else if (typeof(ITunnel).IsAssignableFrom(ParamType))
             {
                 Mode = ParamMode.Tunnel;
@@ -183,16 +180,12 @@ namespace TnyFramework.Net.Command.Dispatcher
                     value = message;
                     break;
                 case ParamMode.Session: {
-                    value = tunnel.Endpoint;
+                    value = tunnel.Session;
                     if (ParamType.IsInstanceOfType(value))
                     {
                         break;
                     }
                     throw new NullReferenceException($"{tunnel} session is null");
-                }
-                case ParamMode.Endpoint: {
-                    value = tunnel.Endpoint;
-                    break;
                 }
                 case ParamMode.Tunnel:
                     value = tunnel;

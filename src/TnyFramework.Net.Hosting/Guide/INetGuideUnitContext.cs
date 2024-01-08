@@ -9,6 +9,7 @@
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Hosting.Guide
 {
@@ -16,6 +17,8 @@ namespace TnyFramework.Net.Hosting.Guide
     public interface INetGuideUnitContext
     {
         IMessageFactory LoadMessageFactory();
+
+        ISessionFactory LoadSessionFactory();
 
         IContactFactory LoadContactFactory();
 

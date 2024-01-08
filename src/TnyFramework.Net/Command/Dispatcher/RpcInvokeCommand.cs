@@ -219,7 +219,7 @@ namespace TnyFramework.Net.Command.Dispatcher
         //     // 是否需要做登录校验,判断是否已经登录
         //     if (certificate != null && certificate.IsAuthenticated())
         //     {
-        //         EndpointKeeperManager.Online(certificate, tunnel);
+        //         SessionKeeperManager.Online(certificate, tunnel);
         //     }
         // }
 

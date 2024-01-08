@@ -7,19 +7,24 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Command.Dispatcher.Monitor;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Application
 {
 
-    public interface INetworkContext : IEndpointContext, IRpcContext
+    public interface INetworkContext : ISessionContext, IRpcContext
     {
         /// <summary>
         /// 消息工厂
         /// </summary>
         IMessageFactory MessageFactory { get; }
+
+        /// <summary>
+        /// 会话工厂
+        /// </summary>
+        ISessionFactory SessionFactory { get; }
 
         /// <summary>
         /// 消息者工厂

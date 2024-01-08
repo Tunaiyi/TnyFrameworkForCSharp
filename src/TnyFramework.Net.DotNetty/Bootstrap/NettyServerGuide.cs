@@ -168,7 +168,9 @@ namespace TnyFramework.Net.DotNetty.Bootstrap
                         channelMaker?.InitChannel(channel);
                         channel.Pipeline.AddLast("MessageHandler", messageHandler);
                         var id = idGenerator.Generate();
+                        var sessionFactory = context.SessionFactory;
                         var tunnel = tunnelFactory.Create(id, channel, context, this);
+                        sessionFactory.Create(context, tunnel);
                         tunnel.Open();
                     } catch (Exception e)
                     {

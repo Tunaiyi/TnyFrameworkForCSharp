@@ -22,9 +22,9 @@ using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Hosting.App;
-using TnyFramework.Net.Hosting.Endpoint;
 using TnyFramework.Net.Hosting.Guide;
 using TnyFramework.Net.Hosting.Selectors;
+using TnyFramework.Net.Hosting.Session;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc.Auth;
 
@@ -190,9 +190,9 @@ namespace TnyFramework.Net.Hosting.Configuration
             return Self;
         }
 
-        public TConfiguration EndpointConfigure(Action<IEndpointSpec> action)
+        public TConfiguration SessionConfigure(Action<ISessionSpec> action)
         {
-            action.Invoke(NetUnitContext.EndpointSpec);
+            action.Invoke(NetUnitContext.SessionSpec);
             return Self;
         }
 

@@ -21,8 +21,6 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         Client,
 
-        Endpoint,
-
         Identify,
 
         IdentifyToken,

@@ -13,8 +13,8 @@ using TnyFramework.Common.EventBus;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport.Event;
 
 namespace TnyFramework.Net.Transport
@@ -44,16 +44,16 @@ namespace TnyFramework.Net.Transport
         public static IEventWatch<TunnelClose> CloseGlobalEvent => CLOSE_GLOBAL_EVENT;
     }
 
-    public abstract class NetTunnel<TEndpoint> : Connector, ITunnelEventSource, INetTunnel
-        where TEndpoint : INetEndpoint
+    public abstract class NetTunnel<TSession> : Communicator, ITunnelEventSource, INetTunnel
+        where TSession : INetSession
     {
         private int status = TunnelStatus.Init.Value();
 
-        private TEndpoint endpoint;
+        private TSession session;
 
         private readonly INetService service;
 
-        private readonly ReaderWriterLockSlim endpointLock = new();
+        private readonly ReaderWriterLockSlim sessionLock = new();
 
         public long Id { get; }
 
@@ -67,17 +67,17 @@ namespace TnyFramework.Net.Transport
 
         public string Service => service.Service;
 
-        public override ICertificate Certificate => endpoint.IsNull() ? null! : endpoint.Certificate;
+        public override ICertificate Certificate => session.IsNull() ? null! : session.Certificate;
 
         public INetworkContext Context { get; }
 
         public IMessageFactory MessageFactory => Context.MessageFactory;
 
-        public INetEndpoint Endpoint => endpoint;
+        public INetSession Session => session;
 
         public override NetAccessMode AccessMode { get; }
 
-        IEndpoint ITunnel.Endpoint => Endpoint;
+        ISession ITunnel.Session => Session;
 
         public bool IsOpen() => Status == TunnelStatus.Open;
 
@@ -98,7 +98,7 @@ namespace TnyFramework.Net.Transport
             this.service = service;
             Id = id;
             Context = context;
-            endpoint = default!;
+            session = default!;
             AccessMode = accessMode;
             activateEvent = ITunnelEventSource.ACTIVATE_GLOBAL_EVENT.ForkChild();
             unactivatedEvent = ITunnelEventSource.UNACTIVATED_GLOBAL_EVENT.ForkChild();
@@ -107,42 +107,42 @@ namespace TnyFramework.Net.Transport
             // Action<ITunnel> action = new Action<ITunnel>(handle);
         }
 
-        public IEndpoint GetEndpoint()
+        public ISession GetSession()
         {
-            return endpoint;
+            return session;
         }
 
-        public INetEndpoint NetEndpoint => endpoint;
+        public INetSession NetSession => session;
 
-        protected void SetEndpoint(TEndpoint value)
+        protected void SetSession(TSession value)
         {
-            endpoint = value;
+            session = value;
         }
 
         public bool Receive(INetMessage message)
         {
-            endpointLock.EnterReadLock();
+            sessionLock.EnterReadLock();
             try
             {
                 var rpcContext = RpcMessageTransactionContext.CreateEnter(this, message);
                 var rpcMonitor = Context.RpcMonitor;
                 rpcMonitor.OnReceive(rpcContext);
-                return endpoint.Receive(rpcContext);
+                return session.Receive(rpcContext);
             } finally
             {
-                endpointLock.ExitReadLock();
+                sessionLock.ExitReadLock();
             }
         }
 
         public ValueTask<IMessageSent> Send(MessageContent content, bool waitWritten = false)
         {
-            endpointLock.EnterReadLock();
+            sessionLock.EnterReadLock();
             try
             {
-                return endpoint.Send(this, content, waitWritten);
+                return session.Send(this, content, waitWritten);
             } finally
             {
-                endpointLock.ExitReadLock();
+                sessionLock.ExitReadLock();
             }
         }
 
@@ -154,38 +154,38 @@ namespace TnyFramework.Net.Transport
             }
         }
 
-        public bool Bind(INetEndpoint newEndpoint)
+        public bool Bind(INetSession newSession)
         {
-            if (newEndpoint.IsNull())
+            if (newSession.IsNull())
             {
                 return false;
             }
-            if (Endpoint == newEndpoint)
+            if (Session == newSession)
             {
                 return true;
             }
-            endpointLock.EnterWriteLock();
+            sessionLock.EnterWriteLock();
             try
             {
-                if (Endpoint == newEndpoint)
+                if (Session == newSession)
                 {
                     return true;
                 }
-                if (endpoint.IsNull())
+                if (session.IsNull())
                 {
-                    endpoint = (TEndpoint) newEndpoint;
+                    session = (TSession) newSession;
                     return true;
                 } else
                 {
-                    return ReplaceEndpoint(newEndpoint);
+                    return ResetSession(newSession);
                 }
             } finally
             {
-                endpointLock.ExitWriteLock();
+                sessionLock.ExitWriteLock();
             }
         }
 
-        protected abstract bool ReplaceEndpoint(INetEndpoint newEndpoint);
+        protected abstract bool ResetSession(INetSession newSession);
 
         public bool Open()
         {
@@ -221,7 +221,7 @@ namespace TnyFramework.Net.Transport
 
         public void Disconnect()
         {
-            INetEndpoint? netEndpoint;
+            INetSession? netSession;
             lock (this)
             {
                 var current = Status;
@@ -231,10 +231,10 @@ namespace TnyFramework.Net.Transport
                 }
                 Status = TunnelStatus.Suspend;
                 OnDisconnect();
-                netEndpoint = endpoint;
+                netSession = session;
                 OnDisconnected();
             }
-            netEndpoint.OnUnactivated(this);
+            netSession.OnUnactivated(this);
             unactivatedEvent.Notify(this);
         }
 
@@ -251,7 +251,7 @@ namespace TnyFramework.Net.Transport
             {
                 return false;
             }
-            INetEndpoint? netEndpoint;
+            INetSession? netSession;
             lock (this)
             {
                 current = Status;
@@ -262,10 +262,10 @@ namespace TnyFramework.Net.Transport
                 Status = TunnelStatus.Closed;
                 OnDisconnect();
                 OnClose();
-                netEndpoint = endpoint;
+                netSession = session;
                 OnClosed();
             }
-            netEndpoint.OnUnactivated(this);
+            netSession.OnUnactivated(this);
             closeEvent.Notify(this);
             return true;
         }

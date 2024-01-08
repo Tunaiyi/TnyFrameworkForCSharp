@@ -6,7 +6,7 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.Endpoint;
+using TnyFramework.Net.Session;
 
 namespace TnyFramework.Net.Rpc
 {
@@ -25,9 +25,9 @@ namespace TnyFramework.Net.Rpc
         bool IsActive();
 
         /// <summary>
-        /// endpoint
+        /// Session
         /// </summary>
-        IEndpoint Endpoint { get; }
+        ISession Session { get; }
     }
 
 }

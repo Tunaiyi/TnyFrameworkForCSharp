@@ -20,13 +20,13 @@ namespace TnyFramework.Net.Transport
         bool IsActive();
 
         /// <summary>
-        /// 是否关闭终端
+        /// 是否关闭会话
         /// </summary>
         /// <returns></returns>
         bool IsClosed();
 
         /// <summary>
-        /// 关闭终端
+        /// 关闭会话
         /// </summary>
         /// <returns></returns>
         bool Close();

@@ -14,7 +14,7 @@ using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
 using TnyFramework.Net.Hosting.App;
-using TnyFramework.Net.Hosting.Endpoint;
+using TnyFramework.Net.Hosting.Session;
 using TnyFramework.Net.Plugin;
 
 namespace TnyFramework.Net.Hosting.Configuration
@@ -45,7 +45,7 @@ namespace TnyFramework.Net.Hosting.Configuration
 
         TConfiguration CommandPluginsConfigure(Action<IUnitCollectionSpec<ICommandPlugin, INetUnitContext>> action);
 
-        TConfiguration EndpointConfigure(Action<IEndpointSpec> action);
+        TConfiguration SessionConfigure(Action<ISessionSpec> action);
 
         TConfiguration AuthenticateValidatorsConfigure(Action<IUnitCollectionSpec<IAuthenticationValidator, INetUnitContext>> action);
 

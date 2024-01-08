@@ -7,9 +7,9 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Command.Dispatcher.Monitor;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
+using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport;
 
 namespace TnyFramework.Net.Command.Dispatcher
@@ -21,12 +21,12 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         private readonly RpcMonitor rpcMonitor;
 
-        private readonly IEndpoint endpoint;
+        private readonly ISession session;
 
-        public RpcMessageExitInvocationContext(IEndpoint endpoint, MessageContent content, bool async, RpcMonitor rpcMonitor)
+        public RpcMessageExitInvocationContext(ISession session, MessageContent content, bool async, RpcMonitor rpcMonitor)
             : base(async)
         {
-            this.endpoint = endpoint;
+            this.session = session;
             this.content = content;
             this.rpcMonitor = rpcMonitor;
         }
@@ -35,11 +35,11 @@ namespace TnyFramework.Net.Command.Dispatcher
 
         public override RpcTransactionMode Mode => RpcTransactionMode.Exit;
 
-        public override IConnector Connector => endpoint;
+        public override ICommunicator Communicator => session;
 
         public override bool Valid => true;
 
-        public override IEndpoint GetEndpoint() => endpoint;
+        public override ISession GetSession() => session;
 
         public bool Invoke(string operationName)
         {

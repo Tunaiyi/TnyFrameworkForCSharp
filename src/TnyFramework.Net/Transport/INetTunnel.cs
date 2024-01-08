@@ -8,8 +8,8 @@
 
 using TnyFramework.Common.Event;
 using TnyFramework.Net.Application;
-using TnyFramework.Net.Endpoint;
 using TnyFramework.Net.Message;
+using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport.Event;
 
 namespace TnyFramework.Net.Transport
@@ -17,7 +17,7 @@ namespace TnyFramework.Net.Transport
 
     public interface INetTunnel : ITunnel, ITransport
     {
-        INetEndpoint NetEndpoint { get; }
+        INetSession NetSession { get; }
 
         /// <summary>
         /// 接收消息
@@ -38,11 +38,11 @@ namespace TnyFramework.Net.Transport
         IMessageFactory MessageFactory { get; }
 
         /// <summary>
-        /// 终端 Endpoint
+        /// 会话 Session
         /// </summary>
-        /// <param name="endpoint">终端</param>
+        /// <param name="session">会话</param>
         /// <returns>返回是否绑定成功</returns>
-        bool Bind(INetEndpoint endpoint);
+        bool Bind(INetSession session);
 
         /// <summary>
         /// 打开通道

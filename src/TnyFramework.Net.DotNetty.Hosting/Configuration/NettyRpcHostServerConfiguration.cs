@@ -94,7 +94,7 @@ namespace TnyFramework.Net.DotNetty.Hosting.Configuration
 
         protected override void OnAddRpcServer(string name)
         {
-            // EndpointConfigure(endpointSpec => endpointSpec
+            // EndpointConfigure(sessionSpec => sessionSpec
             //     .CustomSessionConfigure(UnitContainer.UnitName<ISessionKeeperSettingSpec>(name), settingSpec => settingSpec
             //         .UserType(name)
             //         .KeeperFactory(RPC_SESSION_KEEPER_NAME)));
