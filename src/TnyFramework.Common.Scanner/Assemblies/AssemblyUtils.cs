@@ -9,26 +9,43 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Extensions;
+using TnyFramework.Common.Logger;
 
 namespace TnyFramework.Common.Scanner.Assemblies
 {
 
     public static class AssemblyUtils
     {
+        private static readonly ILogger LOGGER = LogFactory.Logger(nameof(AssemblyUtils));
+
         private static volatile IList<Assembly>? _ALL_ASSEMBLIES;
 
         public static IEnumerable<Assembly> AllAssemblies => _ALL_ASSEMBLIES ?? ImmutableList<Assembly>.Empty;
 
         public static IList<Assembly> LoadAllAssemblies(params string[] startWiths)
         {
-            return LoadAllAssemblies(ab => startWiths.IsNullOrEmpty() || (
-                from assemblyFilter in startWiths
-                let name = ab.GetName()
-                where name.Name!.StartsWith(assemblyFilter)
-                select assemblyFilter).Any());
+            return LoadAllAssemblies(ab => {
+                var name = ab.GetName();
+                if (startWiths.IsNullOrEmpty())
+                {
+                    // LOGGER.LogInformation("Load assembly {Assembly} with name {Name}", ab, name);
+                    return true;
+                }
+                foreach (var startWith in startWiths)
+                {
+                    if (!name.Name!.StartsWith(startWith))
+                    {
+                        continue;
+                    }
+                    LOGGER.LogInformation("Load assembly with name {Name} with start with {StartWith}",  name, startWith);
+                    return true;
+                }
+                // LOGGER.LogInformation("Skip assembly {Assembly} with name {Name}", ab, name);
+                return false;
+            });
         }
 
         public static IList<Assembly> LoadAllAssemblies(Func<Assembly, bool>? filter = null)

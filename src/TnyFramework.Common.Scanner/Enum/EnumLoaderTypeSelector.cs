@@ -18,12 +18,15 @@ namespace TnyFramework.Common.Scanner.Enum
 
     public class EnumLoaderTypeSelector : TypeSelectorDefinition
     {
+
+
+
         private static readonly ILogger LOGGER = LogFactory.Logger<EnumLoaderTypeSelector>();
 
         public EnumLoaderTypeSelector()
         {
             Selector(selector => selector
-                .AddFilter(SubOfTypeFilter.OfInclude<BaseEnum>())
+                .AddFilter(SubOfTypeFilter.OfInclude<IEnum>())
                 .AddFilter(TypeFilter.Include(type => !(type.IsInterface || type.IsAbstract)))
                 .WithHandler(OnLoadEnumTypes)
             );

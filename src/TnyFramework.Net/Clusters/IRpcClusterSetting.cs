@@ -10,7 +10,7 @@ using TnyFramework.Net.Application;
 
 namespace TnyFramework.Net.Clusters;
 
-public interface IRemoteServeNodeSetting : IServiceSetting
+public interface IRpcClusterSetting : IServiceSetting
 {
     string Host { get; }
 

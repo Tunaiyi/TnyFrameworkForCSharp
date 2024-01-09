@@ -13,5 +13,5 @@ namespace TnyFramework.Net.Hosting.Options;
 
 public class RemoteServeClusterOptions : RemoteServeClusterSetting
 {
-    public static readonly string RPC_CLIENT_ROOT_PATH = ConfigurationPath.Combine("Tny", "Rpc", "Client");
+    public static readonly string RPC_CLUSTER_ROOT_PATH = ConfigurationPath.Combine("Tny", "Rpc", "Cluster");
 }

@@ -12,5 +12,5 @@ namespace TnyFramework.Net.Clusters;
 
 public interface IRemoteServeClusterSetting
 {
-    List<IRemoteServeNodeSetting> Services { get; }
+    List<IRpcClusterSetting> Clusters { get; }
 }

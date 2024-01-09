@@ -13,9 +13,10 @@ using TnyFramework.Net.Command.Auth;
 namespace TnyFramework.Net.Attributes
 {
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class | AttributeTargets.Method)]
     public class AuthenticationRequiredAttribute : Attribute
     {
+
         /// <summary>
         /// 必须剩饭认证
         /// </summary>

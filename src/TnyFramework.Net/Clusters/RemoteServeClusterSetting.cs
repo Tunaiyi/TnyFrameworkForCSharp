@@ -13,12 +13,12 @@ namespace TnyFramework.Net.Clusters;
 
 public class RemoteServeClusterSetting : IRemoteServeClusterSetting
 {
-    private List<RemoteServeNodeSetting> services = [];
+    private List<RpcClusterSetting> services = [];
 
-    public List<RemoteServeNodeSetting> Services {
+    public List<RpcClusterSetting> Services {
         get => services;
         set => services = value;
     }
 
-    List<IRemoteServeNodeSetting> IRemoteServeClusterSetting.Services => services.Select(s => s as IRemoteServeNodeSetting).ToList();
+    List<IRpcClusterSetting> IRemoteServeClusterSetting.Clusters => services.Select(s => s as IRpcClusterSetting).ToList();
 }

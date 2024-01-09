@@ -8,7 +8,7 @@
 
 namespace TnyFramework.Net.Clusters;
 
-public class RemoteServeNodeSetting : IRemoteServeNodeSetting
+public class RpcClusterSetting : IRpcClusterSetting
 {
     // rpc服务名
     public string Service { get; set; } = "";

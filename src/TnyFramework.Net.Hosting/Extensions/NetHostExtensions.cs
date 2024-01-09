@@ -44,7 +44,7 @@ public static class NetHostExtensions
             .ConfigureServices((hostBuilder, services) => {
                 var configuration = hostBuilder.Configuration;
                 var clientServiceOptions =
-                    configuration.BindOptionsIfExists<RemoteServeClusterOptions>(RemoteServeClusterOptions.RPC_CLIENT_ROOT_PATH);
+                    configuration.BindOptionsIfExists<RemoteServeClusterOptions>(RemoteServeClusterOptions.RPC_CLUSTER_ROOT_PATH);
                 if (clientServiceOptions == null)
                 {
                     return;

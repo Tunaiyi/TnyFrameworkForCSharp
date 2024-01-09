@@ -53,7 +53,7 @@ namespace TnyFramework.Common.Collections
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            return dict.TryGetValue(key, out value);
+            return dict.TryGetValue(key, out value!);
         }
 
         public TValue this[TKey key] {

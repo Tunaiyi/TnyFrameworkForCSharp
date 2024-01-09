@@ -22,11 +22,11 @@ namespace TnyFramework.Net.Rpc.Client;
 public class RpcClientFactory : IRpcClientFactory
 {
     private readonly ILogger logger = LogFactory.Logger<RpcClientFactory>();
-    private readonly IRemoteServeNodeSetting setting;
+    private readonly IRpcClusterSetting setting;
     private readonly INetApplicationOptions application;
     private readonly IClientGuide guide;
 
-    public RpcClientFactory(IRemoteServeNodeSetting setting, INetApplicationOptions application, IClientGuide guide)
+    public RpcClientFactory(IRpcClusterSetting setting, INetApplicationOptions application, IClientGuide guide)
     {
         this.setting = setting;
         this.application = application;

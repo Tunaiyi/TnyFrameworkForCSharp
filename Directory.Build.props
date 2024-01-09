@@ -10,7 +10,6 @@
 
 <Project>
     <PropertyGroup>
-<!--        <PackageVersion>5.7.0-alpha.3</PackageVersion>-->
         <PackageVersion>5.7.0-x</PackageVersion>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <LangVersion>12</LangVersion>
@@ -52,16 +51,16 @@
         <NugetReleaseOutputDirectory>$(MSBuildProjectDirectory)/../../Nuget/Release</NugetReleaseOutputDirectory>
     </PropertyGroup>
 
-    <Target Name="LoaclInstallReleasePackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release' And '$(OutputType)' == 'Library'">
-        <Message Text="Push Nuget To $(OutputPath)"/>
-        <MakeDir Directories="$(NugetReleaseOutputDirectory)"/>
-        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetReleaseOutputDirectory)"/>
-    </Target>
+<!--    <Target Name="LoaclInstallReleasePackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release' And '$(OutputType)' == 'Library'">-->
+<!--        <Message Text="Push Nuget To $(OutputPath)"/>-->
+<!--        <MakeDir Directories="$(NugetReleaseOutputDirectory)"/>-->
+<!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetReleaseOutputDirectory)"/>-->
+<!--    </Target>-->
 
-    <Target Name="LoaclInstallDebugPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug' And '$(OutputType)' == 'Library'">
-        <MakeDir Directories="$(NugetDebugOutputDirectory)"/>
+<!--    <Target Name="LoaclInstallDebugPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug' And '$(OutputType)' == 'Library'">-->
+<!--        <MakeDir Directories="$(NugetDebugOutputDirectory)"/>-->
 <!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetDebugOutputDirectory)"/>-->
-    </Target>
+<!--    </Target>-->
 
     <Target Name="LoaclInstallPublishPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">
         <Message Text="Push Nuget To $(TnyRemoteUrl)"/>
