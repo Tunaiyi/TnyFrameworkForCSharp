@@ -10,7 +10,7 @@
 
 <Project>
     <PropertyGroup>
-        <PackageVersion>5.7.0-x</PackageVersion>
+        <PackageVersion>0.0.0-main</PackageVersion>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
         <LangVersion>12</LangVersion>
         <Nullable>enable</Nullable>
