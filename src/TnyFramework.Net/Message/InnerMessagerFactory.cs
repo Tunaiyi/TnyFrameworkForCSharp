@@ -8,20 +8,17 @@
 
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+public class InnerContactFactory : IContactFactory
 {
-
-    public class InnerContactFactory : IContactFactory
+    public IContact CreateContact(IContactType type, long contactId)
     {
-        public IContact CreateContact(IContactType type, long contactId)
-        {
-            return new InnerContact(type, contactId);
-        }
-
-        public IContact CreateContact(ForwardContact contact)
-        {
-            return contact;
-        }
+        return new InnerContact(type, contactId);
     }
 
+    public IContact CreateContact(ForwardContact contact)
+    {
+        return contact;
+    }
 }

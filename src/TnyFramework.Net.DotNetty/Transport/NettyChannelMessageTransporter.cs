@@ -16,62 +16,59 @@ using TnyFramework.Net.Message;
 using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.DotNetty.Transport
+namespace TnyFramework.Net.DotNetty.Transport;
+
+public class NettyChannelMessageTransporter : NettyChannelConnection, IMessageTransporter
 {
+    private static readonly ILogger LOGGER = LogFactory.Logger<NettyChannelMessageTransporter>();
 
-    public class NettyChannelMessageTransporter : NettyChannelConnection, IMessageTransporter
+    private INetTunnel tunnel = null!;
+
+    public NettyChannelMessageTransporter(NetAccessMode accessMode, IChannel channel) : base(accessMode, channel)
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<NettyChannelMessageTransporter>();
+    }
 
-        private INetTunnel tunnel = null!;
+    public void Bind(INetTunnel tunnel)
+    {
+        channel.GetAttribute(NettyNetAttrKeys.TUNNEL).Set(tunnel);
+        this.tunnel = tunnel;
+    }
 
-        public NettyChannelMessageTransporter(NetAccessMode accessMode, IChannel channel) : base(accessMode, channel)
+    protected override void DoClose()
+    {
+        var tunnelAttr = channel.GetAttribute(NettyNetAttrKeys.TUNNEL);
+        var current = tunnelAttr.GetAndRemove();
+        if (current != null && (current.IsOpen() || current.IsActive()))
         {
-        }
-
-        public void Bind(INetTunnel tunnel)
-        {
-            channel.GetAttribute(NettyNetAttrKeys.TUNNEL).Set(tunnel);
-            this.tunnel = tunnel;
-        }
-
-        protected override void DoClose()
-        {
-            var tunnelAttr = channel.GetAttribute(NettyNetAttrKeys.TUNNEL);
-            var current = tunnelAttr.GetAndRemove();
-            if (current != null && (current.IsOpen() || current.IsActive()))
-            {
-                current.Disconnect();
-            }
-        }
-
-        public ValueTask Write(IMessage message, bool waitWritten = false)
-        {
-            var task = channel.WriteAndFlushAsync(message);
-            return waitWritten ? new ValueTask(task) : ValueTask.CompletedTask;
-        }
-
-        public ValueTask Write(IMessageAllocator maker, MessageContent content, bool waitWritten = false)
-        {
-            return Write(maker.Allocate, content, waitWritten);
-        }
-
-        public ValueTask Write(MessageAllocator maker, MessageContent content, bool waitWritten = false)
-        {
-            var task = channel.EventLoop.SubmitAsync(() => {
-                IMessage? message = null;
-                try
-                {
-                    message = maker(tunnel.MessageFactory, content);
-                } catch (Exception e)
-                {
-                    content.Cancel(e);
-                    LOGGER.LogError(e, "");
-                }
-                return channel.WriteAndFlushAsync(message);
-            }).Unwrap();
-            return waitWritten ? new ValueTask(task) : ValueTask.CompletedTask;
+            current.Disconnect();
         }
     }
 
+    public ValueTask Write(IMessage message, bool waitWritten = false)
+    {
+        var task = channel.WriteAndFlushAsync(message);
+        return waitWritten ? new ValueTask(task) : ValueTask.CompletedTask;
+    }
+
+    public ValueTask Write(IMessageAllocator maker, MessageContent content, bool waitWritten = false)
+    {
+        return Write(maker.Allocate, content, waitWritten);
+    }
+
+    public ValueTask Write(MessageAllocator maker, MessageContent content, bool waitWritten = false)
+    {
+        var task = channel.EventLoop.SubmitAsync(() => {
+            IMessage? message = null;
+            try
+            {
+                message = maker(tunnel.MessageFactory, content);
+            } catch (Exception e)
+            {
+                content.Cancel(e);
+                LOGGER.LogError(e, "");
+            }
+            return channel.WriteAndFlushAsync(message);
+        }).Unwrap();
+        return waitWritten ? new ValueTask(task) : ValueTask.CompletedTask;
+    }
 }

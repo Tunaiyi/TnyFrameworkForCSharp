@@ -9,15 +9,12 @@
 using System;
 using TnyFramework.Common.Scanner.Assemblies.Attributes;
 
-namespace TnyFramework.Common.Scanner.Enum.Attributes
+namespace TnyFramework.Common.Scanner.Enum.Attributes;
+
+[AttributeUsage(AttributeTargets.Assembly)]
+public class AssemblyEnumLoaderAttributes : AssemblyAutoLoadAttributes
 {
-
-    [AttributeUsage(AttributeTargets.Assembly)]
-    public class AssemblyEnumLoaderAttributes : AssemblyAutoLoadAttributes
+    public AssemblyEnumLoaderAttributes(string loadClass, params string[] loadClasses) : base(loadClass, loadClasses)
     {
-        public AssemblyEnumLoaderAttributes(string loadClass, params string[] loadClasses) : base(loadClass, loadClasses)
-        {
-        }
     }
-
 }

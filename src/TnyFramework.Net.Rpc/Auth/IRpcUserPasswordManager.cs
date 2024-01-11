@@ -6,18 +6,15 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Rpc.Auth
+namespace TnyFramework.Net.Rpc.Auth;
+
+public interface IRpcUserPasswordManager
 {
-
-    public interface IRpcUserPasswordManager
-    {
-        /// <summary>
-        /// 认证
-        /// </summary>
-        /// <param name="identify">Rpc接入标识</param>
-        /// <param name="password">密码</param>
-        /// <returns></returns>
-        bool Auth(RpcAccessIdentify identify, string password);
-    }
-
+    /// <summary>
+    /// 认证
+    /// </summary>
+    /// <param name="identify">Rpc接入标识</param>
+    /// <param name="password">密码</param>
+    /// <returns></returns>
+    bool Auth(RpcAccessIdentify identify, string password);
 }

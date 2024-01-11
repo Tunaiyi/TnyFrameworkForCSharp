@@ -8,14 +8,11 @@
 
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public delegate IMessage MessageAllocator(IMessageFactory factory, MessageContent content);
+
+public interface IMessageAllocator
 {
-
-    public delegate IMessage MessageAllocator(IMessageFactory factory, MessageContent content);
-
-    public interface IMessageAllocator
-    {
-        IMessage Allocate(IMessageFactory factory, MessageContent content);
-    }
-
+    IMessage Allocate(IMessageFactory factory, MessageContent content);
 }

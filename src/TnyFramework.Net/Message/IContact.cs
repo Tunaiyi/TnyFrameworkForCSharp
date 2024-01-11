@@ -8,28 +8,25 @@
 
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+/// <summary>
+/// 消息发送接收者
+/// </summary>
+public interface IContact
 {
+    /// <summary>
+    /// 消息者 Id
+    /// </summary>
+    long ContactId { get; }
 
     /// <summary>
-    /// 消息发送接收者
+    /// 消息者类型
     /// </summary>
-    public interface IContact
-    {
-        /// <summary>
-        /// 消息者 Id
-        /// </summary>
-        long ContactId { get; }
+    IContactType ContactType { get; }
 
-        /// <summary>
-        /// 消息者类型
-        /// </summary>
-        IContactType ContactType { get; }
-
-        /// <summary>
-        /// 消息者类型
-        /// </summary>
-        string ContactGroup => ContactType.Group;
-    }
-
+    /// <summary>
+    /// 消息者类型
+    /// </summary>
+    string ContactGroup => ContactType.Group;
 }

@@ -9,26 +9,23 @@
 using System;
 using TnyFramework.Common.Result;
 
-namespace TnyFramework.Net.Exceptions
+namespace TnyFramework.Net.Exceptions;
+
+public class RpcInvokeTimeoutException : RpcInvokeException
 {
-
-    public class RpcInvokeTimeoutException : RpcInvokeException
+    public RpcInvokeTimeoutException(string message = "")
+        : base(message)
     {
-        public RpcInvokeTimeoutException(string message = "")
-            : base(message)
-        {
-        }
+    }
 
-        public RpcInvokeTimeoutException(IResultCode? code = null, object? body = null, string message = "")
-            : base(code, body, message)
-        {
-        }
+    public RpcInvokeTimeoutException(IResultCode? code = null, object? body = null, string message = "")
+        : base(code, body, message)
+    {
+    }
 
-        public RpcInvokeTimeoutException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
-            : base(innerException, code, body, message)
-        {
-        }
-
+    public RpcInvokeTimeoutException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+        : base(innerException, code, body, message)
+    {
     }
 
 }

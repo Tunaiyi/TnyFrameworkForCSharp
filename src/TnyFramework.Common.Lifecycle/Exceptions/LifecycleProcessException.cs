@@ -9,26 +9,23 @@
 using System;
 using TnyFramework.Common.Exceptions;
 
-namespace TnyFramework.Common.Lifecycle.Exceptions
+namespace TnyFramework.Common.Lifecycle.Exceptions;
+
+public class LifecycleProcessException : CommonException
 {
-
-    public class LifecycleProcessException : CommonException
+    public LifecycleProcessException()
     {
-        public LifecycleProcessException()
-        {
-        }
-
-        public LifecycleProcessException(string message) : base(message)
-        {
-        }
-
-        public LifecycleProcessException(Exception innerException, string message) : base(innerException, message)
-        {
-        }
-
-        public LifecycleProcessException(Exception innerException) : base(innerException, innerException.Message)
-        {
-        }
     }
 
+    public LifecycleProcessException(string message) : base(message)
+    {
+    }
+
+    public LifecycleProcessException(Exception innerException, string message) : base(innerException, message)
+    {
+    }
+
+    public LifecycleProcessException(Exception innerException) : base(innerException, innerException.Message)
+    {
+    }
 }

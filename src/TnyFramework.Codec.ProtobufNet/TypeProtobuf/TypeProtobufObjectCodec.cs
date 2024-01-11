@@ -16,112 +16,109 @@ using TnyFramework.Common.Extensions;
 using System.Buffers;
 #endif
 
-namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
+namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf;
+
+public class TypeProtobufObjectCodec<T> : BytesObjectCodec<T>
 {
+    private readonly TypeProtobufSchemeFactory factory;
 
-    public class TypeProtobufObjectCodec<T> : BytesObjectCodec<T>
+    public TypeProtobufObjectCodec()
     {
-        private readonly TypeProtobufSchemeFactory factory;
-
-        public TypeProtobufObjectCodec()
-        {
-            factory = TypeProtobufSchemeFactory.Factory;
-        }
-
-        public TypeProtobufObjectCodec(TypeProtobufSchemeFactory factory)
-        {
-            this.factory = factory;
-        }
-
-        public override byte[] Encode(T? value)
-        {
-            if (value == null)
-            {
-                return Array.Empty<byte>();
-            }
-            var scheme = factory.Load(value.GetType());
-            if (scheme.IsNull())
-            {
-                return Array.Empty<byte>();
-            }
-            var stream = new MemoryStream(256);
-            stream.WriteFixed32(scheme.Id);
-            Serializer.Serialize(stream, value);
-            return stream.ToArray();
-        }
-
-        public override void Encode(T? value, Stream output)
-        {
-            if (value == null)
-            {
-                return;
-            }
-            var scheme = factory.Load(value.GetType());
-            if (scheme.IsNull())
-                return;
-            output.WriteFixed32(scheme.Id);
-            Serializer.Serialize(output, value);
-        }
-
-        public override T? Decode(byte[]? bytes)
-        {
-            if (bytes == null || bytes.Length == 0)
-            {
-                return default;
-            }
-            var memory = new MemoryStream(bytes);
-            memory.ReadFixed32(out int id);
-            if (factory.Get(id, out var scheme))
-            {
-                return (T) Serializer.Deserialize(scheme.Type, memory);
-            }
-            throw new ObjectCodecException($"Unknown ${id} TypeProtobufScheme");
-        }
-
-        public override T? Decode(Stream input)
-        {
-            if (input.IsNull() || input.Length == 0)
-            {
-                return default;
-            }
-            input.ReadFixed32(out int id);
-            if (factory.Get(id, out var scheme))
-            {
-                return (T) Serializer.Deserialize(scheme.Type, input);
-            }
-            throw new ObjectCodecException($"Unknown ${id} TypeProtobufScheme");
-        }
-
-#if NET
-        public override void Encode(T? value, IBufferWriter<byte> output)
-        {
-            if (value == null)
-            {
-                return;
-            }
-            var scheme = factory.Load(value.GetType());
-            if (scheme.IsNull())
-                return;
-            output.WriteFixed32(scheme.Id);
-            Serializer.Serialize(output, value);
-        }
-
-        public override T? Decode(ReadOnlySequence<byte> input)
-        {
-            if (input.IsNull() || input.Length == 0)
-            {
-                return default;
-            }
-            var reader = new SequenceReader<byte>(input);
-            reader.ReadFixed32(out int id);
-            if (factory.Get(id, out var scheme))
-            {
-                var instance = (T) scheme.Create();
-                return Serializer.Deserialize(input.Slice(reader.Position), instance);
-            }
-            throw new ObjectCodecException($"Unknown ${id} TypeProtobufScheme");
-        }
-#endif
+        factory = TypeProtobufSchemeFactory.Factory;
     }
 
+    public TypeProtobufObjectCodec(TypeProtobufSchemeFactory factory)
+    {
+        this.factory = factory;
+    }
+
+    public override byte[] Encode(T? value)
+    {
+        if (value == null)
+        {
+            return Array.Empty<byte>();
+        }
+        var scheme = factory.Load(value.GetType());
+        if (scheme.IsNull())
+        {
+            return Array.Empty<byte>();
+        }
+        var stream = new MemoryStream(256);
+        stream.WriteFixed32(scheme.Id);
+        Serializer.Serialize(stream, value);
+        return stream.ToArray();
+    }
+
+    public override void Encode(T? value, Stream output)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        var scheme = factory.Load(value.GetType());
+        if (scheme.IsNull())
+            return;
+        output.WriteFixed32(scheme.Id);
+        Serializer.Serialize(output, value);
+    }
+
+    public override T? Decode(byte[]? bytes)
+    {
+        if (bytes == null || bytes.Length == 0)
+        {
+            return default;
+        }
+        var memory = new MemoryStream(bytes);
+        memory.ReadFixed32(out int id);
+        if (factory.Get(id, out var scheme))
+        {
+            return (T) Serializer.Deserialize(scheme.Type, memory);
+        }
+        throw new ObjectCodecException($"Unknown ${id} TypeProtobufScheme");
+    }
+
+    public override T? Decode(Stream input)
+    {
+        if (input.IsNull() || input.Length == 0)
+        {
+            return default;
+        }
+        input.ReadFixed32(out int id);
+        if (factory.Get(id, out var scheme))
+        {
+            return (T) Serializer.Deserialize(scheme.Type, input);
+        }
+        throw new ObjectCodecException($"Unknown ${id} TypeProtobufScheme");
+    }
+
+#if NET
+    public override void Encode(T? value, IBufferWriter<byte> output)
+    {
+        if (value == null)
+        {
+            return;
+        }
+        var scheme = factory.Load(value.GetType());
+        if (scheme.IsNull())
+            return;
+        output.WriteFixed32(scheme.Id);
+        Serializer.Serialize(output, value);
+    }
+
+    public override T? Decode(ReadOnlySequence<byte> input)
+    {
+        if (input.IsNull() || input.Length == 0)
+        {
+            return default;
+        }
+        var reader = new SequenceReader<byte>(input);
+        reader.ReadFixed32(out int id);
+        if (factory.Get(id, out var scheme))
+        {
+            var instance = (T) scheme.Create();
+            return Serializer.Deserialize(input.Slice(reader.Position), instance);
+        }
+        throw new ObjectCodecException($"Unknown ${id} TypeProtobufScheme");
+    }
+#endif
 }

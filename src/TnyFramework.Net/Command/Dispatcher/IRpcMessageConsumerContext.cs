@@ -8,12 +8,9 @@
 
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public interface IRpcMessageConsumerContext : IRpcMessageInvocationContext
 {
-
-    public interface IRpcMessageConsumerContext : IRpcMessageInvocationContext
-    {
-        bool Complete(IMessage message);
-    }
-
+    bool Complete(IMessage message);
 }

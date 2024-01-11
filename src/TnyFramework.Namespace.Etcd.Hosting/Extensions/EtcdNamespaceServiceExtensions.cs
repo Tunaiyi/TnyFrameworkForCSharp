@@ -14,27 +14,24 @@ using TnyFramework.Common.Extensions;
 using TnyFramework.DI.Extensions;
 using TnyFramework.DI.Hosting.Configurations.Extensions;
 
-namespace TnyFramework.Namespace.Etcd.Hosting.Extensions
+namespace TnyFramework.Namespace.Etcd.Hosting.Extensions;
+
+public static class EtcdNamespaceServiceExtensions
 {
+    private static readonly string DEFAULT_SECTION = ConfigurationPath.Combine("Namespace", "Etcd");
 
-    public static class EtcdNamespaceServiceExtensions
+    public static IHostBuilder UseEtcdNamespace(this IHostBuilder builder, string section = EtcdNamespacePropertiesKeys.ETCD_NAMESPACE_ROOT)
     {
-        private static readonly string DEFAULT_SECTION = ConfigurationPath.Combine("Namespace", "Etcd");
-
-        public static IHostBuilder UseEtcdNamespace(this IHostBuilder builder, string section = EtcdNamespacePropertiesKeys.ETCD_NAMESPACE_ROOT)
+        if (section.IsBlank())
         {
-            if (section.IsBlank())
-            {
-                section = DEFAULT_SECTION;
-            }
-            return builder.ConfigureServices((hostBuilder, services) => {
-                services.BindProperties<EtcdConfig>(hostBuilder.Configuration, section);
-                services.AddSingleton<ObjectCodecAdapter>();
-                services.BindSingleton<EtcdNamespaceExplorerFactory>();
-                services.BindSingleton(p => p.GetService<EtcdNamespaceExplorerFactory>()!.Create());
-            });
-
+            section = DEFAULT_SECTION;
         }
-    }
+        return builder.ConfigureServices((hostBuilder, services) => {
+            services.BindProperties<EtcdConfig>(hostBuilder.Configuration, section);
+            services.AddSingleton<ObjectCodecAdapter>();
+            services.BindSingleton<EtcdNamespaceExplorerFactory>();
+            services.BindSingleton(p => p.GetService<EtcdNamespaceExplorerFactory>()!.Create());
+        });
 
+    }
 }

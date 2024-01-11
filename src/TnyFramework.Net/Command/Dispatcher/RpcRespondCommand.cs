@@ -10,42 +10,39 @@ using System;
 using System.Threading.Tasks;
 using TnyFramework.Common.Result;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public class RpcRespondCommand : Command
 {
+    private readonly IRpcMessageEnterContext rpcMessageContext;
 
-    public class RpcRespondCommand : Command
+    private readonly IResultCode code;
+
+    private readonly object? body;
+
+    public RpcRespondCommand(IRpcMessageEnterContext rpcMessageContext, IResultCode code, object? body)
     {
-        private readonly IRpcMessageEnterContext rpcMessageContext;
+        this.rpcMessageContext = rpcMessageContext;
+        this.code = code;
+        this.body = body;
 
-        private readonly IResultCode code;
-
-        private readonly object? body;
-
-        public RpcRespondCommand(IRpcMessageEnterContext rpcMessageContext, IResultCode code, object? body)
-        {
-            this.rpcMessageContext = rpcMessageContext;
-            this.code = code;
-            this.body = body;
-
-        }
-
-        protected override Task Action()
-        {
-            RpcContexts.SetCurrent(rpcMessageContext);
-            try
-            {
-                var message = rpcMessageContext.NetMessage;
-                rpcMessageContext.Invoke(RpcMessageTransactionContext.ErrorOperation(message));
-                rpcMessageContext.Complete(code, body);
-            } catch (Exception cause)
-            {
-                rpcMessageContext.Complete(cause);
-            } finally
-            {
-                RpcContexts.Clear();
-            }
-            return Task.CompletedTask;
-        }
     }
 
+    protected override Task Action()
+    {
+        RpcContexts.SetCurrent(rpcMessageContext);
+        try
+        {
+            var message = rpcMessageContext.NetMessage;
+            rpcMessageContext.Invoke(RpcMessageTransactionContext.ErrorOperation(message));
+            rpcMessageContext.Complete(code, body);
+        } catch (Exception cause)
+        {
+            rpcMessageContext.Complete(cause);
+        } finally
+        {
+            RpcContexts.Clear();
+        }
+        return Task.CompletedTask;
+    }
 }

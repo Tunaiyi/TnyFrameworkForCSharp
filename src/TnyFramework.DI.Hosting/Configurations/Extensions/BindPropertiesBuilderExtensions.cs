@@ -11,34 +11,31 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TnyFramework.DI.Extensions;
 
-namespace TnyFramework.DI.Hosting.Configurations.Extensions
+namespace TnyFramework.DI.Hosting.Configurations.Extensions;
+
+public static class BindPropertiesBuilderExtensions
 {
-
-    public static class BindPropertiesBuilderExtensions
+    public static IServiceCollection BindProperties<TProperties>(this IServiceCollection services, HostBuilderContext context,
+        string propertiesPath)
+        where TProperties : new()
     {
-        public static IServiceCollection BindProperties<TProperties>(this IServiceCollection services, HostBuilderContext context,
-            string propertiesPath)
-            where TProperties : new()
-        {
-            return services.BindProperties<TProperties>(context.Configuration, propertiesPath);
-        }
-
-        public static IServiceCollection BindProperties<TProperties>(this IServiceCollection services, IConfiguration configuration,
-            string propertiesPath)
-            where TProperties : new()
-        {
-            var properties = new TProperties();
-            configuration.Bind(propertiesPath, properties);
-            services.BindSingleton(properties);
-            return services;
-        }
-
-        public static IHostBuilder BindProperties<TProperties>(this IHostBuilder builder, string propertiesPath) where TProperties : new()
-        {
-            return builder.ConfigureServices((hostBuilder, services) => {
-                services.BindProperties<TProperties>(hostBuilder.Configuration, propertiesPath);
-            });
-        }
+        return services.BindProperties<TProperties>(context.Configuration, propertiesPath);
     }
 
+    public static IServiceCollection BindProperties<TProperties>(this IServiceCollection services, IConfiguration configuration,
+        string propertiesPath)
+        where TProperties : new()
+    {
+        var properties = new TProperties();
+        configuration.Bind(propertiesPath, properties);
+        services.BindSingleton(properties);
+        return services;
+    }
+
+    public static IHostBuilder BindProperties<TProperties>(this IHostBuilder builder, string propertiesPath) where TProperties : new()
+    {
+        return builder.ConfigureServices((hostBuilder, services) => {
+            services.BindProperties<TProperties>(hostBuilder.Configuration, propertiesPath);
+        });
+    }
 }

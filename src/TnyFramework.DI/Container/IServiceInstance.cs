@@ -8,12 +8,9 @@
 
 using System;
 
-namespace TnyFramework.DI.Container
+namespace TnyFramework.DI.Container;
+
+public interface IServiceInstance
 {
-
-    public interface IServiceInstance
-    {
-        object Get(IServiceProvider provider);
-    }
-
+    object Get(IServiceProvider provider);
 }

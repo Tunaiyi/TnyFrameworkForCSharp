@@ -8,14 +8,11 @@
 
 using System;
 
-namespace TnyFramework.Net.Rpc.Remote
+namespace TnyFramework.Net.Rpc.Remote;
+
+public interface IRpcRemoteRouteManager
 {
+    IRpcRouter? GetRouter<T>() where T : IRpcRouter;
 
-    public interface IRpcRemoteRouteManager
-    {
-        IRpcRouter? GetRouter<T>() where T : IRpcRouter;
-
-        IRpcRouter? GetRouter(Type type);
-    }
-
+    IRpcRouter? GetRouter(Type type);
 }

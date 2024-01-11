@@ -9,18 +9,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace TnyFramework.Net.Application
+namespace TnyFramework.Net.Application;
+
+public interface INetApplication
 {
+    INetAppContext AppContext { get; }
 
-    public interface INetApplication
-    {
-        INetAppContext AppContext { get; }
+    IList<INetServer> Servers { get; }
 
-        IList<INetServer> Servers { get; }
+    Task Start();
 
-        Task Start();
-
-        Task Close();
-    }
-
+    Task Close();
 }

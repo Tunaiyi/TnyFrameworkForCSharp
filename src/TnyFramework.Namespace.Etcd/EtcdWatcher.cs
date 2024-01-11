@@ -21,273 +21,270 @@ using TnyFramework.Coroutines.Async;
 using TnyFramework.Namespace.Etcd.Exceptions;
 using TnyFramework.Namespace.Etcd.Listener;
 
-namespace TnyFramework.Namespace.Etcd
+namespace TnyFramework.Namespace.Etcd;
+
+internal class EtcdWatcher : IEtcdWatcher
 {
+    private static readonly ILogger LOGGER = LogFactory.Logger<EtcdWatcher>();
 
-    internal class EtcdWatcher : IEtcdWatcher
+    private const long EMPTY_ID = -1L;
+
+    private readonly string key;
+
+    private readonly EtcdAccessor client;
+
+    private readonly ICoroutine coroutine;
+
+    private readonly EtcdWatchOption option;
+
+    private volatile ITaskCompletionSource? watchSource;
+
+    private volatile CancellationTokenSource? watchCancel;
+
+    private volatile bool started;
+
+    private volatile bool closed;
+
+    private long id = EMPTY_ID;
+
+    private long revision;
+
+    private readonly IEventBus<EtcdWatchOnWatch> watchEvent = EventBuses.Create<EtcdWatchOnWatch>();
+
+    private readonly IEventBus<EtcdWatchOnChange> changeEvent = EventBuses.Create<EtcdWatchOnChange>();
+
+    private readonly IEventBus<EtcdWatchOnError> errorEvent = EventBuses.Create<EtcdWatchOnError>();
+
+    private readonly IEventBus<EtcdWatchOnCompleted> completedEvent = EventBuses.Create<EtcdWatchOnCompleted>();
+
+    public EtcdWatcher(EtcdAccessor client, string key, EtcdWatchOption option)
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<EtcdWatcher>();
+        coroutine = DefaultCoroutineFactory.Default.Create("EtcdWatcher");
+        this.client = client;
+        this.key = key;
+        this.option = option;
+        revision = option.Revision;
+    }
 
-        private const long EMPTY_ID = -1L;
+    public IEventWatch<EtcdWatchOnWatch> WatchEvent => watchEvent;
 
-        private readonly string key;
+    public IEventWatch<EtcdWatchOnChange> ChangeEvent => changeEvent;
 
-        private readonly EtcdAccessor client;
+    public IEventWatch<EtcdWatchOnError> ErrorEvent => errorEvent;
 
-        private readonly ICoroutine coroutine;
+    public IEventWatch<EtcdWatchOnCompleted> CompletedEvent => completedEvent;
 
-        private readonly EtcdWatchOption option;
+    public bool IsClosed() => closed;
 
-        private volatile ITaskCompletionSource? watchSource;
-
-        private volatile CancellationTokenSource? watchCancel;
-
-        private volatile bool started;
-
-        private volatile bool closed;
-
-        private long id = EMPTY_ID;
-
-        private long revision;
-
-        private readonly IEventBus<EtcdWatchOnWatch> watchEvent = EventBuses.Create<EtcdWatchOnWatch>();
-
-        private readonly IEventBus<EtcdWatchOnChange> changeEvent = EventBuses.Create<EtcdWatchOnChange>();
-
-        private readonly IEventBus<EtcdWatchOnError> errorEvent = EventBuses.Create<EtcdWatchOnError>();
-
-        private readonly IEventBus<EtcdWatchOnCompleted> completedEvent = EventBuses.Create<EtcdWatchOnCompleted>();
-
-        public EtcdWatcher(EtcdAccessor client, string key, EtcdWatchOption option)
-        {
-            coroutine = DefaultCoroutineFactory.Default.Create("EtcdWatcher");
-            this.client = client;
-            this.key = key;
-            this.option = option;
-            revision = option.Revision;
-        }
-
-        public IEventWatch<EtcdWatchOnWatch> WatchEvent => watchEvent;
-
-        public IEventWatch<EtcdWatchOnChange> ChangeEvent => changeEvent;
-
-        public IEventWatch<EtcdWatchOnError> ErrorEvent => errorEvent;
-
-        public IEventWatch<EtcdWatchOnCompleted> CompletedEvent => completedEvent;
-
-        public bool IsClosed() => closed;
-
-        public Task Close()
-        {
-            return coroutine.AsyncFunc(() => {
-                if (closed)
-                {
-                    return Task.CompletedTask;
-                }
-                closed = true;
-                watchCancel?.Cancel();
-                return Task.CompletedTask;
-            });
-        }
-
-        internal Task Resume()
-        {
-            if (IsClosed())
+    public Task Close()
+    {
+        return coroutine.AsyncFunc(() => {
+            if (closed)
             {
                 return Task.CompletedTask;
             }
+            closed = true;
+            watchCancel?.Cancel();
+            return Task.CompletedTask;
+        });
+    }
 
-            return coroutine.AsyncExec(async () => {
-                try
-                {
-                    if (started)
-                    {
-                        return;
-                    }
-                    id = EMPTY_ID;
-                    started = true;
-                    var createRequest = new WatchCreateRequest {
-                        Key = EtcdObject.Key(key),
-                        PrevKv = option.PrevKv,
-                        ProgressNotify = option.ProgressNotify
-                    };
-                    if (option.EndKey.IsNotBlank())
-                    {
-                        createRequest.RangeEnd = EtcdObject.EndKey(option.EndKey);
-                    } else
-                    {
-                        if (option.Prefix)
-                        {
-                            var endKey = EtcdObject.EndKey(key);
-                            createRequest.RangeEnd = endKey;
-                        }
-                    }
-
-                    if (option.NoDelete)
-                    {
-                        createRequest.Filters.Add(WatchCreateRequest.Types.FilterType.Nodelete);
-                    }
-
-                    if (option.NoPut)
-                    {
-                        createRequest.Filters.Add(WatchCreateRequest.Types.FilterType.Noput);
-                    }
-
-                    var watchRequest = new WatchRequest {
-                        CreateRequest = createRequest
-                    };
-                    watchSource = new NoneTaskCompletionSource();
-                    watchCancel = new CancellationTokenSource();
-                    var _ = client.Watch(watchRequest, HandleWatch, null, null, watchCancel.Token);
-                    await watchSource.Task;
-                    watchCancel.Token.Register(() => coroutine.Exec(async () => await HandleCompleted()));
-                } catch (Exception exception)
-                {
-                    HandleError(exception);
-                }
-            });
-        }
-
-        private Task HandleCompleted()
+    internal Task Resume()
+    {
+        if (IsClosed())
         {
-            if (id == -1)
-                return Task.CompletedTask;
-            id = -1;
-            FireCompleted();
-            var request = new WatchRequest {
-                CancelRequest = new WatchCancelRequest {
-                    WatchId = id
-                }
-            };
-            var _ = client.Watch(request, HandleUnwatch);
-            watchCancel = null;
-            watchSource = null;
             return Task.CompletedTask;
         }
 
-        private void HandleWatch(WatchResponse response)
-        {
-            coroutine.AsyncAction(() => {
-                if (closed)
+        return coroutine.AsyncExec(async () => {
+            try
+            {
+                if (started)
                 {
                     return;
                 }
-                if (response.Created && response.Canceled && response.CancelReason != null &&
-                    response.CancelReason.Contains("etcdserver: permission denied"))
+                id = EMPTY_ID;
+                started = true;
+                var createRequest = new WatchCreateRequest {
+                    Key = EtcdObject.Key(key),
+                    PrevKv = option.PrevKv,
+                    ProgressNotify = option.ProgressNotify
+                };
+                if (option.EndKey.IsNotBlank())
                 {
-                    var error = new Status(StatusCode.Cancelled, response.CancelReason);
-                    var exception = EtcdExceptionFactory.ToEtcdException(error);
-                    HandleError(exception, true);
-                } else if (response.Created)
+                    createRequest.RangeEnd = EtcdObject.EndKey(option.EndKey);
+                } else
                 {
-                    if (response.WatchId == EMPTY_ID)
+                    if (option.Prefix)
                     {
-                        var exception = EtcdExceptionFactory.NewEtcdException(StatusCode.Internal, "etcd server failed to create watch id");
-                        FireError(exception);
-                        return;
+                        var endKey = EtcdObject.EndKey(key);
+                        createRequest.RangeEnd = endKey;
                     }
-                    revision = Math.Max(revision, response.Header.Revision);
-                    id = response.WatchId;
-                    watchSource?.SetResult();
-                    watchEvent.Notify();
-                } else if (response.Canceled)
-                {
-                    var reason = response.CancelReason;
-                    Exception error;
-                    if (response.CompactRevision != 0)
-                    {
-                        error = EtcdExceptionFactory.NewCompactedException(response.CompactRevision);
-                    } else if (reason.IsBlank())
-                    {
-                        error = EtcdExceptionFactory.NewEtcdException(StatusCode.OutOfRange,
-                            "etcdserver: mvcc: required revision is a future revision");
-                    } else
-                    {
-                        error = EtcdExceptionFactory.NewEtcdException(StatusCode.FailedPrecondition, reason ?? "");
-                    }
-                    HandleError(EtcdExceptionFactory.ToEtcdException(error), false);
-                } else if (IsProgressNotify(response))
-                {
-                    FireNext(new WatchResponse(response));
-                    revision = Math.Max(revision, response.Header.Revision);
-                } else if (response.Events.Count == 0 && option.ProgressNotify)
-                {
-                    FireNext(new WatchResponse(response));
-                    revision = response.Header.Revision;
-                } else if (response.Events.Count > 0)
-                {
-                    FireNext(new WatchResponse(response));
-                    var index = response.Events.Count - 1;
-                    revision = response.Events[index].Kv.ModRevision + 1;
                 }
-            });
-        }
 
-        private static bool IsProgressNotify(WatchResponse response)
-        {
-            return response.Events.Count == 0 && !response.Created && !response.Canceled
-                   && response.CompactRevision == 0 && response.Header.Revision != 0;
-        }
+                if (option.NoDelete)
+                {
+                    createRequest.Filters.Add(WatchCreateRequest.Types.FilterType.Nodelete);
+                }
 
-        private void HandleError(Exception exception)
-        {
-            HandleError(EtcdExceptionFactory.ToEtcdException(exception), ShouldReschedule(EtcdErrors.FormatException(exception)));
-        }
+                if (option.NoPut)
+                {
+                    createRequest.Filters.Add(WatchCreateRequest.Types.FilterType.Noput);
+                }
 
-        private void HandleError(EtcdException exception, bool shouldReschedule)
-        {
+                var watchRequest = new WatchRequest {
+                    CreateRequest = createRequest
+                };
+                watchSource = new NoneTaskCompletionSource();
+                watchCancel = new CancellationTokenSource();
+                var _ = client.Watch(watchRequest, HandleWatch, null, null, watchCancel.Token);
+                await watchSource.Task;
+                watchCancel.Token.Register(() => coroutine.Exec(async () => await HandleCompleted()));
+            } catch (Exception exception)
+            {
+                HandleError(exception);
+            }
+        });
+    }
+
+    private Task HandleCompleted()
+    {
+        if (id == -1)
+            return Task.CompletedTask;
+        id = -1;
+        FireCompleted();
+        var request = new WatchRequest {
+            CancelRequest = new WatchCancelRequest {
+                WatchId = id
+            }
+        };
+        var _ = client.Watch(request, HandleUnwatch);
+        watchCancel = null;
+        watchSource = null;
+        return Task.CompletedTask;
+    }
+
+    private void HandleWatch(WatchResponse response)
+    {
+        coroutine.AsyncAction(() => {
             if (closed)
             {
                 return;
             }
-            FireError(exception);
-            started = false;
-
-            if (shouldReschedule)
+            if (response.Created && response.Canceled && response.CancelReason != null &&
+                response.CancelReason.Contains("etcdserver: permission denied"))
             {
-                Reschedule();
-                return;
-            }
-            Close();
-        }
-
-        private static void HandleUnwatch(WatchResponse response)
-        {
-        }
-
-        private void Reschedule()
-        {
-            coroutine.AsyncExec(async () => {
-                try
+                var error = new Status(StatusCode.Cancelled, response.CancelReason);
+                var exception = EtcdExceptionFactory.ToEtcdException(error);
+                HandleError(exception, true);
+            } else if (response.Created)
+            {
+                if (response.WatchId == EMPTY_ID)
                 {
-                    await Task.Delay(500);
-                    var _ = Resume();
-                } catch (Exception e)
-                {
-                    LOGGER.LogError(e, "scheduled resume failed");
+                    var exception = EtcdExceptionFactory.NewEtcdException(StatusCode.Internal, "etcd server failed to create watch id");
+                    FireError(exception);
+                    return;
                 }
-            });
-        }
-
-        private void FireError(Exception exception)
-        {
-            errorEvent.Notify(exception);
-        }
-
-        private void FireNext(WatchResponse response)
-        {
-            changeEvent.Notify(response);
-        }
-
-        private void FireCompleted()
-        {
-            completedEvent.Notify();
-        }
-
-        private static bool ShouldReschedule(Status status)
-        {
-            return !EtcdErrors.IsHaltError(status) && !EtcdErrors.IsNoLeaderError(status);
-        }
+                revision = Math.Max(revision, response.Header.Revision);
+                id = response.WatchId;
+                watchSource?.SetResult();
+                watchEvent.Notify();
+            } else if (response.Canceled)
+            {
+                var reason = response.CancelReason;
+                Exception error;
+                if (response.CompactRevision != 0)
+                {
+                    error = EtcdExceptionFactory.NewCompactedException(response.CompactRevision);
+                } else if (reason.IsBlank())
+                {
+                    error = EtcdExceptionFactory.NewEtcdException(StatusCode.OutOfRange,
+                        "etcdserver: mvcc: required revision is a future revision");
+                } else
+                {
+                    error = EtcdExceptionFactory.NewEtcdException(StatusCode.FailedPrecondition, reason ?? "");
+                }
+                HandleError(EtcdExceptionFactory.ToEtcdException(error), false);
+            } else if (IsProgressNotify(response))
+            {
+                FireNext(new WatchResponse(response));
+                revision = Math.Max(revision, response.Header.Revision);
+            } else if (response.Events.Count == 0 && option.ProgressNotify)
+            {
+                FireNext(new WatchResponse(response));
+                revision = response.Header.Revision;
+            } else if (response.Events.Count > 0)
+            {
+                FireNext(new WatchResponse(response));
+                var index = response.Events.Count - 1;
+                revision = response.Events[index].Kv.ModRevision + 1;
+            }
+        });
     }
 
+    private static bool IsProgressNotify(WatchResponse response)
+    {
+        return response.Events.Count == 0 && !response.Created && !response.Canceled
+               && response.CompactRevision == 0 && response.Header.Revision != 0;
+    }
+
+    private void HandleError(Exception exception)
+    {
+        HandleError(EtcdExceptionFactory.ToEtcdException(exception), ShouldReschedule(EtcdErrors.FormatException(exception)));
+    }
+
+    private void HandleError(EtcdException exception, bool shouldReschedule)
+    {
+        if (closed)
+        {
+            return;
+        }
+        FireError(exception);
+        started = false;
+
+        if (shouldReschedule)
+        {
+            Reschedule();
+            return;
+        }
+        Close();
+    }
+
+    private static void HandleUnwatch(WatchResponse response)
+    {
+    }
+
+    private void Reschedule()
+    {
+        coroutine.AsyncExec(async () => {
+            try
+            {
+                await Task.Delay(500);
+                var _ = Resume();
+            } catch (Exception e)
+            {
+                LOGGER.LogError(e, "scheduled resume failed");
+            }
+        });
+    }
+
+    private void FireError(Exception exception)
+    {
+        errorEvent.Notify(exception);
+    }
+
+    private void FireNext(WatchResponse response)
+    {
+        changeEvent.Notify(response);
+    }
+
+    private void FireCompleted()
+    {
+        completedEvent.Notify();
+    }
+
+    private static bool ShouldReschedule(Status status)
+    {
+        return !EtcdErrors.IsHaltError(status) && !EtcdErrors.IsNoLeaderError(status);
+    }
 }

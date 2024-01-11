@@ -6,14 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.DI.Units
+namespace TnyFramework.DI.Units;
+
+public interface IUnitCreator<out TUnit, in TContext>
 {
-
-    public interface IUnitCreator<out TUnit, in TContext>
-    {
-        TUnit Load(TContext context);
-    }
-
-    public delegate TUnit UnitCreator<out TUnit, in TContext>(TContext context);
-
+    TUnit Load(TContext context);
 }
+
+public delegate TUnit UnitCreator<out TUnit, in TContext>(TContext context);

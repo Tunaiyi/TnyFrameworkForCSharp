@@ -10,39 +10,36 @@ using System.Net;
 using TnyFramework.Common.Attribute;
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public abstract class Communicator : AttributesContext, ICommunicator
 {
+    public abstract ICertificate Certificate { get; }
 
-    public abstract class Communicator : AttributesContext, ICommunicator
+    public long Identify => Certificate.Identify;
+
+    public object? IdentifyToken => Certificate.IdentifyToken;
+
+    public long ContactId => Certificate.ContactId;
+
+    public IContactType ContactType => Certificate.ContactType;
+
+    public string ContactGroup => Certificate.ContactGroup;
+
+    public ICertificate GetCertificate()
     {
-        public abstract ICertificate Certificate { get; }
-
-        public long Identify => Certificate.Identify;
-
-        public object? IdentifyToken => Certificate.IdentifyToken;
-
-        public long ContactId => Certificate.ContactId;
-
-        public IContactType ContactType => Certificate.ContactType;
-
-        public string ContactGroup => Certificate.ContactGroup;
-
-        public ICertificate GetCertificate()
-        {
-            return Certificate;
-        }
-
-        public abstract EndPoint? RemoteAddress { get; }
-
-        public abstract EndPoint? LocalAddress { get; }
-
-        public abstract NetAccessMode AccessMode { get; }
-
-        public abstract bool IsActive();
-
-        public abstract bool IsClosed();
-
-        public abstract bool Close();
+        return Certificate;
     }
 
+    public abstract EndPoint? RemoteAddress { get; }
+
+    public abstract EndPoint? LocalAddress { get; }
+
+    public abstract NetAccessMode AccessMode { get; }
+
+    public abstract bool IsActive();
+
+    public abstract bool IsClosed();
+
+    public abstract bool Close();
 }

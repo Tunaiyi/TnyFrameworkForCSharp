@@ -8,51 +8,48 @@
 
 using System;
 
-namespace TnyFramework.Codec
+namespace TnyFramework.Codec;
+
+public class ObjectMimeType
 {
+    protected IMimeType? mimeType;
 
-    public class ObjectMimeType
+    public static ObjectMimeType<T> Of<T>()
     {
-        protected IMimeType? mimeType;
-
-        public static ObjectMimeType<T> Of<T>()
-        {
-            return new ObjectMimeType<T>(null);
-        }
-
-        public static ObjectMimeType<T> Of<T>(IMimeType mimeType)
-        {
-            return new ObjectMimeType<T>(mimeType);
-        }
-
-        public IMimeType MimeType => mimeType!;
-
-        public Type ObjectType { get; }
-
-        public ObjectMimeType(IMimeType? mimeType, Type objectType)
-        {
-            this.mimeType = mimeType;
-            ObjectType = objectType;
-        }
+        return new ObjectMimeType<T>(null);
     }
 
-    public class ObjectMimeType<TObject> : ObjectMimeType
+    public static ObjectMimeType<T> Of<T>(IMimeType mimeType)
     {
-        public bool HasMimeType() => mimeType != null;
-
-        internal ObjectMimeType(IMimeType? mimeType) : base(mimeType, typeof(TObject))
-        {
-        }
-
-        /// <summary>
-        /// 以当前MineType创建一个 type 的 ObjectMineType
-        /// </summary>
-        /// <typeparam name="T">类型</typeparam>
-        /// <returns>返回新的MineType</returns>
-        public ObjectMimeType<T> With<T>()
-        {
-            return new ObjectMimeType<T>(MimeType);
-        }
+        return new ObjectMimeType<T>(mimeType);
     }
 
+    public IMimeType MimeType => mimeType!;
+
+    public Type ObjectType { get; }
+
+    public ObjectMimeType(IMimeType? mimeType, Type objectType)
+    {
+        this.mimeType = mimeType;
+        ObjectType = objectType;
+    }
+}
+
+public class ObjectMimeType<TObject> : ObjectMimeType
+{
+    public bool HasMimeType() => mimeType != null;
+
+    internal ObjectMimeType(IMimeType? mimeType) : base(mimeType, typeof(TObject))
+    {
+    }
+
+    /// <summary>
+    /// 以当前MineType创建一个 type 的 ObjectMineType
+    /// </summary>
+    /// <typeparam name="T">类型</typeparam>
+    /// <returns>返回新的MineType</returns>
+    public ObjectMimeType<T> With<T>()
+    {
+        return new ObjectMimeType<T>(MimeType);
+    }
 }

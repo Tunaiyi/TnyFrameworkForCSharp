@@ -6,28 +6,25 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Command.Tasks
+namespace TnyFramework.Net.Command.Tasks;
+
+public class SerialCommandExecutorFactory : ICommandExecutorFactory
 {
+    private readonly ICommandTaskSchedulerFactory taskSchedulerFactory;
 
-    public class SerialCommandExecutorFactory : ICommandExecutorFactory
+    public SerialCommandExecutorFactory()
     {
-        private readonly ICommandTaskSchedulerFactory taskSchedulerFactory;
-
-        public SerialCommandExecutorFactory()
-        {
-            taskSchedulerFactory = new CoroutineCommandTaskSchedulerFactory();
-        }
-
-        public SerialCommandExecutorFactory(ICommandTaskSchedulerFactory taskSchedulerFactory)
-        {
-            this.taskSchedulerFactory = taskSchedulerFactory;
-        }
-
-        public ICommandExecutor CreateCommandExecutor(CommandBox commandBox)
-        {
-            var taskScheduler = taskSchedulerFactory.CreateTaskScheduler(commandBox, "CoroutineCommandExecutor");
-            return new SerialCommandExecutor(commandBox, taskScheduler);
-        }
+        taskSchedulerFactory = new CoroutineCommandTaskSchedulerFactory();
     }
 
+    public SerialCommandExecutorFactory(ICommandTaskSchedulerFactory taskSchedulerFactory)
+    {
+        this.taskSchedulerFactory = taskSchedulerFactory;
+    }
+
+    public ICommandExecutor CreateCommandExecutor(CommandBox commandBox)
+    {
+        var taskScheduler = taskSchedulerFactory.CreateTaskScheduler(commandBox, "CoroutineCommandExecutor");
+        return new SerialCommandExecutor(commandBox, taskScheduler);
+    }
 }

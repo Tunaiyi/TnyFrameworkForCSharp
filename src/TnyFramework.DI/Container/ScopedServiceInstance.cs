@@ -8,15 +8,12 @@
 
 using System;
 
-namespace TnyFramework.DI.Container
+namespace TnyFramework.DI.Container;
+
+public class ScopedServiceInstance(IServiceFactory factory) : BaseServiceInstance(factory)
 {
-
-    public class ScopedServiceInstance(IServiceFactory factory) : BaseServiceInstance(factory)
+    public override object Get(IServiceProvider provider)
     {
-        public override object Get(IServiceProvider provider)
-        {
-            return Create(provider);
-        }
+        return Create(provider);
     }
-
 }

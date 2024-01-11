@@ -15,77 +15,74 @@ using TnyFramework.Codec.Exceptions;
 using TnyFramework.Common.Extensions;
 using TnyFramework.FreeRedis.Hosting.Attributes;
 
-namespace TnyFramework.FreeRedis.Hosting
+namespace TnyFramework.FreeRedis.Hosting;
+
+public class RedisObjectScheme
 {
+    private static readonly ConcurrentDictionary<Type, RedisObjectScheme> SCHEME_MAP = new ConcurrentDictionary<Type, RedisObjectScheme>();
 
-    public class RedisObjectScheme
+    private static readonly RedisObjectScheme EMPTY = new RedisObjectScheme(null!, null!);
+
+    public string Source { get; }
+
+    public Type Type { get; }
+
+    public IMimeType Mime { get; }
+
+    public static RedisObjectScheme? SchemeOf<TValue>(bool throwOnNull = false)
     {
-        private static readonly ConcurrentDictionary<Type, RedisObjectScheme> SCHEME_MAP = new ConcurrentDictionary<Type, RedisObjectScheme>();
-
-        private static readonly RedisObjectScheme EMPTY = new RedisObjectScheme(null!, null!);
-
-        public string Source { get; }
-
-        public Type Type { get; }
-
-        public IMimeType Mime { get; }
-
-        public static RedisObjectScheme? SchemeOf<TValue>(bool throwOnNull = false)
-        {
-            return SchemeOf(typeof(TValue), throwOnNull);
-        }
-
-        private static RedisObjectScheme CreateScheme(Type current)
-        {
-            var redisObject = current.GetCustomAttribute<RedisObjectAttribute>();
-            if (redisObject != null)
-            {
-                var mimeType = MimeTypeOf(redisObject.Mime);
-                if (mimeType != null)
-                {
-                    return new RedisObjectScheme(current, mimeType, redisObject.Source);
-                }
-            }
-            var codable = current.GetCustomAttribute<CodableAttribute>();
-            if (codable != null)
-            {
-                var mimeType = MimeTypeOf(codable.Mime);
-                if (mimeType != null)
-                {
-                    return new RedisObjectScheme(current, mimeType);
-                }
-            }
-            return EMPTY;
-        }
-
-        public static RedisObjectScheme? SchemeOf(Type type, bool throwOnNull = false)
-        {
-            var result = SCHEME_MAP.Get(type);
-            if (result != null)
-            {
-                return result;
-            }
-            var value = SCHEME_MAP.GetOrAdd(type, CreateScheme);
-            if (!ReferenceEquals(value, EMPTY))
-                return value;
-            if (throwOnNull)
-            {
-                throw new ObjectCodecException($"Type {type} 没有存在 {nameof(RedisObjectAttribute)} 或 {nameof(CodableAttribute)}");
-            }
-            return null;
-        }
-
-        private static IMimeType? MimeTypeOf(string value)
-        {
-            return !value.IsNotBlank() ? null : MimeType.ForMimeType(value);
-        }
-
-        private RedisObjectScheme(Type type, IMimeType mime, string source = "")
-        {
-            Type = type;
-            Mime = mime;
-            Source = source;
-        }
+        return SchemeOf(typeof(TValue), throwOnNull);
     }
 
+    private static RedisObjectScheme CreateScheme(Type current)
+    {
+        var redisObject = current.GetCustomAttribute<RedisObjectAttribute>();
+        if (redisObject != null)
+        {
+            var mimeType = MimeTypeOf(redisObject.Mime);
+            if (mimeType != null)
+            {
+                return new RedisObjectScheme(current, mimeType, redisObject.Source);
+            }
+        }
+        var codable = current.GetCustomAttribute<CodableAttribute>();
+        if (codable != null)
+        {
+            var mimeType = MimeTypeOf(codable.Mime);
+            if (mimeType != null)
+            {
+                return new RedisObjectScheme(current, mimeType);
+            }
+        }
+        return EMPTY;
+    }
+
+    public static RedisObjectScheme? SchemeOf(Type type, bool throwOnNull = false)
+    {
+        var result = SCHEME_MAP.Get(type);
+        if (result != null)
+        {
+            return result;
+        }
+        var value = SCHEME_MAP.GetOrAdd(type, CreateScheme);
+        if (!ReferenceEquals(value, EMPTY))
+            return value;
+        if (throwOnNull)
+        {
+            throw new ObjectCodecException($"Type {type} 没有存在 {nameof(RedisObjectAttribute)} 或 {nameof(CodableAttribute)}");
+        }
+        return null;
+    }
+
+    private static IMimeType? MimeTypeOf(string value)
+    {
+        return !value.IsNotBlank() ? null : MimeType.ForMimeType(value);
+    }
+
+    private RedisObjectScheme(Type type, IMimeType mime, string source = "")
+    {
+        Type = type;
+        Mime = mime;
+        Source = source;
+    }
 }

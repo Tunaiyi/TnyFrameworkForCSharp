@@ -8,15 +8,12 @@
 
 using System;
 
-namespace TnyFramework.Net.Attributes
+namespace TnyFramework.Net.Attributes;
+
+[AttributeUsage(AttributeTargets.Parameter)]
+public class RpcFromAttribute : Attribute
 {
-
-    [AttributeUsage(AttributeTargets.Parameter)]
-    public class RpcFromAttribute : Attribute
+    public RpcFromAttribute()
     {
-        public RpcFromAttribute()
-        {
-        }
     }
-
 }

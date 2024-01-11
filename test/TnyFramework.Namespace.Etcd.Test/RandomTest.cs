@@ -10,14 +10,13 @@ using System;
 using NUnit.Framework;
 using Random = TnyFramework.Common.Util.Random;
 
-namespace TnyFramework.Namespace.Etcd.Test
-{
+namespace TnyFramework.Namespace.Etcd.Test;
 
-    public class RandomTest
+public class RandomTest
+{
+    [Test]
+    public void TestRandom()
     {
-        [Test]
-        public void TestRandom()
-        {
             var random = new Random(199999L, true);
             for (var i = 0; i < 20; i++)
             {
@@ -30,6 +29,4 @@ namespace TnyFramework.Namespace.Etcd.Test
                 Console.WriteLine(random.NextInt(100));
             }
         }
-    }
-
 }

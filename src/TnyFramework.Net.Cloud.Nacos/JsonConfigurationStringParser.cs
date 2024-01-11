@@ -16,109 +16,106 @@ using Nacos.V2;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace TnyFramework.Net.Cloud.Nacos
+namespace TnyFramework.Net.Cloud.Nacos;
+
+public class JsonConfigurationStringParser : INacosConfigurationParser
 {
+    internal static JsonConfigurationStringParser instance = new JsonConfigurationStringParser();
 
-    public class JsonConfigurationStringParser : INacosConfigurationParser
+    private readonly IDictionary<string, string> data =
+        new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+    private readonly Stack<string> context = new Stack<string>();
+    private string currentPath;
+    private JsonTextReader reader;
+
+    private JsonConfigurationStringParser()
     {
-        internal static JsonConfigurationStringParser instance = new JsonConfigurationStringParser();
+        currentPath = null!;
+        reader = null!;
+    }
 
-        private readonly IDictionary<string, string> data =
-            new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+    public IDictionary<string, string> Parse(string input) => new JsonConfigurationStringParser().ParseString(input);
 
-        private readonly Stack<string> context = new Stack<string>();
-        private string currentPath;
-        private JsonTextReader reader;
-
-        private JsonConfigurationStringParser()
+    private IDictionary<string, string> ParseString(string input)
+    {
+        data.Clear();
+        if (string.IsNullOrEmpty(input))
         {
-            currentPath = null!;
-            reader = null!;
+            input = "{}";
         }
+        var jsonTextReader = new JsonTextReader(new StringReader(input));
+        jsonTextReader.DateParseHandling = DateParseHandling.None;
+        reader = jsonTextReader;
+        VisitJObject(JObject.Load(reader));
+        return data;
+    }
 
-        public IDictionary<string, string> Parse(string input) => new JsonConfigurationStringParser().ParseString(input);
-
-        private IDictionary<string, string> ParseString(string input)
+    private void VisitJObject(JObject jObject)
+    {
+        foreach (var property in jObject.Properties())
         {
-            data.Clear();
-            if (string.IsNullOrEmpty(input))
-            {
-                input = "{}";
-            }
-            var jsonTextReader = new JsonTextReader(new StringReader(input));
-            jsonTextReader.DateParseHandling = DateParseHandling.None;
-            reader = jsonTextReader;
-            VisitJObject(JObject.Load(reader));
-            return data;
-        }
-
-        private void VisitJObject(JObject jObject)
-        {
-            foreach (var property in jObject.Properties())
-            {
-                EnterContext(property.Name);
-                VisitProperty(property);
-                ExitContext();
-            }
-        }
-
-        private void VisitProperty(JProperty property) => VisitToken(property.Value);
-
-        private void VisitToken(JToken token)
-        {
-            switch (token.Type)
-            {
-                case JTokenType.Object:
-                    VisitJObject(token.Value<JObject>()!);
-                    break;
-                case JTokenType.Array:
-                    VisitArray(token.Value<JArray>()!);
-                    break;
-                case JTokenType.Integer:
-                case JTokenType.Float:
-                case JTokenType.String:
-                case JTokenType.Boolean:
-                case JTokenType.Null:
-                case JTokenType.Raw:
-                case JTokenType.Bytes:
-                    VisitPrimitive(token.Value<JValue>()!);
-                    break;
-                default:
-                    throw new FormatException(string.Format("Unsupported JSON token '{0}' was found. Path '{1}', line {2} position {3}.",
-                        reader.TokenType, reader.Path, reader.LineNumber,
-                        reader.LinePosition));
-            }
-        }
-
-        private void VisitArray(JArray array)
-        {
-            for (var index = 0; index < array.Count; ++index)
-            {
-                EnterContext(index.ToString());
-                VisitToken(array[index]);
-                ExitContext();
-            }
-        }
-
-        private void VisitPrimitive(JValue data)
-        {
-            var path = this.currentPath;
-            if (this.data.ContainsKey(path))
-                throw new FormatException("A duplicate key '" + path + "' was found.");
-            this.data[path] = data.ToString(CultureInfo.InvariantCulture);
-        }
-
-        private void EnterContext(string context)
-        {
-            this.context.Push(context);
-            currentPath = ConfigurationPath.Combine(this.context.Reverse());
-        }
-
-        private void ExitContext()
-        {
-            context.Pop();
-            currentPath = ConfigurationPath.Combine(context.Reverse());
+            EnterContext(property.Name);
+            VisitProperty(property);
+            ExitContext();
         }
     }
 
+    private void VisitProperty(JProperty property) => VisitToken(property.Value);
+
+    private void VisitToken(JToken token)
+    {
+        switch (token.Type)
+        {
+            case JTokenType.Object:
+                VisitJObject(token.Value<JObject>()!);
+                break;
+            case JTokenType.Array:
+                VisitArray(token.Value<JArray>()!);
+                break;
+            case JTokenType.Integer:
+            case JTokenType.Float:
+            case JTokenType.String:
+            case JTokenType.Boolean:
+            case JTokenType.Null:
+            case JTokenType.Raw:
+            case JTokenType.Bytes:
+                VisitPrimitive(token.Value<JValue>()!);
+                break;
+            default:
+                throw new FormatException(string.Format("Unsupported JSON token '{0}' was found. Path '{1}', line {2} position {3}.",
+                    reader.TokenType, reader.Path, reader.LineNumber,
+                    reader.LinePosition));
+        }
+    }
+
+    private void VisitArray(JArray array)
+    {
+        for (var index = 0; index < array.Count; ++index)
+        {
+            EnterContext(index.ToString());
+            VisitToken(array[index]);
+            ExitContext();
+        }
+    }
+
+    private void VisitPrimitive(JValue data)
+    {
+        var path = this.currentPath;
+        if (this.data.ContainsKey(path))
+            throw new FormatException("A duplicate key '" + path + "' was found.");
+        this.data[path] = data.ToString(CultureInfo.InvariantCulture);
+    }
+
+    private void EnterContext(string context)
+    {
+        this.context.Push(context);
+        currentPath = ConfigurationPath.Combine(this.context.Reverse());
+    }
+
+    private void ExitContext()
+    {
+        context.Pop();
+        currentPath = ConfigurationPath.Combine(context.Reverse());
+    }
 }

@@ -8,25 +8,22 @@
 
 using System.Collections.Generic;
 
-namespace TnyFramework.Net.Application
+namespace TnyFramework.Net.Application;
+
+public interface IServedServerSetting : IServerSetting
 {
+    /// <summary>
+    /// 上报绑定域名
+    /// </summary>
+    string ServeHost { get; }
 
-    public interface IServedServerSetting : IServerSetting
-    {
-        /// <summary>
-        /// 上报绑定域名
-        /// </summary>
-        string ServeHost { get; }
+    /// <summary>
+    /// 上报绑定端口
+    /// </summary>
+    int ServePort { get; }
 
-        /// <summary>
-        /// 上报绑定端口
-        /// </summary>
-        int ServePort { get; }
-
-        /// <summary>
-        /// 信息
-        /// </summary>
-        IDictionary<string, string>? Metadata { get; }
-    }
-
+    /// <summary>
+    /// 信息
+    /// </summary>
+    IDictionary<string, string>? Metadata { get; }
 }

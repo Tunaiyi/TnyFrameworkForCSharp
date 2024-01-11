@@ -12,24 +12,21 @@ using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.ProtobufNet.Attributes;
 using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 
-namespace TnyFramework.Net.DotNetty.Demo.DTO
+namespace TnyFramework.Net.DotNetty.Demo.DTO;
+
+[Codable(ProtobufMimeType.PROTOBUF_TYPE)]
+[TypeProtobuf(1000_00_00)]
+[ProtoContract]
+public class LoginResultDTO
 {
+    [ProtoMember(1)]
+    public long userId;
 
-    [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
-    [TypeProtobuf(1000_00_00)]
-    [ProtoContract]
-    public class LoginResultDTO
-    {
-        [ProtoMember(1)]
-        public long userId;
+    [ProtoMember(2)]
+    public string message = "";
+}
 
-        [ProtoMember(2)]
-        public string message = "";
-    }
-
-    public static partial class DTOOutline
-    {
-        public static Action RegisterLoginResultDTO = () => { TypeProtobufSchemeFactory.Factory.Load<LoginResultDTO>(); };
-    }
-
+public static partial class DTOOutline
+{
+    public static Action RegisterLoginResultDTO = () => { TypeProtobufSchemeFactory.Factory.Load<LoginResultDTO>(); };
 }

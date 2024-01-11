@@ -8,28 +8,25 @@
 
 using TnyFramework.Common.Result;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+/// <summary>
+/// 消息头
+/// </summary>
+public interface IMessageHead : IMessageHeaderContainer, IMessageSchema
 {
+    /// <summary>
+    /// 请求Id
+    /// </summary>
+    long Id { get; }
 
     /// <summary>
-    /// 消息头
+    /// 请求时间
     /// </summary>
-    public interface IMessageHead : IMessageHeaderContainer, IMessageSchema
-    {
-        /// <summary>
-        /// 请求Id
-        /// </summary>
-        long Id { get; }
+    long Time { get; }
 
-        /// <summary>
-        /// 请求时间
-        /// </summary>
-        long Time { get; }
-
-        /// <summary>
-        ///
-        /// </summary>
-        ResultCode ResultCode => ResultCode.ForId(Code);
-    }
-
+    /// <summary>
+    ///
+    /// </summary>
+    ResultCode ResultCode => ResultCode.ForId(Code);
 }

@@ -8,24 +8,21 @@
 
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public interface IRpcHandleContext
 {
+    /// <summary>
+    /// 获取会话
+    /// </summary>
+    ///
+    /// <return>获取会话</return>
+    ISession GetSession();
 
-    public interface IRpcHandleContext
-    {
-        /// <summary>
-        /// 获取会话
-        /// </summary>
-        ///
-        /// <return>获取会话</return>
-        ISession GetSession();
-
-        // /// <summary>
-        // /// 当前执行器
-        // /// </summary>
-        // ///
-        // /// <return>当前执行器</return>
-        // IAsyncExecutor Executor { get; }
-    }
-
+    // /// <summary>
+    // /// 当前执行器
+    // /// </summary>
+    // ///
+    // /// <return>当前执行器</return>
+    // IAsyncExecutor Executor { get; }
 }

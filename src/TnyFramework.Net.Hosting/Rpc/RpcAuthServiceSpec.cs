@@ -11,47 +11,44 @@ using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Rpc.Auth;
 
-namespace TnyFramework.Net.Hosting.Rpc
+namespace TnyFramework.Net.Hosting.Rpc;
+
+public interface IRpcAuthServiceSpec : IUnitSpec<IRpcAuthService, IRpcUnitContext>
 {
+    RpcAuthServiceSpec RpcUserPasswordManagerConfigure(Action<UnitSpec<IRpcUserPasswordManager, IRpcUnitContext>> action);
+}
 
-    public interface IRpcAuthServiceSpec : IUnitSpec<IRpcAuthService, IRpcUnitContext>
+public class RpcAuthServiceSpec : UnitSpec<IRpcAuthService, IRpcUnitContext>, IRpcAuthServiceSpec
+{
+    private IServiceCollection UnitContainer { get; }
+
+    private IRpcUnitContext RpcUnitContext { get; }
+
+    private readonly UnitSpec<IRpcUserPasswordManager, IRpcUnitContext> rpcUserPasswordManagerSpec;
+
+    public RpcAuthServiceSpec(IRpcUnitContext rpcUnitContext, IServiceCollection container)
     {
-        RpcAuthServiceSpec RpcUserPasswordManagerConfigure(Action<UnitSpec<IRpcUserPasswordManager, IRpcUnitContext>> action);
+        RpcUnitContext = rpcUnitContext;
+        UnitContainer = container;
+        Default(DefaultRpcAuthService);
+        rpcUserPasswordManagerSpec = Unit<IRpcUserPasswordManager, IRpcUnitContext>()
+            .Default<NoopRpcUserPasswordManager>();
     }
 
-    public class RpcAuthServiceSpec : UnitSpec<IRpcAuthService, IRpcUnitContext>, IRpcAuthServiceSpec
+    public RpcAuthServiceSpec RpcUserPasswordManagerConfigure(Action<UnitSpec<IRpcUserPasswordManager, IRpcUnitContext>> action)
     {
-        private IServiceCollection UnitContainer { get; }
-
-        private IRpcUnitContext RpcUnitContext { get; }
-
-        private readonly UnitSpec<IRpcUserPasswordManager, IRpcUnitContext> rpcUserPasswordManagerSpec;
-
-        public RpcAuthServiceSpec(IRpcUnitContext rpcUnitContext, IServiceCollection container)
-        {
-            RpcUnitContext = rpcUnitContext;
-            UnitContainer = container;
-            Default(DefaultRpcAuthService);
-            rpcUserPasswordManagerSpec = Unit<IRpcUserPasswordManager, IRpcUnitContext>()
-                .Default<NoopRpcUserPasswordManager>();
-        }
-
-        public RpcAuthServiceSpec RpcUserPasswordManagerConfigure(Action<UnitSpec<IRpcUserPasswordManager, IRpcUnitContext>> action)
-        {
-            action.Invoke(rpcUserPasswordManagerSpec);
-            return this;
-        }
-
-        public IRpcAuthService DefaultRpcAuthService(IRpcUnitContext context)
-        {
-            var netUnitContext = context.NetUnitContext;
-            return new RpcAuthService(netUnitContext.LoadAppContext(), context.LoadRpcUserPasswordManager());
-        }
-
-        public IRpcUserPasswordManager LoadRpcUserPasswordManager()
-        {
-            return rpcUserPasswordManagerSpec.Load(RpcUnitContext, UnitContainer);
-        }
+        action.Invoke(rpcUserPasswordManagerSpec);
+        return this;
     }
 
+    public IRpcAuthService DefaultRpcAuthService(IRpcUnitContext context)
+    {
+        var netUnitContext = context.NetUnitContext;
+        return new RpcAuthService(netUnitContext.LoadAppContext(), context.LoadRpcUserPasswordManager());
+    }
+
+    public IRpcUserPasswordManager LoadRpcUserPasswordManager()
+    {
+        return rpcUserPasswordManagerSpec.Load(RpcUnitContext, UnitContainer);
+    }
 }

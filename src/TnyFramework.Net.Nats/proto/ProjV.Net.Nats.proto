@@ -1,0 +1,16 @@
+syntax = "proto3";
+package ProjV.Net.Nats.Codecs.TypeProtobuf.Proto;
+
+message MessageHeadProto {
+   int64 id = 1;
+   int64 toMessage = 2;
+   int32 protocolId = 3;
+   int32 code = 4;
+   sfixed64 time = 5;
+   uint32 mode = 6;
+   map<int32,string> headers = 7;
+}
+message PlayerProto {
+   int64 id = 1;
+   string toMessage = 2;
+}

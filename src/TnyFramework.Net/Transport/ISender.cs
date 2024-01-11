@@ -9,18 +9,15 @@
 using System.Threading.Tasks;
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public interface ISender
 {
-
-    public interface ISender
-    {
-        /// <summary>
-        /// 异步发送消息
-        /// </summary>
-        /// <param name="content">发送消息上下文</param>
-        /// <param name="waitWritten">是否等待</param>
-        /// <returns>返回发送回执</returns>
-        ValueTask<IMessageSent> Send(MessageContent content, bool waitWritten = false);
-    }
-
+    /// <summary>
+    /// 异步发送消息
+    /// </summary>
+    /// <param name="content">发送消息上下文</param>
+    /// <param name="waitWritten">是否等待</param>
+    /// <returns>返回发送回执</returns>
+    ValueTask<IMessageSent> Send(MessageContent content, bool waitWritten = false);
 }

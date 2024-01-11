@@ -11,125 +11,122 @@ using System.Collections.Generic;
 using System.Threading;
 using TnyFramework.Common.Event;
 
-namespace TnyFramework.Common.EventBus
+namespace TnyFramework.Common.EventBus;
+
+internal class EventBus<THandler> : IEventBus<THandler>
+    where THandler : Delegate
 {
+    private static HandlerProfile<THandler> HandlerProfile { get; } = new();
 
-    internal class EventBus<THandler> : IEventBus<THandler>
-        where THandler : Delegate
+    private THandler? eventHandler;
+
+    private readonly EventBus<THandler>? parent;
+
+    public THandler Notify { get; }
+
+    public THandler? Handler => eventHandler;
+
+    public THandler? ParentNotify => parent?.Notify;
+
+    public EventBus()
     {
-        private static HandlerProfile<THandler> HandlerProfile { get; } = new();
+        Notify = HandlerProfile.CreateHandler(this);
+    }
 
-        private THandler? eventHandler;
+    private EventBus(EventBus<THandler> parent)
+    {
+        this.parent = parent;
+        Notify = HandlerProfile.CreateHandler(this);
+    }
 
-        private readonly EventBus<THandler>? parent;
+    IEvent IEvent.ForkChild()
+    {
+        return ForkChild();
+    }
 
-        public THandler Notify { get; }
+    public IEventBus<THandler> ForkChild()
+    {
+        return new EventBus<THandler>(this);
+    }
 
-        public THandler? Handler => eventHandler;
-
-        public THandler? ParentNotify => parent?.Notify;
-
-        public EventBus()
+    public void Add(THandler handler)
+    {
+        var current = eventHandler;
+        while (true)
         {
-            Notify = HandlerProfile.CreateHandler(this);
-        }
-
-        private EventBus(EventBus<THandler> parent)
-        {
-            this.parent = parent;
-            Notify = HandlerProfile.CreateHandler(this);
-        }
-
-        IEvent IEvent.ForkChild()
-        {
-            return ForkChild();
-        }
-
-        public IEventBus<THandler> ForkChild()
-        {
-            return new EventBus<THandler>(this);
-        }
-
-        public void Add(THandler handler)
-        {
-            var current = eventHandler;
-            while (true)
+            var check = current;
+            var combined = (THandler) Delegate.Combine(current, handler);
+            current = Interlocked.CompareExchange(ref eventHandler, combined, check);
+            if (current == check)
             {
-                var check = current;
-                var combined = (THandler) Delegate.Combine(current, handler);
-                current = Interlocked.CompareExchange(ref eventHandler, combined, check);
-                if (current == check)
-                {
-                    break;
-                }
+                break;
             }
-        }
-
-        public void Add(IEnumerable<THandler> handler)
-        {
-            foreach (var tHandler in handler)
-            {
-                Add(tHandler);
-            }
-        }
-
-        public void Add(params THandler[] handler)
-        {
-            foreach (var tHandler in handler)
-            {
-                Add(tHandler);
-            }
-        }
-
-        public void Remove(THandler handler)
-        {
-            var current = eventHandler;
-            while (true)
-            {
-                var check = current;
-                var removed = (THandler) Delegate.Remove(check, handler)!;
-                current = Interlocked.CompareExchange(ref eventHandler, removed, check);
-                if (current == check)
-                {
-                    break;
-                }
-            }
-        }
-
-        public void Remove(IEnumerable<THandler> handler)
-        {
-            foreach (var tHandler in handler)
-            {
-                Remove(tHandler);
-            }
-        }
-
-        public void Remove(params THandler[] handler)
-        {
-            foreach (var tHandler in handler)
-            {
-                Remove(tHandler);
-            }
-        }
-
-        public void Clear()
-        {
-            var current = eventHandler;
-            while (true)
-            {
-                var check = current;
-                current = Interlocked.CompareExchange(ref eventHandler, null, check);
-                if (current == check)
-                {
-                    break;
-                }
-            }
-        }
-
-        public void Dispose()
-        {
-            Clear();
         }
     }
 
+    public void Add(IEnumerable<THandler> handler)
+    {
+        foreach (var tHandler in handler)
+        {
+            Add(tHandler);
+        }
+    }
+
+    public void Add(params THandler[] handler)
+    {
+        foreach (var tHandler in handler)
+        {
+            Add(tHandler);
+        }
+    }
+
+    public void Remove(THandler handler)
+    {
+        var current = eventHandler;
+        while (true)
+        {
+            var check = current;
+            var removed = (THandler) Delegate.Remove(check, handler)!;
+            current = Interlocked.CompareExchange(ref eventHandler, removed, check);
+            if (current == check)
+            {
+                break;
+            }
+        }
+    }
+
+    public void Remove(IEnumerable<THandler> handler)
+    {
+        foreach (var tHandler in handler)
+        {
+            Remove(tHandler);
+        }
+    }
+
+    public void Remove(params THandler[] handler)
+    {
+        foreach (var tHandler in handler)
+        {
+            Remove(tHandler);
+        }
+    }
+
+    public void Clear()
+    {
+        var current = eventHandler;
+        while (true)
+        {
+            var check = current;
+            current = Interlocked.CompareExchange(ref eventHandler, null, check);
+            if (current == check)
+            {
+                break;
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        Clear();
+    }
 }

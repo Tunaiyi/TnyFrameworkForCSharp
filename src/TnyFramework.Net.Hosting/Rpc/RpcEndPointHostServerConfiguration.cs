@@ -11,28 +11,25 @@ using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Hosting.Guide;
 
-namespace TnyFramework.Net.Hosting.Rpc
+namespace TnyFramework.Net.Hosting.Rpc;
+
+public abstract class RpcEndPointHostServerConfiguration<TConfiguration, TContext, TGuide, TSetting, TSpec>
+    : RpcHostServerConfiguration<TConfiguration, TContext, TGuide, TSetting, TSpec>,
+        IRpcEndPointHostConfiguration<TGuide, TSetting, TContext, TConfiguration, TSpec>
+    where TSetting : IServedServerSetting
+    where TGuide : IServerGuide<TSetting>
+    where TContext : INetGuideUnitContext
+    where TConfiguration : IRpcEndPointHostConfiguration<TGuide, TSetting, TContext, TConfiguration, TSpec>
+    where TSpec : INetGuideSpec<TGuide, TContext, TSpec>
 {
-
-    public abstract class RpcEndPointHostServerConfiguration<TConfiguration, TContext, TGuide, TSetting, TSpec>
-        : RpcHostServerConfiguration<TConfiguration, TContext, TGuide, TSetting, TSpec>,
-            IRpcEndPointHostConfiguration<TGuide, TSetting, TContext, TConfiguration, TSpec>
-        where TSetting : IServedServerSetting
-        where TGuide : IServerGuide<TSetting>
-        where TContext : INetGuideUnitContext
-        where TConfiguration : IRpcEndPointHostConfiguration<TGuide, TSetting, TContext, TConfiguration, TSpec>
-        where TSpec : INetGuideSpec<TGuide, TContext, TSpec>
+    protected RpcEndPointHostServerConfiguration(IServiceCollection unitContainer) : base(unitContainer)
     {
-        protected RpcEndPointHostServerConfiguration(IServiceCollection unitContainer) : base(unitContainer)
-        {
-        }
-
-        public abstract TConfiguration RpcServer(string name, int port, Action<TSpec>? action = null);
-
-        public abstract TConfiguration RpcServer(string name, string host, int port, Action<TSpec>? action = null);
-
-        public abstract TConfiguration RpcServer(string name, string serveName, string host, int port,
-            Action<TSpec>? action = null);
     }
 
+    public abstract TConfiguration RpcServer(string name, int port, Action<TSpec>? action = null);
+
+    public abstract TConfiguration RpcServer(string name, string host, int port, Action<TSpec>? action = null);
+
+    public abstract TConfiguration RpcServer(string name, string serveName, string host, int port,
+        Action<TSpec>? action = null);
 }

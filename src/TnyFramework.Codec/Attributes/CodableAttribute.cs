@@ -8,21 +8,18 @@
 
 using System;
 
-namespace TnyFramework.Codec.Attributes
+namespace TnyFramework.Codec.Attributes;
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
+public class CodableAttribute : Attribute
 {
+    /// <summary>
+    /// 协议 id
+    /// </summary>
+    public string Mime { get; }
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-    public class CodableAttribute : Attribute
+    public CodableAttribute(string mime)
     {
-        /// <summary>
-        /// 协议 id
-        /// </summary>
-        public string Mime { get; }
-
-        public CodableAttribute(string mime)
-        {
-            Mime = mime;
-        }
+        Mime = mime;
     }
-
 }

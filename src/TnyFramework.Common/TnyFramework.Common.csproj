@@ -21,7 +21,7 @@
 
 
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj" />
+        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj"/>
     </ItemGroup>
 
 

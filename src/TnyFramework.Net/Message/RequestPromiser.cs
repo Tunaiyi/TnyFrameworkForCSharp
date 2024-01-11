@@ -8,15 +8,12 @@
 
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+internal interface IMessageResponsable
 {
-
-    internal interface IMessageResponsable
-    {
-        /// <summary>
-        /// 获取相应任务源
-        /// </summary>
-        internal TaskResponseSource? ResponseSource { get; }
-    }
-
+    /// <summary>
+    /// 获取相应任务源
+    /// </summary>
+    internal TaskResponseSource? ResponseSource { get; }
 }

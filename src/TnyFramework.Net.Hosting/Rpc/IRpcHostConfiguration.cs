@@ -13,21 +13,18 @@ using TnyFramework.Net.Hosting.Configuration;
 using TnyFramework.Net.Hosting.Guide;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Hosting.Rpc
+namespace TnyFramework.Net.Hosting.Rpc;
+
+public interface IRpcHostConfiguration<TUnit, in TSetting, TContext, out TConfiguration, out TSpec> : INetHostConfiguration<TConfiguration>
+    where TConfiguration : IRpcHostConfiguration<TUnit, TSetting, TContext, TConfiguration, TSpec>
+    where TSetting : IServedServerSetting
+    where TUnit : IServerGuide
+    where TContext : INetGuideUnitContext
+    where TSpec : INetGuideSpec<TUnit, TContext, TSpec>
 {
+    TConfiguration RpcServer(TSetting setting, Action<TSpec>? action = null);
 
-    public interface IRpcHostConfiguration<TUnit, in TSetting, TContext, out TConfiguration, out TSpec> : INetHostConfiguration<TConfiguration>
-        where TConfiguration : IRpcHostConfiguration<TUnit, TSetting, TContext, TConfiguration, TSpec>
-        where TSetting : IServedServerSetting
-        where TUnit : IServerGuide
-        where TContext : INetGuideUnitContext
-        where TSpec : INetGuideSpec<TUnit, TContext, TSpec>
-    {
-        TConfiguration RpcServer(TSetting setting, Action<TSpec>? action = null);
+    TConfiguration RpcAuthServiceSpecConfigure(Action<RpcAuthServiceSpec> action);
 
-        TConfiguration RpcAuthServiceSpecConfigure(Action<RpcAuthServiceSpec> action);
-
-        TConfiguration IdGeneratorConfigure(Action<UnitSpec<IIdGenerator, IRpcUnitContext>> action);
-    }
-
+    TConfiguration IdGeneratorConfigure(Action<UnitSpec<IIdGenerator, IRpcUnitContext>> action);
 }

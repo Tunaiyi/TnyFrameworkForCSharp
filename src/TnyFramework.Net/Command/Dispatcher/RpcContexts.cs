@@ -9,44 +9,41 @@
 using System.Threading;
 using TnyFramework.Common.Attribute;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public static class RpcContexts
 {
+    private static readonly AsyncLocal<IRpcMessageEnterContext> LOCAL_CONTEXT = new AsyncLocal<IRpcMessageEnterContext>();
 
-    public static class RpcContexts
-    {
-        private static readonly AsyncLocal<IRpcMessageEnterContext> LOCAL_CONTEXT = new AsyncLocal<IRpcMessageEnterContext>();
+    private static readonly IRpcMessageEnterContext EMPTY = new RpcMessageEnterInvocationContext(null!, null!, false, EmptyAttributes.GetEmpty());
 
-        private static readonly IRpcMessageEnterContext EMPTY = new RpcMessageEnterInvocationContext(null!, null!, false, EmptyAttributes.GetEmpty());
-
-        public static IRpcMessageContext Current {
-            get {
-                var info = LOCAL_CONTEXT.Value;
-                if (info != null)
-                    return info;
-                info = EMPTY;
-                info.Resume();
-                LOCAL_CONTEXT.Value = info;
+    public static IRpcMessageContext Current {
+        get {
+            var info = LOCAL_CONTEXT.Value;
+            if (info != null)
                 return info;
-            }
-        }
-
-        internal static void SetCurrent(IRpcMessageEnterContext context)
-        {
-            var info = LOCAL_CONTEXT.Value;
-            if (info is not {Valid: true})
-                return;
-            info.Suspend();
-            LOCAL_CONTEXT.Value = context;
-        }
-
-        internal static void Clear()
-        {
-            var info = LOCAL_CONTEXT.Value;
-            if (info is {Valid: false})
-            {
-                LOCAL_CONTEXT.Value = EMPTY;
-            }
+            info = EMPTY;
+            info.Resume();
+            LOCAL_CONTEXT.Value = info;
+            return info;
         }
     }
 
+    internal static void SetCurrent(IRpcMessageEnterContext context)
+    {
+        var info = LOCAL_CONTEXT.Value;
+        if (info is not {Valid: true})
+            return;
+        info.Suspend();
+        LOCAL_CONTEXT.Value = context;
+    }
+
+    internal static void Clear()
+    {
+        var info = LOCAL_CONTEXT.Value;
+        if (info is {Valid: false})
+        {
+            LOCAL_CONTEXT.Value = EMPTY;
+        }
+    }
 }

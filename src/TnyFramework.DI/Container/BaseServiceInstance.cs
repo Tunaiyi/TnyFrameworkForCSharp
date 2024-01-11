@@ -8,19 +8,16 @@
 
 using System;
 
-namespace TnyFramework.DI.Container
+namespace TnyFramework.DI.Container;
+
+public abstract class BaseServiceInstance(IServiceFactory factory) : IServiceInstance
 {
+    private volatile IServiceFactory factory = factory;
 
-    public abstract class BaseServiceInstance(IServiceFactory factory) : IServiceInstance
+    public abstract object Get(IServiceProvider provider);
+
+    protected object Create(IServiceProvider provider)
     {
-        private volatile IServiceFactory factory = factory;
-
-        public abstract object Get(IServiceProvider provider);
-
-        protected object Create(IServiceProvider provider)
-        {
-            return factory.Create(provider);
-        }
+        return factory.Create(provider);
     }
-
 }

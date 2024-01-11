@@ -10,26 +10,23 @@ using System;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Common;
 
-namespace TnyFramework.Net.Exceptions
+namespace TnyFramework.Net.Exceptions;
+
+public class SessionException : NetException
 {
+    private static readonly IResultCode CODE = NetResultCode.SESSION_CLOSE;
 
-    public class SessionException : NetException
+    public SessionException(string message = "") : base(CODE, message)
     {
-        private static readonly IResultCode CODE = NetResultCode.SESSION_CLOSE;
-
-        public SessionException(string message = "") : base(CODE, message)
-        {
-        }
-
-        public SessionException(IResultCode? code = null, object? body = null, string message = "")
-            : base(code ?? CODE, body, message)
-        {
-        }
-
-        public SessionException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
-            : base(innerException, code ?? CODE, body, message)
-        {
-        }
     }
 
+    public SessionException(IResultCode? code = null, object? body = null, string message = "")
+        : base(code ?? CODE, body, message)
+    {
+    }
+
+    public SessionException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+        : base(innerException, code ?? CODE, body, message)
+    {
+    }
 }

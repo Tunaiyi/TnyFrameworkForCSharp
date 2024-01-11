@@ -6,14 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Rpc.Auth
+namespace TnyFramework.Net.Rpc.Auth;
+
+public static class RpcProtocol
 {
+    public const int RPC_AUTH = 987_0000;
 
-    public static class RpcProtocol
-    {
-        public const int RPC_AUTH = 987_0000;
-
-        public const int RPC_AUTH_4_AUTHENTICATE = 987_0000_01;
-    }
-
+    public const int RPC_AUTH_4_AUTHENTICATE = 987_0000_01;
 }

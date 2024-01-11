@@ -6,18 +6,15 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.DotNetty.Hosting.Guide
+namespace TnyFramework.Net.DotNetty.Hosting.Guide;
+
+public interface IServerSettingSpec
 {
+    ServerSettingSpec ServiceName(string value);
 
-    public interface IServerSettingSpec
-    {
-        ServerSettingSpec ServiceName(string value);
+    ServerSettingSpec Host(string value);
 
-        ServerSettingSpec Host(string value);
+    ServerSettingSpec Port(int port);
 
-        ServerSettingSpec Port(int port);
-
-        ServerSettingSpec Libuv(bool value);
-    }
-
+    ServerSettingSpec Libuv(bool value);
 }

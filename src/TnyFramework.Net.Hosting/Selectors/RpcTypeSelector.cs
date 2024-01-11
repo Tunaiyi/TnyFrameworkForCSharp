@@ -13,38 +13,35 @@ using TnyFramework.Common.Scanner;
 using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Rpc.Attributes;
 
-namespace TnyFramework.Net.Hosting.Selectors
+namespace TnyFramework.Net.Hosting.Selectors;
+
+public class RpcTypeSelector : TypeSelectorDefinition
 {
+    internal static IList<Type> Controllers { get; private set; } = ImmutableList<Type>.Empty;
 
-    public class RpcTypeSelector : TypeSelectorDefinition
+    internal static IList<Type> RemoteService { get; private set; } = ImmutableList<Type>.Empty;
+
+    public RpcTypeSelector()
     {
-        internal static IList<Type> Controllers { get; private set; } = ImmutableList<Type>.Empty;
+        Selector(selector => selector
+            .AddFilter(AttributeTypeFilter.OfInclude<RpcControllerAttribute>())
+            .WithHandler(OnLoadController)
+        );
 
-        internal static IList<Type> RemoteService { get; private set; } = ImmutableList<Type>.Empty;
-
-        public RpcTypeSelector()
-        {
-            Selector(selector => selector
-                .AddFilter(AttributeTypeFilter.OfInclude<RpcControllerAttribute>())
-                .WithHandler(OnLoadController)
-            );
-
-            Selector(selector => selector
-                .AddFilter(AttributeTypeFilter.OfInclude<RpcRemoteServiceAttribute>())
-                .AddFilter(TypeFilter.Include(type => type.IsInterface))
-                .WithHandler(OnLoadService)
-            );
-        }
-
-        private static void OnLoadController(ICollection<Type> types)
-        {
-            Controllers = types.ToImmutableList();
-        }
-
-        private static void OnLoadService(ICollection<Type> types)
-        {
-            RemoteService = types.ToImmutableList();
-        }
+        Selector(selector => selector
+            .AddFilter(AttributeTypeFilter.OfInclude<RpcRemoteServiceAttribute>())
+            .AddFilter(TypeFilter.Include(type => type.IsInterface))
+            .WithHandler(OnLoadService)
+        );
     }
 
+    private static void OnLoadController(ICollection<Type> types)
+    {
+        Controllers = types.ToImmutableList();
+    }
+
+    private static void OnLoadService(ICollection<Type> types)
+    {
+        RemoteService = types.ToImmutableList();
+    }
 }

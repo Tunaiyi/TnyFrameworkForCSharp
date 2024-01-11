@@ -8,20 +8,17 @@
 
 using System.Threading.Tasks;
 
-namespace TnyFramework.Net.Application
+namespace TnyFramework.Net.Application;
+
+public class NoopServerDiscoveryService : INetServerDiscoveryService
 {
-
-    public class NoopServerDiscoveryService : INetServerDiscoveryService
+    public Task RegisterInstance(INetApplication netApplication, INetServer server)
     {
-        public Task RegisterInstance(INetApplication netApplication, INetServer server)
-        {
-            return Task.CompletedTask;
-        }
-
-        public Task DeregisterInstance(INetServer setting)
-        {
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 
+    public Task DeregisterInstance(INetServer setting)
+    {
+        return Task.CompletedTask;
+    }
 }

@@ -6,21 +6,18 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Common.Lifecycle
+namespace TnyFramework.Common.Lifecycle;
+
+public interface IAppClosed : ILifecycleHandler
 {
+    /// <summary>
+    /// 服务关闭生命周期对象
+    /// </summary>
+    /// <returns></returns>
+    virtual PostCloser GetPostCloser() => PostCloser.Value(GetType());
 
-    public interface IAppClosed : ILifecycleHandler
-    {
-        /// <summary>
-        /// 服务关闭生命周期对象
-        /// </summary>
-        /// <returns></returns>
-        virtual PostCloser GetPostCloser() => PostCloser.Value(GetType());
-
-        /// <summary>
-        /// 服务关闭
-        /// </summary>
-        void OnClosed();
-    }
-
+    /// <summary>
+    /// 服务关闭
+    /// </summary>
+    void OnClosed();
 }

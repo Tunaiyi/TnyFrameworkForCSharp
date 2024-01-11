@@ -9,12 +9,9 @@
 using Microsoft.Extensions.Hosting;
 using SkyApm;
 
-namespace TnyFramework.Net.Apm.Skywalking.Hosting.Host
+namespace TnyFramework.Net.Apm.Skywalking.Hosting.Host;
+
+internal class HostingEnvironmentProvider(IHostEnvironment hostingEnvironment) : IEnvironmentProvider
 {
-
-    internal class HostingEnvironmentProvider(IHostEnvironment hostingEnvironment) : IEnvironmentProvider
-    {
-        public string EnvironmentName { get; } = hostingEnvironment.EnvironmentName;
-    }
-
+    public string EnvironmentName { get; } = hostingEnvironment.EnvironmentName;
 }

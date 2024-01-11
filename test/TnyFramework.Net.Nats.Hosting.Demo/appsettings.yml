@@ -1,0 +1,10 @@
+Logging:
+  LogLevel:
+    Default: Information
+    ProjV.Net.Nats: Information
+    Microsoft.AspNetCore: Warning
+
+
+
+Nats:
+  Url: "nats://localhost:4221,nats://localhost:4222"

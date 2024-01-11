@@ -8,26 +8,23 @@
 
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public interface ICommunicator : IConnectIdentity, IAddressPeer
 {
+    /// <summary>
+    /// 接入模式
+    /// </summary>
+    public NetAccessMode AccessMode { get; }
 
-    public interface ICommunicator : IConnectIdentity, IAddressPeer
-    {
-        /// <summary>
-        /// 接入模式
-        /// </summary>
-        public NetAccessMode AccessMode { get; }
+    /// <summary>
+    /// 认证
+    /// </summary>
+    ICertificate Certificate { get; }
 
-        /// <summary>
-        /// 认证
-        /// </summary>
-        ICertificate Certificate { get; }
-
-        /// <summary>
-        /// 是否登陆认证
-        /// </summary>
-        /// <returns></returns>
-        bool IsAuthenticated() => Certificate.IsAuthenticated();
-    }
-
+    /// <summary>
+    /// 是否登陆认证
+    /// </summary>
+    /// <returns></returns>
+    bool IsAuthenticated() => Certificate.IsAuthenticated();
 }

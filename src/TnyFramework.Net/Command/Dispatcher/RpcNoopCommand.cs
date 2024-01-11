@@ -11,38 +11,35 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public class RpcNoopCommand : Command
 {
+    private static readonly ILogger LOGGER = LogFactory.Logger<RpcNoopCommand>();
 
-    public class RpcNoopCommand : Command
+    private readonly IRpcMessageEnterContext rpcMessageContext;
+
+    public RpcNoopCommand(IRpcMessageEnterContext rpcMessageContext)
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<RpcNoopCommand>();
-
-        private readonly IRpcMessageEnterContext rpcMessageContext;
-
-        public RpcNoopCommand(IRpcMessageEnterContext rpcMessageContext)
-        {
-            this.rpcMessageContext = rpcMessageContext;
-        }
-
-        protected override Task Action()
-        {
-            RpcContexts.SetCurrent(rpcMessageContext);
-            try
-            {
-                var message = rpcMessageContext.Message;
-                rpcMessageContext.Invoke(RpcMessageTransactionContext.ReturnOperation(message));
-                rpcMessageContext.CompleteSilently();
-            } catch (Exception cause)
-            {
-                LOGGER.LogError(cause, "");
-                rpcMessageContext.Complete(cause);
-            } finally
-            {
-                RpcContexts.Clear();
-            }
-            return Task.CompletedTask;
-        }
+        this.rpcMessageContext = rpcMessageContext;
     }
 
+    protected override Task Action()
+    {
+        RpcContexts.SetCurrent(rpcMessageContext);
+        try
+        {
+            var message = rpcMessageContext.Message;
+            rpcMessageContext.Invoke(RpcMessageTransactionContext.ReturnOperation(message));
+            rpcMessageContext.CompleteSilently();
+        } catch (Exception cause)
+        {
+            LOGGER.LogError(cause, "");
+            rpcMessageContext.Complete(cause);
+        } finally
+        {
+            RpcContexts.Clear();
+        }
+        return Task.CompletedTask;
+    }
 }

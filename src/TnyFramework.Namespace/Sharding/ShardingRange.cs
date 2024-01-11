@@ -9,83 +9,80 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace TnyFramework.Namespace.Sharding
+namespace TnyFramework.Namespace.Sharding;
+
+public class ShardingRange
 {
+    private List<SlotRange>? ranges;
 
-    public class ShardingRange
+    public long FromSlot { get; }
+
+    public long ToSlot { get; }
+
+    public long MaxSlot { get; }
+
+    public bool Across { get; }
+
+    public ShardingRange(long fromSlot, long toSlot, long maxSlot)
     {
-        private List<SlotRange>? ranges;
-
-        public long FromSlot { get; }
-
-        public long ToSlot { get; }
-
-        public long MaxSlot { get; }
-
-        public bool Across { get; }
-
-        public ShardingRange(long fromSlot, long toSlot, long maxSlot)
+        if (fromSlot > maxSlot)
         {
-            if (fromSlot > maxSlot)
-            {
-                fromSlot = 0;
-            }
-            MaxSlot = maxSlot;
-            FromSlot = fromSlot;
-            ToSlot = toSlot;
-            if (fromSlot > toSlot)
-            {
-                Across = true;
-            }
+            fromSlot = 0;
         }
-
-        public IReadOnlyList<SlotRange> GetRanges()
+        MaxSlot = maxSlot;
+        FromSlot = fromSlot;
+        ToSlot = toSlot;
+        if (fromSlot > toSlot)
         {
-            if (ranges != null)
-            {
-                return ranges;
-            }
-            if (Across)
-            {
-                ranges = new List<SlotRange> {
-                    new SlotRange(0L, this.ToSlot),
-                    new SlotRange(FromSlot, this.MaxSlot)
-                };
-            } else
-            {
-                ranges = new List<SlotRange> {
-                    new SlotRange(FromSlot, this.ToSlot)
-                };
-            }
+            Across = true;
+        }
+    }
+
+    public IReadOnlyList<SlotRange> GetRanges()
+    {
+        if (ranges != null)
+        {
             return ranges;
         }
+        if (Across)
+        {
+            ranges = new List<SlotRange> {
+                new SlotRange(0L, this.ToSlot),
+                new SlotRange(FromSlot, this.MaxSlot)
+            };
+        } else
+        {
+            ranges = new List<SlotRange> {
+                new SlotRange(FromSlot, this.ToSlot)
+            };
+        }
+        return ranges;
     }
+}
 
-    public class ShardingRange<TNode> : ShardingRange
-        where TNode : IShardingNode
+public class ShardingRange<TNode> : ShardingRange
+    where TNode : IShardingNode
+{
+    public IPartition<TNode> Partition { get; }
+
+    public ShardingRange(IPartition<TNode> partition, long slot, long maxSlot)
+        : this(slot, slot, partition, maxSlot)
     {
-        public IPartition<TNode> Partition { get; }
 
-        public ShardingRange(IPartition<TNode> partition, long slot, long maxSlot)
-            : this(slot, slot, partition, maxSlot)
-        {
-
-        }
-
-        public ShardingRange(long fromSlot, long toSlot, IPartition<TNode> partition, long maxSlot) : base(fromSlot, toSlot, maxSlot)
-        {
-            Partition = partition;
-        }
-
-        public override string ToString()
-        {
-            var buffer = new StringBuilder();
-            foreach (var r in GetRanges())
-            {
-                buffer.Append('[').Append(r.Min).Append('-').Append(r.Max).Append(']');
-            }
-            return $"{Partition}{{{FromSlot} to {ToSlot}}}{buffer}";
-        }
     }
 
+    public ShardingRange(long fromSlot, long toSlot, IPartition<TNode> partition, long maxSlot) : base(fromSlot, toSlot, maxSlot)
+    {
+        Partition = partition;
+    }
+
+    public override string ToString()
+    {
+        var buffer = new StringBuilder();
+        foreach (var r in GetRanges())
+        {
+            buffer.Append('[').Append(r.Min).Append('-').Append(r.Max).Append(']');
+        }
+        return $"{Partition}{{{FromSlot} to {ToSlot}}}{buffer}";
+    }
 }

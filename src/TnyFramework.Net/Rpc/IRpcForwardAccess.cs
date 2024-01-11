@@ -8,20 +8,17 @@
 
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public interface IRpcForwardAccess : IRpcAccess
 {
+    /// <summary>
+    /// 服务 id
+    /// </summary>
+    RpcAccessIdentify Identify { get; }
 
-    public interface IRpcForwardAccess : IRpcAccess
-    {
-        /// <summary>
-        /// 服务 id
-        /// </summary>
-        RpcAccessIdentify Identify { get; }
-
-        /// <summary>
-        /// 获取转发服务者
-        /// </summary>
-        ForwardPoint ForwardPoint { get; }
-    }
-
+    /// <summary>
+    /// 获取转发服务者
+    /// </summary>
+    ForwardPoint ForwardPoint { get; }
 }

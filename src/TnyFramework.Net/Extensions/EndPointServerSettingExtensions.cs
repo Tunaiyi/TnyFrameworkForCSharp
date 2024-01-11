@@ -10,25 +10,22 @@ using System;
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Extensions
+namespace TnyFramework.Net.Extensions;
+
+public static class EndPointServerSettingExtensions
 {
-
-    public static class EndPointServerSettingExtensions
+    public static bool IsHasEndPoint(this IServerSetting setting)
     {
-        public static bool IsHasEndPoint(this IServerSetting setting)
-        {
-            return setting.Host.IsNotBlank() && setting.Port > 0;
-        }
-
-        public static Uri GetUri(this IServerSetting setting)
-        {
-            return new Uri(setting.Url());
-        }
-
-        public static string Url(this IServerSetting setting)
-        {
-            return $"{setting.Scheme}://{setting.Host}:{setting.Port}";
-        }
+        return setting.Host.IsNotBlank() && setting.Port > 0;
     }
 
+    public static Uri GetUri(this IServerSetting setting)
+    {
+        return new Uri(setting.Url());
+    }
+
+    public static string Url(this IServerSetting setting)
+    {
+        return $"{setting.Scheme}://{setting.Host}:{setting.Port}";
+    }
 }

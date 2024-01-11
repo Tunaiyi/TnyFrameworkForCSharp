@@ -13,50 +13,47 @@ using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.Exceptions;
 using TnyFramework.FreeRedis.Hosting.Attributes;
 
-namespace TnyFramework.FreeRedis.Hosting
+namespace TnyFramework.FreeRedis.Hosting;
+
+public class FreeRedisCodecs
 {
+    private readonly ObjectCodecAdapter objectCodecAdapter;
 
-    public class FreeRedisCodecs
+    private readonly MimeType? defaultMimeType;
+
+    private readonly Encoding encoding;
+
+    public FreeRedisCodecs(ObjectCodecAdapter objectCodecAdapter, MimeType? defaultMimeType = null, Encoding? encoding = null)
     {
-        private readonly ObjectCodecAdapter objectCodecAdapter;
-
-        private readonly MimeType? defaultMimeType;
-
-        private readonly Encoding encoding;
-
-        public FreeRedisCodecs(ObjectCodecAdapter objectCodecAdapter, MimeType? defaultMimeType = null, Encoding? encoding = null)
-        {
-            this.objectCodecAdapter = objectCodecAdapter;
-            this.defaultMimeType = defaultMimeType;
-            this.encoding = encoding ?? Encoding.UTF8;
-        }
-
-        private IObjectCodec Codec(Type type)
-        {
-            var scheme = RedisObjectScheme.SchemeOf(type);
-            var mimeType = scheme != null ? scheme.Mime : defaultMimeType;
-            if (mimeType == null)
-            {
-                throw new ObjectCodecException($"Type {type} 没有存在 {nameof(RedisObjectAttribute)} 或 {nameof(CodableAttribute)}");
-            }
-            return objectCodecAdapter.Codec(type, mimeType);
-
-        }
-
-        public object? Serialize(object? value)
-        {
-            return value == null ? null : Codec(value.GetType()).Encode(value);
-        }
-
-        public object? Deserialize(string? data, Type type)
-        {
-            return data == null ? null : Codec(type).Decode(encoding.GetBytes(data));
-        }
-
-        public object? DeserializeRaw(byte[]? data, Type type)
-        {
-            return data == null ? null : Codec(type).Decode(data);
-        }
+        this.objectCodecAdapter = objectCodecAdapter;
+        this.defaultMimeType = defaultMimeType;
+        this.encoding = encoding ?? Encoding.UTF8;
     }
 
+    private IObjectCodec Codec(Type type)
+    {
+        var scheme = RedisObjectScheme.SchemeOf(type);
+        var mimeType = scheme != null ? scheme.Mime : defaultMimeType;
+        if (mimeType == null)
+        {
+            throw new ObjectCodecException($"Type {type} 没有存在 {nameof(RedisObjectAttribute)} 或 {nameof(CodableAttribute)}");
+        }
+        return objectCodecAdapter.Codec(type, mimeType);
+
+    }
+
+    public object? Serialize(object? value)
+    {
+        return value == null ? null : Codec(value.GetType()).Encode(value);
+    }
+
+    public object? Deserialize(string? data, Type type)
+    {
+        return data == null ? null : Codec(type).Decode(encoding.GetBytes(data));
+    }
+
+    public object? DeserializeRaw(byte[]? data, Type type)
+    {
+        return data == null ? null : Codec(type).Decode(data);
+    }
 }

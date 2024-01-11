@@ -8,18 +8,15 @@
 
 using System;
 
-namespace TnyFramework.Net.Attributes
+namespace TnyFramework.Net.Attributes;
+
+[AttributeUsage(AttributeTargets.Parameter)]
+public class RpcHeaderAttribute : Attribute
 {
-
-    [AttributeUsage(AttributeTargets.Parameter)]
-    public class RpcHeaderAttribute : Attribute
+    public RpcHeaderAttribute(string key)
     {
-        public RpcHeaderAttribute(string key)
-        {
-            Key = key;
-        }
-
-        public string Key { get; }
+        Key = key;
     }
 
+    public string Key { get; }
 }

@@ -13,46 +13,43 @@ using ProtoBuf;
 using System.Buffers;
 #endif
 
-namespace TnyFramework.Codec.ProtobufNet.Protobuf
+namespace TnyFramework.Codec.ProtobufNet.Protobuf;
+
+public class ProtobufObjectCodec<T> : BytesObjectCodec<T>
 {
-
-    public class ProtobufObjectCodec<T> : BytesObjectCodec<T>
+    public override byte[] Encode(T? value)
     {
-        public override byte[] Encode(T? value)
-        {
-            var stream = new MemoryStream();
-            Serializer.Serialize(stream, value);
-            return stream.ToArray();
-        }
-
-        public override void Encode(T? value, Stream output)
-        {
-            var stream = new MemoryStream();
-            Serializer.Serialize(stream, value);
-        }
-
-        public override T Decode(byte[]? bytes)
-        {
-            var memory = new ReadOnlyMemory<byte>(bytes);
-            return Serializer.Deserialize<T>(memory);
-        }
-
-        public override T Decode(Stream input)
-        {
-            return Serializer.Deserialize<T>(input);
-        }
-
-#if NET
-        public override void Encode(T? value, IBufferWriter<byte> output)
-        {
-            Serializer.Serialize(output, value);
-        }
-
-        public override T? Decode(ReadOnlySequence<byte> input)
-        {
-            return Serializer.Deserialize<T>(input);
-        }
-#endif
+        var stream = new MemoryStream();
+        Serializer.Serialize(stream, value);
+        return stream.ToArray();
     }
 
+    public override void Encode(T? value, Stream output)
+    {
+        var stream = new MemoryStream();
+        Serializer.Serialize(stream, value);
+    }
+
+    public override T Decode(byte[]? bytes)
+    {
+        var memory = new ReadOnlyMemory<byte>(bytes);
+        return Serializer.Deserialize<T>(memory);
+    }
+
+    public override T Decode(Stream input)
+    {
+        return Serializer.Deserialize<T>(input);
+    }
+
+#if NET
+    public override void Encode(T? value, IBufferWriter<byte> output)
+    {
+        Serializer.Serialize(output, value);
+    }
+
+    public override T? Decode(ReadOnlySequence<byte> input)
+    {
+        return Serializer.Deserialize<T>(input);
+    }
+#endif
 }

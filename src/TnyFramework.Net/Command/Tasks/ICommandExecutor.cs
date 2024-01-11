@@ -9,14 +9,11 @@
 using System.Threading.Tasks;
 using TnyFramework.Coroutines.Async;
 
-namespace TnyFramework.Net.Command.Tasks
+namespace TnyFramework.Net.Command.Tasks;
+
+public interface ICommandExecutor : IAsyncExecutor
 {
+    TaskScheduler TaskScheduler { get; }
 
-    public interface ICommandExecutor : IAsyncExecutor
-    {
-        TaskScheduler TaskScheduler { get; }
-
-        void TrySummit();
-    }
-
+    void TrySummit();
 }

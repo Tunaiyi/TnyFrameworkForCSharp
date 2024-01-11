@@ -13,32 +13,29 @@ using TnyFramework.Common.Event;
 using TnyFramework.Namespace.Listener;
 using TnyFramework.Namespace.Sharding;
 
-namespace TnyFramework.Namespace
+namespace TnyFramework.Namespace;
+
+public interface IHashingSubscriber<TValue>
 {
+    string Path { get; }
 
-    public interface IHashingSubscriber<TValue>
-    {
-        string Path { get; }
+    ObjectMimeType<TValue> MineType { get; }
 
-        ObjectMimeType<TValue> MineType { get; }
+    Task Subscribe<TRange>(IList<TRange> ranges) where TRange : ShardingRange;
 
-        Task Subscribe<TRange>(IList<TRange> ranges) where TRange : ShardingRange;
+    Task SubscribeAll();
 
-        Task SubscribeAll();
+    Task Unsubscribe();
 
-        Task Unsubscribe();
+    void ClearListener();
 
-        void ClearListener();
+    void Close();
 
-        void Close();
+    IEventWatch<OnNodeLoad<TValue>> LoadEvent { get; }
 
-        IEventWatch<OnNodeLoad<TValue>> LoadEvent { get; }
+    IEventWatch<OnNodeCreate<TValue>> CreateEvent { get; }
 
-        IEventWatch<OnNodeCreate<TValue>> CreateEvent { get; }
+    IEventWatch<OnNodeUpdate<TValue>> UpdateEvent { get; }
 
-        IEventWatch<OnNodeUpdate<TValue>> UpdateEvent { get; }
-
-        IEventWatch<OnNodeDelete<TValue>> DeleteEvent { get; }
-    }
-
+    IEventWatch<OnNodeDelete<TValue>> DeleteEvent { get; }
 }

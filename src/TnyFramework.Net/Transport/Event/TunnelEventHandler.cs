@@ -6,13 +6,10 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Transport.Event
-{
+namespace TnyFramework.Net.Transport.Event;
 
-    public delegate void TunnelActivate(ITunnel tunnel);
+public delegate void TunnelActivate(ITunnel tunnel);
 
-    public delegate void TunnelUnactivated(ITunnel tunnel);
+public delegate void TunnelUnactivated(ITunnel tunnel);
 
-    public delegate void TunnelClose(ITunnel tunnel);
-
-}
+public delegate void TunnelClose(ITunnel tunnel);

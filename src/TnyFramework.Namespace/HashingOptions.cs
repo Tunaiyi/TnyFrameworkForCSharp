@@ -9,25 +9,22 @@
 using System.Text;
 using TnyFramework.Namespace.Sharding;
 
-namespace TnyFramework.Namespace
+namespace TnyFramework.Namespace;
+
+public class HashingOptions<TNode>
+    where TNode : IShardingNode
 {
+    public string Name { get; set; } = "";
 
-    public class HashingOptions<TNode>
-        where TNode : IShardingNode
-    {
-        public string Name { get; set; } = "";
+    public long Ttl { get; set; } = 3000L;
 
-        public long Ttl { get; set; } = 3000L;
+    public int PartitionCount { get; set; } = 5;
 
-        public int PartitionCount { get; set; } = 5;
+    public long MaxSlots { get; set; } = 1024L;
 
-        public long MaxSlots { get; set; } = 1024L;
+    public Encoding Encoding { get; set; } = Encoding.UTF8;
 
-        public Encoding Encoding { get; set; } = Encoding.UTF8;
+    public IHasher<string> KeyHasher { get; set; } = null!;
 
-        public IHasher<string> KeyHasher { get; set; } = null!;
-
-        public IHasher<IPartitionSlot<TNode>> NodeHasher { get; set; } = null!;
-    }
-
+    public IHasher<IPartitionSlot<TNode>> NodeHasher { get; set; } = null!;
 }

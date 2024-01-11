@@ -6,14 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public interface IRpcServicer
 {
+    int ServerId { get; }
 
-    public interface IRpcServicer
-    {
-        int ServerId { get; }
-
-        IRpcServiceType ServiceType { get; }
-    }
-
+    IRpcServiceType ServiceType { get; }
 }

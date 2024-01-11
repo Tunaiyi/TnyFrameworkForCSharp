@@ -8,54 +8,51 @@
 
 using TnyFramework.Codec;
 
-namespace TnyFramework.Namespace.Etcd
+namespace TnyFramework.Namespace.Etcd;
+
+public class EtcdNamespaceExplorerFactory : INamespaceExplorerFactory
 {
+    private EtcdAccessor? accessor;
 
-    public class EtcdNamespaceExplorerFactory : INamespaceExplorerFactory
+    private readonly EtcdConfig config;
+
+    private readonly ObjectCodecAdapter objectCodecAdapter;
+
+    private volatile EtcdNamespaceExplorer? namespaceExplorer;
+
+    public EtcdNamespaceExplorerFactory(EtcdConfig config, ObjectCodecAdapter objectCodecAdapter)
     {
-        private EtcdAccessor? accessor;
+        this.config = config;
+        this.objectCodecAdapter = objectCodecAdapter;
+    }
 
-        private readonly EtcdConfig config;
-
-        private readonly ObjectCodecAdapter objectCodecAdapter;
-
-        private volatile EtcdNamespaceExplorer? namespaceExplorer;
-
-        public EtcdNamespaceExplorerFactory(EtcdConfig config, ObjectCodecAdapter objectCodecAdapter)
+    public INamespaceExplorer Create()
+    {
+        if (namespaceExplorer != null)
         {
-            this.config = config;
-            this.objectCodecAdapter = objectCodecAdapter;
+            return namespaceExplorer;
         }
-
-        public INamespaceExplorer Create()
+        lock (this)
         {
             if (namespaceExplorer != null)
             {
                 return namespaceExplorer;
             }
-            lock (this)
-            {
-                if (namespaceExplorer != null)
-                {
-                    return namespaceExplorer;
-                }
-                accessor = new EtcdAccessor(config);
-                accessor.Init().Wait();
-                namespaceExplorer = new EtcdNamespaceExplorer(accessor, objectCodecAdapter);
-            }
-            return namespaceExplorer;
+            accessor = new EtcdAccessor(config);
+            accessor.Init().Wait();
+            namespaceExplorer = new EtcdNamespaceExplorer(accessor, objectCodecAdapter);
         }
+        return namespaceExplorer;
     }
+}
 
-    public class EtcdConfig
-    {
-        public string Encoding { get; set; } = "utf-8";
+public class EtcdConfig
+{
+    public string Encoding { get; set; } = "utf-8";
 
-        public string Endpoints { get; set; } = "";
+    public string Endpoints { get; set; } = "";
 
-        public string User { get; set; } = "";
+    public string User { get; set; } = "";
 
-        public string Password { get; set; } = "";
-    }
-
+    public string Password { get; set; } = "";
 }

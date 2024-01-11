@@ -8,18 +8,15 @@
 
 using Microsoft.Extensions.Configuration;
 
-namespace TnyFramework.Extensions.Configuration.Json
+namespace TnyFramework.Extensions.Configuration.Json;
+
+public static class JsonConfigurationExtensions
 {
-
-    public static class JsonConfigurationExtensions
+    public static IConfigurationBuilder AddJsonFileWithEnvironment(this IConfigurationBuilder builder, string name, bool optional = true)
     {
-        public static IConfigurationBuilder AddJsonFileWithEnvironment(this IConfigurationBuilder builder, string name, bool optional = true)
-        {
-            var environment = TnyEnvironments.GetEnvironment();
-            builder.AddJsonFile(name + ".json", optional: optional, reloadOnChange: true)
-                .AddJsonFile(name + "." + environment + ".json", true, true);
-            return builder;
-        }
+        var environment = TnyEnvironments.GetEnvironment();
+        builder.AddJsonFile(name + ".json", optional: optional, reloadOnChange: true)
+            .AddJsonFile(name + "." + environment + ".json", true, true);
+        return builder;
     }
-
 }

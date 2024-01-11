@@ -9,24 +9,21 @@
 using System;
 using TnyFramework.Common.Result;
 
-namespace TnyFramework.Net.Exceptions
+namespace TnyFramework.Net.Exceptions;
+
+public class SessionClosedException : SessionException
 {
-
-    public class SessionClosedException : SessionException
+    public SessionClosedException(string message = "") : base(message)
     {
-        public SessionClosedException(string message = "") : base(message)
-        {
-        }
-
-        public SessionClosedException(IResultCode? code = null, object? body = null, string message = "")
-            : base(code, body, message)
-        {
-        }
-
-        public SessionClosedException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
-            : base(innerException, code, body, message)
-        {
-        }
     }
 
+    public SessionClosedException(IResultCode? code = null, object? body = null, string message = "")
+        : base(code, body, message)
+    {
+    }
+
+    public SessionClosedException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+        : base(innerException, code, body, message)
+    {
+    }
 }

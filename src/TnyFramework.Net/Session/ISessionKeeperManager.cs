@@ -9,19 +9,16 @@
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+/// <summary>
+/// Session 管理器
+/// </summary>
+public interface ISessionKeeperManager
 {
+    ISession? Online(ICertificate certificate, INetTunnel tunnel);
 
-    /// <summary>
-    /// Session 管理器
-    /// </summary>
-    public interface ISessionKeeperManager
-    {
-        ISession? Online(ICertificate certificate, INetTunnel tunnel);
+    ISessionKeeper? LoadKeeper(IContactType contactType, NetAccessMode accessMode);
 
-        ISessionKeeper? LoadKeeper(IContactType contactType, NetAccessMode accessMode);
-
-        ISessionKeeper? FindKeeper(IContactType contactType);
-    }
-
+    ISessionKeeper? FindKeeper(IContactType contactType);
 }

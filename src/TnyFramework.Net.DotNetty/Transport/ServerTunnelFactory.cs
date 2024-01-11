@@ -10,16 +10,13 @@ using DotNetty.Transport.Channels;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.DotNetty.Transport
+namespace TnyFramework.Net.DotNetty.Transport;
+
+public class ServerTunnelFactory : INettyTunnelFactory
 {
-
-    public class ServerTunnelFactory : INettyTunnelFactory
+    public INetTunnel Create(long id, IChannel channel, INetworkContext context, INetService service)
     {
-        public INetTunnel Create(long id, IChannel channel, INetworkContext context, INetService service)
-        {
-            var transport = new NettyChannelMessageTransporter(NetAccessMode.Server, channel);
-            return new ServerTunnel<NettyChannelMessageTransporter>(id, transport, context, service); // 创建 Tunnel 已经transport.bind
-        }
+        var transport = new NettyChannelMessageTransporter(NetAccessMode.Server, channel);
+        return new ServerTunnel<NettyChannelMessageTransporter>(id, transport, context, service); // 创建 Tunnel 已经transport.bind
     }
-
 }

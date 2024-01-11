@@ -12,13 +12,12 @@ using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.DotNetty.Demo.Controller
-{
+namespace TnyFramework.Net.DotNetty.Demo.Controller;
 
-    public class DemoAuthenticationValidator : AuthenticationValidator
+public class DemoAuthenticationValidator : AuthenticationValidator
+{
+    public override ICertificate Validate(ITunnel tunnel, IMessage message)
     {
-        public override ICertificate Validate(ITunnel tunnel, IMessage message)
-        {
             var value = message.Body;
             if (!(value is MessageParamList paramList))
                 throw new AuthFailedException("登录失败");
@@ -35,6 +34,4 @@ namespace TnyFramework.Net.DotNetty.Demo.Controller
             // }
             // System.out.println(value);
         }
-    }
-
 }

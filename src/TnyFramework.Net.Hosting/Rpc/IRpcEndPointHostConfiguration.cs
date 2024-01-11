@@ -10,22 +10,19 @@ using System;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Hosting.Guide;
 
-namespace TnyFramework.Net.Hosting.Rpc
+namespace TnyFramework.Net.Hosting.Rpc;
+
+public interface IRpcEndPointHostConfiguration<TUnit, in TSetting, TContext, out TConfiguration, out TSpec>
+    : IRpcHostConfiguration<TUnit, TSetting, TContext, TConfiguration, TSpec>
+    where TConfiguration : IRpcEndPointHostConfiguration<TUnit, TSetting, TContext, TConfiguration, TSpec>
+    where TSetting : IServedServerSetting
+    where TUnit : IServerGuide
+    where TContext : INetGuideUnitContext
+    where TSpec : INetGuideSpec<TUnit, TContext, TSpec>
 {
+    TConfiguration RpcServer(string name, int port, Action<TSpec>? action = null);
 
-    public interface IRpcEndPointHostConfiguration<TUnit, in TSetting, TContext, out TConfiguration, out TSpec>
-        : IRpcHostConfiguration<TUnit, TSetting, TContext, TConfiguration, TSpec>
-        where TConfiguration : IRpcEndPointHostConfiguration<TUnit, TSetting, TContext, TConfiguration, TSpec>
-        where TSetting : IServedServerSetting
-        where TUnit : IServerGuide
-        where TContext : INetGuideUnitContext
-        where TSpec : INetGuideSpec<TUnit, TContext, TSpec>
-    {
-        TConfiguration RpcServer(string name, int port, Action<TSpec>? action = null);
+    TConfiguration RpcServer(string name, string host, int port, Action<TSpec>? action = null);
 
-        TConfiguration RpcServer(string name, string host, int port, Action<TSpec>? action = null);
-
-        TConfiguration RpcServer(string name, string serveName, string host, int port, Action<TSpec>? action = null);
-    }
-
+    TConfiguration RpcServer(string name, string serveName, string host, int port, Action<TSpec>? action = null);
 }

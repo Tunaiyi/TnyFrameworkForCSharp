@@ -11,49 +11,46 @@ using System.IO;
 using System.Buffers;
 #endif
 
-namespace TnyFramework.Codec
+namespace TnyFramework.Codec;
+
+public interface IObjectCodec
 {
+    byte[] Encode(object? value);
 
-    public interface IObjectCodec
-    {
-        byte[] Encode(object? value);
+    void Encode(object? value, Stream output);
 
-        void Encode(object? value, Stream output);
+    object? Decode(byte[] bytes);
 
-        object? Decode(byte[] bytes);
+    object? Decode(Stream input);
 
-        object? Decode(Stream input);
+    string? Format(object value);
 
-        string? Format(object value);
-
-        object? Parse(string data);
+    object? Parse(string data);
 
 #if NET
-        void Encode(object? value, IBufferWriter<byte> output);
+    void Encode(object? value, IBufferWriter<byte> output);
 
-        object? Decode(ReadOnlySequence<byte> input);
+    object? Decode(ReadOnlySequence<byte> input);
 #endif
-    }
+}
 
-    public interface IObjectCodec<T> : IObjectCodec
-    {
-        byte[] Encode(T? value);
+public interface IObjectCodec<T> : IObjectCodec
+{
+    byte[] Encode(T? value);
 
-        void Encode(T? value, Stream output);
+    void Encode(T? value, Stream output);
 
-        new T? Decode(byte[] bytes);
+    new T? Decode(byte[] bytes);
 
-        new T? Decode(Stream input);
+    new T? Decode(Stream input);
 
-        string? Format(T value);
+    string? Format(T value);
 
-        new T? Parse(string data);
+    new T? Parse(string data);
 
 #if NET
-        void Encode(T? value, IBufferWriter<byte> output);
+    void Encode(T? value, IBufferWriter<byte> output);
 
-        new T? Decode(ReadOnlySequence<byte> input);
+    new T? Decode(ReadOnlySequence<byte> input);
 #endif
-    }
-
 }

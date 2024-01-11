@@ -8,24 +8,20 @@
 
 using System;
 
-namespace TnyFramework.Namespace.Exceptions
+namespace TnyFramework.Namespace.Exceptions;
+
+public class NameNodeWatchException : NamespaceException
 {
-
-    public class NameNodeWatchException : NamespaceException
+    public NameNodeWatchException()
     {
-        public NameNodeWatchException()
-        {
-        }
-
-
-
-        public NameNodeWatchException(string message) : base(message)
-        {
-        }
-
-        public NameNodeWatchException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
     }
 
+
+    public NameNodeWatchException(string message) : base(message)
+    {
+    }
+
+    public NameNodeWatchException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
 }

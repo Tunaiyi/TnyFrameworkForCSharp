@@ -1,0 +1,14 @@
+Tny:
+  App:
+    Name: test-server
+    AppType: test-server
+    ServerId: 1
+    ScopeType: online
+  Net:
+    Nats:
+      RpcServer:
+        Name: test-server
+#  Rpc:
+#    Client:
+#      Services:
+#        - Service: test-server

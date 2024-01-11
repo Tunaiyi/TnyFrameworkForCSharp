@@ -20,11 +20,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Namespace.Algorithm\TnyFramework.Namespace.Algorithm.csproj" />
+        <ProjectReference Include="..\TnyFramework.Namespace.Algorithm\TnyFramework.Namespace.Algorithm.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="XXHash3.NET" Version="2.1.0" />
+        <PackageReference Include="XXHash3.NET" Version="2.1.0"/>
     </ItemGroup>
 
 </Project>

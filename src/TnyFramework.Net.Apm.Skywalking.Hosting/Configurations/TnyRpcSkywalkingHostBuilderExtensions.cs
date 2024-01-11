@@ -12,31 +12,28 @@ using TnyFramework.DI.Extensions;
 using TnyFramework.Net.Apm.Skywalking.Hosting.Handler;
 using TnyFramework.Net.Apm.Skywalking.Hosting.Setting;
 
-namespace TnyFramework.Net.Apm.Skywalking.Hosting.Configurations
+namespace TnyFramework.Net.Apm.Skywalking.Hosting.Configurations;
+
+public static class RpcHostNetSkywalkingBuilderExtensions
 {
+    private static readonly string ROOT_PATH = ConfigurationPath.Combine("Tny", "Apm", "Skywalking");
 
-    public static class RpcHostNetSkywalkingBuilderExtensions
+    /// <summary>
+    /// 为 HostBuilder 配置 TnyRpcSkyApm
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <returns></returns>
+    public static IHostBuilder ConfigureTnyRpcSkyApm(this IHostBuilder builder)
     {
-        private static readonly string ROOT_PATH = ConfigurationPath.Combine("Tny", "Apm", "Skywalking");
-
-        /// <summary>
-        /// 为 HostBuilder 配置 TnyRpcSkyApm
-        /// </summary>
-        /// <param name="builder"></param>
-        /// <returns></returns>
-        public static IHostBuilder ConfigureTnyRpcSkyApm(this IHostBuilder builder)
-        {
-            return builder.ConfigureServices((hostBuilder, services) => {
-                var configuration = hostBuilder.Configuration;
-                var properties = new SkywalkingRpcMonitorProperties();
-                configuration.Bind(ROOT_PATH, properties);
-                if (!properties.Enable)
-                    return;
-                services.BindSingleton(_ => properties)
-                    .BindSingleton<SkywalkingRpcMonitorHandler>()
-                    .AddTnyRpcSkyApm();
-            });
-        }
+        return builder.ConfigureServices((hostBuilder, services) => {
+            var configuration = hostBuilder.Configuration;
+            var properties = new SkywalkingRpcMonitorProperties();
+            configuration.Bind(ROOT_PATH, properties);
+            if (!properties.Enable)
+                return;
+            services.BindSingleton(_ => properties)
+                .BindSingleton<SkywalkingRpcMonitorHandler>()
+                .AddTnyRpcSkyApm();
+        });
     }
-
 }

@@ -8,14 +8,11 @@
 
 using System.Collections.Generic;
 
-namespace TnyFramework.FreeRedis.Hosting.Configurations
+namespace TnyFramework.FreeRedis.Hosting.Configurations;
+
+public class FreeRedisProperties
 {
+    public FreeRedisSetting? Default { get; set; }
 
-    public class FreeRedisProperties
-    {
-        public FreeRedisSetting? Default { get; set; }
-
-        public Dictionary<string, FreeRedisSetting> DataSources { get; set; } = new();
-    }
-
+    public Dictionary<string, FreeRedisSetting> DataSources { get; set; } = new();
 }

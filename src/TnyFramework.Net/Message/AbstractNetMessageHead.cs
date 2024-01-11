@@ -8,36 +8,33 @@
 
 using System.Collections.Generic;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+public abstract class AbstractNetMessageHead : MessageHeaderContainer, INetMessageHead
 {
-
-    public abstract class AbstractNetMessageHead : MessageHeaderContainer, INetMessageHead
+    protected AbstractNetMessageHead()
     {
-        protected AbstractNetMessageHead()
-        {
-        }
-
-        protected AbstractNetMessageHead(IDictionary<string, MessageHeader> headers) : base(headers)
-        {
-        }
-
-        public abstract MessageMode Mode { get; init; }
-
-        public abstract long ToMessage { get; init; }
-
-        public abstract int ProtocolId { get; init; }
-
-        public abstract int Line { get; init; }
-
-        public abstract long Id { get; init; }
-
-        public abstract int Code { get; init; }
-
-        public abstract long Time { get; init; }
-
-        public abstract bool IsOwn(IProtocol protocol);
-
-        public abstract void AllotMessageId(long id);
     }
 
+    protected AbstractNetMessageHead(IDictionary<string, MessageHeader> headers) : base(headers)
+    {
+    }
+
+    public abstract MessageMode Mode { get; init; }
+
+    public abstract long ToMessage { get; init; }
+
+    public abstract int ProtocolId { get; init; }
+
+    public abstract int Line { get; init; }
+
+    public abstract long Id { get; init; }
+
+    public abstract int Code { get; init; }
+
+    public abstract long Time { get; init; }
+
+    public abstract bool IsOwn(IProtocol protocol);
+
+    public abstract void AllotMessageId(long id);
 }

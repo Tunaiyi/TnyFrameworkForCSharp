@@ -17,44 +17,44 @@ namespace TnyFramework.Common.Event
         where THandler : Delegate
     {
         protected HandleBaseEvent()
-    {
-    }
+        {
+        }
 
         protected HandleBaseEvent(TEvent parent)
             : base(parent)
-    {
-    }
+        {
+        }
 
         /// <summary>
         /// trigger
         /// </summary>
         protected void DoNotify<TParam>(Action<THandler, TParam> invoker, TParam param)
-    {
-        var node = firstNode;
-        while (node != null)
         {
-            try
+            var node = firstNode;
+            while (node != null)
             {
-                node.Locked = true;
-                if (node.Target != null)
+                try
                 {
-                    invoker(node.Target, param);
+                    node.Locked = true;
+                    if (node.Target != null)
+                    {
+                        invoker(node.Target, param);
+                    }
+                } catch (Exception e)
+                {
+                    LOGGER.LogError(e, "{listener} trigger exception", node.Target);
+                } finally
+                {
+                    node.Locked = false;
                 }
-            } catch (Exception e)
-            {
-                LOGGER.LogError(e, "{listener} trigger exception", node.Target);
-            } finally
-            {
-                node.Locked = false;
+                var next = node.Next;
+                if (node.IsDelayDequeue)
+                {
+                    RemoveNode(node);
+                }
+                node = next;
             }
-            var next = node.Next;
-            if (node.IsDelayDequeue)
-            {
-                RemoveNode(node);
-            }
-            node = next;
         }
-    }
     }
 
 }

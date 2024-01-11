@@ -14,112 +14,109 @@ using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Hosting.Guide
+namespace TnyFramework.Net.Hosting.Guide;
+
+public abstract class NetGuideUnitContext<TGuideContext> : INetGuideUnitContext
+    where TGuideContext : INetGuideUnitContext
 {
+    protected IServiceCollection UnitContainer { get; }
 
-    public abstract class NetGuideUnitContext<TGuideContext> : INetGuideUnitContext
-        where TGuideContext : INetGuideUnitContext
-    {
-        protected IServiceCollection UnitContainer { get; }
+    public INetUnitContext UnitContext { get; }
 
-        public INetUnitContext UnitContext { get; }
+    public UnitSpec<IMessageFactory, TGuideContext> MessageFactorySpec { get; }
 
-        public UnitSpec<IMessageFactory, TGuideContext> MessageFactorySpec { get; }
+    public UnitSpec<ISessionFactory, TGuideContext> SessionFactorySpec { get; }
 
-        public UnitSpec<ISessionFactory, TGuideContext> SessionFactorySpec { get; }
+    public UnitSpec<IContactFactory, TGuideContext> ContactFactorySpec { get; }
 
-        public UnitSpec<IContactFactory, TGuideContext> ContactFactorySpec { get; }
+    public UnitSpec<RpcMonitor, TGuideContext> RpcMonitorSpec { get; }
 
-        public UnitSpec<RpcMonitor, TGuideContext> RpcMonitorSpec { get; }
+    public UnitSpec<INetworkContext, TGuideContext> NetworkContextSpec { get; }
 
-        public UnitSpec<INetworkContext, TGuideContext> NetworkContextSpec { get; }
-
-        protected TGuideContext Self {
-            get {
-                if (this is TGuideContext context)
-                {
-                    return context;
-                }
-                throw new InvalidCastException($"{GetType()} cast {nameof(TGuideContext)}");
+    protected TGuideContext Self {
+        get {
+            if (this is TGuideContext context)
+            {
+                return context;
             }
-        }
-
-        protected NetGuideUnitContext(INetUnitContext unitContext, IServiceCollection unitContainer)
-        {
-            UnitContainer = unitContainer;
-
-            UnitContext = unitContext;
-
-            // MessageFactory
-            MessageFactorySpec = UnitSpec.Unit<IMessageFactory, TGuideContext>()
-                .Default<CommonMessageFactory>();
-
-            // SessionFactory
-            SessionFactorySpec = UnitSpec.Unit<ISessionFactory, TGuideContext>()
-                .Default<SessionFactory>();
-
-            // ContactFactory
-            ContactFactorySpec = UnitSpec.Unit<IContactFactory, TGuideContext>()
-                .Default<InnerContactFactory>();
-
-            // RpcMonitor
-            RpcMonitorSpec = UnitSpec.Unit<RpcMonitor, TGuideContext>()
-                .Default(DefaultRpcMonitor);
-
-            NetworkContextSpec = UnitSpec.Unit<INetworkContext, TGuideContext>()
-                .Default(DefaultNetworkContext);
-        }
-
-        private static INetworkContext DefaultNetworkContext(TGuideContext context)
-        {
-            var unitContext = context.UnitContext;
-            return new NetworkContext(
-                unitContext.LoadMessageDispatcher(),
-                unitContext.LoadCommandBoxFactory(),
-                context.LoadMessageFactory(),
-                context.LoadSessionFactory(),
-                context.LoadContactFactory(),
-                context.LoadRpcMonitor());
-        }
-
-        private RpcMonitor DefaultRpcMonitor(TGuideContext context)
-        {
-            return new RpcMonitor();
-        }
-
-        public void SetName(string name)
-        {
-            MessageFactorySpec.WithNamePrefix(name);
-            ContactFactorySpec.WithNamePrefix(name);
-            OnSetName(name);
-        }
-
-        protected abstract void OnSetName(string name);
-
-        public RpcMonitor LoadRpcMonitor()
-        {
-            return RpcMonitorSpec.Load(Self, UnitContainer);
-        }
-
-        public IMessageFactory LoadMessageFactory()
-        {
-            return MessageFactorySpec.Load(Self, UnitContainer);
-        }
-
-        public ISessionFactory LoadSessionFactory()
-        {
-            return SessionFactorySpec.Load(Self, UnitContainer);
-        }
-
-        public IContactFactory LoadContactFactory()
-        {
-            return ContactFactorySpec.Load(Self, UnitContainer);
-        }
-
-        public INetworkContext LoadNetworkContext()
-        {
-            return NetworkContextSpec.Load(Self, UnitContainer);
+            throw new InvalidCastException($"{GetType()} cast {nameof(TGuideContext)}");
         }
     }
 
+    protected NetGuideUnitContext(INetUnitContext unitContext, IServiceCollection unitContainer)
+    {
+        UnitContainer = unitContainer;
+
+        UnitContext = unitContext;
+
+        // MessageFactory
+        MessageFactorySpec = UnitSpec.Unit<IMessageFactory, TGuideContext>()
+            .Default<CommonMessageFactory>();
+
+        // SessionFactory
+        SessionFactorySpec = UnitSpec.Unit<ISessionFactory, TGuideContext>()
+            .Default<SessionFactory>();
+
+        // ContactFactory
+        ContactFactorySpec = UnitSpec.Unit<IContactFactory, TGuideContext>()
+            .Default<InnerContactFactory>();
+
+        // RpcMonitor
+        RpcMonitorSpec = UnitSpec.Unit<RpcMonitor, TGuideContext>()
+            .Default(DefaultRpcMonitor);
+
+        NetworkContextSpec = UnitSpec.Unit<INetworkContext, TGuideContext>()
+            .Default(DefaultNetworkContext);
+    }
+
+    private static INetworkContext DefaultNetworkContext(TGuideContext context)
+    {
+        var unitContext = context.UnitContext;
+        return new NetworkContext(
+            unitContext.LoadMessageDispatcher(),
+            unitContext.LoadCommandBoxFactory(),
+            context.LoadMessageFactory(),
+            context.LoadSessionFactory(),
+            context.LoadContactFactory(),
+            context.LoadRpcMonitor());
+    }
+
+    private RpcMonitor DefaultRpcMonitor(TGuideContext context)
+    {
+        return new RpcMonitor();
+    }
+
+    public void SetName(string name)
+    {
+        MessageFactorySpec.WithNamePrefix(name);
+        ContactFactorySpec.WithNamePrefix(name);
+        OnSetName(name);
+    }
+
+    protected abstract void OnSetName(string name);
+
+    public RpcMonitor LoadRpcMonitor()
+    {
+        return RpcMonitorSpec.Load(Self, UnitContainer);
+    }
+
+    public IMessageFactory LoadMessageFactory()
+    {
+        return MessageFactorySpec.Load(Self, UnitContainer);
+    }
+
+    public ISessionFactory LoadSessionFactory()
+    {
+        return SessionFactorySpec.Load(Self, UnitContainer);
+    }
+
+    public IContactFactory LoadContactFactory()
+    {
+        return ContactFactorySpec.Load(Self, UnitContainer);
+    }
+
+    public INetworkContext LoadNetworkContext()
+    {
+        return NetworkContextSpec.Load(Self, UnitContainer);
+    }
 }

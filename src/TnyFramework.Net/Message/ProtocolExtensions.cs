@@ -6,20 +6,17 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+public static class ProtocolExtensions
 {
-
-    public static class ProtocolExtensions
+    public static IProtocol Protocol(this int id)
     {
-        public static IProtocol Protocol(this int id)
-        {
-            return Protocols.Protocol(id);
-        }
-
-        public static IProtocol Protocol(this int id, int line)
-        {
-            return Protocols.Protocol(id, line);
-        }
+        return Protocols.Protocol(id);
     }
 
+    public static IProtocol Protocol(this int id, int line)
+    {
+        return Protocols.Protocol(id, line);
+    }
 }

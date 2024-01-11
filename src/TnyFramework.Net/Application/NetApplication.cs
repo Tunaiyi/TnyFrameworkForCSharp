@@ -15,66 +15,63 @@ using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 
-namespace TnyFramework.Net.Application
+namespace TnyFramework.Net.Application;
+
+public class NetApplication : INetApplication
 {
+    private readonly IServiceProvider serviceProvider;
+    private readonly IList<IServerGuide> serverGuides;
+    private bool registered;
 
-    public class NetApplication : INetApplication
+    public NetApplication(IServiceProvider serviceProvider, IEnumerable<IServerGuide> serverGuides)
     {
-        private readonly IServiceProvider serviceProvider;
-        private readonly IList<IServerGuide> serverGuides;
-        private bool registered;
+        this.serviceProvider = serviceProvider;
+        this.serverGuides = serverGuides.ToImmutableList();
+        AppContext = serviceProvider.GetRequiredService<INetAppContext>();
+        Register();
+    }
 
-        public NetApplication(IServiceProvider serviceProvider, IEnumerable<IServerGuide> serverGuides)
+    public IList<INetServer> Servers => serverGuides.Select(guide => (INetServer) guide).ToList();
+
+    public INetAppContext AppContext { get; }
+
+    public async Task Start()
+    {
+        foreach (var guide in serverGuides)
         {
-            this.serviceProvider = serviceProvider;
-            this.serverGuides = serverGuides.ToImmutableList();
-            AppContext = serviceProvider.GetRequiredService<INetAppContext>();
-            Register();
-        }
-
-        public IList<INetServer> Servers => serverGuides.Select(guide => (INetServer) guide).ToList();
-
-        public INetAppContext AppContext { get; }
-
-        public async Task Start()
-        {
-            foreach (var guide in serverGuides)
-            {
-                await guide.Open();
-            }
-        }
-
-        public async Task Close()
-        {
-            foreach (var guide in serverGuides)
-            {
-                await guide.Close();
-            }
-        }
-
-        private void Register()
-        {
-            if (registered)
-                return;
-            var controllers = serviceProvider.GetServices<IController>();
-
-            var dispatcher = serviceProvider.GetService<IMessageDispatcher>();
-            if (dispatcher == null)
-            {
-                throw new NullReferenceException("MessageDispatcher is null");
-            }
-            foreach (var controller in controllers)
-            {
-                dispatcher.AddController(controller);
-            }
-            var handlers = serviceProvider.GetServices<IRpcMonitorHandler>().ToList();
-            var monitors = serviceProvider.GetServices<RpcMonitor>();
-            foreach (var monitor in monitors)
-            {
-                monitor.AddHandlers(handlers);
-            }
-            registered = true;
+            await guide.Open();
         }
     }
 
+    public async Task Close()
+    {
+        foreach (var guide in serverGuides)
+        {
+            await guide.Close();
+        }
+    }
+
+    private void Register()
+    {
+        if (registered)
+            return;
+        var controllers = serviceProvider.GetServices<IController>();
+
+        var dispatcher = serviceProvider.GetService<IMessageDispatcher>();
+        if (dispatcher == null)
+        {
+            throw new NullReferenceException("MessageDispatcher is null");
+        }
+        foreach (var controller in controllers)
+        {
+            dispatcher.AddController(controller);
+        }
+        var handlers = serviceProvider.GetServices<IRpcMonitorHandler>().ToList();
+        var monitors = serviceProvider.GetServices<RpcMonitor>();
+        foreach (var monitor in monitors)
+        {
+            monitor.AddHandlers(handlers);
+        }
+        registered = true;
+    }
 }

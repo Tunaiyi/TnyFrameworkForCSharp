@@ -6,18 +6,15 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Rpc.Remote
+namespace TnyFramework.Net.Rpc.Remote;
+
+/// <summary>
+/// 远程调用配置
+/// </summary>
+public class RpcRemoteSetting
 {
-
     /// <summary>
-    /// 远程调用配置
+    /// 调用超时时间
     /// </summary>
-    public class RpcRemoteSetting
-    {
-        /// <summary>
-        /// 调用超时时间
-        /// </summary>
-        public int InvokeTimeout { get; set; } = 5000;
-    }
-
+    public int InvokeTimeout { get; set; } = 5000;
 }

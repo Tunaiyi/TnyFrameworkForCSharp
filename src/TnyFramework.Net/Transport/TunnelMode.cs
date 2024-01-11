@@ -8,24 +8,21 @@
 
 using TnyFramework.Common.Enum;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public class TunnelMode : BaseEnum<TunnelMode>
 {
+    /// <summary>
+    /// 服务器通道
+    /// </summary>
+    public static readonly TunnelMode SERVER = E(1);
 
-    public class TunnelMode : BaseEnum<TunnelMode>
-    {
-        /// <summary>
-        /// 服务器通道
-        /// </summary>
-        public static readonly TunnelMode SERVER = E(1);
+    /// <summary>
+    /// 客户端通道
+    /// </summary>
+    public static readonly TunnelMode CLIENT = E(2);
 
-        /// <summary>
-        /// 客户端通道
-        /// </summary>
-        public static readonly TunnelMode CLIENT = E(2);
+    public static implicit operator int(TunnelMode type) => type.Id;
 
-        public static implicit operator int(TunnelMode type) => type.Id;
-
-        public static explicit operator TunnelMode(int type) => ForId(type);
-    }
-
+    public static explicit operator TunnelMode(int type) => ForId(type);
 }

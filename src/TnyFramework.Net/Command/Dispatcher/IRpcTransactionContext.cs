@@ -10,62 +10,59 @@ using System;
 using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public interface IRpcTransactionContext : IRpcMessageContext
 {
+    /// <summary>
+    /// 请求模式
+    /// </summary>
+    /// <return>请求模式</return>
+    RpcTransactionMode Mode { get; }
 
-    public interface IRpcTransactionContext : IRpcMessageContext
-    {
-        /// <summary>
-        /// 请求模式
-        /// </summary>
-        /// <return>请求模式</return>
-        RpcTransactionMode Mode { get; }
+    /// <summary>
+    /// 消息者
+    /// </summary>
+    ICommunicator Communicator { get; }
 
-        /// <summary>
-        /// 消息者
-        /// </summary>
-        ICommunicator Communicator { get; }
+    /// <summary>
+    /// @return 获取消息
+    /// </summary>
+    bool Completed { get; }
 
-        /// <summary>
-        /// @return 获取消息
-        /// </summary>
-        bool Completed { get; }
+    /// <summary>
+    /// 成功并响应
+    /// </summary>
+    /// <return>是否完成成功</return>
+    bool Complete();
 
-        /// <summary>
-        /// 成功并响应
-        /// </summary>
-        /// <return>是否完成成功</return>
-        bool Complete();
+    /// <summary>
+    /// @return 操作名
+    /// </summary>
+    string? OperationName { get; }
 
-        /// <summary>
-        /// @return 操作名
-        /// </summary>
-        string? OperationName { get; }
+    /// <summary>
+    /// 失败并响应
+    /// </summary>
+    /// <param name="error">错误原因</param>
+    /// <return>是否完成成功</return>
+    bool Complete(Exception error);
 
-        /// <summary>
-        /// 失败并响应
-        /// </summary>
-        /// <param name="error">错误原因</param>
-        /// <return>是否完成成功</return>
-        bool Complete(Exception error);
+    /// <summary>
+    /// 获取错误原因
+    /// </summary>
+    /// <return>获取错误原因</return>
+    Exception? Cause { get; }
 
-        /// <summary>
-        /// 获取错误原因
-        /// </summary>
-        /// <return>获取错误原因</return>
-        Exception? Cause { get; }
+    /// <summary>
+    /// 是否异步
+    /// </summary>
+    /// <returns></returns>
+    bool Async { get; }
 
-        /// <summary>
-        /// 是否异步
-        /// </summary>
-        /// <returns></returns>
-        bool Async { get; }
-
-        /// <summary>
-        /// 获取错误原因
-        /// </summary>
-        /// <return>是否错误(异常)</return>
-        bool IsError();
-    }
-
+    /// <summary>
+    /// 获取错误原因
+    /// </summary>
+    /// <return>是否错误(异常)</return>
+    bool IsError();
 }

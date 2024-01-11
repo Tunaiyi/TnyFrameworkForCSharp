@@ -12,31 +12,28 @@ using TnyFramework.Net.Attributes;
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Rpc.Auth
+namespace TnyFramework.Net.Rpc.Auth;
+
+[RpcController]
+public class RpcAuthController(IRpcAuthService rpcAuthService) : IController
 {
+    private static readonly ILogger LOGGER = LogFactory.Logger<RpcAuthController>();
 
-    [RpcController]
-    public class RpcAuthController(IRpcAuthService rpcAuthService) : IController
+    [RpcRequest(RpcProtocol.RPC_AUTH_4_AUTHENTICATE)]
+    [AuthenticationRequired(typeof(RpcPasswordValidator))]
+    public IRpcResult<string> Authenticate(ITunnel tunnel, [IdentifyToken] RpcAccessIdentify id)
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<RpcAuthController>();
+        var serviceType = RpcServiceType.ForService(tunnel.Service);
+        var token = rpcAuthService.CreateToken(serviceType, id);
+        LOGGER.LogInformation("Rpc执行 << [{id}] 认证成功", id);
+        return RpcResults.Success(token);
+    }
 
-        [RpcRequest(RpcProtocol.RPC_AUTH_4_AUTHENTICATE)]
-        [AuthenticationRequired(typeof(RpcPasswordValidator))]
-        public IRpcResult<string> Authenticate(ITunnel tunnel, [IdentifyToken] RpcAccessIdentify id)
-        {
-            var serviceType = RpcServiceType.ForService(tunnel.Service);
-            var token = rpcAuthService.CreateToken(serviceType, id);
-            LOGGER.LogInformation("Rpc执行 << [{id}] 认证成功", id);
-            return RpcResults.Success(token);
-        }
-
-        [RpcResponse(RpcProtocol.RPC_AUTH_4_AUTHENTICATE)]
-        [AuthenticationRequired(typeof(RpcTokenValidator))]
-        public void Authenticated([IdentifyToken] RpcAccessIdentify id)
-        {
-            LOGGER.LogInformation("Rpc响应 >> [{id}] 认证完成", id);
-        }
-
+    [RpcResponse(RpcProtocol.RPC_AUTH_4_AUTHENTICATE)]
+    [AuthenticationRequired(typeof(RpcTokenValidator))]
+    public void Authenticated([IdentifyToken] RpcAccessIdentify id)
+    {
+        LOGGER.LogInformation("Rpc响应 >> [{id}] 认证完成", id);
     }
 
 }

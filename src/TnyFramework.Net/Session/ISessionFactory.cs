@@ -8,12 +8,9 @@
 
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public interface ISessionFactory
 {
-
-    public interface ISessionFactory
-    {
-        INetSession Create(ISessionContext context, INetTunnel tunnel);
-    }
-
+    INetSession Create(ISessionContext context, INetTunnel tunnel);
 }

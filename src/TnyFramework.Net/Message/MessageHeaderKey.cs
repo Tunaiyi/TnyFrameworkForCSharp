@@ -8,59 +8,56 @@
 
 using System;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+public abstract class MessageHeaderKey
 {
+    public string Value { get; }
 
-    public abstract class MessageHeaderKey
+    public MessageHeaderUsage Usage { get; }
+
+    public Type HeaderType { get; }
+
+    protected MessageHeaderKey(string value, MessageHeaderUsage usage, Type headerType)
     {
-        public string Value { get; }
-
-        public MessageHeaderUsage Usage { get; }
-
-        public Type HeaderType { get; }
-
-        protected MessageHeaderKey(string value, MessageHeaderUsage usage, Type headerType)
-        {
-            Usage = usage;
-            Value = value;
-            HeaderType = headerType;
-        }
-
-        private bool Equals(MessageHeaderKey other)
-        {
-            return Value == other.Value && HeaderType == other.HeaderType && Usage == other.Usage;
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == this.GetType() && Equals((MessageHeaderKey) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (Value.GetHashCode() * 397) ^ HeaderType.GetHashCode();
-            }
-        }
+        Usage = usage;
+        Value = value;
+        HeaderType = headerType;
     }
 
-    /// <summary>
-    /// 消息头信息 Key
-    /// </summary>
-    /// <typeparam name="TH"></typeparam>
-    public class MessageHeaderKey<TH> : MessageHeaderKey where TH : MessageHeader
+    private bool Equals(MessageHeaderKey other)
     {
-        public static MessageHeaderKey<TH> Of(string key, MessageHeaderUsage usage)
-        {
-            return new MessageHeaderKey<TH>(key, usage);
-        }
-
-        private MessageHeaderKey(string value, MessageHeaderUsage usage) : base(value, usage, typeof(TH))
-        {
-        }
+        return Value == other.Value && HeaderType == other.HeaderType && Usage == other.Usage;
     }
 
+    public override bool Equals(object? obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        return obj.GetType() == this.GetType() && Equals((MessageHeaderKey) obj);
+    }
+
+    public override int GetHashCode()
+    {
+        unchecked
+        {
+            return (Value.GetHashCode() * 397) ^ HeaderType.GetHashCode();
+        }
+    }
+}
+
+/// <summary>
+/// 消息头信息 Key
+/// </summary>
+/// <typeparam name="TH"></typeparam>
+public class MessageHeaderKey<TH> : MessageHeaderKey where TH : MessageHeader
+{
+    public static MessageHeaderKey<TH> Of(string key, MessageHeaderUsage usage)
+    {
+        return new MessageHeaderKey<TH>(key, usage);
+    }
+
+    private MessageHeaderKey(string value, MessageHeaderUsage usage) : base(value, usage, typeof(TH))
+    {
+    }
 }

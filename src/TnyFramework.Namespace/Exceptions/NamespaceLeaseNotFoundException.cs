@@ -8,22 +8,19 @@
 
 using System;
 
-namespace TnyFramework.Namespace.Exceptions
+namespace TnyFramework.Namespace.Exceptions;
+
+public class NamespaceLeaseNotFoundException : NamespaceException
 {
-
-    public class NamespaceLeaseNotFoundException : NamespaceException
+    public NamespaceLeaseNotFoundException()
     {
-        public NamespaceLeaseNotFoundException()
-        {
-        }
-
-        public NamespaceLeaseNotFoundException(string message) : base(message)
-        {
-        }
-
-        public NamespaceLeaseNotFoundException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
     }
 
+    public NamespaceLeaseNotFoundException(string message) : base(message)
+    {
+    }
+
+    public NamespaceLeaseNotFoundException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
 }

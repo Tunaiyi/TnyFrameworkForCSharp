@@ -19,147 +19,144 @@ using TnyFramework.Net.Hosting.Selectors;
 using TnyFramework.Net.Rpc.Attributes;
 using TnyFramework.Net.Rpc.Remote;
 
-namespace TnyFramework.Net.Hosting.Rpc
+namespace TnyFramework.Net.Hosting.Rpc;
+
+public class RpcRemoteServiceConfiguration : IRpcRemoteServiceConfiguration
 {
+    private static readonly ILogger LOGGER = LogFactory.Logger<RpcRemoteServiceConfiguration>();
 
-    public class RpcRemoteServiceConfiguration : IRpcRemoteServiceConfiguration
+    private bool autoRemoteServices;
+
+    private bool initialized;
+
+    private readonly ISet<Type> rpcRemoteServiceTypes = new HashSet<Type>();
+
+    private RpcRemoteUnitContext RemoteUnitContext { get; }
+
+    private IServiceCollection UnitContainer { get; }
+
+    public static RpcRemoteServiceConfiguration CreateRpcRemoteService(IServiceCollection unitContainer)
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<RpcRemoteServiceConfiguration>();
+        return new RpcRemoteServiceConfiguration(unitContainer);
+    }
 
-        private bool autoRemoteServices;
+    private RpcRemoteServiceConfiguration(IServiceCollection unitContainer)
+    {
+        UnitContainer = unitContainer;
+        RemoteUnitContext = new RpcRemoteUnitContext(unitContainer);
+        UnitContainer = unitContainer;
+    }
 
-        private bool initialized;
+    public RpcRemoteServiceConfiguration RpcRemoteSettingConfigure(
+        Action<IUnitSpec<RpcRemoteSetting, IRpcRemoteUnitContext>> action)
+    {
+        action.Invoke(RemoteUnitContext.RpcRemoteSettingSpec);
+        return this;
+    }
 
-        private readonly ISet<Type> rpcRemoteServiceTypes = new HashSet<Type>();
+    public RpcRemoteServiceConfiguration AddRemoteService<TRpcRemoteService>() where TRpcRemoteService : class
+    {
+        CheckRemoteServiceInterface<TRpcRemoteService>();
+        rpcRemoteServiceTypes.Add(typeof(TRpcRemoteService));
+        LOGGER.LogInformation("AddRemoteService : {RemoteService}", typeof(TRpcRemoteService));
+        return this;
+    }
 
-        private RpcRemoteUnitContext RemoteUnitContext { get; }
+    public RpcRemoteServiceConfiguration AddRemoteService(Type type)
+    {
+        CheckRemoteServiceInterface(type);
+        rpcRemoteServiceTypes.Add(type);
+        LOGGER.LogInformation("AddRemoteService : {RemoteService}", type);
+        return this;
+    }
 
-        private IServiceCollection UnitContainer { get; }
+    public RpcRemoteServiceConfiguration AddRemoteServices()
+    {
+        autoRemoteServices = true;
+        return this;
+    }
 
-        public static RpcRemoteServiceConfiguration CreateRpcRemoteService(IServiceCollection unitContainer)
+    private void CheckRemoteServiceInterface<T>()
+    {
+        CheckRemoteServiceInterface(typeof(T));
+    }
+
+    private bool IsRemoteServiceInterface(Type type)
+    {
+        return (type.IsInterface || type.IsAbstract) && type.GetCustomAttribute<RpcRemoteServiceAttribute>() != null;
+    }
+
+    private void CheckRemoteServiceInterface(Type type)
+    {
+        if (!(type.IsInterface || type.IsAbstract))
         {
-            return new RpcRemoteServiceConfiguration(unitContainer);
+            throw new IllegalArgumentException($"{type} 非接口");
         }
-
-        private RpcRemoteServiceConfiguration(IServiceCollection unitContainer)
+        if (type.GetCustomAttribute<RpcRemoteServiceAttribute>() == null)
         {
-            UnitContainer = unitContainer;
-            RemoteUnitContext = new RpcRemoteUnitContext(unitContainer);
-            UnitContainer = unitContainer;
+            throw new IllegalArgumentException($"{type} 未配置 {typeof(RpcRemoteServiceAttribute)} 特性");
         }
+    }
 
-        public RpcRemoteServiceConfiguration RpcRemoteSettingConfigure(
-            Action<IUnitSpec<RpcRemoteSetting, IRpcRemoteUnitContext>> action)
-        {
-            action.Invoke(RemoteUnitContext.RpcRemoteSettingSpec);
-            return this;
-        }
-
-        public RpcRemoteServiceConfiguration AddRemoteService<TRpcRemoteService>() where TRpcRemoteService : class
-        {
-            CheckRemoteServiceInterface<TRpcRemoteService>();
-            rpcRemoteServiceTypes.Add(typeof(TRpcRemoteService));
-            LOGGER.LogInformation("AddRemoteService : {RemoteService}", typeof(TRpcRemoteService));
-            return this;
-        }
-
-        public RpcRemoteServiceConfiguration AddRemoteService(Type type)
+    public RpcRemoteServiceConfiguration AddRemoteServices(IEnumerable<Type> types)
+    {
+        foreach (var type in types)
         {
             CheckRemoteServiceInterface(type);
             rpcRemoteServiceTypes.Add(type);
-            LOGGER.LogInformation("AddRemoteService : {RemoteService}", type);
-            return this;
         }
+        return this;
+    }
 
-        public RpcRemoteServiceConfiguration AddRemoteServices()
+    public RpcRemoteServiceConfiguration AddRemoteServices(ICollection<Assembly> assemblies)
+    {
+        foreach (var assembly in assemblies)
         {
-            autoRemoteServices = true;
-            return this;
-        }
-
-        private void CheckRemoteServiceInterface<T>()
-        {
-            CheckRemoteServiceInterface(typeof(T));
-        }
-
-        private bool IsRemoteServiceInterface(Type type)
-        {
-            return (type.IsInterface || type.IsAbstract) && type.GetCustomAttribute<RpcRemoteServiceAttribute>() != null;
-        }
-
-        private void CheckRemoteServiceInterface(Type type)
-        {
-            if (!(type.IsInterface || type.IsAbstract))
+            foreach (var type in assembly.GetTypes())
             {
-                throw new IllegalArgumentException($"{type} 非接口");
-            }
-            if (type.GetCustomAttribute<RpcRemoteServiceAttribute>() == null)
-            {
-                throw new IllegalArgumentException($"{type} 未配置 {typeof(RpcRemoteServiceAttribute)} 特性");
-            }
-        }
-
-        public RpcRemoteServiceConfiguration AddRemoteServices(IEnumerable<Type> types)
-        {
-            foreach (var type in types)
-            {
-                CheckRemoteServiceInterface(type);
-                rpcRemoteServiceTypes.Add(type);
-            }
-            return this;
-        }
-
-        public RpcRemoteServiceConfiguration AddRemoteServices(ICollection<Assembly> assemblies)
-        {
-            foreach (var assembly in assemblies)
-            {
-                foreach (var type in assembly.GetTypes())
+                if (IsRemoteServiceInterface(type))
                 {
-                    if (IsRemoteServiceInterface(type))
-                    {
-                        rpcRemoteServiceTypes.Add(type);
-                    }
+                    rpcRemoteServiceTypes.Add(type);
                 }
             }
+        }
+        return this;
+    }
+
+    private Func<IServiceProvider, object> ServiceFunc(Type type)
+    {
+        return provider => {
+            var factory = provider.GetService<RpcRemoteInstanceFactory>();
+            if (factory != null)
+                return factory.Create(type);
+            throw new NullReferenceException($"{typeof(RpcRemoteInstanceFactory)} is null");
+        };
+    }
+
+    public RpcRemoteServiceConfiguration Initialize()
+    {
+        if (initialized)
             return this;
-        }
-
-        private Func<IServiceProvider, object> ServiceFunc(Type type)
+        RemoteUnitContext.Load();
+        var types = new HashSet<Type>();
+        if (autoRemoteServices)
         {
-            return provider => {
-                var factory = provider.GetService<RpcRemoteInstanceFactory>();
-                if (factory != null)
-                    return factory.Create(type);
-                throw new NullReferenceException($"{typeof(RpcRemoteInstanceFactory)} is null");
-            };
-        }
-
-        public RpcRemoteServiceConfiguration Initialize()
-        {
-            if (initialized)
-                return this;
-            RemoteUnitContext.Load();
-            var types = new HashSet<Type>();
-            if (autoRemoteServices)
-            {
-                foreach (var type in RpcTypeSelector.RemoteService)
-                {
-                    if (types.Add(type))
-                    {
-                        UnitContainer.BindSingleton(type, ServiceFunc(type));
-                    }
-                }
-            }
-            foreach (var type in rpcRemoteServiceTypes)
+            foreach (var type in RpcTypeSelector.RemoteService)
             {
                 if (types.Add(type))
                 {
                     UnitContainer.BindSingleton(type, ServiceFunc(type));
                 }
             }
-            initialized = true;
-            return this;
         }
+        foreach (var type in rpcRemoteServiceTypes)
+        {
+            if (types.Add(type))
+            {
+                UnitContainer.BindSingleton(type, ServiceFunc(type));
+            }
+        }
+        initialized = true;
+        return this;
     }
-
 }

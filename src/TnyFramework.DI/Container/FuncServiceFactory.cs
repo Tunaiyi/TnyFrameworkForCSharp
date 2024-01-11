@@ -8,15 +8,12 @@
 
 using System;
 
-namespace TnyFramework.DI.Container
+namespace TnyFramework.DI.Container;
+
+public class FuncServiceFactory<TInstance>(Func<IServiceProvider, TInstance> factory) : IServiceFactory
 {
-
-    public class FuncServiceFactory<TInstance>(Func<IServiceProvider, TInstance> factory) : IServiceFactory
+    public object Create(IServiceProvider provider)
     {
-        public object Create(IServiceProvider provider)
-        {
-            return factory(provider)!;
-        }
+        return factory(provider)!;
     }
-
 }

@@ -11,29 +11,26 @@ using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Hosting;
 
-namespace TnyFramework.Net.DotNetty.Hosting.Guide
+namespace TnyFramework.Net.DotNetty.Hosting.Guide;
+
+public class NettyServerGuideUnitContext : NettyGuideUnitContext<INettyServerGuideUnitContext>, INettyServerGuideUnitContext
 {
+    public ServerSettingSpec ServerSettingSpec { get; }
 
-    public class NettyServerGuideUnitContext : NettyGuideUnitContext<INettyServerGuideUnitContext>, INettyServerGuideUnitContext
+    public NettyServerGuideUnitContext(INetUnitContext unitContext, IServiceCollection unitContainer) : base(unitContext, unitContainer)
     {
-        public ServerSettingSpec ServerSettingSpec { get; }
-
-        public NettyServerGuideUnitContext(INetUnitContext unitContext, IServiceCollection unitContainer) : base(unitContext, unitContainer)
-        {
-            ServerSettingSpec = new ServerSettingSpec();
-            TunnelFactorySpec.Default<ServerTunnelFactory>();
-        }
-
-        protected override void OnGuideUnitSetName(string name)
-        {
-            ServerSettingSpec.WithNamePrefix(name);
-            TunnelFactorySpec.WithNamePrefix(name);
-        }
-
-        public INettyServerSetting LoadServerSetting()
-        {
-            return ServerSettingSpec.Load(this, UnitContainer);
-        }
+        ServerSettingSpec = new ServerSettingSpec();
+        TunnelFactorySpec.Default<ServerTunnelFactory>();
     }
 
+    protected override void OnGuideUnitSetName(string name)
+    {
+        ServerSettingSpec.WithNamePrefix(name);
+        TunnelFactorySpec.WithNamePrefix(name);
+    }
+
+    public INettyServerSetting LoadServerSetting()
+    {
+        return ServerSettingSpec.Load(this, UnitContainer);
+    }
 }

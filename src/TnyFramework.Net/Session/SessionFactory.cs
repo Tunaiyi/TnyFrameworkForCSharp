@@ -8,15 +8,12 @@
 
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public class SessionFactory : ISessionFactory
 {
-
-    public class SessionFactory : ISessionFactory
+    public INetSession Create(ISessionContext context, INetTunnel tunnel)
     {
-        public INetSession Create(ISessionContext context, INetTunnel tunnel)
-        {
-            return new Session(Certificates.Anonymous, context, tunnel);
-        }
+        return new Session(Certificates.Anonymous, context, tunnel);
     }
-
 }

@@ -9,24 +9,21 @@
 using System;
 using TnyFramework.Common.Result;
 
-namespace TnyFramework.Net.Exceptions
+namespace TnyFramework.Net.Exceptions;
+
+public class TunnelConnectException : TunnelException
 {
-
-    public class TunnelConnectException : TunnelException
+    public TunnelConnectException(string message = "") : base(message)
     {
-        public TunnelConnectException(string message = "") : base(message)
-        {
-        }
-
-        public TunnelConnectException(IResultCode? code = null, object? body = null, string message = "")
-            : base(code, body, message)
-        {
-        }
-
-        public TunnelConnectException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
-            : base(innerException, code, body, message)
-        {
-        }
     }
 
+    public TunnelConnectException(IResultCode? code = null, object? body = null, string message = "")
+        : base(code, body, message)
+    {
+    }
+
+    public TunnelConnectException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+        : base(innerException, code, body, message)
+    {
+    }
 }

@@ -8,15 +8,12 @@
 
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+public interface INetContact : IContact, IAddressPeer
 {
-
-    public interface INetContact : IContact, IAddressPeer
-    {
-        /// <summary>
-        /// 接入模式
-        /// </summary>
-        NetAccessMode AccessMode { get; }
-    }
-
+    /// <summary>
+    /// 接入模式
+    /// </summary>
+    NetAccessMode AccessMode { get; }
 }

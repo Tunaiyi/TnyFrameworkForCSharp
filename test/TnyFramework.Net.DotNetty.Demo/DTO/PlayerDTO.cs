@@ -12,27 +12,24 @@ using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.ProtobufNet.Attributes;
 using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 
-namespace TnyFramework.Net.DotNetty.Demo.DTO
+namespace TnyFramework.Net.DotNetty.Demo.DTO;
+
+[Codable(ProtobufMimeType.PROTOBUF_TYPE)]
+[TypeProtobuf(1000_03_00)]
+[ProtoContract]
+public class PlayerDTO
 {
+    [ProtoMember(1)]
+    public long id;
 
-    [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
-    [TypeProtobuf(1000_03_00)]
-    [ProtoContract]
-    public class PlayerDTO
-    {
-        [ProtoMember(1)]
-        public long id;
+    [ProtoMember(2)]
+    public string name = "";
 
-        [ProtoMember(2)]
-        public string name = "";
+    [ProtoMember(3)]
+    public int age;
+}
 
-        [ProtoMember(3)]
-        public int age;
-    }
-
-    public static partial class DTOOutline
-    {
-        public static Action RegisterPlayerDTO = () => { TypeProtobufSchemeFactory.Factory.Load<PlayerDTO>(); };
-    }
-
+public static partial class DTOOutline
+{
+    public static Action RegisterPlayerDTO = () => { TypeProtobufSchemeFactory.Factory.Load<PlayerDTO>(); };
 }

@@ -9,12 +9,9 @@
 using System;
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Command.Dispatcher.Monitor
+namespace TnyFramework.Net.Command.Dispatcher.Monitor;
+
+public interface IRpcMonitorAfterInvokeHandler : IRpcMonitorHandler
 {
-
-    public interface IRpcMonitorAfterInvokeHandler : IRpcMonitorHandler
-    {
-        void OnAfterInvoke(IRpcTransactionContext rpcMessageContext, IMessageSubject? result, Exception? exception);
-    }
-
+    void OnAfterInvoke(IRpcTransactionContext rpcMessageContext, IMessageSubject? result, Exception? exception);
 }

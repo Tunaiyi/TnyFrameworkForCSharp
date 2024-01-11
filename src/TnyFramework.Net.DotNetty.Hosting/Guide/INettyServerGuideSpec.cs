@@ -9,22 +9,19 @@
 using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Hosting.Configuration.Spec;
 
-namespace TnyFramework.Net.DotNetty.Hosting.Guide
+namespace TnyFramework.Net.DotNetty.Hosting.Guide;
+
+public interface INettyServerGuideSpec : INettyGuideSpec<INettyServerGuide, INettyServerGuideUnitContext, INettyServerGuideSpec>
 {
+    INettyServerGuideSpec Server(INettyServerSetting setting);
 
-    public interface INettyServerGuideSpec : INettyGuideSpec<INettyServerGuide, INettyServerGuideUnitContext, INettyServerGuideSpec>
-    {
-        INettyServerGuideSpec Server(INettyServerSetting setting);
+    INettyServerGuideSpec Server(int port);
 
-        INettyServerGuideSpec Server(int port);
+    INettyServerGuideSpec Server(string host, int port);
 
-        INettyServerGuideSpec Server(string host, int port);
+    INettyServerGuideSpec Server(string host, int port, bool libuv);
 
-        INettyServerGuideSpec Server(string host, int port, bool libuv);
+    INettyServerGuideSpec Server(string serveName, string host, int port);
 
-        INettyServerGuideSpec Server(string serveName, string host, int port);
-
-        INettyServerGuideSpec Server(string serveName, string host, int port, bool libuv);
-    }
-
+    INettyServerGuideSpec Server(string serveName, string host, int port, bool libuv);
 }

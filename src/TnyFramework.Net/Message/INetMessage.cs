@@ -6,14 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+/// <summary>
+/// 内部使用接口
+/// </summary>
+public interface INetMessage : IMessage, INetMessageHead
 {
-
-    /// <summary>
-    /// 内部使用接口
-    /// </summary>
-    public interface INetMessage : IMessage, INetMessageHead
-    {
-    }
-
 }

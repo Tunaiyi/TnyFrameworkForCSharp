@@ -6,22 +6,19 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public interface ISessionKeeperSetting
 {
+    string Name { get; }
 
-    public interface ISessionKeeperSetting
-    {
-        string Name { get; }
+    string KeeperFactory { get; }
 
-        string KeeperFactory { get; }
+    ISessionSetting SessionSetting { get; }
 
-        ISessionSetting SessionSetting { get; }
+    long OfflineCloseDelay { get; }
 
-        long OfflineCloseDelay { get; }
+    int OfflineMaxSize { get; }
 
-        int OfflineMaxSize { get; }
-
-        long ClearSessionInterval { get; }
-    }
-
+    long ClearSessionInterval { get; }
 }

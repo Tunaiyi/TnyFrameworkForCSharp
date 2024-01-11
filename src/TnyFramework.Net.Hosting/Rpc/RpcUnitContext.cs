@@ -9,33 +9,30 @@
 using Microsoft.Extensions.DependencyInjection;
 using TnyFramework.Net.Rpc.Auth;
 
-namespace TnyFramework.Net.Hosting.Rpc
+namespace TnyFramework.Net.Hosting.Rpc;
+
+public class RpcUnitContext : IRpcUnitContext
 {
+    private IServiceCollection UnitContainer { get; }
 
-    public class RpcUnitContext : IRpcUnitContext
+    public NetUnitContext NetUnitContext { get; }
+
+    public RpcAuthServiceSpec RpcAuthServiceSpec { get; }
+
+    public RpcUnitContext(NetUnitContext nettyNetUnitContext, IServiceCollection unitContainer)
     {
-        private IServiceCollection UnitContainer { get; }
-
-        public NetUnitContext NetUnitContext { get; }
-
-        public RpcAuthServiceSpec RpcAuthServiceSpec { get; }
-
-        public RpcUnitContext(NetUnitContext nettyNetUnitContext, IServiceCollection unitContainer)
-        {
-            UnitContainer = unitContainer;
-            NetUnitContext = nettyNetUnitContext;
-            RpcAuthServiceSpec = new RpcAuthServiceSpec(this, unitContainer);
-        }
-
-        public IRpcAuthService LoadRpcAuthService()
-        {
-            return RpcAuthServiceSpec.Load(this, UnitContainer);
-        }
-
-        public IRpcUserPasswordManager LoadRpcUserPasswordManager()
-        {
-            return RpcAuthServiceSpec.LoadRpcUserPasswordManager();
-        }
+        UnitContainer = unitContainer;
+        NetUnitContext = nettyNetUnitContext;
+        RpcAuthServiceSpec = new RpcAuthServiceSpec(this, unitContainer);
     }
 
+    public IRpcAuthService LoadRpcAuthService()
+    {
+        return RpcAuthServiceSpec.Load(this, UnitContainer);
+    }
+
+    public IRpcUserPasswordManager LoadRpcUserPasswordManager()
+    {
+        return RpcAuthServiceSpec.LoadRpcUserPasswordManager();
+    }
 }

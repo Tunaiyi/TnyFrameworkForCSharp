@@ -9,13 +9,10 @@
 using System;
 using TnyFramework.Common.Event;
 
-namespace TnyFramework.Common.EventBus
+namespace TnyFramework.Common.EventBus;
+
+public interface IEventBus<THandler> : IEvent<THandler, IEventBus<THandler>>
+    where THandler : Delegate
 {
-
-    public interface IEventBus<THandler> : IEvent<THandler, IEventBus<THandler>>
-        where THandler : Delegate
-    {
-        THandler Notify { get; }
-    }
-
+    THandler Notify { get; }
 }

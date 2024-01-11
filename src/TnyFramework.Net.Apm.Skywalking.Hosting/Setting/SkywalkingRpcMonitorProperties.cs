@@ -6,18 +6,15 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Apm.Skywalking.Hosting.Setting
+namespace TnyFramework.Net.Apm.Skywalking.Hosting.Setting;
+
+public class SkywalkingRpcMonitorProperties
 {
+    public bool Enable { get; set; } = true;
 
-    public class SkywalkingRpcMonitorProperties
-    {
-        public bool Enable { get; set; } = true;
+    public bool Disable => !Enable;
 
-        public bool Disable => !Enable;
+    public bool EnableCollectArguments { get; set; } = true;
 
-        public bool EnableCollectArguments { get; set; } = true;
-
-        public int CollectArgumentsMaxLength { get; set; } = 125;
-    }
-
+    public int CollectArgumentsMaxLength { get; set; } = 125;
 }

@@ -8,22 +8,19 @@
 
 using System;
 
-namespace TnyFramework.DI.Units
+namespace TnyFramework.DI.Units;
+
+public interface IUnit<out TInstance>
 {
+    /// <summary>
+    /// 实例名字
+    /// </summary>
+    string Name { get; }
 
-    public interface IUnit<out TInstance>
-    {
-        /// <summary>
-        /// 实例名字
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
-        /// 获取 Unit 实体
-        /// </summary>
-        /// <param name="provider"></param>
-        /// <returns></returns>
-        TInstance Value(IServiceProvider provider);
-    }
-
+    /// <summary>
+    /// 获取 Unit 实体
+    /// </summary>
+    /// <param name="provider"></param>
+    /// <returns></returns>
+    TInstance Value(IServiceProvider provider);
 }

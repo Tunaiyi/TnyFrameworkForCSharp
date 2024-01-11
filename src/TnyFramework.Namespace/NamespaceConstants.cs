@@ -6,12 +6,9 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Namespace
+namespace TnyFramework.Namespace;
+
+public static class NamespaceConstants
 {
-
-    public static class NamespaceConstants
-    {
-        public const int DEFAULT_TTL = 60;
-    }
-
+    public const int DEFAULT_TTL = 60;
 }

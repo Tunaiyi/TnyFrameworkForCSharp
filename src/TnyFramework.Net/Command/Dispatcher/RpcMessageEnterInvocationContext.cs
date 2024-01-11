@@ -17,123 +17,120 @@ using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public class RpcMessageEnterInvocationContext : CompletableRpcMessageTransactionContext, IRpcMessageEnterContext
 {
+    private const int OPEN = 0;
+    private const int CLOSE = 1;
 
-    public class RpcMessageEnterInvocationContext : CompletableRpcMessageTransactionContext, IRpcMessageEnterContext
+    private readonly INetTunnel tunnel;
+
+    private readonly RpcMonitor rpcMonitor;
+
+    private volatile int running = CLOSE;
+
+    private INetContact to;
+
+    private bool forward;
+
+    public override IMessageSubject MessageSubject => message;
+
+    public override RpcTransactionMode Mode => RpcTransactionMode.Enter;
+
+    public RpcMonitor RpcMonitor => rpcMonitor;
+
+    public INetworkContext NetworkContext => tunnel.Context;
+
+    public INetTunnel NetTunnel => tunnel;
+
+    public override ICommunicator Communicator => tunnel;
+
+    public IMessage Message => message;
+
+    public INetMessage NetMessage => message;
+
+    public override bool Valid => tunnel.IsNotNull() && Message.IsNotNull();
+
+    public IContact From => tunnel;
+
+    public IContact To => to;
+
+    public RpcMessageEnterInvocationContext(INetTunnel tunnel, INetMessage message, bool async, IAttributes? attributes = null)
+        : base(message, async, attributes)
     {
-        private const int OPEN = 0;
-        private const int CLOSE = 1;
-
-        private readonly INetTunnel tunnel;
-
-        private readonly RpcMonitor rpcMonitor;
-
-        private volatile int running = CLOSE;
-
-        private INetContact to;
-
-        private bool forward;
-
-        public override IMessageSubject MessageSubject => message;
-
-        public override RpcTransactionMode Mode => RpcTransactionMode.Enter;
-
-        public RpcMonitor RpcMonitor => rpcMonitor;
-
-        public INetworkContext NetworkContext => tunnel.Context;
-
-        public INetTunnel NetTunnel => tunnel;
-
-        public override ICommunicator Communicator => tunnel;
-
-        public IMessage Message => message;
-
-        public INetMessage NetMessage => message;
-
-        public override bool Valid => tunnel.IsNotNull() && Message.IsNotNull();
-
-        public IContact From => tunnel;
-
-        public IContact To => to;
-
-        public RpcMessageEnterInvocationContext(INetTunnel tunnel, INetMessage message, bool async, IAttributes? attributes = null)
-            : base(message, async, attributes)
+        this.tunnel = tunnel;
+        to = null!;
+        if (tunnel.IsNotNull())
         {
-            this.tunnel = tunnel;
-            to = null!;
-            if (tunnel.IsNotNull())
-            {
-                rpcMonitor = tunnel.Context.RpcMonitor;
-            } else
-            {
-                rpcMonitor = null!;
-            }
-        }
-
-        public bool Invoke(string operationName)
+            rpcMonitor = tunnel.Context.RpcMonitor;
+        } else
         {
-            return Prepare(operationName);
-        }
-
-        public override ISession GetSession() => tunnel.Session;
-
-        public bool Resume()
-        {
-            if (!Valid || Interlocked.CompareExchange(ref running, CLOSE, OPEN) != CLOSE)
-            {
-                return false;
-            }
-            rpcMonitor.OnResume(this);
-            return true;
-        }
-
-        public bool Suspend()
-        {
-            if (!Valid || Interlocked.CompareExchange(ref running, OPEN, CLOSE) != OPEN)
-            {
-                return false;
-            }
-            rpcMonitor.OnSuspend(this);
-            return true;
-        }
-
-        public bool Running() => running == OPEN;
-
-        bool IRpcMessageTransferContext.Transfer(INetContact toContact, string operationName)
-        {
-            return Prepare(operationName, () => {
-                to = toContact;
-                forward = true;
-            });
-        }
-
-        protected override void OnPrepare()
-        {
-            if (forward)
-            {
-                rpcMonitor.OnTransfer(this);
-            } else
-            {
-                rpcMonitor.OnBeforeInvoke(this);
-            }
-        }
-
-        protected override void OnComplete(MessageContent? result, Exception? exception)
-        {
-            if (forward)
-            {
-                rpcMonitor.OnTransferred(this, result, exception);
-            } else
-            {
-                rpcMonitor.OnAfterInvoke(this, result, exception);
-            }
-        }
-
-        protected override void OnReturn(MessageContent content)
-        {
-            _ = RpcMessageAide.Send(tunnel, content);
+            rpcMonitor = null!;
         }
     }
 
+    public bool Invoke(string operationName)
+    {
+        return Prepare(operationName);
+    }
+
+    public override ISession GetSession() => tunnel.Session;
+
+    public bool Resume()
+    {
+        if (!Valid || Interlocked.CompareExchange(ref running, CLOSE, OPEN) != CLOSE)
+        {
+            return false;
+        }
+        rpcMonitor.OnResume(this);
+        return true;
+    }
+
+    public bool Suspend()
+    {
+        if (!Valid || Interlocked.CompareExchange(ref running, OPEN, CLOSE) != OPEN)
+        {
+            return false;
+        }
+        rpcMonitor.OnSuspend(this);
+        return true;
+    }
+
+    public bool Running() => running == OPEN;
+
+    bool IRpcMessageTransferContext.Transfer(INetContact toContact, string operationName)
+    {
+        return Prepare(operationName, () => {
+            to = toContact;
+            forward = true;
+        });
+    }
+
+    protected override void OnPrepare()
+    {
+        if (forward)
+        {
+            rpcMonitor.OnTransfer(this);
+        } else
+        {
+            rpcMonitor.OnBeforeInvoke(this);
+        }
+    }
+
+    protected override void OnComplete(MessageContent? result, Exception? exception)
+    {
+        if (forward)
+        {
+            rpcMonitor.OnTransferred(this, result, exception);
+        } else
+        {
+            rpcMonitor.OnAfterInvoke(this, result, exception);
+        }
+    }
+
+    protected override void OnReturn(MessageContent content)
+    {
+        _ = RpcMessageAide.Send(tunnel, content);
+    }
 }

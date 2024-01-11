@@ -8,91 +8,88 @@
 
 using System;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+[Flags]
+public enum MessageMode
 {
+    /// <summary>
+    /// 请求
+    /// </summary>
+    Request = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_REQUEST,
 
-    [Flags]
-    public enum MessageMode
+    /// <summary>
+    /// 响应
+    /// </summary>
+    Response = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_RESPONSE,
+
+    /// <summary>
+    /// 推送
+    /// </summary>
+    Push = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PUSH,
+
+    /// <summary>
+    /// ping
+    /// </summary>
+    Ping = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PING,
+
+    /// <summary>
+    /// pong
+    /// </summary>
+    Pong = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PONG,
+}
+
+public static class MessageModeExtensions
+{
+    public static byte GetOption(this MessageMode value)
     {
-        /// <summary>
-        /// 请求
-        /// </summary>
-        Request = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_REQUEST,
-
-        /// <summary>
-        /// 响应
-        /// </summary>
-        Response = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_RESPONSE,
-
-        /// <summary>
-        /// 推送
-        /// </summary>
-        Push = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PUSH,
-
-        /// <summary>
-        /// ping
-        /// </summary>
-        Ping = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PING,
-
-        /// <summary>
-        /// pong
-        /// </summary>
-        Pong = CodecConstants.MESSAGE_HEAD_OPTION_MODE_VALUE_PONG,
+        return (byte) value;
     }
 
-    public static class MessageModeExtensions
+    public static bool IsHeartBeat(this MessageMode value)
     {
-        public static byte GetOption(this MessageMode value)
-        {
-            return (byte) value;
-        }
+        return value is MessageMode.Ping or MessageMode.Pong;
+    }
 
-        public static bool IsHeartBeat(this MessageMode value)
-        {
-            return value is MessageMode.Ping or MessageMode.Pong;
-        }
+    public static bool IsMessage(this MessageMode value)
+    {
+        return value is MessageMode.Request or MessageMode.Response or MessageMode.Push;
+    }
 
-        public static bool IsMessage(this MessageMode value)
+    public static int GetIndex(this MessageMode self)
+    {
+        switch (self)
         {
-            return value is MessageMode.Request or MessageMode.Response or MessageMode.Push;
-        }
-
-        public static int GetIndex(this MessageMode self)
-        {
-            switch (self)
-            {
-                case MessageMode.Request:
-                case MessageMode.Response:
-                case MessageMode.Push:
-                default:
-                    return (int) self;
-                case MessageMode.Ping:
-                    return 3;
-                case MessageMode.Pong:
-                    return 4;
-            }
-        }
-
-        public static string Mark(this MessageMode self)
-        {
-            return self.ToString().ToLower();
-        }
-
-        public static NetworkWay GetWay(this MessageMode self)
-        {
-            switch (self)
-            {
-                case MessageMode.Request:
-                case MessageMode.Response:
-                case MessageMode.Push:
-                    return NetworkWay.MESSAGE;
-                case MessageMode.Ping:
-                case MessageMode.Pong:
-                    return NetworkWay.HEARTBEAT;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(self), self, null);
-            }
+            case MessageMode.Request:
+            case MessageMode.Response:
+            case MessageMode.Push:
+            default:
+                return (int) self;
+            case MessageMode.Ping:
+                return 3;
+            case MessageMode.Pong:
+                return 4;
         }
     }
 
+    public static string Mark(this MessageMode self)
+    {
+        return self.ToString().ToLower();
+    }
+
+    public static NetworkWay GetWay(this MessageMode self)
+    {
+        switch (self)
+        {
+            case MessageMode.Request:
+            case MessageMode.Response:
+            case MessageMode.Push:
+                return NetworkWay.MESSAGE;
+            case MessageMode.Ping:
+            case MessageMode.Pong:
+                return NetworkWay.HEARTBEAT;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(self), self, null);
+        }
+    }
 }

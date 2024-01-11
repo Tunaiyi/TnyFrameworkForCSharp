@@ -15,22 +15,21 @@ using TnyFramework.Common.Lifecycle;
 using TnyFramework.Common.Logger;
 using TnyFramework.Coroutines.Async;
 
-namespace TnyFramework.Namespace.Etcd.Test
+namespace TnyFramework.Namespace.Etcd.Test;
+
+public class AsyncLocalTest
 {
+    private static readonly ILogger LOGGER = LogFactory.Logger<AsyncLocalTest>();
 
-    public class AsyncLocalTest
+    [Test]
+    public void TestBaseEnum()
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<AsyncLocalTest>();
-
-        [Test]
-        public void TestBaseEnum()
-        {
             LifecycleStage.LoadAll();
         }
 
-        [Test]
-        public async Task TestAwaitSelf()
-        {
+    [Test]
+    public async Task TestAwaitSelf()
+    {
             var coroutine = DefaultCoroutineFactory.Default.Create("TestAwaitSelf");
             await coroutine.AsyncExec(async () => {
                 Console.WriteLine("2 - 1 " + Coroutine.CurrentCoroutine!.Name + Thread.CurrentThread.ManagedThreadId);
@@ -46,9 +45,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             });
         }
 
-        [Test]
-        public async Task TestAsyncLocal()
-        {
+    [Test]
+    public async Task TestAsyncLocal()
+    {
             var local = new AsyncLocal<string>();
             var coroutine = DefaultCoroutineFactory.Default.Create();
 
@@ -73,6 +72,4 @@ namespace TnyFramework.Namespace.Etcd.Test
             await task2;
 
         }
-    }
-
 }

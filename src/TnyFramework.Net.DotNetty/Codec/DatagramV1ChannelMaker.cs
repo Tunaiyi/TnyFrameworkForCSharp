@@ -6,21 +6,18 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.DotNetty.Codec
+namespace TnyFramework.Net.DotNetty.Codec;
+
+public class DatagramV1ChannelMaker : DatagramChannelMaker
 {
-
-    public class DatagramV1ChannelMaker : DatagramChannelMaker
+    public DatagramV1ChannelMaker(INetPacketEncoder encoder, bool closeOnEncodeError, INetPacketDecoder decoder, bool closeOnDecodeError) :
+        base(encoder, closeOnEncodeError, decoder, closeOnDecodeError)
     {
-        public DatagramV1ChannelMaker(INetPacketEncoder encoder, bool closeOnEncodeError, INetPacketDecoder decoder, bool closeOnDecodeError) :
-            base(encoder, closeOnEncodeError, decoder, closeOnDecodeError)
-        {
-        }
-
-        public DatagramV1ChannelMaker(DataPacketV1Setting setting, IMessageCodec messageCodec, bool closeOnEncodeError, bool closeOnDecodeError)
-            : base(new NetPacketV1Encoder(setting, messageCodec), closeOnEncodeError,
-                new NetPacketV1Decoder(setting, messageCodec), closeOnDecodeError)
-        {
-        }
     }
 
+    public DatagramV1ChannelMaker(DataPacketV1Setting setting, IMessageCodec messageCodec, bool closeOnEncodeError, bool closeOnDecodeError)
+        : base(new NetPacketV1Encoder(setting, messageCodec), closeOnEncodeError,
+            new NetPacketV1Decoder(setting, messageCodec), closeOnDecodeError)
+    {
+    }
 }

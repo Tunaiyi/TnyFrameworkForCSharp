@@ -6,16 +6,13 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.DI.Units
+namespace TnyFramework.DI.Units;
+
+public interface IUnitSpec<in TUnit, out TContext>
 {
+    IUnitSpec<TUnit, TContext> Unit(TUnit value);
 
-    public interface IUnitSpec<in TUnit, out TContext>
-    {
-        IUnitSpec<TUnit, TContext> Unit(TUnit value);
+    IUnitSpec<TUnit, TContext> Creator<TImplement>() where TImplement : TUnit, new();
 
-        IUnitSpec<TUnit, TContext> Creator<TImplement>() where TImplement : TUnit, new();
-
-        IUnitSpec<TUnit, TContext> Creator(UnitCreator<TUnit, TContext> value);
-    }
-
+    IUnitSpec<TUnit, TContext> Creator(UnitCreator<TUnit, TContext> value);
 }

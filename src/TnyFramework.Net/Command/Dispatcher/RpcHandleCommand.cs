@@ -11,53 +11,50 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using TnyFramework.Common.Logger;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public abstract class RpcHandleCommand : ICommand
 {
+    private static readonly ILogger LOGGER = LogFactory.Logger<RpcHandleCommand>();
 
-    public abstract class RpcHandleCommand : ICommand
+    protected readonly IRpcMessageEnterContext rpcMessageContext;
+
+    private Exception? cause;
+
+    private bool Done { get; set; }
+
+    protected RpcHandleCommand(IRpcMessageEnterContext rpcMessageContext)
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<RpcHandleCommand>();
-
-        protected readonly IRpcMessageEnterContext rpcMessageContext;
-
-        private Exception? cause;
-
-        private bool Done { get; set; }
-
-        protected RpcHandleCommand(IRpcMessageEnterContext rpcMessageContext)
-        {
-            this.rpcMessageContext = rpcMessageContext;
-        }
-
-        public async Task Execute()
-        {
-            try
-            {
-                await OnRun();
-                Done = true;
-            } catch (Exception e)
-            {
-                LOGGER.LogError(e, "{name} execute exception", Name);
-                cause = e;
-                OnException(e);
-            } finally
-            {
-                OnDone(cause);
-            }
-        }
-
-        protected abstract Task OnRun();
-
-        protected abstract void OnDone(Exception? cause);
-
-        protected abstract void OnException(Exception? cause);
-
-        public bool IsDone()
-        {
-            return Done;
-        }
-
-        public abstract string Name { get; }
+        this.rpcMessageContext = rpcMessageContext;
     }
 
+    public async Task Execute()
+    {
+        try
+        {
+            await OnRun();
+            Done = true;
+        } catch (Exception e)
+        {
+            LOGGER.LogError(e, "{name} execute exception", Name);
+            cause = e;
+            OnException(e);
+        } finally
+        {
+            OnDone(cause);
+        }
+    }
+
+    protected abstract Task OnRun();
+
+    protected abstract void OnDone(Exception? cause);
+
+    protected abstract void OnException(Exception? cause);
+
+    public bool IsDone()
+    {
+        return Done;
+    }
+
+    public abstract string Name { get; }
 }

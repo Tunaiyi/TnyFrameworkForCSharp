@@ -15,21 +15,20 @@ using TnyFramework.Coroutines.Async;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace TnyFramework.Coroutines.Test
+namespace TnyFramework.Coroutines.Test;
+
+public class CoroutinesTest
 {
+    private readonly ILogger logger;
 
-    public class CoroutinesTest
+    public CoroutinesTest(ITestOutputHelper output)
     {
-        private readonly ILogger logger;
-
-        public CoroutinesTest(ITestOutputHelper output)
-        {
             logger = output.BuildLogger();
         }
 
-        [Fact]
-        public async Task TestCoroutineSynchronizationContext()
-        {
+    [Fact]
+    public async Task TestCoroutineSynchronizationContext()
+    {
             CoroutineSynchronizationContext.InitializeSynchronizationContext();
             var factory = new DefaultCoroutineFactory("Actor");
             var coroutine1 = factory.Create();
@@ -63,15 +62,15 @@ namespace TnyFramework.Coroutines.Test
                 Thread.CurrentThread.ManagedThreadId);
         }
 
-        private async Task Exception()
-        {
+    private async Task Exception()
+    {
             await Task.CompletedTask;
             throw new Exception();
         }
 
-        [Fact]
-        public void TestTaskSchedulerNoWait()
-        {
+    [Fact]
+    public void TestTaskSchedulerNoWait()
+    {
             TaskScheduler.UnobservedTaskException += (o, args) => { logger.LogError(args.Exception, ""); };
             var executor = TaskScheduler.Default;
             var factory = new DefaultCoroutineFactory("Actor", executor);
@@ -83,9 +82,9 @@ namespace TnyFramework.Coroutines.Test
             Task.Delay(10000).Wait();
         }
 
-        [Fact]
-        public async Task TestTaskScheduler()
-        {
+    [Fact]
+    public async Task TestTaskScheduler()
+    {
             // var executor = new WorkStealingThreadPoolCoroutineExecutor(2, "TestTaskScheduler");
             var executor = TaskScheduler.Default;
             var factory = new DefaultCoroutineFactory("Actor", executor);
@@ -129,8 +128,8 @@ namespace TnyFramework.Coroutines.Test
             //     Thread.CurrentThread.ManagedThreadId);
         }
 
-        private async Task DelayTest(string taskNam, int time)
-        {
+    private async Task DelayTest(string taskNam, int time)
+    {
             var times = 0;
             while (times++ < time)
             {
@@ -150,6 +149,4 @@ namespace TnyFramework.Coroutines.Test
                     times, delay);
             }
         }
-    }
-
 }

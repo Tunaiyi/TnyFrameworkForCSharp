@@ -23,310 +23,307 @@ using TnyFramework.Net.Message;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public class MethodControllerHolder : ControllerHolder
 {
+    /// <summary>
+    /// 调用器
+    /// </summary>
+    private readonly IFastInvoker invoker;
 
-    public class MethodControllerHolder : ControllerHolder
+    /// <summary>
+    /// 执行者
+    /// </summary>
+    private readonly object executor;
+
+    /// <summary>
+    /// 执行前
+    /// </summary>
+    private readonly PluginChain? beforeChain;
+
+    /// <summary>
+    /// 执行后
+    /// </summary>
+    private readonly PluginChain? afterChain;
+
+    /// <summary>
+    /// 类 Controller 信息
+    /// </summary>
+    private readonly TypeControllerHolder typeController;
+
+    /// <summary>
+    /// 参数注解
+    /// </summary>
+    private readonly IDictionary<Type, IList<Attribute?>> indexParamAnnotationsMap;
+
+    private readonly RpcProfile rpcProfile;
+
+    public void Run()
     {
-        /// <summary>
-        /// 调用器
-        /// </summary>
-        private readonly IFastInvoker invoker;
+    }
 
-        /// <summary>
-        /// 执行者
-        /// </summary>
-        private readonly object executor;
-
-        /// <summary>
-        /// 执行前
-        /// </summary>
-        private readonly PluginChain? beforeChain;
-
-        /// <summary>
-        /// 执行后
-        /// </summary>
-        private readonly PluginChain? afterChain;
-
-        /// <summary>
-        /// 类 Controller 信息
-        /// </summary>
-        private readonly TypeControllerHolder typeController;
-
-        /// <summary>
-        /// 参数注解
-        /// </summary>
-        private readonly IDictionary<Type, IList<Attribute?>> indexParamAnnotationsMap;
-
-        private readonly RpcProfile rpcProfile;
-
-        public void Run()
+    public MethodControllerHolder(object executor, MethodInfo method, RpcProfile rpcProfile,
+        MessageDispatcherContext context,
+        TypeControllerHolder typeController)
+        : base(executor)
+    {
+        this.rpcProfile = rpcProfile;
+        invoker = method.ReturnType == typeof(void)
+            ? FastActionFactory.CreateFactory(method).CreateInvoker(method)
+            : FastFuncFactory.CreateFactory(method).CreateInvoker(method);
+        Init(context,
+            method.GetCustomAttributes<BeforePluginAttribute>(),
+            method.GetCustomAttributes<AfterPluginAttribute>(),
+            method.GetCustomAttribute<AuthenticationRequiredAttribute>(),
+            method.GetCustomAttribute<AppProfileAttribute>(),
+            method.GetCustomAttribute<ScopeProfileAttribute>());
+        // var findMethod = ControllerType.GetMethod("FindParamAttributes");
+        // if (findMethod == null)
+        //     throw new NullReferenceException();
+        var nameBuilder = new StringBuilder();
+        var type = executor.GetType();
+        nameBuilder.Append(type.Name).Append(".").Append(method.Name);
+        SimpleName = nameBuilder.ToString();
+        var parameterInfos = method.GetParameters();
+        var paramAnnotationsMap = new Dictionary<Type, IDictionary<int, Attribute>>();
+        ParamDescriptions = InitParamDescriptions(paramAnnotationsMap, parameterInfos, nameBuilder, method);
+        nameBuilder.Append(")");
+        Name = nameBuilder.ToString();
+        this.executor = executor;
+        this.typeController = typeController;
+        foreach (var plugin in BeforePlugins)
         {
+            beforeChain = AppendPlugin(beforeChain, plugin);
         }
-
-        public MethodControllerHolder(object executor, MethodInfo method, RpcProfile rpcProfile,
-            MessageDispatcherContext context,
-            TypeControllerHolder typeController)
-            : base(executor)
+        foreach (var plugin in AfterPlugins)
         {
-            this.rpcProfile = rpcProfile;
-            invoker = method.ReturnType == typeof(void)
-                ? FastActionFactory.CreateFactory(method).CreateInvoker(method)
-                : FastFuncFactory.CreateFactory(method).CreateInvoker(method);
-            Init(context,
-                method.GetCustomAttributes<BeforePluginAttribute>(),
-                method.GetCustomAttributes<AfterPluginAttribute>(),
-                method.GetCustomAttribute<AuthenticationRequiredAttribute>(),
-                method.GetCustomAttribute<AppProfileAttribute>(),
-                method.GetCustomAttribute<ScopeProfileAttribute>());
-            // var findMethod = ControllerType.GetMethod("FindParamAttributes");
-            // if (findMethod == null)
-            //     throw new NullReferenceException();
-            var nameBuilder = new StringBuilder();
-            var type = executor.GetType();
-            nameBuilder.Append(type.Name).Append(".").Append(method.Name);
-            SimpleName = nameBuilder.ToString();
-            var parameterInfos = method.GetParameters();
-            var paramAnnotationsMap = new Dictionary<Type, IDictionary<int, Attribute>>();
-            ParamDescriptions = InitParamDescriptions(paramAnnotationsMap, parameterInfos, nameBuilder, method);
-            nameBuilder.Append(")");
-            Name = nameBuilder.ToString();
-            this.executor = executor;
-            this.typeController = typeController;
-            foreach (var plugin in BeforePlugins)
-            {
-                beforeChain = AppendPlugin(beforeChain, plugin);
-            }
-            foreach (var plugin in AfterPlugins)
-            {
-                afterChain = AppendPlugin(afterChain, plugin);
-            }
-            ReturnType = method.ReturnType;
-            indexParamAnnotationsMap = InitIndexParamAttributes(paramAnnotationsMap, ParamDescriptions.Count);
-            MethodAttributeHolder = new AttributeHolder(method);
-
+            afterChain = AppendPlugin(afterChain, plugin);
         }
+        ReturnType = method.ReturnType;
+        indexParamAnnotationsMap = InitIndexParamAttributes(paramAnnotationsMap, ParamDescriptions.Count);
+        MethodAttributeHolder = new AttributeHolder(method);
 
-        private IList<RpcLocalParamDescription> InitParamDescriptions(
-            IDictionary<Type, IDictionary<int, Attribute>> paramAnnotationsMap,
-            IEnumerable<ParameterInfo> parameterInfos, StringBuilder nameBuilder, MethodInfo method)
+    }
+
+    private IList<RpcLocalParamDescription> InitParamDescriptions(
+        IDictionary<Type, IDictionary<int, Attribute>> paramAnnotationsMap,
+        IEnumerable<ParameterInfo> parameterInfos, StringBuilder nameBuilder, MethodInfo method)
+    {
+        var indexCreator = new ParamIndexCreator(method);
+        var paramDescriptions = new List<RpcLocalParamDescription>();
+        var index = 0;
+        foreach (var parameterInfo in parameterInfos)
         {
-            var indexCreator = new ParamIndexCreator(method);
-            var paramDescriptions = new List<RpcLocalParamDescription>();
-            var index = 0;
-            foreach (var parameterInfo in parameterInfos)
+            nameBuilder.Append(index > 0 ? ", " : "(");
+            nameBuilder.Append(parameterInfo.ParameterType);
+            var paramDescription = new RpcLocalParamDescription(this, parameterInfo, indexCreator);
+            paramDescriptions.Add(paramDescription);
+            foreach (var attribute in paramDescription.Attributes)
             {
-                nameBuilder.Append(index > 0 ? ", " : "(");
-                nameBuilder.Append(parameterInfo.ParameterType);
-                var paramDescription = new RpcLocalParamDescription(this, parameterInfo, indexCreator);
-                paramDescriptions.Add(paramDescription);
-                foreach (var attribute in paramDescription.Attributes)
+                var attributeType = attribute.GetType();
+                if (!paramAnnotationsMap.TryGetValue(attributeType, out var attributes))
                 {
-                    var attributeType = attribute.GetType();
-                    if (!paramAnnotationsMap.TryGetValue(attributeType, out var attributes))
-                    {
-                        attributes = new Dictionary<int, Attribute>();
-                        paramAnnotationsMap[attributeType] = attributes;
-                    }
-                    attributes.Add(index, attribute);
+                    attributes = new Dictionary<int, Attribute>();
+                    paramAnnotationsMap[attributeType] = attributes;
                 }
-                index++;
+                attributes.Add(index, attribute);
             }
-            return paramDescriptions.ToImmutableList();
+            index++;
         }
+        return paramDescriptions.ToImmutableList();
+    }
 
-        private static IDictionary<Type, IList<Attribute?>> InitIndexParamAttributes(
-            Dictionary<Type, IDictionary<int, Attribute>> paramAnnotationsMap, int index)
+    private static IDictionary<Type, IList<Attribute?>> InitIndexParamAttributes(
+        Dictionary<Type, IDictionary<int, Attribute>> paramAnnotationsMap, int index)
+    {
+
+        var indexAnnotationsMap = new Dictionary<Type, IList<Attribute?>>();
+        foreach (var pair in paramAnnotationsMap)
         {
-
-            var indexAnnotationsMap = new Dictionary<Type, IList<Attribute?>>();
-            foreach (var pair in paramAnnotationsMap)
+            var attributes = new List<Attribute?>();
+            for (var i = 0; i < index; i++)
             {
-                var attributes = new List<Attribute?>();
-                for (var i = 0; i < index; i++)
-                {
-                    attributes.Add(null);
-                }
-                foreach (var indexPair in pair.Value)
-                {
-                    attributes[indexPair.Key] = indexPair.Value;
-                }
-                indexAnnotationsMap.Add(pair.Key, attributes.ToImmutableList());
+                attributes.Add(null);
             }
-            return indexAnnotationsMap.ToImmutableDictionary();
-        }
-
-        private static PluginChain AppendPlugin(PluginChain? context, CommandPluginHolder plugin)
-        {
-            if (context == null)
+            foreach (var indexPair in pair.Value)
             {
-                context = new PluginChain(plugin);
+                attributes[indexPair.Key] = indexPair.Value;
             }
-            context.Append(new PluginChain(plugin));
-            return context;
+            indexAnnotationsMap.Add(pair.Key, attributes.ToImmutableList());
         }
+        return indexAnnotationsMap.ToImmutableDictionary();
+    }
 
-        /// <summary>
-        /// 返回类型
-        /// </summary>
-        public Type ReturnType { get; }
-
-        /// <summary>
-        /// 参数
-        /// </summary>
-        public IList<RpcLocalParamDescription> ParamDescriptions { get; }
-
-        /// <summary>
-        /// 参数个数
-        /// </summary>
-        public int ParametersSize => ParamDescriptions.Count;
-
-        /// <summary>
-        /// 方法注解
-        /// </summary>
-        /// <returns></returns>
-        private AttributeHolder MethodAttributeHolder { get; }
-
-        public string SimpleName { get; }
-
-        public int Protocol => rpcProfile.IsNotNull() ? rpcProfile.Protocol : -1;
-
-        /// <summary>
-        /// 处理的消息类型
-        /// </summary>
-        public MessageMode MessageMode => rpcProfile.Mode;
-
-        public bool IsHasAuthValidator => AuthValidatorType != null;
-
-        public override bool IsContactGroup(IContactType contactType)
+    private static PluginChain AppendPlugin(PluginChain? context, CommandPluginHolder plugin)
+    {
+        if (context == null)
         {
-            return ContactGroups != null ? base.IsContactGroup(contactType) : typeController.IsContactGroup(contactType);
+            context = new PluginChain(plugin);
         }
+        context.Append(new PluginChain(plugin));
+        return context;
+    }
 
-        public override bool IsActiveByAppType(string appType)
-        {
-            return AppTypes != null ? base.IsActiveByAppType(appType) : typeController.IsActiveByAppType(appType);
-        }
+    /// <summary>
+    /// 返回类型
+    /// </summary>
+    public Type ReturnType { get; }
 
-        public override bool IsActiveByScope(string scope)
-        {
-            return Scopes != null ? base.IsActiveByScope(scope) : typeController.IsActiveByScope(scope);
-        }
+    /// <summary>
+    /// 参数
+    /// </summary>
+    public IList<RpcLocalParamDescription> ParamDescriptions { get; }
 
-        public override bool IsAuth()
-        {
-            return AuthAttribute != null ? base.IsAuth() : typeController.IsAuth();
-        }
+    /// <summary>
+    /// 参数个数
+    /// </summary>
+    public int ParametersSize => ParamDescriptions.Count;
 
-        public override Type? AuthValidatorType {
-            get {
-                var auth = AuthAttribute;
-                return auth != null ? base.AuthValidatorType : typeController.AuthValidatorType;
-            }
-        }
+    /// <summary>
+    /// 方法注解
+    /// </summary>
+    /// <returns></returns>
+    private AttributeHolder MethodAttributeHolder { get; }
 
-        public override IList<CommandPluginHolder> BeforePlugins {
-            get {
-                var plugin = base.BeforePlugins;
-                return plugin.Count == 0 ? typeController.BeforePlugins : plugin;
-            }
-        }
+    public string SimpleName { get; }
 
-        public override IList<CommandPluginHolder> AfterPlugins {
-            get {
-                var plugin = base.AfterPlugins;
-                return plugin.Count == 0 ? typeController.AfterPlugins : plugin;
-            }
-        }
+    public int Protocol => rpcProfile.IsNotNull() ? rpcProfile.Protocol : -1;
 
-        public object? GetParameterValue(int index, INetTunnel tunnel, IMessage message, object? body)
-        {
-            if (index >= ParamDescriptions.Count)
-            {
-                throw new ResultCodeException(NetResultCode.SERVER_EXECUTE_EXCEPTION,
-                    $"{this} 获取 index 为 {index} 的ParamDesc越界, index < {ParamDescriptions.Count}");
-            }
+    /// <summary>
+    /// 处理的消息类型
+    /// </summary>
+    public MessageMode MessageMode => rpcProfile.Mode;
 
-            var desc = ParamDescriptions[index];
-            if (desc == null)
-            {
-                throw new ResultCodeException(NetResultCode.SERVER_EXECUTE_EXCEPTION,
-                    $"{this} 获取 index 为 {index} 的ParamDesc为null");
-            }
-            return desc.GetValue(tunnel, message, body);
-        }
+    public bool IsHasAuthValidator => AuthValidatorType != null;
 
-        public override TAttribute GetTypeAttribute<TAttribute>()
-        {
-            return typeController.GetTypeAttribute<TAttribute>();
-        }
+    public override bool IsContactGroup(IContactType contactType)
+    {
+        return ContactGroups != null ? base.IsContactGroup(contactType) : typeController.IsContactGroup(contactType);
+    }
 
-        public override IList<TAttribute> GetTypeAttributes<TAttribute>()
-        {
-            return typeController.GetTypeAttributes<TAttribute>();
-        }
+    public override bool IsActiveByAppType(string appType)
+    {
+        return AppTypes != null ? base.IsActiveByAppType(appType) : typeController.IsActiveByAppType(appType);
+    }
 
-        public TAttribute? GetMethodAttribute<TAttribute>() where TAttribute : Attribute
-        {
-            return MethodAttributeHolder.GetAttribute<TAttribute>();
-        }
+    public override bool IsActiveByScope(string scope)
+    {
+        return Scopes != null ? base.IsActiveByScope(scope) : typeController.IsActiveByScope(scope);
+    }
 
-        public IList<TAttribute> GetMethodAttributes<TAttribute>() where TAttribute : Attribute
-        {
-            return MethodAttributeHolder.GetAttributes<TAttribute>();
-        }
+    public override bool IsAuth()
+    {
+        return AuthAttribute != null ? base.IsAuth() : typeController.IsAuth();
+    }
 
-        public IList<Attribute?> GetParameterAnnotationsByType(Type type)
-        {
-            return !indexParamAnnotationsMap.TryGetValue(type, out var attributes)
-                ? ImmutableList.Create<Attribute?>()
-                : attributes;
-        }
-
-        public IList<Attribute> GetParameterAnnotationsByIndex(int index)
-        {
-            return ParamDescriptions[index].Attributes;
-        }
-
-        public IList<Type> GetParameterAnnotationTypes()
-        {
-            return ImmutableList.CreateRange(indexParamAnnotationsMap.Keys);
-        }
-
-        public object Invoke(INetTunnel tunnel, IMessage message)
-        {
-            // 获取调用方法的参数类型
-            var parameters = new object [ParametersSize];
-            var body = message.Body;
-            for (var index = 0; index < parameters.Length; index++)
-            {
-                parameters[index] = GetParameterValue(index, tunnel, message, body)!;
-            }
-            return invoker.Invoke(executor, parameters);
-        }
-
-        public void BeforeInvoke(ITunnel tunnel, IMessage message, RpcInvokeContext context)
-        {
-            if (beforeChain == null)
-            {
-                return;
-            }
-            beforeChain.Execute(tunnel, message, context);
-        }
-
-        public void AfterInvoke(ITunnel tunnel, IMessage message, RpcInvokeContext context)
-        {
-            if (afterChain == null)
-            {
-                return;
-            }
-            afterChain.Execute(tunnel, message, context);
-        }
-
-        public override string ToString()
-        {
-            return $"{nameof(Name)}: {Name}";
+    public override Type? AuthValidatorType {
+        get {
+            var auth = AuthAttribute;
+            return auth != null ? base.AuthValidatorType : typeController.AuthValidatorType;
         }
     }
 
+    public override IList<CommandPluginHolder> BeforePlugins {
+        get {
+            var plugin = base.BeforePlugins;
+            return plugin.Count == 0 ? typeController.BeforePlugins : plugin;
+        }
+    }
+
+    public override IList<CommandPluginHolder> AfterPlugins {
+        get {
+            var plugin = base.AfterPlugins;
+            return plugin.Count == 0 ? typeController.AfterPlugins : plugin;
+        }
+    }
+
+    public object? GetParameterValue(int index, INetTunnel tunnel, IMessage message, object? body)
+    {
+        if (index >= ParamDescriptions.Count)
+        {
+            throw new ResultCodeException(NetResultCode.SERVER_EXECUTE_EXCEPTION,
+                $"{this} 获取 index 为 {index} 的ParamDesc越界, index < {ParamDescriptions.Count}");
+        }
+
+        var desc = ParamDescriptions[index];
+        if (desc == null)
+        {
+            throw new ResultCodeException(NetResultCode.SERVER_EXECUTE_EXCEPTION,
+                $"{this} 获取 index 为 {index} 的ParamDesc为null");
+        }
+        return desc.GetValue(tunnel, message, body);
+    }
+
+    public override TAttribute GetTypeAttribute<TAttribute>()
+    {
+        return typeController.GetTypeAttribute<TAttribute>();
+    }
+
+    public override IList<TAttribute> GetTypeAttributes<TAttribute>()
+    {
+        return typeController.GetTypeAttributes<TAttribute>();
+    }
+
+    public TAttribute? GetMethodAttribute<TAttribute>() where TAttribute : Attribute
+    {
+        return MethodAttributeHolder.GetAttribute<TAttribute>();
+    }
+
+    public IList<TAttribute> GetMethodAttributes<TAttribute>() where TAttribute : Attribute
+    {
+        return MethodAttributeHolder.GetAttributes<TAttribute>();
+    }
+
+    public IList<Attribute?> GetParameterAnnotationsByType(Type type)
+    {
+        return !indexParamAnnotationsMap.TryGetValue(type, out var attributes)
+            ? ImmutableList.Create<Attribute?>()
+            : attributes;
+    }
+
+    public IList<Attribute> GetParameterAnnotationsByIndex(int index)
+    {
+        return ParamDescriptions[index].Attributes;
+    }
+
+    public IList<Type> GetParameterAnnotationTypes()
+    {
+        return ImmutableList.CreateRange(indexParamAnnotationsMap.Keys);
+    }
+
+    public object Invoke(INetTunnel tunnel, IMessage message)
+    {
+        // 获取调用方法的参数类型
+        var parameters = new object [ParametersSize];
+        var body = message.Body;
+        for (var index = 0; index < parameters.Length; index++)
+        {
+            parameters[index] = GetParameterValue(index, tunnel, message, body)!;
+        }
+        return invoker.Invoke(executor, parameters);
+    }
+
+    public void BeforeInvoke(ITunnel tunnel, IMessage message, RpcInvokeContext context)
+    {
+        if (beforeChain == null)
+        {
+            return;
+        }
+        beforeChain.Execute(tunnel, message, context);
+    }
+
+    public void AfterInvoke(ITunnel tunnel, IMessage message, RpcInvokeContext context)
+    {
+        if (afterChain == null)
+        {
+            return;
+        }
+        afterChain.Execute(tunnel, message, context);
+    }
+
+    public override string ToString()
+    {
+        return $"{nameof(Name)}: {Name}";
+    }
 }

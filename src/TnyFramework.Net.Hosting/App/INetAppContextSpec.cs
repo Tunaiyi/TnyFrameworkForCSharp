@@ -6,20 +6,17 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Hosting.App
+namespace TnyFramework.Net.Hosting.App;
+
+public interface INetAppContextSpec
 {
+    NetAppContextSpec ServerId(int value);
 
-    public interface INetAppContextSpec
-    {
-        NetAppContextSpec ServerId(int value);
+    NetAppContextSpec AppName(string value);
 
-        NetAppContextSpec AppName(string value);
+    NetAppContextSpec AppType(string value);
 
-        NetAppContextSpec AppType(string value);
+    NetAppContextSpec ScopeType(string value);
 
-        NetAppContextSpec ScopeType(string value);
-
-        NetAppContextSpec Locale(string value);
-    }
-
+    NetAppContextSpec Locale(string value);
 }

@@ -9,37 +9,34 @@
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public interface ITunnel : ICommunicator, IConnection, ISender, INetService
 {
+    /// <summary>
+    /// 通道 Id
+    /// </summary>
+    long Id { get; }
 
-    public interface ITunnel : ICommunicator, IConnection, ISender, INetService
-    {
-        /// <summary>
-        /// 通道 Id
-        /// </summary>
-        long Id { get; }
+    /// <summary>
+    /// 访问 id
+    /// </summary>
+    /// <returns></returns>
+    long AccessId { get; }
 
-        /// <summary>
-        /// 访问 id
-        /// </summary>
-        /// <returns></returns>
-        long AccessId { get; }
+    /// <summary>
+    /// 通道状态
+    /// </summary>
+    TunnelStatus Status { get; }
 
-        /// <summary>
-        /// 通道状态
-        /// </summary>
-        TunnelStatus Status { get; }
+    /// <summary>
+    /// 是否已经开启
+    /// </summary>
+    /// <returns></returns>
+    bool IsOpen();
 
-        /// <summary>
-        /// 是否已经开启
-        /// </summary>
-        /// <returns></returns>
-        bool IsOpen();
-
-        /// <summary>
-        /// 会话
-        /// </summary>
-        ISession Session { get; }
-    }
-
+    /// <summary>
+    /// 会话
+    /// </summary>
+    ISession Session { get; }
 }

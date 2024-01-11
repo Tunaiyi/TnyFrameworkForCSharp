@@ -9,33 +9,30 @@
 using System.Threading.Tasks;
 using TnyFramework.Codec;
 
-namespace TnyFramework.Namespace
+namespace TnyFramework.Namespace;
+
+public delegate Task<NameNode<TValue>> Publishing<TValue>(
+    INamespaceExplorer explorer, string path, TValue value, ObjectMimeType<TValue> mineType, ILessee? lessee);
+
+public interface IHashingPublisher<in TKey, TValue>
 {
+    string Path { get; }
 
-    public delegate Task<NameNode<TValue>> Publishing<TValue>(
-        INamespaceExplorer explorer, string path, TValue value, ObjectMimeType<TValue> mineType, ILessee? lessee);
+    ObjectMimeType<TValue> MineType { get; }
 
-    public interface IHashingPublisher<in TKey, TValue>
-    {
-        string Path { get; }
+    Task<ILessee> Lease();
 
-        ObjectMimeType<TValue> MineType { get; }
+    Task<ILessee> Lease(long ttl);
 
-        Task<ILessee> Lease();
+    string PathOf(TKey key, TValue value);
 
-        Task<ILessee> Lease(long ttl);
+    Task<NameNode<TValue>> Publish(TKey key, TValue value);
 
-        string PathOf(TKey key, TValue value);
+    Task<NameNode<TValue>> Operate(TKey key, TValue value, Publishing<TValue> publishing);
 
-        Task<NameNode<TValue>> Publish(TKey key, TValue value);
+    Task<NameNode<TValue>> PublishIfAbsent(TKey key, TValue value);
 
-        Task<NameNode<TValue>> Operate(TKey key, TValue value, Publishing<TValue> publishing);
+    Task<NameNode<TValue>> PublishIfExist(TKey key, TValue value);
 
-        Task<NameNode<TValue>> PublishIfAbsent(TKey key, TValue value);
-
-        Task<NameNode<TValue>> PublishIfExist(TKey key, TValue value);
-
-        Task<NameNode<TValue>> Revoke(TKey key, TValue value);
-    }
-
+    Task<NameNode<TValue>> Revoke(TKey key, TValue value);
 }

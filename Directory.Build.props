@@ -24,11 +24,11 @@
         <!--设置二进制文件目录-->
         <BaseOutputPath>$(MSBuildThisFileDirectory)Build/bin/$(MSBuildProjectName)/</BaseOutputPath>
     </PropertyGroup>
-    
+
     <PropertyGroup Condition="'$(Configuration)' == 'Publish' Or '$(Configuration)' == 'Release'">
         <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
         <Deterministic>true</Deterministic>
-<!--        <EmbedUntrackedSources>true</EmbedUntrackedSources>-->
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <NoPackageAnalysis>true</NoPackageAnalysis>
@@ -37,13 +37,13 @@
     </PropertyGroup>
 
     <PropertyGroup>
-<!--        <TnyRemoteUrl>https://m2.tunaiyi.com/repository/nuget-hosted/</TnyRemoteUrl>-->
+        <!--        <TnyRemoteUrl>https://m2.tunaiyi.com/repository/nuget-hosted/</TnyRemoteUrl>-->
         <TnyRemoteUrl>https://nuget.tnydev.com/v3/index.json</TnyRemoteUrl>
         <NugetRemoteUrl>https://api.nuget.org/v3/index.json</NugetRemoteUrl>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Publish' ">
-<!--        <Optimize>true</Optimize>-->
+        <!--        <Optimize>true</Optimize>-->
     </PropertyGroup>
 
     <PropertyGroup>
@@ -51,16 +51,16 @@
         <NugetReleaseOutputDirectory>$(MSBuildProjectDirectory)/../../Nuget/Release</NugetReleaseOutputDirectory>
     </PropertyGroup>
 
-<!--    <Target Name="LoaclInstallReleasePackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release' And '$(OutputType)' == 'Library'">-->
-<!--        <Message Text="Push Nuget To $(OutputPath)"/>-->
-<!--        <MakeDir Directories="$(NugetReleaseOutputDirectory)"/>-->
-<!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetReleaseOutputDirectory)"/>-->
-<!--    </Target>-->
+    <!--    <Target Name="LoaclInstallReleasePackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Release' And '$(OutputType)' == 'Library'">-->
+    <!--        <Message Text="Push Nuget To $(OutputPath)"/>-->
+    <!--        <MakeDir Directories="$(NugetReleaseOutputDirectory)"/>-->
+    <!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetReleaseOutputDirectory)"/>-->
+    <!--    </Target>-->
 
-<!--    <Target Name="LoaclInstallDebugPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug' And '$(OutputType)' == 'Library'">-->
-<!--        <MakeDir Directories="$(NugetDebugOutputDirectory)"/>-->
-<!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetDebugOutputDirectory)"/>-->
-<!--    </Target>-->
+    <!--    <Target Name="LoaclInstallDebugPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Debug' And '$(OutputType)' == 'Library'">-->
+    <!--        <MakeDir Directories="$(NugetDebugOutputDirectory)"/>-->
+    <!--        <Exec Command="nuget push $(OutputPath)$(PackageId).$(PackageVersion).nupkg -Source $(NugetDebugOutputDirectory)"/>-->
+    <!--    </Target>-->
 
     <Target Name="LoaclInstallPublishPackNuget" AfterTargets="Pack" Condition="'$(Configuration)' == 'Publish' And '$(OutputType)' == 'Library'">
         <Message Text="Push Nuget To $(TnyRemoteUrl)"/>

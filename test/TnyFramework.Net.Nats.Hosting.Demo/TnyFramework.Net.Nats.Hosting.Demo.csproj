@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <Configurations>Debug;Release;Publish</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <LangVersion>latest</LangVersion>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0"/>
+        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.7"/>
+        <PackageReference Include="System.Collections.Concurrent" Version="4.3.0"/>
+        <PackageReference Include="TnyFramework.Extensions.Configuration.Yaml" Version="5.7.0-x"/>
+        <PackageReference Include="Steeltoe.Extensions.Configuration.PlaceholderCore" Version="3.2.6"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ContentWithTargetPath Include="*.yml">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>%(Filename)%(Extension)</TargetPath>
+        </ContentWithTargetPath>
+        <ContentWithTargetPath Include="*.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <TargetPath>%(Filename)%(Extension)</TargetPath>
+        </ContentWithTargetPath>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\TnyFramework.Net.Nats.Hosting\TnyFramework.Net.Nats.Hosting.csproj"/>
+        <ProjectReference Include="..\..\src\TnyFramework.Net.Nats\TnyFramework.Net.Nats.csproj"/>
+        <ProjectReference Include="..\..\src\TnyFramework.NLog.Hosting\TnyFramework.NLog.Hosting.csproj" />
+    </ItemGroup>
+</Project>

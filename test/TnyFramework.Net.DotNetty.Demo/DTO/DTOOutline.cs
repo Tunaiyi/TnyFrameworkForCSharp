@@ -9,16 +9,15 @@
 using System;
 using System.Reflection;
 
-namespace TnyFramework.Net.DotNetty.Demo.DTO
-{
+namespace TnyFramework.Net.DotNetty.Demo.DTO;
 
-    public static partial class DTOOutline
+public static partial class DTOOutline
+{
+    /// <summary>
+    /// 注册所有DTO
+    /// </summary>
+    public static void RegisterDTOs()
     {
-        /// <summary>
-        /// 注册所有DTO
-        /// </summary>
-        public static void RegisterDTOs()
-        {
             var type = typeof(DTOOutline);
             var fields = type.GetFields(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
             foreach (var filed in fields)
@@ -29,6 +28,4 @@ namespace TnyFramework.Net.DotNetty.Demo.DTO
                 action?.Invoke();
             }
         }
-    }
-
 }

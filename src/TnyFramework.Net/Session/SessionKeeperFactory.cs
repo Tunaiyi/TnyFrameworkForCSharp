@@ -8,15 +8,12 @@
 
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public class SessionKeeperFactory : ISessionKeeperFactory
 {
-
-    public class SessionKeeperFactory : ISessionKeeperFactory
+    public ISessionKeeper CreateKeeper(IContactType contactType, ISessionKeeperSetting setting)
     {
-        public ISessionKeeper CreateKeeper(IContactType contactType, ISessionKeeperSetting setting)
-        {
-            return new CommonSessionKeeper(contactType, setting);
-        }
+        return new CommonSessionKeeper(contactType, setting);
     }
-
 }

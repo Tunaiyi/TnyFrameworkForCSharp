@@ -19,103 +19,100 @@ using TnyFramework.Net.Common;
 using TnyFramework.Net.Rpc.Attributes;
 using TnyFramework.Net.Rpc.Exceptions;
 
-namespace TnyFramework.Net.Rpc.Remote
+namespace TnyFramework.Net.Rpc.Remote;
+
+public class RpcInvokeHandler : IInterceptor
 {
+    private readonly RpcRemoteInstance instance;
 
-    public class RpcInvokeHandler : IInterceptor
+    public RpcInvokeHandler(RpcRemoteInstance instance)
     {
-        private readonly RpcRemoteInstance instance;
-
-        public RpcInvokeHandler(RpcRemoteInstance instance)
-        {
-            this.instance = instance;
-        }
-
-        public void Intercept(IInvocation invocation)
-        {
-
-            var invoker = instance.Invoker(invocation.Method);
-            var arguments = invocation.Arguments;
-            invocation.ReturnValue = invoker?.Invoke(arguments);
-        }
+        this.instance = instance;
     }
 
-    public class RpcRemoteInstanceFactory
+    public void Intercept(IInvocation invocation)
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<RpcInvokeHandler>();
 
-        private readonly RpcRemoteSetting setting;
+        var invoker = instance.Invoker(invocation.Method);
+        var arguments = invocation.Arguments;
+        invocation.ReturnValue = invoker?.Invoke(arguments);
+    }
+}
 
-        private readonly RpcMonitor rpcMonitor;
+public class RpcRemoteInstanceFactory
+{
+    private static readonly ILogger LOGGER = LogFactory.Logger<RpcInvokeHandler>();
 
-        private readonly IRpcInvokeNodeManager rpcInvokeNode;
+    private readonly RpcRemoteSetting setting;
 
-        private readonly IRpcRemoteRouteManager rpcRouteManager;
+    private readonly RpcMonitor rpcMonitor;
 
-        public RpcRemoteInstanceFactory(RpcRemoteSetting setting, IRpcInvokeNodeManager rpcInvokeNode, IRpcRemoteRouteManager rpcRouteManager,
-            RpcMonitor rpcMonitor)
-        {
-            this.setting = setting;
-            this.rpcInvokeNode = rpcInvokeNode;
-            this.rpcRouteManager = rpcRouteManager;
-            this.rpcMonitor = rpcMonitor;
-        }
+    private readonly IRpcInvokeNodeManager rpcInvokeNode;
 
-        public T Create<T>()
-        {
-            return (T) Create(typeof(T));
-        }
+    private readonly IRpcRemoteRouteManager rpcRouteManager;
 
-        public object Create(Type rpcType)
-        {
-            var factory = new ProxyGenerator();
-            var instance = CreateRpcInstance(rpcType);
-            object proxy;
-            try
-            {
-                proxy = factory.CreateInterfaceProxyWithoutTarget(rpcType, new RpcInvokeHandler(instance));
-            } catch (Exception e)
-            {
-                throw new RpcException(ResultCode.FAILURE, e, $"create {rpcType} proxy object exception");
-            }
-            return proxy;
-        }
-
-        private RpcRemoteInstance CreateRpcInstance(Type rpcType)
-        {
-            var methods = RpcRemoteMethod.MethodsOf(rpcType);
-            var rpcService = rpcType.GetCustomAttribute<RpcRemoteServiceAttribute>();
-            var service = rpcService!.Service;
-            if (!rpcService.ForwardService.IsNullOrEmpty())
-            {
-                service = rpcService.ForwardService;
-            }
-            var serviceType = RpcServiceType.ForService(service);
-            var remoteServicer = rpcInvokeNode.LoadInvokeNodeSet(serviceType);
-            var instance = new RpcRemoteInstance(rpcType, setting, remoteServicer!);
-
-            IDictionary<MethodInfo, IRpcRemoteInvoker> invokerMap = new Dictionary<MethodInfo, IRpcRemoteInvoker>();
-            var count = 0;
-            var objectType = typeof(object);
-            foreach (var method in methods)
-            {
-                var router = rpcRouteManager.GetRouter(method.RouterType);
-                if (method.Method.DeclaringType == objectType)
-                {
-                    continue;
-                }
-                if (router == null)
-                {
-                    throw new RpcInvokeException(NetResultCode.REMOTE_EXCEPTION, $"调用 {method.Method} 异常, 未找到 {method.RouterType} RpcRouter");
-                }
-                var invoker = new RpcRemoteInvoker(method, instance, router, rpcMonitor);
-                count++;
-                invokerMap.Add(method.Method, invoker);
-            }
-            LOGGER.LogDebug("创建 {Rpc} RpcRemoteInstance 实例 {Count} 个协议", rpcType, count);
-            instance.InvokerMap = invokerMap;
-            return instance;
-        }
+    public RpcRemoteInstanceFactory(RpcRemoteSetting setting, IRpcInvokeNodeManager rpcInvokeNode, IRpcRemoteRouteManager rpcRouteManager,
+        RpcMonitor rpcMonitor)
+    {
+        this.setting = setting;
+        this.rpcInvokeNode = rpcInvokeNode;
+        this.rpcRouteManager = rpcRouteManager;
+        this.rpcMonitor = rpcMonitor;
     }
 
+    public T Create<T>()
+    {
+        return (T) Create(typeof(T));
+    }
+
+    public object Create(Type rpcType)
+    {
+        var factory = new ProxyGenerator();
+        var instance = CreateRpcInstance(rpcType);
+        object proxy;
+        try
+        {
+            proxy = factory.CreateInterfaceProxyWithoutTarget(rpcType, new RpcInvokeHandler(instance));
+        } catch (Exception e)
+        {
+            throw new RpcException(ResultCode.FAILURE, e, $"create {rpcType} proxy object exception");
+        }
+        return proxy;
+    }
+
+    private RpcRemoteInstance CreateRpcInstance(Type rpcType)
+    {
+        var methods = RpcRemoteMethod.MethodsOf(rpcType);
+        var rpcService = rpcType.GetCustomAttribute<RpcRemoteServiceAttribute>();
+        var service = rpcService!.Service;
+        if (!rpcService.ForwardService.IsNullOrEmpty())
+        {
+            service = rpcService.ForwardService;
+        }
+        var serviceType = RpcServiceType.ForService(service);
+        var remoteServicer = rpcInvokeNode.LoadInvokeNodeSet(serviceType);
+        var instance = new RpcRemoteInstance(rpcType, setting, remoteServicer!);
+
+        IDictionary<MethodInfo, IRpcRemoteInvoker> invokerMap = new Dictionary<MethodInfo, IRpcRemoteInvoker>();
+        var count = 0;
+        var objectType = typeof(object);
+        foreach (var method in methods)
+        {
+            var router = rpcRouteManager.GetRouter(method.RouterType);
+            if (method.Method.DeclaringType == objectType)
+            {
+                continue;
+            }
+            if (router == null)
+            {
+                throw new RpcInvokeException(NetResultCode.REMOTE_EXCEPTION, $"调用 {method.Method} 异常, 未找到 {method.RouterType} RpcRouter");
+            }
+            var invoker = new RpcRemoteInvoker(method, instance, router, rpcMonitor);
+            count++;
+            invokerMap.Add(method.Method, invoker);
+        }
+        LOGGER.LogDebug("创建 {Rpc} RpcRemoteInstance 实例 {Count} 个协议", rpcType, count);
+        instance.InvokerMap = invokerMap;
+        return instance;
+    }
 }

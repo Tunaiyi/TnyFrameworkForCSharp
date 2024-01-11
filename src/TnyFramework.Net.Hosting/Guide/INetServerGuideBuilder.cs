@@ -8,13 +8,10 @@
 
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Hosting.Guide
+namespace TnyFramework.Net.Hosting.Guide;
+
+public interface INetServerGuideBuilder<out TGuide>
+    where TGuide : INetServer
 {
-
-    public interface INetServerGuideBuilder<out TGuide>
-        where TGuide : INetServer
-    {
-        TGuide BuildGuide();
-    }
-
+    TGuide BuildGuide();
 }

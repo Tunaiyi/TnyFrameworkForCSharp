@@ -6,16 +6,13 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Message.Extensions
+namespace TnyFramework.Net.Message.Extensions;
+
+public static class MessageExtensions
 {
-
-    public static class MessageExtensions
+    public static long GetOriginalId(this IMessage subject)
     {
-        public static long GetOriginalId(this IMessage subject)
-        {
-            var idHeader = subject.GetHeader(MessageHeaderKeys.RPC_ORIGINAL_MESSAGE_ID_HEADER);
-            return idHeader?.MessageId ?? subject.Id;
-        }
+        var idHeader = subject.GetHeader(MessageHeaderKeys.RPC_ORIGINAL_MESSAGE_ID_HEADER);
+        return idHeader?.MessageId ?? subject.Id;
     }
-
 }

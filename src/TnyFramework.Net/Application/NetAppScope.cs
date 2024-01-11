@@ -6,25 +6,22 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Application
+namespace TnyFramework.Net.Application;
+
+public class NetAppScope : AppScope<NetAppScope>
 {
+    /// <summary>
+    /// 上线
+    /// </summary>
+    public static readonly IAppScope ONLINE = Of(1, "online");
 
-    public class NetAppScope : AppScope<NetAppScope>
-    {
-        /// <summary>
-        /// 上线
-        /// </summary>
-        public static readonly IAppScope ONLINE = Of(1, "online");
+    /// <summary>
+    /// 开发
+    /// </summary>
+    public static readonly IAppScope DEVELOP = Of(2, "develop");
 
-        /// <summary>
-        /// 开发
-        /// </summary>
-        public static readonly IAppScope DEVELOP = Of(2, "develop");
-
-        /// <summary>
-        /// 测试
-        /// </summary>
-        public static readonly IAppScope TEST = Of(3, "test");
-    }
-
+    /// <summary>
+    /// 测试
+    /// </summary>
+    public static readonly IAppScope TEST = Of(3, "test");
 }

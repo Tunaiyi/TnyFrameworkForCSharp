@@ -6,12 +6,9 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.FreeRedis.Hosting.Configurations
+namespace TnyFramework.FreeRedis.Hosting.Configurations;
+
+public static class FreeRedisPropertiesKeys
 {
-
-    public static class FreeRedisPropertiesKeys
-    {
-        public const string FREE_REDIS_ROOT = "Tny:Redis:FreeRedis";
-    }
-
+    public const string FREE_REDIS_ROOT = "Tny:Redis:FreeRedis";
 }

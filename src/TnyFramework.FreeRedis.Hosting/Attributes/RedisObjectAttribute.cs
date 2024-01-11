@@ -8,30 +8,27 @@
 
 using System;
 
-namespace TnyFramework.FreeRedis.Hosting.Attributes
+namespace TnyFramework.FreeRedis.Hosting.Attributes;
+
+/// <summary>
+/// Redis 特性
+/// </summary>
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
+public class RedisObjectAttribute : Attribute
 {
+    /// <summary>
+    /// 数据源
+    /// </summary>
+    public string Source { get; }
 
     /// <summary>
-    /// Redis 特性
+    /// 媒体类型
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-    public class RedisObjectAttribute : Attribute
+    public string Mime { get; }
+
+    public RedisObjectAttribute(string mime, string source = "")
     {
-        /// <summary>
-        /// 数据源
-        /// </summary>
-        public string Source { get; }
-
-        /// <summary>
-        /// 媒体类型
-        /// </summary>
-        public string Mime { get; }
-
-        public RedisObjectAttribute(string mime, string source = "")
-        {
-            Source = source;
-            Mime = mime;
-        }
+        Source = source;
+        Mime = mime;
     }
-
 }

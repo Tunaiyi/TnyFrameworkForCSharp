@@ -1,0 +1,40 @@
+﻿{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:8252",
+      "sslPort": 44318
+    }
+  },
+  "profiles": {
+    "Server": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "requireExactSource": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Server"
+      }
+    },
+    "Client": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "requireExactSource": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Client"
+      }
+    },
+    "BTClient": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": false,
+      "requireExactSource": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "BTClient"
+      }
+    }
+  }
+}

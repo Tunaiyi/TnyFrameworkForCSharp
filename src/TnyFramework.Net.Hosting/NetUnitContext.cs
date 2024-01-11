@@ -18,126 +18,123 @@ using TnyFramework.Net.Hosting.Session;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
 
-namespace TnyFramework.Net.Hosting
+namespace TnyFramework.Net.Hosting;
+
+public class NetUnitContext : INetUnitContext
 {
+    private IServiceCollection UnitContainer { get; }
 
-    public class NetUnitContext : INetUnitContext
+    public NetAppContextSpec AppContextSpec { get; }
+
+    public SessionSpec SessionSpec { get; }
+
+    public ISessionUnitContext SessionUnitContext => SessionSpec;
+
+    public UnitSpec<MessageDispatcherContext, INetUnitContext> MessageDispatcherContextSpec { get; }
+
+    public UnitSpec<IMessageDispatcher, INetUnitContext> MessageDispatcherSpec { get; }
+
+    public UnitSpec<IRpcInvokeNodeManager, INetUnitContext> RpcRemoteServiceManagerSpec { get; }
+
+    public UnitSpec<ICommandBoxFactory, INetUnitContext> CommandBoxFactorySpec { get; }
+
+    public UnitCollectionSpec<ICommandPlugin, INetUnitContext> CommandPluginSpecs { get; }
+
+    public UnitCollectionSpec<IAuthenticationValidator, INetUnitContext> AuthenticateValidatorSpecs { get; }
+
+    public NetUnitContext(IServiceCollection unitContainer)
     {
-        private IServiceCollection UnitContainer { get; }
+        UnitContainer = unitContainer;
 
-        public NetAppContextSpec AppContextSpec { get; }
+        RpcRemoteServiceManagerSpec = UnitSpec.Unit<IRpcInvokeNodeManager, INetUnitContext>()
+            .Default(DefaultRpcRemoteServiceManager);
 
-        public SessionSpec SessionSpec { get; }
+        // MessageDispatcher
+        MessageDispatcherSpec = UnitSpec.Unit<IMessageDispatcher, INetUnitContext>()
+            .Default(DefaultMessageDispatcher);
 
-        public ISessionUnitContext SessionUnitContext => SessionSpec;
+        MessageDispatcherContextSpec = UnitSpec.Unit<MessageDispatcherContext, INetUnitContext>()
+            .Default(DefaultMessageDispatcherContext);
 
-        public UnitSpec<MessageDispatcherContext, INetUnitContext> MessageDispatcherContextSpec { get; }
+        // CommandTaskBoxProcessor
+        CommandBoxFactorySpec = UnitSpec.Unit<ICommandBoxFactory, INetUnitContext>()
+            .Default<DefaultCommandBoxFactory>();
 
-        public UnitSpec<IMessageDispatcher, INetUnitContext> MessageDispatcherSpec { get; }
+        // CommandPlugin
+        CommandPluginSpecs = UnitCollectionSpec.Units<ICommandPlugin, INetUnitContext>();
 
-        public UnitSpec<IRpcInvokeNodeManager, INetUnitContext> RpcRemoteServiceManagerSpec { get; }
+        // AuthenticateValidator
+        AuthenticateValidatorSpecs = UnitCollectionSpec.Units<IAuthenticationValidator, INetUnitContext>();
 
-        public UnitSpec<ICommandBoxFactory, INetUnitContext> CommandBoxFactorySpec { get; }
+        // Endpoint
+        SessionSpec = new SessionSpec(UnitContainer);
 
-        public UnitCollectionSpec<ICommandPlugin, INetUnitContext> CommandPluginSpecs { get; }
+        // AppContext
+        AppContextSpec = new NetAppContextSpec();
 
-        public UnitCollectionSpec<IAuthenticationValidator, INetUnitContext> AuthenticateValidatorSpecs { get; }
-
-        public NetUnitContext(IServiceCollection unitContainer)
-        {
-            UnitContainer = unitContainer;
-
-            RpcRemoteServiceManagerSpec = UnitSpec.Unit<IRpcInvokeNodeManager, INetUnitContext>()
-                .Default(DefaultRpcRemoteServiceManager);
-
-            // MessageDispatcher 
-            MessageDispatcherSpec = UnitSpec.Unit<IMessageDispatcher, INetUnitContext>()
-                .Default(DefaultMessageDispatcher);
-
-            MessageDispatcherContextSpec = UnitSpec.Unit<MessageDispatcherContext, INetUnitContext>()
-                .Default(DefaultMessageDispatcherContext);
-
-            // CommandTaskBoxProcessor
-            CommandBoxFactorySpec = UnitSpec.Unit<ICommandBoxFactory, INetUnitContext>()
-                .Default<DefaultCommandBoxFactory>();
-
-            // CommandPlugin
-            CommandPluginSpecs = UnitCollectionSpec.Units<ICommandPlugin, INetUnitContext>();
-
-            // AuthenticateValidator
-            AuthenticateValidatorSpecs = UnitCollectionSpec.Units<IAuthenticationValidator, INetUnitContext>();
-
-            // Endpoint
-            SessionSpec = new SessionSpec(UnitContainer);
-
-            // AppContext
-            AppContextSpec = new NetAppContextSpec();
-
-        }
-
-        public void Load()
-        {
-            LoadAppContext();
-            LoadAuthenticateValidators();
-            LoadCommandPlugins();
-            LoadMessageDispatcher();
-            LoadCommandBoxFactory();
-            LoadMessageDispatcherContext();
-            LoadRpcRemoteServiceManager();
-        }
-
-        public MessageDispatcherContext LoadMessageDispatcherContext()
-        {
-            return MessageDispatcherContextSpec.Load(this, UnitContainer);
-        }
-
-        public IRpcInvokeNodeManager LoadRpcRemoteServiceManager()
-        {
-            return RpcRemoteServiceManagerSpec.Load(this, UnitContainer);
-        }
-
-        public IMessageDispatcher LoadMessageDispatcher()
-        {
-            return MessageDispatcherSpec.Load(this, UnitContainer);
-        }
-
-        public ICommandBoxFactory LoadCommandBoxFactory()
-        {
-            return CommandBoxFactorySpec.Load(this, UnitContainer);
-        }
-
-        public INetAppContext LoadAppContext()
-        {
-            return AppContextSpec.Load(this, UnitContainer);
-        }
-
-        public IList<ICommandPlugin> LoadCommandPlugins()
-        {
-            return CommandPluginSpecs.Load(this, UnitContainer);
-        }
-
-        public IList<IAuthenticationValidator> LoadAuthenticateValidators()
-        {
-            return AuthenticateValidatorSpecs.Load(this, UnitContainer);
-        }
-
-        private static MessageDispatcherContext DefaultMessageDispatcherContext(INetUnitContext context)
-        {
-            return new MessageDispatcherContext(
-                context.LoadAppContext(),
-                context.LoadCommandPlugins(),
-                context.LoadAuthenticateValidators());
-        }
-
-        private static MessageDispatcher DefaultMessageDispatcher(INetUnitContext context)
-        {
-            return new MessageDispatcher(context.LoadMessageDispatcherContext(), context.SessionUnitContext.LoadContactAuthenticator());
-        }
-
-        private static RpcServicerManager DefaultRpcRemoteServiceManager(INetUnitContext context)
-        {
-            return new RpcServicerManager();
-        }
     }
 
+    public void Load()
+    {
+        LoadAppContext();
+        LoadAuthenticateValidators();
+        LoadCommandPlugins();
+        LoadMessageDispatcher();
+        LoadCommandBoxFactory();
+        LoadMessageDispatcherContext();
+        LoadRpcRemoteServiceManager();
+    }
+
+    public MessageDispatcherContext LoadMessageDispatcherContext()
+    {
+        return MessageDispatcherContextSpec.Load(this, UnitContainer);
+    }
+
+    public IRpcInvokeNodeManager LoadRpcRemoteServiceManager()
+    {
+        return RpcRemoteServiceManagerSpec.Load(this, UnitContainer);
+    }
+
+    public IMessageDispatcher LoadMessageDispatcher()
+    {
+        return MessageDispatcherSpec.Load(this, UnitContainer);
+    }
+
+    public ICommandBoxFactory LoadCommandBoxFactory()
+    {
+        return CommandBoxFactorySpec.Load(this, UnitContainer);
+    }
+
+    public INetAppContext LoadAppContext()
+    {
+        return AppContextSpec.Load(this, UnitContainer);
+    }
+
+    public IList<ICommandPlugin> LoadCommandPlugins()
+    {
+        return CommandPluginSpecs.Load(this, UnitContainer);
+    }
+
+    public IList<IAuthenticationValidator> LoadAuthenticateValidators()
+    {
+        return AuthenticateValidatorSpecs.Load(this, UnitContainer);
+    }
+
+    private static MessageDispatcherContext DefaultMessageDispatcherContext(INetUnitContext context)
+    {
+        return new MessageDispatcherContext(
+            context.LoadAppContext(),
+            context.LoadCommandPlugins(),
+            context.LoadAuthenticateValidators());
+    }
+
+    private static MessageDispatcher DefaultMessageDispatcher(INetUnitContext context)
+    {
+        return new MessageDispatcher(context.LoadMessageDispatcherContext(), context.SessionUnitContext.LoadContactAuthenticator());
+    }
+
+    private static RpcServicerManager DefaultRpcRemoteServiceManager(INetUnitContext context)
+    {
+        return new RpcServicerManager();
+    }
 }

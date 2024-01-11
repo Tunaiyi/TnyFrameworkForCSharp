@@ -12,41 +12,38 @@ using TnyFramework.DI.Extensions;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Rpc.Remote;
 
-namespace TnyFramework.Net.Hosting.Rpc
+namespace TnyFramework.Net.Hosting.Rpc;
+
+public class RpcRemoteUnitContext : IRpcRemoteUnitContext
 {
+    private IServiceCollection UnitContainer { get; }
 
-    public class RpcRemoteUnitContext : IRpcRemoteUnitContext
+    public UnitSpec<RpcRemoteSetting, IRpcRemoteUnitContext> RpcRemoteSettingSpec { get; }
+
+    public UnitSpec<IRpcRouter, IRpcRemoteUnitContext> DefaultRpcRemoteRouterSpec { get; }
+
+    public RpcRemoteUnitContext(IServiceCollection unitContainer)
     {
-        private IServiceCollection UnitContainer { get; }
+        UnitContainer = unitContainer;
+        DefaultRpcRemoteRouterSpec = UnitSpec.Unit<IRpcRouter, IRpcRemoteUnitContext>()
+            .Default<FirstRpcRouter>();
+        RpcRemoteSettingSpec = UnitSpec.Unit<RpcRemoteSetting, IRpcRemoteUnitContext>()
+            .Default<RpcRemoteSetting>();
+        unitContainer.BindSingleton<RpcRemoteInstanceFactory>();
+        unitContainer.BindSingleton(provider => {
+            IRpcRouter? defaultRpcRouter = null;
+            if (DefaultRpcRemoteRouterSpec.IsNotNull())
+            {
+                defaultRpcRouter = DefaultRpcRemoteRouterSpec.Load(this, UnitContainer);
+            }
+            return new RpcRemoteRouteManager(defaultRpcRouter, provider.GetServices<IRpcRouter>());
+        });
 
-        public UnitSpec<RpcRemoteSetting, IRpcRemoteUnitContext> RpcRemoteSettingSpec { get; }
-
-        public UnitSpec<IRpcRouter, IRpcRemoteUnitContext> DefaultRpcRemoteRouterSpec { get; }
-
-        public RpcRemoteUnitContext(IServiceCollection unitContainer)
-        {
-            UnitContainer = unitContainer;
-            DefaultRpcRemoteRouterSpec = UnitSpec.Unit<IRpcRouter, IRpcRemoteUnitContext>()
-                .Default<FirstRpcRouter>();
-            RpcRemoteSettingSpec = UnitSpec.Unit<RpcRemoteSetting, IRpcRemoteUnitContext>()
-                .Default<RpcRemoteSetting>();
-            unitContainer.BindSingleton<RpcRemoteInstanceFactory>();
-            unitContainer.BindSingleton(provider => {
-                IRpcRouter? defaultRpcRouter = null;
-                if (DefaultRpcRemoteRouterSpec.IsNotNull())
-                {
-                    defaultRpcRouter = DefaultRpcRemoteRouterSpec.Load(this, UnitContainer);
-                }
-                return new RpcRemoteRouteManager(defaultRpcRouter, provider.GetServices<IRpcRouter>());
-            });
-
-        }
-
-        public void Load()
-        {
-            DefaultRpcRemoteRouterSpec.Load(this, UnitContainer);
-            RpcRemoteSettingSpec.Load(this, UnitContainer);
-        }
     }
 
+    public void Load()
+    {
+        DefaultRpcRemoteRouterSpec.Load(this, UnitContainer);
+        RpcRemoteSettingSpec.Load(this, UnitContainer);
+    }
 }

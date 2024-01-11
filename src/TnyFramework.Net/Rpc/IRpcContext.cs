@@ -8,12 +8,9 @@
 
 using TnyFramework.Net.Command.Dispatcher;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public interface IRpcContext
 {
-
-    public interface IRpcContext
-    {
-        IRpcForwarder? RpcForwarder { get; }
-    }
-
+    IRpcForwarder? RpcForwarder { get; }
 }

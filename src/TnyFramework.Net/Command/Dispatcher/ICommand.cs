@@ -8,65 +8,62 @@
 
 using System.Threading.Tasks;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public interface ICommand
 {
+    /// <summary>
+    /// 执行
+    /// </summary>
+    Task Execute();
 
-    public interface ICommand
+    /// <summary>
+    /// 是否成功完成
+    /// </summary>
+    /// <returns></returns>
+    bool IsDone();
+
+    /// <summary>
+    /// 命令名字
+    /// </summary>
+    string Name { get; }
+}
+
+public abstract class Command : ICommand
+{
+    private bool done;
+
+    protected Command()
     {
-        /// <summary>
-        /// 执行
-        /// </summary>
-        Task Execute();
-
-        /// <summary>
-        /// 是否成功完成
-        /// </summary>
-        /// <returns></returns>
-        bool IsDone();
-
-        /// <summary>
-        /// 命令名字
-        /// </summary>
-        string Name { get; }
+        Name = GetType().Name;
     }
 
-    public abstract class Command : ICommand
+    protected Command(string name)
     {
-        private bool done;
-
-        protected Command()
-        {
-            Name = GetType().Name;
-        }
-
-        protected Command(string name)
-        {
-            Name = name;
-        }
-
-        public string Name { get; }
-
-        /// <summary>
-        /// 执行
-        /// </summary>
-        public async Task Execute()
-        {
-            try
-            {
-                await Action();
-            } finally
-            {
-                done = true;
-            }
-        }
-
-        protected abstract Task Action();
-
-        /// <summary>
-        /// 是否成功完成
-        /// </summary>
-        /// <returns></returns>
-        public bool IsDone() => done;
+        Name = name;
     }
 
+    public string Name { get; }
+
+    /// <summary>
+    /// 执行
+    /// </summary>
+    public async Task Execute()
+    {
+        try
+        {
+            await Action();
+        } finally
+        {
+            done = true;
+        }
+    }
+
+    protected abstract Task Action();
+
+    /// <summary>
+    /// 是否成功完成
+    /// </summary>
+    /// <returns></returns>
+    public bool IsDone() => done;
 }

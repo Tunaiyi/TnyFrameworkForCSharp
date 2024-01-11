@@ -10,16 +10,13 @@ using SkyApm.Utilities.DependencyInjection;
 using TnyFramework.DI.Extensions;
 using TnyFramework.Net.Apm.Skywalking.Hosting.Handler;
 
-namespace TnyFramework.Net.Apm.Skywalking.Hosting.Extensions
+namespace TnyFramework.Net.Apm.Skywalking.Hosting.Extensions;
+
+public static class NetSkyWalkingBuilderExtensions
 {
-
-    public static class NetSkyWalkingBuilderExtensions
+    public static SkyApmExtensions AddTnyRpc(this SkyApmExtensions extensions)
     {
-        public static SkyApmExtensions AddTnyRpc(this SkyApmExtensions extensions)
-        {
-            extensions.Services.BindSingleton<SkywalkingRpcMonitorHandler>();
-            return extensions;
-        }
+        extensions.Services.BindSingleton<SkywalkingRpcMonitorHandler>();
+        return extensions;
     }
-
 }

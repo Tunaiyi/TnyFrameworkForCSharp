@@ -8,48 +8,46 @@
 
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public class Session : NetSession
 {
-
-    public class Session : NetSession
+    public Session(ICertificate certificate, ISessionContext context, INetTunnel tunnel) : base(certificate, context, tunnel)
     {
-        public Session(ICertificate certificate, ISessionContext context, INetTunnel tunnel) : base(certificate, context, tunnel)
-        {
-        }
+    }
 
-        public override void OnUnactivated(INetTunnel tunnel)
+    public override void OnUnactivated(INetTunnel tunnel)
+    {
+        if (!Certificate.IsAuthenticated())
         {
-            if (!Certificate.IsAuthenticated()) {
-                Close();
-                return;
-            }
+            Close();
+            return;
+        }
+        if (IsOffline())
+        {
+            return;
+        }
+        lock (this)
+        {
             if (IsOffline())
             {
                 return;
             }
-            lock (this)
+            var current = CurrentTunnel;
+            if (current.IsActive())
             {
-                if (IsOffline())
-                {
-                    return;
-                }
-                var current = CurrentTunnel;
-                if (current.IsActive())
-                {
-                    return;
-                }
-                if (IsClosed())
-                {
-                    return;
-                }
-                SetOffline();
+                return;
             }
-        }
-
-        public override string ToString()
-        {
-            return $"Session[UserType:{ContactGroup}, UserId:${Identify}, Tunnel:{CurrentTunnel}]";
+            if (IsClosed())
+            {
+                return;
+            }
+            SetOffline();
         }
     }
 
+    public override string ToString()
+    {
+        return $"Session[UserType:{ContactGroup}, UserId:${Identify}, Tunnel:{CurrentTunnel}]";
+    }
 }

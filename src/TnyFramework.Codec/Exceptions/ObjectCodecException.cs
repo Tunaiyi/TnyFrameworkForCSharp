@@ -8,23 +8,20 @@
 
 using System;
 
-namespace TnyFramework.Codec.Exceptions
+namespace TnyFramework.Codec.Exceptions;
+
+public class ObjectCodecException : Exception
 {
-
-    public class ObjectCodecException : Exception
+    public ObjectCodecException()
     {
-        public ObjectCodecException()
-        {
-        }
+    }
 
-        public ObjectCodecException(string message) : base(message)
-        {
-        }
+    public ObjectCodecException(string message) : base(message)
+    {
+    }
 
-        public ObjectCodecException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
+    public ObjectCodecException(string message, Exception innerException) : base(message, innerException)
+    {
     }
 
 }

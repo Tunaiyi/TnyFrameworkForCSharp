@@ -17,41 +17,38 @@ using TnyFramework.Net.Hosting.App;
 using TnyFramework.Net.Hosting.Session;
 using TnyFramework.Net.Plugin;
 
-namespace TnyFramework.Net.Hosting.Configuration
+namespace TnyFramework.Net.Hosting.Configuration;
+
+public interface INetHostConfiguration<out TConfiguration>
+    where TConfiguration : INetHostConfiguration<TConfiguration>
 {
+    TConfiguration AppContext(int serverId, string name);
 
-    public interface INetHostConfiguration<out TConfiguration>
-        where TConfiguration : INetHostConfiguration<TConfiguration>
-    {
-        TConfiguration AppContext(int serverId, string name);
+    TConfiguration AppContext(int serverId, string name, string appType, string scope);
 
-        TConfiguration AppContext(int serverId, string name, string appType, string scope);
+    TConfiguration AppContextConfigure(Action<INetAppContextSpec> action);
 
-        TConfiguration AppContextConfigure(Action<INetAppContextSpec> action);
+    TConfiguration MessageDispatcherConfigure(Action<IUnitSpec<IMessageDispatcher, INetUnitContext>> action);
 
-        TConfiguration MessageDispatcherConfigure(Action<IUnitSpec<IMessageDispatcher, INetUnitContext>> action);
+    TConfiguration CommandBoxFactory(Action<IUnitSpec<ICommandBoxFactory, INetUnitContext>> action);
 
-        TConfiguration CommandBoxFactory(Action<IUnitSpec<ICommandBoxFactory, INetUnitContext>> action);
+    TConfiguration AddController<TController>() where TController : class, IController;
 
-        TConfiguration AddController<TController>() where TController : class, IController;
+    TConfiguration AddController(IController controller);
 
-        TConfiguration AddController(IController controller);
+    TConfiguration AddController<TController>(Func<IServiceProvider, TController> factory) where TController : IController;
 
-        TConfiguration AddController<TController>(Func<IServiceProvider, TController> factory) where TController : IController;
+    TConfiguration AddControllers();
 
-        TConfiguration AddControllers();
+    TConfiguration AddControllers(ICollection<Assembly> assemblies);
 
-        TConfiguration AddControllers(ICollection<Assembly> assemblies);
+    TConfiguration CommandPluginsConfigure(Action<IUnitCollectionSpec<ICommandPlugin, INetUnitContext>> action);
 
-        TConfiguration CommandPluginsConfigure(Action<IUnitCollectionSpec<ICommandPlugin, INetUnitContext>> action);
+    TConfiguration SessionConfigure(Action<ISessionSpec> action);
 
-        TConfiguration SessionConfigure(Action<ISessionSpec> action);
+    TConfiguration AuthenticateValidatorsConfigure(Action<IUnitCollectionSpec<IAuthenticationValidator, INetUnitContext>> action);
 
-        TConfiguration AuthenticateValidatorsConfigure(Action<IUnitCollectionSpec<IAuthenticationValidator, INetUnitContext>> action);
+    TConfiguration AddAuthenticateValidators(Action<IUnitSpec<IAuthenticationValidator, INetUnitContext>> action);
 
-        TConfiguration AddAuthenticateValidators(Action<IUnitSpec<IAuthenticationValidator, INetUnitContext>> action);
-
-        TConfiguration Initialize();
-    }
-
+    TConfiguration Initialize();
 }

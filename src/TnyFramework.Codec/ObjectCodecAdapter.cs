@@ -17,265 +17,262 @@ using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.Exceptions;
 using TnyFramework.Common.Extensions;
 
-namespace TnyFramework.Codec
+namespace TnyFramework.Codec;
+
+/// <summary>
+/// 对象编解码服务
+/// </summary>
+public class ObjectCodecAdapter
 {
+    private readonly IDictionary<IMimeType, ObjectCodecFactory> codecFactoryMap;
 
-    /// <summary>
-    /// 对象编解码服务
-    /// </summary>
-    public class ObjectCodecAdapter
+    private readonly ConcurrentDictionary<Type, ObjectCodecHolder> objectCodecHolderMap = new ConcurrentDictionary<Type, ObjectCodecHolder>();
+
+    public ObjectCodecAdapter(IEnumerable<ObjectCodecFactory> codecFactories)
     {
-        private readonly IDictionary<IMimeType, ObjectCodecFactory> codecFactoryMap;
-
-        private readonly ConcurrentDictionary<Type, ObjectCodecHolder> objectCodecHolderMap = new ConcurrentDictionary<Type, ObjectCodecHolder>();
-
-        public ObjectCodecAdapter(IEnumerable<ObjectCodecFactory> codecFactories)
+        var factoryMap = new Dictionary<IMimeType, ObjectCodecFactory>();
+        foreach (var objectCodecFactory in codecFactories)
         {
-            var factoryMap = new Dictionary<IMimeType, ObjectCodecFactory>();
-            foreach (var objectCodecFactory in codecFactories)
+            foreach (var mimeType in objectCodecFactory.MediaTypes)
             {
-                foreach (var mimeType in objectCodecFactory.MediaTypes)
-                {
-                    factoryMap.Add(mimeType, objectCodecFactory);
-                }
+                factoryMap.Add(mimeType, objectCodecFactory);
             }
-            codecFactoryMap = factoryMap.ToImmutableDictionary();
+        }
+        codecFactoryMap = factoryMap.ToImmutableDictionary();
+    }
+
+    public bool IsSupported(IMimeType type)
+    {
+        return codecFactoryMap.ContainsKey(type);
+    }
+
+    public IObjectCodec<T> Codec<T>(ObjectMimeType<T> objectMimeType)
+    {
+        return objectMimeType.HasMimeType() ? Codec<T>(objectMimeType.MimeType) : Codec<T>();
+    }
+
+    public IObjectCodec Codec(Type objectType, IMimeType mimeType)
+    {
+        var holder = GetHolder(objectType);
+        return holder.LoadObjectCodec(mimeType, CreateObjectCodec);
+    }
+
+    public IObjectCodec<T> Codec<T>()
+    {
+        var objectType = typeof(T);
+        return CastCodec<T>(Codec(objectType));
+    }
+
+    public IObjectCodec Codec(Type objectType)
+    {
+        var holder = GetHolder(objectType);
+        return holder.DefaultCodec;
+    }
+
+    public IObjectCodec<T> Codec<T>(IMimeType mimeType)
+    {
+        var objectType = typeof(T);
+        return CastCodec<T>(Codec(objectType, mimeType));
+    }
+
+    public byte[] EncodeToBytes(object value)
+    {
+        var codec = Codec(value.GetType());
+        try
+        {
+            return codec.Encode(value);
+        } catch (Exception e)
+        {
+            throw new ObjectCodecException($"encode {value.GetType()} to default format {codec} exception", e);
+        }
+    }
+
+    public byte[] EncodeToBytes<T>(ObjectMimeType<T> mimeType, T value)
+    {
+        var codec = Codec(mimeType);
+        try
+        {
+            return codec.Encode(value);
+        } catch (Exception e)
+        {
+            throw new ObjectCodecException($"encode {value?.GetType()} to default format {codec} exception", e);
+        }
+    }
+
+    public byte[] EncodeToBytes(object value, IMimeType mineType)
+    {
+        var codec = Codec(value.GetType(), mineType);
+        try
+        {
+            return codec.Encode(value);
+        } catch (Exception e)
+        {
+            throw new ObjectCodecException($"encode {value.GetType()} to default format {mineType} exception", e);
+        }
+    }
+
+    public T? DecodeByBytes<T>(byte[] data)
+    {
+        var codec = Codec<T>();
+        try
+        {
+            var value = codec.Decode(data);
+            if (value == null)
+            {
+                return default;
+            }
+            return value switch {
+                not null => value,
+                _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
+            };
+        } catch (IOException e)
+        {
+            throw new ObjectCodecException($"decode {typeof(T)} to default format {codec} exception", e);
+        }
+    }
+
+    public T? DecodeByBytes<T>(ObjectMimeType<T> mimeType, byte[] data)
+    {
+        var codec = Codec(mimeType);
+        try
+        {
+            var value = codec.Decode(data);
+            if (value == null)
+            {
+                return default;
+            }
+            return value switch {
+                not null => value,
+                _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
+            };
+        } catch (IOException e)
+        {
+            throw new ObjectCodecException($"decode {typeof(T)} to default format {codec} exception", e);
+        }
+    }
+
+    public T? DecodeByBytes<T>(IMimeType mimeType, byte[] data)
+    {
+        var codec = Codec<T>(mimeType);
+        try
+        {
+            var value = codec.Decode(data);
+            if (value == null)
+            {
+                return default;
+            }
+            return value switch {
+                { } => value,
+                _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
+            };
+        } catch (IOException e)
+        {
+            throw new ObjectCodecException($"decode {typeof(T)} to default format {codec} exception", e);
+        }
+    }
+
+    private ObjectCodecHolder GetHolder(Type objectType)
+    {
+        return objectCodecHolderMap.GetOrAdd(objectType, type => new ObjectCodecHolder(type, CreateObjectCodec));
+    }
+
+    private static IObjectCodec<T> CastCodec<T>(IObjectCodec target)
+    {
+        if (target is IObjectCodec<T> codec)
+            return codec;
+        throw new InvalidCastException($"{target} cast {typeof(T)} exception");
+    }
+
+    private IObjectCodec CreateObjectCodec(IMimeType format, Type type)
+    {
+
+        if (codecFactoryMap.TryGetValue(format, out var factory))
+        {
+            return factory.CreateCodec(type);
+        }
+        throw new NullReferenceException($"Type {type} get {format} ObjectCodecFactory is null");
+    }
+
+    private class ObjectCodecHolder
+    {
+        private Type Type { get; }
+
+        public IMimeType DefaultFormat { get; }
+
+        public IObjectCodec DefaultCodec { get; }
+
+        private readonly IDictionary<IMimeType, IObjectCodec> objectCodes = new Dictionary<IMimeType, IObjectCodec>();
+
+        private readonly ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim();
+
+        public ObjectCodecHolder(Type type, Func<IMimeType, Type, IObjectCodec> factory)
+        {
+            Type = type;
+            var attribute = type.GetCustomAttribute<CodableAttribute>();
+            var defaultType = attribute?.Mime;
+            if (defaultType.IsBlank())
+            {
+                DefaultFormat = null!;
+                DefaultCodec = null!;
+                return;
+            }
+            DefaultFormat = MimeType.ForMimeType(defaultType!);
+            DefaultCodec = factory(DefaultFormat, type);
+            AddCodec(DefaultFormat, DefaultCodec);
         }
 
-        public bool IsSupported(IMimeType type)
+        public IObjectCodec LoadObjectCodec(IMimeType mimeType, Func<IMimeType, Type, IObjectCodec> factory)
         {
-            return codecFactoryMap.ContainsKey(type);
-        }
-
-        public IObjectCodec<T> Codec<T>(ObjectMimeType<T> objectMimeType)
-        {
-            return objectMimeType.HasMimeType() ? Codec<T>(objectMimeType.MimeType) : Codec<T>();
-        }
-
-        public IObjectCodec Codec(Type objectType, IMimeType mimeType)
-        {
-            var holder = GetHolder(objectType);
-            return holder.LoadObjectCodec(mimeType, CreateObjectCodec);
-        }
-
-        public IObjectCodec<T> Codec<T>()
-        {
-            var objectType = typeof(T);
-            return CastCodec<T>(Codec(objectType));
-        }
-
-        public IObjectCodec Codec(Type objectType)
-        {
-            var holder = GetHolder(objectType);
-            return holder.DefaultCodec;
-        }
-
-        public IObjectCodec<T> Codec<T>(IMimeType mimeType)
-        {
-            var objectType = typeof(T);
-            return CastCodec<T>(Codec(objectType, mimeType));
-        }
-
-        public byte[] EncodeToBytes(object value)
-        {
-            var codec = Codec(value.GetType());
+            lockSlim.EnterUpgradeableReadLock();
             try
             {
-                return codec.Encode(value);
-            } catch (Exception e)
+                return objectCodes.TryGetValue(mimeType, out var codec) ? codec : Load(mimeType, factory);
+            } finally
             {
-                throw new ObjectCodecException($"encode {value.GetType()} to default format {codec} exception", e);
+                lockSlim.ExitUpgradeableReadLock();
             }
         }
 
-        public byte[] EncodeToBytes<T>(ObjectMimeType<T> mimeType, T value)
+        private IObjectCodec Load(IMimeType mimeType, Func<IMimeType, Type, IObjectCodec> factory)
         {
-            var codec = Codec(mimeType);
+            lockSlim.EnterWriteLock();
             try
             {
-                return codec.Encode(value);
-            } catch (Exception e)
-            {
-                throw new ObjectCodecException($"encode {value?.GetType()} to default format {codec} exception", e);
-            }
-        }
-
-        public byte[] EncodeToBytes(object value, IMimeType mineType)
-        {
-            var codec = Codec(value.GetType(), mineType);
-            try
-            {
-                return codec.Encode(value);
-            } catch (Exception e)
-            {
-                throw new ObjectCodecException($"encode {value.GetType()} to default format {mineType} exception", e);
-            }
-        }
-
-        public T? DecodeByBytes<T>(byte[] data)
-        {
-            var codec = Codec<T>();
-            try
-            {
-                var value = codec.Decode(data);
-                if (value == null)
+                if (objectCodes.TryGetValue(mimeType, out var codec))
                 {
-                    return default;
-                }
-                return value switch {
-                    not null => value,
-                    _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
-                };
-            } catch (IOException e)
-            {
-                throw new ObjectCodecException($"decode {typeof(T)} to default format {codec} exception", e);
-            }
-        }
-
-        public T? DecodeByBytes<T>(ObjectMimeType<T> mimeType, byte[] data)
-        {
-            var codec = Codec(mimeType);
-            try
-            {
-                var value = codec.Decode(data);
-                if (value == null)
-                {
-                    return default;
-                }
-                return value switch {
-                    not null => value,
-                    _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
-                };
-            } catch (IOException e)
-            {
-                throw new ObjectCodecException($"decode {typeof(T)} to default format {codec} exception", e);
-            }
-        }
-
-        public T? DecodeByBytes<T>(IMimeType mimeType, byte[] data)
-        {
-            var codec = Codec<T>(mimeType);
-            try
-            {
-                var value = codec.Decode(data);
-                if (value == null)
-                {
-                    return default;
-                }
-                return value switch {
-                    { } => value,
-                    _ => throw new InvalidCastException($"{value} cast to {typeof(T)} exception")
-                };
-            } catch (IOException e)
-            {
-                throw new ObjectCodecException($"decode {typeof(T)} to default format {codec} exception", e);
-            }
-        }
-
-        private ObjectCodecHolder GetHolder(Type objectType)
-        {
-            return objectCodecHolderMap.GetOrAdd(objectType, type => new ObjectCodecHolder(type, CreateObjectCodec));
-        }
-
-        private static IObjectCodec<T> CastCodec<T>(IObjectCodec target)
-        {
-            if (target is IObjectCodec<T> codec)
-                return codec;
-            throw new InvalidCastException($"{target} cast {typeof(T)} exception");
-        }
-
-        private IObjectCodec CreateObjectCodec(IMimeType format, Type type)
-        {
-
-            if (codecFactoryMap.TryGetValue(format, out var factory))
-            {
-                return factory.CreateCodec(type);
-            }
-            throw new NullReferenceException($"Type {type} get {format} ObjectCodecFactory is null");
-        }
-
-        private class ObjectCodecHolder
-        {
-            private Type Type { get; }
-
-            public IMimeType DefaultFormat { get; }
-
-            public IObjectCodec DefaultCodec { get; }
-
-            private readonly IDictionary<IMimeType, IObjectCodec> objectCodes = new Dictionary<IMimeType, IObjectCodec>();
-
-            private readonly ReaderWriterLockSlim lockSlim = new ReaderWriterLockSlim();
-
-            public ObjectCodecHolder(Type type, Func<IMimeType, Type, IObjectCodec> factory)
-            {
-                Type = type;
-                var attribute = type.GetCustomAttribute<CodableAttribute>();
-                var defaultType = attribute?.Mime;
-                if (defaultType.IsBlank())
-                {
-                    DefaultFormat = null!;
-                    DefaultCodec = null!;
-                    return;
-                }
-                DefaultFormat = MimeType.ForMimeType(defaultType!);
-                DefaultCodec = factory(DefaultFormat, type);
-                AddCodec(DefaultFormat, DefaultCodec);
-            }
-
-            public IObjectCodec LoadObjectCodec(IMimeType mimeType, Func<IMimeType, Type, IObjectCodec> factory)
-            {
-                lockSlim.EnterUpgradeableReadLock();
-                try
-                {
-                    return objectCodes.TryGetValue(mimeType, out var codec) ? codec : Load(mimeType, factory);
-                } finally
-                {
-                    lockSlim.ExitUpgradeableReadLock();
-                }
-            }
-
-            private IObjectCodec Load(IMimeType mimeType, Func<IMimeType, Type, IObjectCodec> factory)
-            {
-                lockSlim.EnterWriteLock();
-                try
-                {
-                    if (objectCodes.TryGetValue(mimeType, out var codec))
-                    {
-                        return codec;
-                    }
-                    codec = factory(mimeType, Type);
-                    objectCodes.Add(mimeType, codec);
                     return codec;
-                } finally
-                {
-                    lockSlim.ExitWriteLock();
                 }
-            }
-
-            private void AddCodec(IMimeType mimeType, IObjectCodec codec)
+                codec = factory(mimeType, Type);
+                objectCodes.Add(mimeType, codec);
+                return codec;
+            } finally
             {
+                lockSlim.ExitWriteLock();
+            }
+        }
 
-                lockSlim.EnterUpgradeableReadLock();
+        private void AddCodec(IMimeType mimeType, IObjectCodec codec)
+        {
+
+            lockSlim.EnterUpgradeableReadLock();
+            try
+            {
+                if (objectCodes.ContainsKey(mimeType))
+                    return;
+                lockSlim.EnterWriteLock();
                 try
                 {
                     if (objectCodes.ContainsKey(mimeType))
                         return;
-                    lockSlim.EnterWriteLock();
-                    try
-                    {
-                        if (objectCodes.ContainsKey(mimeType))
-                            return;
-                        objectCodes.Add(mimeType, codec);
-                    } finally
-                    {
-                        lockSlim.ExitWriteLock();
-                    }
+                    objectCodes.Add(mimeType, codec);
                 } finally
                 {
-                    lockSlim.ExitUpgradeableReadLock();
+                    lockSlim.ExitWriteLock();
                 }
+            } finally
+            {
+                lockSlim.ExitUpgradeableReadLock();
             }
         }
     }
-
 }

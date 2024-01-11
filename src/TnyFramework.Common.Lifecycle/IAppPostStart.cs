@@ -6,20 +6,17 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Common.Lifecycle
+namespace TnyFramework.Common.Lifecycle;
+
+public interface IAppPostStart : ILifecycleHandler
 {
+    /// <summary>
+    /// 启动完成生命周期对象
+    /// </summary>
+    virtual PostStarter GetPostStarter() => PostStarter.Value(GetType());
 
-    public interface IAppPostStart : ILifecycleHandler
-    {
-        /// <summary>
-        /// 启动完成生命周期对象
-        /// </summary>
-        virtual PostStarter GetPostStarter() => PostStarter.Value(GetType());
-
-        /// <summary>
-        /// 启动完成
-        /// </summary>
-        void OnPostStart();
-    }
-
+    /// <summary>
+    /// 启动完成
+    /// </summary>
+    void OnPostStart();
 }

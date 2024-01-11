@@ -19,55 +19,54 @@ using TnyFramework.Namespace.Algorithm.XXHash3;
 using TnyFramework.Namespace.Sharding;
 using CollectionExtensions = TnyFramework.Common.Extensions.CollectionExtensions;
 
-namespace TnyFramework.Namespace.Etcd.Test
+namespace TnyFramework.Namespace.Etcd.Test;
+
+public class EtcdNamespaceExplorerTest
 {
+    private static readonly ILogger LOGGER = LogFactory.Logger<EtcdNamespaceExplorerTest>();
 
-    public class EtcdNamespaceExplorerTest
+    private static INamespaceExplorerFactory? _NAMESPACE_EXPLORER_FACTORY;
+
+    private static readonly ObjectCodecFactory OBJECT_CODEC_FACTORY = new JsonObjectCodecFactory();
+
+    private static readonly ObjectCodecAdapter OBJECT_CODEC_ADAPTER = new(new List<ObjectCodecFactory> {OBJECT_CODEC_FACTORY});
+
+    private static INamespaceExplorer _EXPLORER = null!;
+
+    private const string HEAD = "/ON_Test/";
+
+    private const string HEAD_OTHER = "/ON_Test/ON_Test_OTHER/";
+
+    private const string HASHING_PATH = "/ON_Test/ON_Hashing/";
+
+    private const string PLAYER_NODE_1_KEY = "/ON_Test/namespace/player/node1";
+
+    private const string PLAYER_NODE = "/ON_Test/namespace/player/";
+
+    private const string OTHER_PLAYER_NODE = "/ON_Test_OTHER/namespace/player/";
+
+    [OneTimeSetUp]
+    public void Init()
     {
-        private static readonly ILogger LOGGER = LogFactory.Logger<EtcdNamespaceExplorerTest>();
-
-        private static INamespaceExplorerFactory? _NAMESPACE_EXPLORER_FACTORY;
-
-        private static readonly ObjectCodecFactory OBJECT_CODEC_FACTORY = new JsonObjectCodecFactory();
-
-        private static readonly ObjectCodecAdapter OBJECT_CODEC_ADAPTER = new(new List<ObjectCodecFactory> {OBJECT_CODEC_FACTORY});
-
-        private static INamespaceExplorer _EXPLORER = null!;
-
-        private const string HEAD = "/ON_Test/";
-
-        private const string HEAD_OTHER = "/ON_Test/ON_Test_OTHER/";
-
-        private const string HASHING_PATH = "/ON_Test/ON_Hashing/";
-
-        private const string PLAYER_NODE_1_KEY = "/ON_Test/namespace/player/node1";
-
-        private const string PLAYER_NODE = "/ON_Test/namespace/player/";
-
-        private const string OTHER_PLAYER_NODE = "/ON_Test_OTHER/namespace/player/";
-
-        [OneTimeSetUp]
-        public void Init()
-        {
             _NAMESPACE_EXPLORER_FACTORY = new EtcdNamespaceExplorerFactory(new EtcdConfig {
                 Endpoints = "http://127.0.0.1:2379"
             }, OBJECT_CODEC_ADAPTER);
             _EXPLORER = _NAMESPACE_EXPLORER_FACTORY.Create();
         }
 
-        [SetUp]
-        public async Task Setup()
-        {
+    [SetUp]
+    public async Task Setup()
+    {
             await _EXPLORER.RemoveAll(HEAD);
             await _EXPLORER.RemoveAll(HASHING_PATH);
             await _EXPLORER.RemoveAll(HEAD_OTHER);
         }
 
-        private static readonly ObjectMimeType<Player> MINE_TYPE = ObjectMimeType.Of<Player>(JsonMimeType.JSON);
+    private static readonly ObjectMimeType<Player> MINE_TYPE = ObjectMimeType.Of<Player>(JsonMimeType.JSON);
 
-        [Test]
-        public async Task Get()
-        {
+    [Test]
+    public async Task Get()
+    {
             var playerNode = await _EXPLORER.Get(PLAYER_NODE_1_KEY, MINE_TYPE);
             Assert.IsNull(playerNode);
             var player = new Player("Lucy", 100);
@@ -80,9 +79,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player, getPlayer);
         }
 
-        [Test]
-        public async Task FindAll()
-        {
+    [Test]
+    public async Task FindAll()
+    {
             var players = new List<Player>();
             for (var i = 0; i < 10; i++)
             {
@@ -98,9 +97,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             }
         }
 
-        [Test]
-        public async Task LesseeTest()
-        {
+    [Test]
+    public async Task LesseeTest()
+    {
             var leased = false;
             var closed = false;
             var renew = false;
@@ -132,9 +131,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             }
         }
 
-        [Test]
-        public async Task AllNodeWatcherTest()
-        {
+    [Test]
+    public async Task AllNodeWatcherTest()
+    {
             var players = new List<Player>();
             var loadSet = new HashSet<Player>();
             var createSet = new HashSet<Player>();
@@ -206,9 +205,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsTrue(closed);
         }
 
-        [Test]
-        public async Task NodeWatcherTest()
-        {
+    [Test]
+    public async Task NodeWatcherTest()
+    {
             var loadSize = 0;
             var createSize = 0;
             var updateSize = 0;
@@ -277,9 +276,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsTrue(closed);
         }
 
-        [Test]
-        public async Task TestPublishSubscribe()
-        {
+    [Test]
+    public async Task TestPublishSubscribe()
+    {
             var nameHasher = HashAlgorithmHasher.Hasher<Player>(p => p.Name, XxHash3HashAlgorithm.XXH3_HASH_32);
             var subscriber = _EXPLORER.HashingSubscriber(HASHING_PATH, nameHasher.Max, MINE_TYPE);
             var publisher = _EXPLORER.HashingPublisher<string, Player>(HASHING_PATH, nameHasher.Max, nameHasher, MINE_TYPE);
@@ -350,17 +349,17 @@ namespace TnyFramework.Namespace.Etcd.Test
             Check(checkList, prePlayerList, opPlayerList, prePlayerList, watchedList);
         }
 
-        private void Check(IReadOnlyList<List<Player>> checkList,
-            ICollection<Player> loadList, ICollection<Player> createList, ICollection<Player> updateList, ICollection<Player> deleteList)
-        {
+    private void Check(IReadOnlyList<List<Player>> checkList,
+        ICollection<Player> loadList, ICollection<Player> createList, ICollection<Player> updateList, ICollection<Player> deleteList)
+    {
             AssertCollection(loadList, checkList[0], "Load");
             AssertCollection(createList, checkList[1], "Create");
             AssertCollection(updateList, checkList[2], "Update");
             AssertCollection(deleteList, checkList[3], "Delete");
         }
 
-        private void AssertCollection(ICollection<Player> expect, ICollection<Player> check, string name)
-        {
+    private void AssertCollection(ICollection<Player> expect, ICollection<Player> check, string name)
+    {
             Assert.AreEqual(expect.Count, check.Count, name);
             foreach (var player in check)
             {
@@ -368,9 +367,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             }
         }
 
-        [Test]
-        public async Task TestGetOrAdd()
-        {
+    [Test]
+    public async Task TestGetOrAdd()
+    {
             var player = new Player(PLAYER_NODE_1_KEY, 100);
             var nameNode = await _EXPLORER.GetOrAdd(player.Name, MINE_TYPE, player);
             Assert.AreEqual(player, nameNode.Value);
@@ -379,9 +378,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player, nameNode.Value);
         }
 
-        [Test]
-        public async Task TestAdd()
-        {
+    [Test]
+    public async Task TestAdd()
+    {
             var player = new Player(PLAYER_NODE_1_KEY, 100);
             var nameNode = await _EXPLORER.Add(player.Name, MINE_TYPE, player);
 
@@ -391,9 +390,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsNull(nameNode);
         }
 
-        [Test]
-        public async Task TestSave()
-        {
+    [Test]
+    public async Task TestSave()
+    {
             var player = new Player(PLAYER_NODE_1_KEY, 100);
             var nameNode = await _EXPLORER.Save(player.Name, MINE_TYPE, player);
             Assert.AreEqual(player, nameNode.Value);
@@ -402,9 +401,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(newPlayer, nameNode.Value);
         }
 
-        [Test]
-        public async Task TestUpdate()
-        {
+    [Test]
+    public async Task TestUpdate()
+    {
             var player = new Player(PLAYER_NODE_1_KEY, 100);
             var nameNode = await _EXPLORER.Update(player.Name, MINE_TYPE, player);
             Assert.IsNull(nameNode);
@@ -415,9 +414,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(newPlayer, nameNode.Value);
         }
 
-        [Test]
-        public async Task UpdateIfValue()
-        {
+    [Test]
+    public async Task UpdateIfValue()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_2", 100);
             var player2 = new Player(PLAYER_NODE + "PL_1", 102);
             var nameNode = await _EXPLORER.UpdateIf(PLAYER_NODE_1_KEY, MINE_TYPE, player1, player2);
@@ -432,9 +431,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player2, nameNode.Value);
         }
 
-        [Test]
-        public async Task UpdateIfValueWithLessee()
-        {
+    [Test]
+    public async Task UpdateIfValueWithLessee()
+    {
             var lessee = await _EXPLORER.Lease("updateIfValueWithLessee", 20);
             var player1 = new Player(PLAYER_NODE + "PL_2", 100);
             var player2 = new Player(PLAYER_NODE + "PL_1", 102);
@@ -450,9 +449,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsNull(nameNode);
         }
 
-        [Test]
-        public async Task TestUpdateIfVersion()
-        {
+    [Test]
+    public async Task TestUpdateIfVersion()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
             var nameNode = await _EXPLORER.UpdateIfVersion(PLAYER_NODE_1_KEY, 2, MINE_TYPE, player1);
@@ -466,9 +465,9 @@ namespace TnyFramework.Namespace.Etcd.Test
 
         }
 
-        [Test]
-        public async Task TestUpdateIfVersionWithLessee()
-        {
+    [Test]
+    public async Task TestUpdateIfVersionWithLessee()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
 
@@ -489,9 +488,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsNull(nameNode);
         }
 
-        [Test]
-        public async Task TestUpdateIfMinAndMaxVersion()
-        {
+    [Test]
+    public async Task TestUpdateIfMinAndMaxVersion()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
 
@@ -578,9 +577,9 @@ namespace TnyFramework.Namespace.Etcd.Test
 
         }
 
-        [Test]
-        public async Task TestUpdateIfMinAndMaxVersionWithLessee()
-        {
+    [Test]
+    public async Task TestUpdateIfMinAndMaxVersionWithLessee()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
 
             var lessee = await _EXPLORER.Lease("testUpdateIfMinAndMaxVersionWithLessee", 3000);
@@ -594,9 +593,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsNull(nameNode);
         }
 
-        [Test]
-        public async Task TestUpdateById()
-        {
+    [Test]
+    public async Task TestUpdateById()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
 
@@ -609,9 +608,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player2, nameNode.Value);
         }
 
-        [Test]
-        public async Task TestUpdateByIdWithLessee()
-        {
+    [Test]
+    public async Task TestUpdateByIdWithLessee()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
 
@@ -629,9 +628,9 @@ namespace TnyFramework.Namespace.Etcd.Test
 
         }
 
-        [Test]
-        public async Task UpdateByIdIfValue()
-        {
+    [Test]
+    public async Task UpdateByIdIfValue()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_2", 100);
             var player2 = new Player(PLAYER_NODE + "PL_1", 102);
 
@@ -648,9 +647,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player2, nameNode.Value);
         }
 
-        [Test]
-        public async Task UpdateByIdValueWithLessee()
-        {
+    [Test]
+    public async Task UpdateByIdValueWithLessee()
+    {
             var lessee = await _EXPLORER.Lease("updateByIdValueWithLessee", 3000);
             var player1 = new Player(PLAYER_NODE + "PL_2", 100);
             var player2 = new Player(PLAYER_NODE + "PL_1", 102);
@@ -670,9 +669,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsNull(nameNode);
         }
 
-        [Test]
-        public async Task TestUpdateByIdIfVersion()
-        {
+    [Test]
+    public async Task TestUpdateByIdIfVersion()
+    {
 
             var player1 = new Player(PLAYER_NODE + "PL_2", 100);
             var player2 = new Player(PLAYER_NODE + "PL_1", 102);
@@ -694,9 +693,9 @@ namespace TnyFramework.Namespace.Etcd.Test
 
         }
 
-        [Test]
-        public async Task TestUpdateByIdIfVersionWithLessee()
-        {
+    [Test]
+    public async Task TestUpdateByIdIfVersionWithLessee()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
 
@@ -723,9 +722,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsNull(nameNode);
         }
 
-        [Test]
-        public async Task TestUpdateByIdIfMinAndMaxVersion()
-        {
+    [Test]
+    public async Task TestUpdateByIdIfMinAndMaxVersion()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 102);
 
@@ -835,9 +834,9 @@ namespace TnyFramework.Namespace.Etcd.Test
 
         }
 
-        [Test]
-        public async Task TestUpdateByIdIfMinAndMaxVersionWithLessee()
-        {
+    [Test]
+    public async Task TestUpdateByIdIfMinAndMaxVersionWithLessee()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 200);
 
@@ -856,9 +855,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsNull(nameNode);
         }
 
-        [Test]
-        public async Task Remove()
-        {
+    [Test]
+    public async Task Remove()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
 
             var result = await _EXPLORER.Remove(PLAYER_NODE_1_KEY);
@@ -870,9 +869,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.IsTrue(result);
         }
 
-        [Test]
-        public async Task RemoveAll()
-        {
+    [Test]
+    public async Task RemoveAll()
+    {
             for (var i = 0; i < 5; i++)
             {
                 var player = new Player(PLAYER_NODE + "PLA_" + i, 10 + i);
@@ -893,9 +892,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(5, otherPlayers.Count);
         }
 
-        [Test]
-        public async Task RemoveAllAndGet()
-        {
+    [Test]
+    public async Task RemoveAllAndGet()
+    {
             var players1 = new List<Player>();
             var players2 = new List<Player>();
             for (var i = 0; i < 5; i++)
@@ -931,9 +930,9 @@ namespace TnyFramework.Namespace.Etcd.Test
 
         }
 
-        [Test]
-        public async Task TestRemoveIfValue()
-        {
+    [Test]
+    public async Task TestRemoveIfValue()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 200);
 
@@ -949,9 +948,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player1, nameNode.Value);
         }
 
-        [Test]
-        public async Task TestRemoveIfVersion()
-        {
+    [Test]
+    public async Task TestRemoveIfVersion()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
 
             var nameNode = await _EXPLORER.RemoveIfVersion(PLAYER_NODE_1_KEY, 2, MINE_TYPE);
@@ -966,9 +965,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player1, nameNode.Value);
         }
 
-        [Test]
-        public async Task TestRemoveIfMinAndMaxVersion()
-        {
+    [Test]
+    public async Task TestRemoveIfMinAndMaxVersion()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
 
             var nameNode = await _EXPLORER.RemoveIfVersion(PLAYER_NODE_1_KEY, 1, RangeBorder.Close, 1, RangeBorder.Close, MINE_TYPE);
@@ -1039,9 +1038,9 @@ namespace TnyFramework.Namespace.Etcd.Test
 
         }
 
-        [Test]
-        public async Task RemoveById()
-        {
+    [Test]
+    public async Task RemoveById()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
 
             var nameNode = await _EXPLORER.RemoveById(PLAYER_NODE_1_KEY, 100, MINE_TYPE);
@@ -1057,9 +1056,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player1, nameNode.Value);
         }
 
-        [Test]
-        public async Task TestRemoveByIdAndIfValue()
-        {
+    [Test]
+    public async Task TestRemoveByIdAndIfValue()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
             var player2 = new Player(PLAYER_NODE + "PL_2", 100);
 
@@ -1076,9 +1075,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player1, nameNode.Value);
         }
 
-        [Test]
-        public async Task TestRemoveByIdAndIfVersion()
-        {
+    [Test]
+    public async Task TestRemoveByIdAndIfVersion()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
 
             var nameNode = await _EXPLORER.RemoveByIdAndIf(PLAYER_NODE_1_KEY, 100, MINE_TYPE, player1);
@@ -1097,9 +1096,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player1, nameNode.Value);
         }
 
-        [Test]
-        public async Task TestRemoveByIdAndIfMinAndMaxVersion()
-        {
+    [Test]
+    public async Task TestRemoveByIdAndIfMinAndMaxVersion()
+    {
             var player1 = new Player(PLAYER_NODE + "PL_1", 100);
 
             var nameNode = await _EXPLORER.RemoveByIdAndIfVersion(PLAYER_NODE_1_KEY, 100, 1, RangeBorder.Close, 1, RangeBorder.Close, MINE_TYPE);
@@ -1172,9 +1171,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             Assert.AreEqual(player1, nameNode.Value);
         }
 
-        [Test]
-        public void DicTest()
-        {
+    [Test]
+    public void DicTest()
+    {
             var dictionary = new Dictionary<string, Player>();
             var p1 = new Player("A", 1);
             var p2 = new Player("B", 2);
@@ -1191,8 +1190,8 @@ namespace TnyFramework.Namespace.Etcd.Test
             // Assert.IsNull(dictionary["d"]);
         }
 
-        private static async Task<NameNode<Player>> SaveToVersion(string path, Player player, int version)
-        {
+    private static async Task<NameNode<Player>> SaveToVersion(string path, Player player, int version)
+    {
             NameNode<Player>? node = null;
             for (var i = 0; i < version; i++)
             {
@@ -1201,9 +1200,9 @@ namespace TnyFramework.Namespace.Etcd.Test
             return node!;
         }
 
-        // [Test]
-        public async Task HashingTest()
-        {
+    // [Test]
+    public async Task HashingTest()
+    {
             const int maxSlots = 32;
             const int partitionCount = 6;
             var keyHash = HashAlgorithmHasher.Hasher<string>(maxSlots, XxHash3HashAlgorithm.XXH3_HASH_32);
@@ -1224,46 +1223,44 @@ namespace TnyFramework.Namespace.Etcd.Test
             await hashing2.Register(new TestShadingNode("Server2"));
 
         }
-    }
+}
 
-    public class Player
+public class Player
+{
+    public string Name { get; set; } = "";
+
+    public int Age { get; set; }
+
+    public Player()
     {
-        public string Name { get; set; } = "";
-
-        public int Age { get; set; }
-
-        public Player()
-        {
         }
 
-        public Player(string name, int age)
-        {
+    public Player(string name, int age)
+    {
             Name = name;
             Age = age;
         }
 
-        private bool Equals(Player other)
-        {
+    private bool Equals(Player other)
+    {
             return Name == other.Name && Age == other.Age;
         }
 
-        public override bool Equals(object? obj)
-        {
+    public override bool Equals(object? obj)
+    {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((Player) obj);
         }
 
-        public override int GetHashCode()
-        {
+    public override int GetHashCode()
+    {
             return HashCode.Combine(Name, Age);
         }
 
-        public override string ToString()
-        {
+    public override string ToString()
+    {
             return $"{nameof(Name)}: {Name}, {nameof(Age)}: {Age}";
         }
-    }
-
 }

@@ -10,20 +10,17 @@ using System;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Result;
 
-namespace TnyFramework.Net.Rpc.Exceptions
+namespace TnyFramework.Net.Rpc.Exceptions;
+
+public class RpcException : ResultCodeException
 {
 
-    public class RpcException : ResultCodeException
+
+    public RpcException(IResultCode code, string message = "") : base(code, message)
     {
-
-
-        public RpcException(IResultCode code, string message = "") : base(code, message)
-        {
-        }
-
-        public RpcException(IResultCode code, Exception innerException, string message) : base(code, innerException, message)
-        {
-        }
     }
 
+    public RpcException(IResultCode code, Exception innerException, string message) : base(code, innerException, message)
+    {
+    }
 }

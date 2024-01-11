@@ -6,23 +6,20 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+/// <summary>
+/// CommonMessage 工厂
+/// </summary>
+public class CommonMessageFactory : IMessageFactory
 {
-
-    /// <summary>
-    /// CommonMessage 工厂
-    /// </summary>
-    public class CommonMessageFactory : IMessageFactory
+    public INetMessage Create(long id, IMessageSubject subject)
     {
-        public INetMessage Create(long id, IMessageSubject subject)
-        {
-            return new CommonMessage(new CommonMessageHead(id, subject), subject.Body);
-        }
-
-        public INetMessage Create(INetMessageHead head, object? body)
-        {
-            return new CommonMessage(head, body);
-        }
+        return new CommonMessage(new CommonMessageHead(id, subject), subject.Body);
     }
 
+    public INetMessage Create(INetMessageHead head, object? body)
+    {
+        return new CommonMessage(head, body);
+    }
 }

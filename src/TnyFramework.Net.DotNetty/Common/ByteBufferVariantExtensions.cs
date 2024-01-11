@@ -8,12 +8,9 @@
 
 using System.Text;
 
-namespace TnyFramework.Net.DotNetty.Common
+namespace TnyFramework.Net.DotNetty.Common;
+
+public static partial class ByteBufferVariantExtensions
 {
-
-    public static partial class ByteBufferVariantExtensions
-    {
-        private static readonly UTF8Encoding ENCODING = new();
-    }
-
+    private static readonly UTF8Encoding ENCODING = new();
 }

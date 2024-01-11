@@ -9,17 +9,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace TnyFramework.DI.Hosting.Configurations
+namespace TnyFramework.DI.Hosting.Configurations;
+
+public interface IAutoServiceConfigurator
 {
-
-    public interface IAutoServiceConfigurator
-    {
-        /// <summary>
-        /// 配置 service
-        /// </summary>
-        /// <param name="context">主机构建上下文</param>
-        /// <param name="serviceCollection">服务集合</param>
-        void Configure(HostBuilderContext context, IServiceCollection serviceCollection);
-    }
-
+    /// <summary>
+    /// 配置 service
+    /// </summary>
+    /// <param name="context">主机构建上下文</param>
+    /// <param name="serviceCollection">服务集合</param>
+    void Configure(HostBuilderContext context, IServiceCollection serviceCollection);
 }

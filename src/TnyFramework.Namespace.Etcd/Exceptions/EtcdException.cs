@@ -10,29 +10,25 @@ using System;
 using Grpc.Core;
 using TnyFramework.Namespace.Exceptions;
 
-namespace TnyFramework.Namespace.Etcd.Exceptions
+namespace TnyFramework.Namespace.Etcd.Exceptions;
+
+public class EtcdException : NamespaceException
 {
+    public StatusCode Code { get; }
 
-    public class EtcdException : NamespaceException
+    public EtcdException(StatusCode code)
     {
-        public StatusCode Code { get; }
-
-        public EtcdException(StatusCode code)
-        {
-            Code = code;
-        }
-
-
-
-        public EtcdException(StatusCode code, string message) : base(message)
-        {
-            Code = code;
-        }
-
-        public EtcdException(StatusCode code, string message, Exception? innerException) : base(message, innerException)
-        {
-            Code = code;
-        }
+        Code = code;
     }
 
+
+    public EtcdException(StatusCode code, string message) : base(message)
+    {
+        Code = code;
+    }
+
+    public EtcdException(StatusCode code, string message, Exception? innerException) : base(message, innerException)
+    {
+        Code = code;
+    }
 }

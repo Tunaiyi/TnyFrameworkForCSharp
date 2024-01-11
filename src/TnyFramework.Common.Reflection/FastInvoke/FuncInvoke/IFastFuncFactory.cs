@@ -8,18 +8,15 @@
 
 using System.Reflection;
 
-namespace TnyFramework.Common.Reflection.FastInvoke.FuncInvoke
+namespace TnyFramework.Common.Reflection.FastInvoke.FuncInvoke;
+
+public interface IFastFuncFactory
 {
+    IFastInvoker CreateInvoker(FieldInfo field);
 
-    public interface IFastFuncFactory
-    {
-        IFastInvoker CreateInvoker(FieldInfo field);
+    IFastInvoker CreateInvoker(PropertyInfo property);
 
-        IFastInvoker CreateInvoker(PropertyInfo property);
+    IFastInvoker CreateInvoker(MethodInfo method);
 
-        IFastInvoker CreateInvoker(MethodInfo method);
-
-        IFastInvoker CreateInvoker(ConstructorInfo constructor);
-    }
-
+    IFastInvoker CreateInvoker(ConstructorInfo constructor);
 }

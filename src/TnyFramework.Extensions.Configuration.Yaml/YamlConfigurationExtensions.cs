@@ -8,19 +8,16 @@
 
 using Microsoft.Extensions.Configuration;
 
-namespace TnyFramework.Extensions.Configuration.Yaml
+namespace TnyFramework.Extensions.Configuration.Yaml;
+
+public static class YamlConfigurationExtensions
 {
-
-    public static class YamlConfigurationExtensions
+    public static IConfigurationBuilder AddYamlFileWithEnvironment(this IConfigurationBuilder builder, string name, bool optional = true)
     {
-        public static IConfigurationBuilder AddYamlFileWithEnvironment(this IConfigurationBuilder builder, string name, bool optional = true)
-        {
-            var environment = TnyEnvironments.GetEnvironment();
-            builder.AddYamlFile(name + ".yml", optional: optional, reloadOnChange: true)
-                .AddYamlFile(name + "." + environment + ".yml", true, true);
-            return builder;
-        }
-
+        var environment = TnyEnvironments.GetEnvironment();
+        builder.AddYamlFile(name + ".yml", optional: optional, reloadOnChange: true)
+            .AddYamlFile(name + "." + environment + ".yml", true, true);
+        return builder;
     }
 
 }

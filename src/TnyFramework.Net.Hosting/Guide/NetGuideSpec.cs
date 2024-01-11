@@ -13,59 +13,56 @@ using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Hosting.Guide
+namespace TnyFramework.Net.Hosting.Guide;
+
+public abstract class NetGuideSpec<TGuide, TContext, TImplContext, TSpec>
+    : UnitSpec<TGuide, TContext>, INetGuideSpec<TGuide, TContext, TSpec>
+    where TGuide : INetServer
+    where TContext : INetGuideUnitContext
+    where TImplContext : NetGuideUnitContext<TContext>, TContext
+    where TSpec : INetGuideSpec<TGuide, TContext, TSpec>
 {
+    protected readonly TImplContext context;
 
-    public abstract class NetGuideSpec<TGuide, TContext, TImplContext, TSpec>
-        : UnitSpec<TGuide, TContext>, INetGuideSpec<TGuide, TContext, TSpec>
-        where TGuide : INetServer
-        where TContext : INetGuideUnitContext
-        where TImplContext : NetGuideUnitContext<TContext>, TContext
-        where TSpec : INetGuideSpec<TGuide, TContext, TSpec>
+    protected TGuide? Guide { get; set; }
+
+    protected IServiceCollection UnitContainer { get; }
+
+    protected NetGuideSpec(IServiceCollection unitContainer, TImplContext context)
     {
-        protected readonly TImplContext context;
-
-        protected TGuide? Guide { get; set; }
-
-        protected IServiceCollection UnitContainer { get; }
-
-        protected NetGuideSpec(IServiceCollection unitContainer, TImplContext context)
-        {
-            UnitContainer = unitContainer;
-            this.context = context;
-        }
-
-        protected abstract TSpec Self();
-
-        public TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, TContext>> action)
-        {
-            action(context.MessageFactorySpec);
-            return Self();
-        }
-
-        public TSpec ContactConfigure(Action<IUnitSpec<IContactFactory, TContext>> action)
-        {
-            action(context.ContactFactorySpec);
-            return Self();
-        }
-
-        public TSpec RpcMonitorConfigure(Action<UnitSpec<RpcMonitor, TContext>> action)
-        {
-            action(context.RpcMonitorSpec);
-            return Self();
-        }
-
-        public override TGuide Load(TContext context, IServiceCollection services)
-        {
-            if (Guide != null)
-                return Guide;
-            return Guide = base.Load(context, UnitContainer);
-        }
-
-        public TGuide BuildGuide()
-        {
-            return Load(context, UnitContainer);
-        }
+        UnitContainer = unitContainer;
+        this.context = context;
     }
 
+    protected abstract TSpec Self();
+
+    public TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, TContext>> action)
+    {
+        action(context.MessageFactorySpec);
+        return Self();
+    }
+
+    public TSpec ContactConfigure(Action<IUnitSpec<IContactFactory, TContext>> action)
+    {
+        action(context.ContactFactorySpec);
+        return Self();
+    }
+
+    public TSpec RpcMonitorConfigure(Action<UnitSpec<RpcMonitor, TContext>> action)
+    {
+        action(context.RpcMonitorSpec);
+        return Self();
+    }
+
+    public override TGuide Load(TContext context, IServiceCollection services)
+    {
+        if (Guide != null)
+            return Guide;
+        return Guide = base.Load(context, UnitContainer);
+    }
+
+    public TGuide BuildGuide()
+    {
+        return Load(context, UnitContainer);
+    }
 }

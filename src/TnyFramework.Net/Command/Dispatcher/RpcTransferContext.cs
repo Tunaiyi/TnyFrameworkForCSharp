@@ -8,33 +8,30 @@
 
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public interface IRpcMessageTransferContext : IRpcTransactionContext, IRpcEnterCompletable
 {
+    /// <summary>
+    /// 转发
+    /// </summary>
+    /// <param name="to">目标</param>
+    /// <param name="operationName">操作</param>
+    /// <returns>返回是否成功</returns>
+    bool Transfer(INetContact to, string operationName);
 
-    public interface IRpcMessageTransferContext : IRpcTransactionContext, IRpcEnterCompletable
-    {
-        /// <summary>
-        /// 转发
-        /// </summary>
-        /// <param name="to">目标</param>
-        /// <param name="operationName">操作</param>
-        /// <returns>返回是否成功</returns>
-        bool Transfer(INetContact to, string operationName);
+    /// <summary>
+    /// 传送消息
+    /// </summary>
+    IMessage Message { get; }
 
-        /// <summary>
-        /// 传送消息
-        /// </summary>
-        IMessage Message { get; }
+    /// <summary>
+    /// 发送服务
+    /// </summary>
+    IContact From { get; }
 
-        /// <summary>
-        /// 发送服务
-        /// </summary>
-        IContact From { get; }
-
-        /// <summary>
-        /// 目标服务
-        /// </summary>
-        IContact To { get; }
-    }
-
+    /// <summary>
+    /// 目标服务
+    /// </summary>
+    IContact To { get; }
 }

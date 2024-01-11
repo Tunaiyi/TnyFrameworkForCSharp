@@ -12,20 +12,17 @@ using TnyFramework.Net.Application;
 using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Hosting.Guide
+namespace TnyFramework.Net.Hosting.Guide;
+
+public interface INetGuideSpec<TUnit, TContext, out TSpec>
+    : IUnitSpec<TUnit, TContext>, INetServerGuideBuilder<TUnit>
+    where TSpec : INetGuideSpec<TUnit, TContext, TSpec>
+    where TUnit : INetServer
+    where TContext : INetGuideUnitContext
 {
+    TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, TContext>> action);
 
-    public interface INetGuideSpec<TUnit, TContext, out TSpec>
-        : IUnitSpec<TUnit, TContext>, INetServerGuideBuilder<TUnit>
-        where TSpec : INetGuideSpec<TUnit, TContext, TSpec>
-        where TUnit : INetServer
-        where TContext : INetGuideUnitContext
-    {
-        TSpec MessageConfigure(Action<IUnitSpec<IMessageFactory, TContext>> action);
+    TSpec ContactConfigure(Action<IUnitSpec<IContactFactory, TContext>> action);
 
-        TSpec ContactConfigure(Action<IUnitSpec<IContactFactory, TContext>> action);
-
-        TSpec RpcMonitorConfigure(Action<UnitSpec<RpcMonitor, TContext>> action);
-    }
-
+    TSpec RpcMonitorConfigure(Action<UnitSpec<RpcMonitor, TContext>> action);
 }

@@ -8,22 +8,19 @@
 
 using System;
 
-namespace TnyFramework.Namespace.Exceptions
+namespace TnyFramework.Namespace.Exceptions;
+
+public class NamespaceHashingException : NamespaceException
 {
-
-    public class NamespaceHashingException : NamespaceException
+    public NamespaceHashingException()
     {
-        public NamespaceHashingException()
-        {
-        }
-
-        public NamespaceHashingException(string message) : base(message)
-        {
-        }
-
-        public NamespaceHashingException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
     }
 
+    public NamespaceHashingException(string message) : base(message)
+    {
+    }
+
+    public NamespaceHashingException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
 }

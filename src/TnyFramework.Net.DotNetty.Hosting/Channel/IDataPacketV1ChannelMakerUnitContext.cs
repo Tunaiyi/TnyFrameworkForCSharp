@@ -10,28 +10,25 @@ using System.Collections.Generic;
 using TnyFramework.Net.DotNetty.Codec;
 using TnyFramework.Net.DotNetty.Hosting.Guide;
 
-namespace TnyFramework.Net.DotNetty.Hosting.Channel
+namespace TnyFramework.Net.DotNetty.Hosting.Channel;
+
+public interface IDataPacketV1ChannelMakerUnitContext
 {
+    IList<IChannelPipelineChain> LoadPipelineChains(INettyGuideUnitContext context);
 
-    public interface IDataPacketV1ChannelMakerUnitContext
-    {
-        IList<IChannelPipelineChain> LoadPipelineChains(INettyGuideUnitContext context);
+    INetPacketDecoder LoadPackDecoder(INettyGuideUnitContext context);
 
-        INetPacketDecoder LoadPackDecoder(INettyGuideUnitContext context);
+    INetPacketEncoder LoadPackEncoder(INettyGuideUnitContext context);
 
-        INetPacketEncoder LoadPackEncoder(INettyGuideUnitContext context);
+    ICodecVerifier LoadCodecVerifier(INettyGuideUnitContext context);
 
-        ICodecVerifier LoadCodecVerifier(INettyGuideUnitContext context);
+    ICodecCrypto LoadCodecCrypto(INettyGuideUnitContext context);
 
-        ICodecCrypto LoadCodecCrypto(INettyGuideUnitContext context);
+    bool LoadCloseOnEncodeError();
 
-        bool LoadCloseOnEncodeError();
+    bool LoadCloseOnDecodeError();
 
-        bool LoadCloseOnDecodeError();
+    DataPacketV1Setting LoadEncodeConfig();
 
-        DataPacketV1Setting LoadEncodeConfig();
-
-        DataPacketV1Setting LoadDecodeConfig();
-    }
-
+    DataPacketV1Setting LoadDecodeConfig();
 }

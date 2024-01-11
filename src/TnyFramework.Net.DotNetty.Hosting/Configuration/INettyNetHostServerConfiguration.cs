@@ -10,12 +10,9 @@ using System;
 using TnyFramework.Net.DotNetty.Hosting.Guide;
 using TnyFramework.Net.Hosting.Configuration;
 
-namespace TnyFramework.Net.DotNetty.Hosting.Configuration
+namespace TnyFramework.Net.DotNetty.Hosting.Configuration;
+
+public interface INettyNetHostServerConfiguration : INetHostConfiguration<INettyNetHostServerConfiguration>
 {
-
-    public interface INettyNetHostServerConfiguration : INetHostConfiguration<INettyNetHostServerConfiguration>
-    {
-        public INettyNetHostServerConfiguration Server(string name, Action<INettyServerGuideSpec> action);
-    }
-
+    public INettyNetHostServerConfiguration Server(string name, Action<INettyServerGuideSpec> action);
 }

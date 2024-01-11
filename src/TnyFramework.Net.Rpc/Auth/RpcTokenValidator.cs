@@ -12,44 +12,41 @@ using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Rpc.Auth
+namespace TnyFramework.Net.Rpc.Auth;
+
+public class RpcTokenValidator : AuthenticationValidator
 {
+    private readonly IIdGenerator idCreator;
 
-    public class RpcTokenValidator : AuthenticationValidator
+    private readonly IRpcAuthService rpcAuthService;
+
+    public RpcTokenValidator(IIdGenerator idCreator, IRpcAuthService rpcAuthService)
     {
-        private readonly IIdGenerator idCreator;
-
-        private readonly IRpcAuthService rpcAuthService;
-
-        public RpcTokenValidator(IIdGenerator idCreator, IRpcAuthService rpcAuthService)
-        {
-            this.idCreator = idCreator;
-            this.rpcAuthService = rpcAuthService;
-        }
-
-        public override ICertificate Validate(ITunnel tunnel, IMessage message)
-        {
-            var token = message.BodyAs<string>();
-            if (token == null)
-            {
-                throw new AuthFailedException("Token is null");
-            }
-            try
-            {
-                var result = rpcAuthService.VerifyToken(token);
-                if (result.IsSuccess())
-                {
-                    var rpcToken = result.Value;
-                    var rpcIdentify = RpcAccessIdentify.Parse(rpcToken.Id);
-                    return Certificates.CreateAuthenticated(idCreator.Generate(), rpcIdentify.Id, rpcToken.Id, rpcToken.ServiceType, rpcIdentify);
-                }
-                var resultCode = result.Code;
-                throw new AuthFailedException(resultCode, null, $"Rpc登录认证失败. {{resultCode}} : {result.Message}");
-            } catch (Exception e)
-            {
-                throw new AuthFailedException(e, null, null, "Rpc登录认证失败");
-            }
-        }
+        this.idCreator = idCreator;
+        this.rpcAuthService = rpcAuthService;
     }
 
+    public override ICertificate Validate(ITunnel tunnel, IMessage message)
+    {
+        var token = message.BodyAs<string>();
+        if (token == null)
+        {
+            throw new AuthFailedException("Token is null");
+        }
+        try
+        {
+            var result = rpcAuthService.VerifyToken(token);
+            if (result.IsSuccess())
+            {
+                var rpcToken = result.Value;
+                var rpcIdentify = RpcAccessIdentify.Parse(rpcToken.Id);
+                return Certificates.CreateAuthenticated(idCreator.Generate(), rpcIdentify.Id, rpcToken.Id, rpcToken.ServiceType, rpcIdentify);
+            }
+            var resultCode = result.Code;
+            throw new AuthFailedException(resultCode, null, $"Rpc登录认证失败. {{resultCode}} : {result.Message}");
+        } catch (Exception e)
+        {
+            throw new AuthFailedException(e, null, null, "Rpc登录认证失败");
+        }
+    }
 }

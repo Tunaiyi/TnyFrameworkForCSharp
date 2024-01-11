@@ -6,44 +6,41 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public enum ParamMode
 {
+    None,
 
-    public enum ParamMode
-    {
-        None,
+    Message,
 
-        Message,
+    Tunnel,
 
-        Tunnel,
+    Session,
 
-        Session,
+    Client,
 
-        Client,
+    Identify,
 
-        Identify,
+    IdentifyToken,
 
-        IdentifyToken,
+    Param,
 
-        Param,
+    Code,
 
-        Code,
+    CodeNum,
 
-        CodeNum,
+    Header,
 
-        Header,
+    FromService,
 
-        FromService,
+    ToService,
 
-        ToService,
+    Sender,
 
-        Sender,
+    Receiver,
 
-        Receiver,
+    Body,
 
-        Body,
-
-        Ignore,
-    }
-
+    Ignore,
 }

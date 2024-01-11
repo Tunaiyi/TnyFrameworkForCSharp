@@ -10,70 +10,67 @@ using System;
 using System.Buffers.Binary;
 using System.Runtime.InteropServices;
 
-namespace TnyFramework.Common.Binary.Extensions
+namespace TnyFramework.Common.Binary.Extensions;
+
+public static partial class ByteSpanReadExtensions
 {
-
-    public static partial class ByteSpanReadExtensions
+    public static Span<byte> ReadDoubleBigEndian(this Span<byte> destination, out double value)
     {
-        public static Span<byte> ReadDoubleBigEndian(this Span<byte> destination, out double value)
-        {
 #if NETSTANDARD || NETFRAMEWORK
-            value = !BitConverter.IsLittleEndian
-                ? MemoryMarshal.Read<double>(destination)
-                : BitConverter.Int64BitsToDouble(BinaryPrimitives.ReverseEndianness(MemoryMarshal.Read<long>(destination)));
+        value = !BitConverter.IsLittleEndian
+            ? MemoryMarshal.Read<double>(destination)
+            : BitConverter.Int64BitsToDouble(BinaryPrimitives.ReverseEndianness(MemoryMarshal.Read<long>(destination)));
 #else
-            value = BinaryPrimitives.ReadDoubleBigEndian(destination);
+        value = BinaryPrimitives.ReadDoubleBigEndian(destination);
 #endif
-            return destination.Slice(sizeof(double));
-        }
-
-        public static Span<byte> ReadInt16BigEndian(this Span<byte> destination, out short value)
-        {
-            value = BinaryPrimitives.ReadInt16BigEndian(destination);
-            return destination.Slice(sizeof(short));
-        }
-
-        public static Span<byte> ReadInt32BigEndian(this Span<byte> destination, out int value)
-        {
-            value = BinaryPrimitives.ReadInt32BigEndian(destination);
-            return destination.Slice(sizeof(int));
-        }
-
-        public static Span<byte> ReadInt64BigEndian(this Span<byte> destination, out long value)
-        {
-            value = BinaryPrimitives.ReadInt64BigEndian(destination);
-            return destination.Slice(sizeof(long));
-        }
-
-        public static Span<byte> ReadSingleBigEndian(this Span<byte> destination, out float value)
-        {
-#if NETSTANDARD || NETFRAMEWORK
-            value = !BitConverter.IsLittleEndian
-                ? MemoryMarshal.Read<float>(destination)
-                : Int32BitsToSingle(BinaryPrimitives.ReverseEndianness(MemoryMarshal.Read<int>(destination)));
-#else
-            value = BinaryPrimitives.ReadSingleBigEndian(destination);
-#endif
-            return destination.Slice(sizeof(double));
-        }
-
-        public static Span<byte> ReadUInt16BigEndian(this Span<byte> destination, out ushort value)
-        {
-            value = BinaryPrimitives.ReadUInt16BigEndian(destination);
-            return destination.Slice(sizeof(ushort));
-        }
-
-        public static Span<byte> ReadUInt32BigEndian(this Span<byte> destination, out uint value)
-        {
-            value = BinaryPrimitives.ReadUInt32BigEndian(destination);
-            return destination.Slice(sizeof(uint));
-        }
-
-        public static Span<byte> ReadUInt64BigEndian(this Span<byte> destination, out ulong value)
-        {
-            value = BinaryPrimitives.ReadUInt64BigEndian(destination);
-            return destination.Slice(sizeof(ulong));
-        }
+        return destination.Slice(sizeof(double));
     }
 
+    public static Span<byte> ReadInt16BigEndian(this Span<byte> destination, out short value)
+    {
+        value = BinaryPrimitives.ReadInt16BigEndian(destination);
+        return destination.Slice(sizeof(short));
+    }
+
+    public static Span<byte> ReadInt32BigEndian(this Span<byte> destination, out int value)
+    {
+        value = BinaryPrimitives.ReadInt32BigEndian(destination);
+        return destination.Slice(sizeof(int));
+    }
+
+    public static Span<byte> ReadInt64BigEndian(this Span<byte> destination, out long value)
+    {
+        value = BinaryPrimitives.ReadInt64BigEndian(destination);
+        return destination.Slice(sizeof(long));
+    }
+
+    public static Span<byte> ReadSingleBigEndian(this Span<byte> destination, out float value)
+    {
+#if NETSTANDARD || NETFRAMEWORK
+        value = !BitConverter.IsLittleEndian
+            ? MemoryMarshal.Read<float>(destination)
+            : Int32BitsToSingle(BinaryPrimitives.ReverseEndianness(MemoryMarshal.Read<int>(destination)));
+#else
+        value = BinaryPrimitives.ReadSingleBigEndian(destination);
+#endif
+        return destination.Slice(sizeof(double));
+    }
+
+    public static Span<byte> ReadUInt16BigEndian(this Span<byte> destination, out ushort value)
+    {
+        value = BinaryPrimitives.ReadUInt16BigEndian(destination);
+        return destination.Slice(sizeof(ushort));
+    }
+
+    public static Span<byte> ReadUInt32BigEndian(this Span<byte> destination, out uint value)
+    {
+        value = BinaryPrimitives.ReadUInt32BigEndian(destination);
+        return destination.Slice(sizeof(uint));
+    }
+
+    public static Span<byte> ReadUInt64BigEndian(this Span<byte> destination, out ulong value)
+    {
+        value = BinaryPrimitives.ReadUInt64BigEndian(destination);
+        return destination.Slice(sizeof(ulong));
+    }
 }

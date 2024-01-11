@@ -10,36 +10,33 @@ using System.Threading.Tasks;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public interface ITransport
 {
+    /// <summary>
+    /// 写出消息
+    /// </summary>
+    /// <param name="message">发送消息</param>
+    /// <param name="waitWritten"></param>
+    /// <returns>发送promise</returns>
+    ValueTask Write(IMessage message, bool waitWritten = false);
 
-    public interface ITransport
-    {
-        /// <summary>
-        /// 写出消息
-        /// </summary>
-        /// <param name="message">发送消息</param>
-        /// <param name="waitWritten"></param>
-        /// <returns>发送promise</returns>
-        ValueTask Write(IMessage message, bool waitWritten = false);
+    /// <summary>
+    /// 写出消息
+    /// </summary>
+    /// <param name="allocator">消费分发器</param>
+    /// <param name="messageContent">消息上下文</param>
+    /// <param name="waitWritten"></param>
+    /// <returns></returns>
+    ValueTask Write(MessageAllocator allocator, MessageContent messageContent, bool waitWritten = false);
 
-        /// <summary>
-        /// 写出消息
-        /// </summary>
-        /// <param name="allocator">消费分发器</param>
-        /// <param name="messageContent">消息上下文</param>
-        /// <param name="waitWritten"></param>
-        /// <returns></returns>
-        ValueTask Write(MessageAllocator allocator, MessageContent messageContent, bool waitWritten = false);
-
-        /// <summary>
-        /// 写出消息
-        /// </summary>
-        /// <param name="allocator">消费分发器</param>
-        /// <param name="messageContent">消息上下文</param>
-        /// <param name="waitWritten"></param>
-        /// <returns></returns>
-        ValueTask Write(IMessageAllocator allocator, MessageContent messageContent, bool waitWritten = false) => Write(allocator.Allocate, messageContent, waitWritten);
-    }
-
+    /// <summary>
+    /// 写出消息
+    /// </summary>
+    /// <param name="allocator">消费分发器</param>
+    /// <param name="messageContent">消息上下文</param>
+    /// <param name="waitWritten"></param>
+    /// <returns></returns>
+    ValueTask Write(IMessageAllocator allocator, MessageContent messageContent, bool waitWritten = false) => Write(allocator.Allocate, messageContent, waitWritten);
 }

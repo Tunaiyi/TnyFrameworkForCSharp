@@ -8,23 +8,20 @@
 
 using TnyFramework.Common.Attribute;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+/// <summary>
+/// 消息接口
+/// </summary>
+public interface IMessage : IMessageSubject, IMessageHead
 {
+    /// <summary>
+    /// 消息头
+    /// </summary>
+    IMessageHead Head { get; }
 
     /// <summary>
-    /// 消息接口
+    /// 附加属性
     /// </summary>
-    public interface IMessage : IMessageSubject, IMessageHead
-    {
-        /// <summary>
-        /// 消息头
-        /// </summary>
-        IMessageHead Head { get; }
-
-        /// <summary>
-        /// 附加属性
-        /// </summary>
-        IAttributes Attribute { get; }
-    }
-
+    IAttributes Attribute { get; }
 }

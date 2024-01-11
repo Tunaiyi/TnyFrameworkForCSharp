@@ -9,28 +9,25 @@
 using TnyFramework.Coroutines.Async;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public interface ISession : ICommunicator, IConnection, ISender, IAsyncExecutor
 {
+    long Id { get; }
 
-    public interface ISession : ICommunicator, IConnection, ISender, IAsyncExecutor
-    {
-        long Id { get; }
+    MessageHandleFilter? SendFilter { get; set; }
 
-        MessageHandleFilter? SendFilter { get; set; }
+    MessageHandleFilter? ReceiveFilter { get; set; }
 
-        MessageHandleFilter? ReceiveFilter { get; set; }
+    void Heartbeat();
 
-        void Heartbeat();
+    SessionStatus Status { get; }
 
-        SessionStatus Status { get; }
+    long OfflineTime { get; }
 
-        long OfflineTime { get; }
+    void Offline();
 
-        void Offline();
+    bool IsOnline();
 
-        bool IsOnline();
-
-        bool IsOffline();
-    }
-
+    bool IsOffline();
 }

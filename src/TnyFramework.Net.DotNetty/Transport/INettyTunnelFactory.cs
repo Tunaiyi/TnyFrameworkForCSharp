@@ -10,15 +10,12 @@ using DotNetty.Transport.Channels;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.DotNetty.Transport
+namespace TnyFramework.Net.DotNetty.Transport;
+
+/// <summary>
+/// Netty Tunnel 工厂
+/// </summary>
+public interface INettyTunnelFactory
 {
-
-    /// <summary>
-    /// Netty Tunnel 工厂
-    /// </summary>
-    public interface INettyTunnelFactory
-    {
-        INetTunnel Create(long id, IChannel channel, INetworkContext context, INetService service);
-    }
-
+    INetTunnel Create(long id, IChannel channel, INetworkContext context, INetService service);
 }

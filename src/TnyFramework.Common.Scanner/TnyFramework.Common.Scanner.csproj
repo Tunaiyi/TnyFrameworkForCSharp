@@ -10,7 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Collections.Immutable" Version="8.0.0" />
+        <PackageReference Include="System.Collections.Immutable" Version="8.0.0"/>
     </ItemGroup>
     <ItemGroup>
         <AssemblyAttribute Include="TnyFramework.Common.Scanner.Attributes.AssemblyTypeSelectorAttributes">
@@ -18,7 +18,7 @@
         </AssemblyAttribute>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj" />
-        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
+        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj"/>
     </ItemGroup>
 </Project>

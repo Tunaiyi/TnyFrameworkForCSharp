@@ -8,16 +8,13 @@
 
 using TnyFramework.Net.Rpc.Auth;
 
-namespace TnyFramework.Net.Hosting.Rpc
+namespace TnyFramework.Net.Hosting.Rpc;
+
+public interface IRpcUnitContext
 {
+    IRpcAuthService LoadRpcAuthService();
 
-    public interface IRpcUnitContext
-    {
-        IRpcAuthService LoadRpcAuthService();
+    IRpcUserPasswordManager LoadRpcUserPasswordManager();
 
-        IRpcUserPasswordManager LoadRpcUserPasswordManager();
-
-        NetUnitContext NetUnitContext { get; }
-    }
-
+    NetUnitContext NetUnitContext { get; }
 }

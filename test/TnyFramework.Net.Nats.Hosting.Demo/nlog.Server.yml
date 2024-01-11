@@ -1,0 +1,8 @@
+NLog:
+  rules:
+    - logger: ProjV
+      minLevel: '${globalLevel}'
+      writeTo: 'toConsole,toMessage'
+    - logger: '*'
+      minLevel: '${globalLevel}'
+      writeTo: 'toConsole,toInfo,toError'

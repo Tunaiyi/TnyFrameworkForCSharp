@@ -6,21 +6,18 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+/// <summary>
+/// 通用消息对象
+/// </summary>
+public class CommonMessage : AbstractNetMessage
 {
-
-    /// <summary>
-    /// 通用消息对象
-    /// </summary>
-    public class CommonMessage : AbstractNetMessage
+    public CommonMessage(INetMessageHead head) : base(head)
     {
-        public CommonMessage(INetMessageHead head) : base(head)
-        {
-        }
-
-        public CommonMessage(INetMessageHead head, object? body) : base(head, body)
-        {
-        }
     }
 
+    public CommonMessage(INetMessageHead head, object? body) : base(head, body)
+    {
+    }
 }

@@ -17,134 +17,130 @@ using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public abstract class BaseNetTunnel<TSession, TTransporter> : NetTunnel<TSession>
+    where TSession : INetSession
+    where TTransporter : IMessageTransporter
 {
+    protected TTransporter Transporter { get; }
 
-    public abstract class BaseNetTunnel<TSession, TTransporter> : NetTunnel<TSession>
-        where TSession : INetSession
-        where TTransporter : IMessageTransporter
+    public override EndPoint? RemoteAddress => Transporter.RemoteAddress;
+
+    public override EndPoint? LocalAddress => Transporter.LocalAddress;
+
+    protected readonly ILogger logger;
+
+    protected BaseNetTunnel(long id, TTransporter transporter, NetAccessMode accessMode, INetworkContext context, INetService service)
+        : base(id, accessMode, context, service)
     {
-        protected TTransporter Transporter { get; }
-
-        public override EndPoint? RemoteAddress => Transporter.RemoteAddress;
-
-        public override EndPoint? LocalAddress => Transporter.LocalAddress;
-
-        protected readonly ILogger logger;
-
-        protected BaseNetTunnel(long id, TTransporter transporter, NetAccessMode accessMode, INetworkContext context, INetService service)
-            : base(id, accessMode, context, service)
+        logger = LogFactory.Logger(GetType());
+        if (transporter.IsNotNull())
         {
-            logger = LogFactory.Logger(GetType());
-            if (transporter.IsNotNull())
-            {
-                Transporter = transporter;
-                Transporter.Bind(this);
-            } else
-            {
-                Transporter = default!;
-            }
+            Transporter = transporter;
+            Transporter.Bind(this);
+        } else
+        {
+            Transporter = default!;
         }
+    }
 
-        protected sealed override bool ResetSession(INetSession newSession)
+    protected sealed override bool ResetSession(INetSession newSession)
+    {
+        var certificate = Certificate;
+        if (certificate.IsAuthenticated())
+            return false;
+        var commandTaskBox = Session.CommandBox;
+        SetSession((TSession) newSession);
+        Session.TakeOver(commandTaskBox);
+        return true;
+    }
+
+    public override bool IsActive()
+    {
+        var transporter = Transporter;
+        return Status == TunnelStatus.Open && transporter.IsNotNull() && transporter.IsActive();
+    }
+
+
+    public override void Reset()
+    {
+
+        if (Status == TunnelStatus.Init)
         {
-            var certificate = Certificate;
-            if (certificate.IsAuthenticated())
-                return false;
-            var commandTaskBox = Session.CommandBox;
-            SetSession((TSession)newSession);
-            Session.TakeOver(commandTaskBox);
-            return true;
+            return;
         }
-
-        public override bool IsActive()
+        lock (this)
         {
-            var transporter = Transporter;
-            return Status == TunnelStatus.Open && transporter.IsNotNull() && transporter.IsActive();
-        }
-
-
-
-        public override void Reset()
-        {
-
             if (Status == TunnelStatus.Init)
             {
                 return;
             }
-            lock (this)
+            if (!IsActive())
             {
-                if (Status == TunnelStatus.Init)
-                {
-                    return;
-                }
-                if (!IsActive())
-                {
-                    OnDisconnect();
-                }
-                Status = TunnelStatus.Init;
+                OnDisconnect();
             }
-        }
-
-        public override async ValueTask Write(IMessage message, bool waitWritten = false)
-        {
-            if (!await CheckAvailable(null))
-            {
-                return;
-            }
-            await Transporter.Write(message, waitWritten);
-        }
-
-        public override async ValueTask Write(MessageAllocator allocator, MessageContent messageContent, bool waitWritten = false)
-        {
-            if (!await CheckAvailable(null))
-            {
-                return;
-            }
-            await Transporter.Write(allocator, messageContent, waitWritten);
-        }
-
-        protected virtual void OnWriteUnavailable()
-        {
-
-        }
-
-        protected override void OnDisconnect()
-        {
-            var transporter = Transporter;
-            if (transporter.IsNull() || !transporter.IsActive())
-                return;
-            try
-            {
-                transporter.Close();
-            } catch (Exception e)
-            {
-                logger.LogError(e, "transporter close error");
-            }
-        }
-
-        private ValueTask<bool> CheckAvailable(MessageContent? content)
-        {
-            if (IsActive())
-            {
-                return ValueTask.FromResult(true);
-            }
-            OnWriteUnavailable();
-            var cause = new TunnelDisconnectedException($"{this} is disconnect");
-            if (content != null)
-            {
-                content.Cancel(false);
-            } else
-            {
-                return ValueTask.FromException<bool>(cause);
-            }
-            return ValueTask.FromResult(false);
-        }
-
-        public override string ToString()
-        {
-            return $"Tunnel({AccessMode})[{ContactGroup}({Identify})]{Transporter}";
+            Status = TunnelStatus.Init;
         }
     }
 
+    public override async ValueTask Write(IMessage message, bool waitWritten = false)
+    {
+        if (!await CheckAvailable(null))
+        {
+            return;
+        }
+        await Transporter.Write(message, waitWritten);
+    }
+
+    public override async ValueTask Write(MessageAllocator allocator, MessageContent messageContent, bool waitWritten = false)
+    {
+        if (!await CheckAvailable(null))
+        {
+            return;
+        }
+        await Transporter.Write(allocator, messageContent, waitWritten);
+    }
+
+    protected virtual void OnWriteUnavailable()
+    {
+
+    }
+
+    protected override void OnDisconnect()
+    {
+        var transporter = Transporter;
+        if (transporter.IsNull() || !transporter.IsActive())
+            return;
+        try
+        {
+            transporter.Close();
+        } catch (Exception e)
+        {
+            logger.LogError(e, "transporter close error");
+        }
+    }
+
+    private ValueTask<bool> CheckAvailable(MessageContent? content)
+    {
+        if (IsActive())
+        {
+            return ValueTask.FromResult(true);
+        }
+        OnWriteUnavailable();
+        var cause = new TunnelDisconnectedException($"{this} is disconnect");
+        if (content != null)
+        {
+            content.Cancel(false);
+        } else
+        {
+            return ValueTask.FromException<bool>(cause);
+        }
+        return ValueTask.FromResult(false);
+    }
+
+    public override string ToString()
+    {
+        return $"Tunnel({AccessMode})[{ContactGroup}({Identify})]{Transporter}";
+    }
 }

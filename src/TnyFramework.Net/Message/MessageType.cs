@@ -8,34 +8,31 @@
 
 using System;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+[Flags]
+public enum MessageType
 {
+    /// <summary>
+    /// 处理请求
+    /// </summary>
+    Message = CodecConstants.DATA_PACK_OPTION_MESSAGE,
 
-    [Flags]
-    public enum MessageType
+    /// <summary>
+    /// Ping
+    /// </summary>
+    Ping = CodecConstants.DATA_PACK_OPTION_PING,
+
+    /// <summary>
+    /// Pong
+    /// </summary>
+    Pong = CodecConstants.DATA_PACK_OPTION_PONG,
+}
+
+public static class MessageTypeExtensions
+{
+    public static byte GetOption(this MessageType value)
     {
-        /// <summary>
-        /// 处理请求
-        /// </summary>
-        Message = CodecConstants.DATA_PACK_OPTION_MESSAGE,
-
-        /// <summary>
-        /// Ping
-        /// </summary>
-        Ping = CodecConstants.DATA_PACK_OPTION_PING,
-
-        /// <summary>
-        /// Pong
-        /// </summary>
-        Pong = CodecConstants.DATA_PACK_OPTION_PONG,
+        return (byte) value;
     }
-
-    public static class MessageTypeExtensions
-    {
-        public static byte GetOption(this MessageType value)
-        {
-            return (byte) value;
-        }
-    }
-
 }

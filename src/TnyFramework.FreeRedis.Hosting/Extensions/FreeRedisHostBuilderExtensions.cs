@@ -13,26 +13,23 @@ using TnyFramework.DI.Extensions;
 using TnyFramework.DI.Hosting.Configurations.Extensions;
 using TnyFramework.FreeRedis.Hosting.Configurations;
 
-namespace TnyFramework.FreeRedis.Hosting.Extensions
+namespace TnyFramework.FreeRedis.Hosting.Extensions;
+
+public static class FreeRedisHostBuilderExtensions
 {
-
-    public static class FreeRedisHostBuilderExtensions
+    public static IHostBuilder UseFreeRedis(this IHostBuilder builder, string section = FreeRedisPropertiesKeys.FREE_REDIS_ROOT)
     {
-        public static IHostBuilder UseFreeRedis(this IHostBuilder builder, string section = FreeRedisPropertiesKeys.FREE_REDIS_ROOT)
-        {
-            return builder.ConfigureServices((context, services) => FreeRedisServices(context, services, section));
-        }
-
-        private static void FreeRedisServices(HostBuilderContext context, IServiceCollection services, string section)
-        {
-            services.BindProperties<FreeRedisProperties>(context, section);
-            var descriptor = ServiceDescriptor.Singleton<ObjectCodecAdapter, ObjectCodecAdapter>();
-            if (!services.Contains(descriptor))
-            {
-                services.BindSingleton<ObjectCodecAdapter>();
-            }
-            services.BindSingleton<FreeRedisDataSources>();
-        }
+        return builder.ConfigureServices((context, services) => FreeRedisServices(context, services, section));
     }
 
+    private static void FreeRedisServices(HostBuilderContext context, IServiceCollection services, string section)
+    {
+        services.BindProperties<FreeRedisProperties>(context, section);
+        var descriptor = ServiceDescriptor.Singleton<ObjectCodecAdapter, ObjectCodecAdapter>();
+        if (!services.Contains(descriptor))
+        {
+            services.BindSingleton<ObjectCodecAdapter>();
+        }
+        services.BindSingleton<FreeRedisDataSources>();
+    }
 }

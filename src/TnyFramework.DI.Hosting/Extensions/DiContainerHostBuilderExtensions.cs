@@ -12,35 +12,32 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TnyFramework.DI.Hosting.Configurations;
 
-namespace TnyFramework.DI.Hosting.Extensions
+namespace TnyFramework.DI.Hosting.Extensions;
+
+public static class DiContainerHostBuilderExtensions
 {
-
-    public static class DiContainerHostBuilderExtensions
+    public static IHostBuilder UseDiContainerHost(this IHostBuilder builder)
     {
-        public static IHostBuilder UseDiContainerHost(this IHostBuilder builder)
-        {
-            return builder.ConfigureServices((hostBuilder, services) => { services.AddHostedService<DiContainerHostedService>(); })
-                .EnableAutoConfigureServices();
-        }
-
-        public static IHostBuilder EnableAutoConfigureServices(this IHostBuilder builder)
-        {
-            return builder.ConfigureServices(AutoConfigureServices);
-        }
-
-        private static void AutoConfigureServices(HostBuilderContext hostBuilder, IServiceCollection services)
-        {
-            var configurators = (
-                from type in AutoServiceConfiguratorSelector.Types
-                select type.GetConstructor(Type.EmptyTypes)
-                into constructor
-                where constructor != null
-                select (IAutoServiceConfigurator) constructor.Invoke(Array.Empty<object>())).ToList();
-            foreach (var autoConfigurator in configurators)
-            {
-                autoConfigurator.Configure(hostBuilder, services);
-            }
-        }
+        return builder.ConfigureServices((hostBuilder, services) => { services.AddHostedService<DiContainerHostedService>(); })
+            .EnableAutoConfigureServices();
     }
 
+    public static IHostBuilder EnableAutoConfigureServices(this IHostBuilder builder)
+    {
+        return builder.ConfigureServices(AutoConfigureServices);
+    }
+
+    private static void AutoConfigureServices(HostBuilderContext hostBuilder, IServiceCollection services)
+    {
+        var configurators = (
+            from type in AutoServiceConfiguratorSelector.Types
+            select type.GetConstructor(Type.EmptyTypes)
+            into constructor
+            where constructor != null
+            select (IAutoServiceConfigurator) constructor.Invoke(Array.Empty<object>())).ToList();
+        foreach (var autoConfigurator in configurators)
+        {
+            autoConfigurator.Configure(hostBuilder, services);
+        }
+    }
 }

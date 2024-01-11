@@ -9,25 +9,22 @@
 using System;
 using TnyFramework.Common.Result;
 
-namespace TnyFramework.Net.Exceptions
+namespace TnyFramework.Net.Exceptions;
+
+public class TunnelDisconnectedException : NetException
 {
-
-    public class TunnelDisconnectedException : NetException
+    public TunnelDisconnectedException(string message = "") : base(message)
     {
-        public TunnelDisconnectedException(string message = "") : base(message)
-        {
-        }
+    }
 
-        public TunnelDisconnectedException(IResultCode? code = null, object? body = null, string message = "")
-            : base(code, body, message)
-        {
-        }
+    public TunnelDisconnectedException(IResultCode? code = null, object? body = null, string message = "")
+        : base(code, body, message)
+    {
+    }
 
-        public TunnelDisconnectedException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
-            : base(innerException, code, body, message)
-        {
-        }
-
+    public TunnelDisconnectedException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+        : base(innerException, code, body, message)
+    {
     }
 
 }

@@ -11,32 +11,29 @@ using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Common;
 
-namespace TnyFramework.Net.Exceptions
+namespace TnyFramework.Net.Exceptions;
+
+public class NetException : ResultCodeException
 {
+    private static readonly IResultCode CODE = NetResultCode.SERVER_ERROR;
 
-    public class NetException : ResultCodeException
+    public object Body { get; }
+
+    public NetException(string message = "")
+        : base(CODE, message)
     {
-        private static readonly IResultCode CODE = NetResultCode.SERVER_ERROR;
-
-        public object Body { get; }
-
-        public NetException(string message = "")
-            : base(CODE, message)
-        {
-            Body = null!;
-        }
-
-        public NetException(IResultCode? code = null, object? body = null, string message = "")
-            : base(code ?? CODE, message)
-        {
-            Body = body!;
-        }
-
-        public NetException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
-            : base(code ?? CODE, innerException, message)
-        {
-            Body = body!;
-        }
+        Body = null!;
     }
 
+    public NetException(IResultCode? code = null, object? body = null, string message = "")
+        : base(code ?? CODE, message)
+    {
+        Body = body!;
+    }
+
+    public NetException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+        : base(code ?? CODE, innerException, message)
+    {
+        Body = body!;
+    }
 }

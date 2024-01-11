@@ -6,27 +6,24 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Application
+namespace TnyFramework.Net.Application;
+
+public interface INetServer : IServedService
 {
+    /// <summary>
+    /// 是否启动
+    /// </summary>
+    /// <returns></returns>
+    bool IsOpen();
 
-    public interface INetServer : IServedService
-    {
-        /// <summary>
-        /// 是否启动
-        /// </summary>
-        /// <returns></returns>
-        bool IsOpen();
+    IServiceSetting Setting { get; }
+}
 
-        IServiceSetting Setting { get; }
-    }
-
-    public interface INetServer<out TSetting> : INetServer
-        where TSetting : IServiceSetting
-    {
-        /// <summary>
-        /// 设置
-        /// </summary>
-        TSetting ServiceSetting { get; }
-    }
-
+public interface INetServer<out TSetting> : INetServer
+    where TSetting : IServiceSetting
+{
+    /// <summary>
+    /// 设置
+    /// </summary>
+    TSetting ServiceSetting { get; }
 }

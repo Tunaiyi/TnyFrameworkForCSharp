@@ -8,28 +8,25 @@
 
 using System;
 
-namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
+namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf;
+
+/// <summary>
+/// ProtobufObjectCodec 工厂
+/// </summary>
+public class TypeProtobufObjectCodecFactory : ObjectCodecFactory
 {
-
-    /// <summary>
-    /// ProtobufObjectCodec 工厂
-    /// </summary>
-    public class TypeProtobufObjectCodecFactory : ObjectCodecFactory
+    public TypeProtobufObjectCodecFactory() : base(TypeProtobufMimeType.TYPE_PROTOBUF)
     {
-        public TypeProtobufObjectCodecFactory() : base(TypeProtobufMimeType.TYPE_PROTOBUF)
-        {
-        }
-
-        protected override IObjectCodec<T> Create<T>()
-        {
-            return new TypeProtobufObjectCodec<T>(TypeProtobufSchemeFactory.Factory);
-        }
-
-        protected override IObjectCodec Create(Type type)
-        {
-            var makeGenericType = typeof(TypeProtobufObjectCodec<>).MakeGenericType(type);
-            return (IObjectCodec) Activator.CreateInstance(makeGenericType)!;
-        }
     }
 
+    protected override IObjectCodec<T> Create<T>()
+    {
+        return new TypeProtobufObjectCodec<T>(TypeProtobufSchemeFactory.Factory);
+    }
+
+    protected override IObjectCodec Create(Type type)
+    {
+        var makeGenericType = typeof(TypeProtobufObjectCodec<>).MakeGenericType(type);
+        return (IObjectCodec) Activator.CreateInstance(makeGenericType)!;
+    }
 }

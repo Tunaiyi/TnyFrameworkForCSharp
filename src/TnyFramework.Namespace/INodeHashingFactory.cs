@@ -9,13 +9,10 @@
 using TnyFramework.Codec;
 using TnyFramework.Namespace.Sharding;
 
-namespace TnyFramework.Namespace
+namespace TnyFramework.Namespace;
+
+public interface INodeHashingFactory
 {
-
-    public interface INodeHashingFactory
-    {
-        INodeHashing<TNode>? Create<TNode>(string rootPath, HashingOptions<TNode> option, INamespaceExplorer explorer, ObjectCodecAdapter adapter)
-            where TNode : IShardingNode;
-    }
-
+    INodeHashing<TNode>? Create<TNode>(string rootPath, HashingOptions<TNode> option, INamespaceExplorer explorer, ObjectCodecAdapter adapter)
+        where TNode : IShardingNode;
 }

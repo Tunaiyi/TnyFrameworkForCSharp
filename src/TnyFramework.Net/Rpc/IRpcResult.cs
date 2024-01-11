@@ -9,27 +9,24 @@
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public interface IRpcResult
 {
+    object? Body { get; }
 
-    public interface IRpcResult
-    {
-        object? Body { get; }
+    IMessage? Message { get; }
 
-        IMessage? Message { get; }
+    IResultCode ResultCode { get; }
 
-        IResultCode ResultCode { get; }
+    string Description { get; }
 
-        string Description { get; }
+    bool IsSuccess();
 
-        bool IsSuccess();
+    bool IsFailure();
+}
 
-        bool IsFailure();
-    }
-
-    public interface IRpcResult<out TBody> : IRpcResult
-    {
-        new TBody? Body { get; }
-    }
-
+public interface IRpcResult<out TBody> : IRpcResult
+{
+    new TBody? Body { get; }
 }

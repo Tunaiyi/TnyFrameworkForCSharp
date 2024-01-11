@@ -8,15 +8,12 @@
 
 using System.Buffers;
 
-namespace TnyFramework.Common.Binary.Extensions
+namespace TnyFramework.Common.Binary.Extensions;
+
+public static class BufferWriterExtensions
 {
-
-    public static class BufferWriterExtensions
+    public static IByteBufferWriter AsByteBufferWriter(this IBufferWriter<byte> writer)
     {
-        public static IByteBufferWriter AsByteBufferWriter(this IBufferWriter<byte> writer)
-        {
-            return ByteBufferWriter.Wrap(writer);
-        }
+        return ByteBufferWriter.Wrap(writer);
     }
-
 }

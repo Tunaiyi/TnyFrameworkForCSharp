@@ -14,337 +14,334 @@ using TnyFramework.Codec;
 using TnyFramework.Namespace.Sharding;
 using CollectionExtensions = TnyFramework.Common.Extensions.CollectionExtensions;
 
-namespace TnyFramework.Namespace.Etcd
+namespace TnyFramework.Namespace.Etcd;
+
+internal class PartitionComparer<TNode> : IComparer<IPartition<TNode>>
+    where TNode : IShardingNode
 {
-
-    internal class PartitionComparer<TNode> : IComparer<IPartition<TNode>>
-        where TNode : IShardingNode
+    public int Compare(IPartition<TNode>? x, IPartition<TNode>? y)
     {
-        public int Compare(IPartition<TNode>? x, IPartition<TNode>? y)
-        {
-            var nodeKey = string.Compare(x?.NodeKey, y?.NodeKey, StringComparison.Ordinal);
-            return nodeKey != 0 ? nodeKey : x!.Slot.CompareTo(y!.Slot);
-        }
-    };
+        var nodeKey = string.Compare(x?.NodeKey, y?.NodeKey, StringComparison.Ordinal);
+        return nodeKey != 0 ? nodeKey : x!.Slot.CompareTo(y!.Slot);
+    }
+};
 
-    public class EtcdNodeHashingMultimap<TNode> : EtcdNodeHashing<TNode>
-        where TNode : IShardingNode
+public class EtcdNodeHashingMultimap<TNode> : EtcdNodeHashing<TNode>
+    where TNode : IShardingNode
+{
+    // 节点
+    private readonly Dictionary<long, SortedSet<IPartition<TNode>>> slotPartitionsMap = new Dictionary<long, SortedSet<IPartition<TNode>>>();
+
+    private readonly Dictionary<string, IPartition<TNode>> partitionMap = new Dictionary<string, IPartition<TNode>>();
+
+    private volatile List<ShardingRange<TNode>>? ranges;
+
+    private static readonly PartitionComparer<TNode> PARTITION_COMPARER = new PartitionComparer<TNode>();
+
+    private readonly ReaderWriterLockSlim mutex = new ReaderWriterLockSlim();
+
+    public EtcdNodeHashingMultimap(string path, HashingOptions<TNode> option, EtcdNamespaceExplorer explorer,
+        ObjectCodecAdapter objectCodecAdapter)
+        : base(path, option, explorer, objectCodecAdapter, false)
     {
-        // 节点
-        private readonly Dictionary<long, SortedSet<IPartition<TNode>>> slotPartitionsMap = new Dictionary<long, SortedSet<IPartition<TNode>>>();
+    }
 
-        private readonly Dictionary<string, IPartition<TNode>> partitionMap = new Dictionary<string, IPartition<TNode>>();
+    private void WriterLock()
+    {
+        mutex.EnterWriteLock();
+    }
 
-        private volatile List<ShardingRange<TNode>>? ranges;
+    private void WriterUnlock()
+    {
+        mutex.ExitWriteLock();
+    }
 
-        private static readonly PartitionComparer<TNode> PARTITION_COMPARER = new PartitionComparer<TNode>();
+    private void ReaderUpgradeableLock()
+    {
+        mutex.EnterUpgradeableReadLock();
+    }
 
-        private readonly ReaderWriterLockSlim mutex = new ReaderWriterLockSlim();
+    private void ReaderUpgradeableUnlock()
+    {
+        mutex.ExitUpgradeableReadLock();
+    }
 
-        public EtcdNodeHashingMultimap(string path, HashingOptions<TNode> option, EtcdNamespaceExplorer explorer,
-            ObjectCodecAdapter objectCodecAdapter)
-            : base(path, option, explorer, objectCodecAdapter, false)
+    private void ReaderLock()
+    {
+        mutex.EnterReadLock();
+    }
+
+    private void ReaderUnlock()
+    {
+        mutex.ExitReadLock();
+    }
+
+    protected override void LoadPartitions(IEnumerable<IPartition<TNode>> partitions)
+    {
+        WriterLock();
+        try
         {
+            var addList = partitions.Where(DoAddPartition).ToList();
+            if (CollectionExtensions.IsNullOrEmpty(addList))
+                return;
+            ResetRange();
+            FireChange(this, addList);
+        } finally
+        {
+            WriterUnlock();
         }
+    }
 
-        private void WriterLock()
+    protected override void PutPartition(IPartition<TNode> partition)
+    {
+        WriterLock();
+        try
         {
-            mutex.EnterWriteLock();
+            if (!DoReplacePartition(partition))
+                return;
+            ResetRange();
+            FireChange(this, new List<IPartition<TNode>> {partition});
+        } finally
+        {
+            WriterUnlock();
         }
+    }
 
-        private void WriterUnlock()
+    protected override void RemovePartition(IPartition<TNode> partition)
+    {
+        WriterLock();
+        try
         {
-            mutex.ExitWriteLock();
+            var exist = DoRemovePartition(partition);
+            if (exist == null)
+                return;
+            ResetRange();
+            FireChange(this, new List<IPartition<TNode>> {exist});
+        } finally
+        {
+            WriterUnlock();
         }
+    }
 
-        private void ReaderUpgradeableLock()
+    private bool DoAddPartition(IPartition<TNode> partition)
+    {
+        if (!partitionMap.TryAdd(partition.Key, partition))
         {
-            mutex.EnterUpgradeableReadLock();
+            return false;
         }
+        var partitions = PartitionSet(partition.Slot);
+        return partitions.Add(partition);
+    }
 
-        private void ReaderUpgradeableUnlock()
+    private bool DoReplacePartition(IPartition<TNode> partition)
+    {
+        partitionMap[partition.Key] = partition;
+        if (partitionMap.TryGetValue(partition.Key, out var exist))
         {
-            mutex.ExitUpgradeableReadLock();
-        }
-
-        private void ReaderLock()
-        {
-            mutex.EnterReadLock();
-        }
-
-        private void ReaderUnlock()
-        {
-            mutex.ExitReadLock();
-        }
-
-        protected override void LoadPartitions(IEnumerable<IPartition<TNode>> partitions)
-        {
-            WriterLock();
-            try
-            {
-                var addList = partitions.Where(DoAddPartition).ToList();
-                if (CollectionExtensions.IsNullOrEmpty(addList))
-                    return;
-                ResetRange();
-                FireChange(this, addList);
-            } finally
-            {
-                WriterUnlock();
-            }
-        }
-
-        protected override void PutPartition(IPartition<TNode> partition)
-        {
-            WriterLock();
-            try
-            {
-                if (!DoReplacePartition(partition))
-                    return;
-                ResetRange();
-                FireChange(this, new List<IPartition<TNode>> {partition});
-            } finally
-            {
-                WriterUnlock();
-            }
-        }
-
-        protected override void RemovePartition(IPartition<TNode> partition)
-        {
-            WriterLock();
-            try
-            {
-                var exist = DoRemovePartition(partition);
-                if (exist == null)
-                    return;
-                ResetRange();
-                FireChange(this, new List<IPartition<TNode>> {exist});
-            } finally
-            {
-                WriterUnlock();
-            }
-        }
-
-        private bool DoAddPartition(IPartition<TNode> partition)
-        {
-            if (!partitionMap.TryAdd(partition.Key, partition))
-            {
-                return false;
-            }
-            var partitions = PartitionSet(partition.Slot);
-            return partitions.Add(partition);
-        }
-
-        private bool DoReplacePartition(IPartition<TNode> partition)
-        {
-            partitionMap[partition.Key] = partition;
-            if (partitionMap.TryGetValue(partition.Key, out var exist))
-            {
-                GetPartitionSet(partition.Slot)?.Remove(exist);
-            }
-            var partitions = PartitionSet(partition.Slot);
-            return partitions.Add(partition);
-        }
-
-        private IPartition<TNode>? DoRemovePartition(IPartition<TNode> partition)
-        {
-            if (!partitionMap.TryGetValue(partition.Key, out var exist))
-            {
-                return default;
-            }
-            partitionMap.Remove(partition.Key);
             GetPartitionSet(partition.Slot)?.Remove(exist);
-            return exist;
         }
+        var partitions = PartitionSet(partition.Slot);
+        return partitions.Add(partition);
+    }
 
-        private SortedSet<IPartition<TNode>>? GetPartitionSet(long slot)
+    private IPartition<TNode>? DoRemovePartition(IPartition<TNode> partition)
+    {
+        if (!partitionMap.TryGetValue(partition.Key, out var exist))
         {
-            if (slotPartitionsMap.TryGetValue(slot, out var partitions))
-            {
-                return partitions;
-            } else
-            {
-                return null;
-            }
+            return default;
         }
+        partitionMap.Remove(partition.Key);
+        GetPartitionSet(partition.Slot)?.Remove(exist);
+        return exist;
+    }
 
-        private SortedSet<IPartition<TNode>> PartitionSet(long slot)
+    private SortedSet<IPartition<TNode>>? GetPartitionSet(long slot)
+    {
+        if (slotPartitionsMap.TryGetValue(slot, out var partitions))
         {
-            if (slotPartitionsMap.TryGetValue(slot, out var partitions))
-            {
-                return partitions;
-            }
-            partitions = new SortedSet<IPartition<TNode>>(PARTITION_COMPARER);
-            slotPartitionsMap[slot] = partitions;
+            return partitions;
+        } else
+        {
+            return null;
+        }
+    }
+
+    private SortedSet<IPartition<TNode>> PartitionSet(long slot)
+    {
+        if (slotPartitionsMap.TryGetValue(slot, out var partitions))
+        {
             return partitions;
         }
+        partitions = new SortedSet<IPartition<TNode>>(PARTITION_COMPARER);
+        slotPartitionsMap[slot] = partitions;
+        return partitions;
+    }
 
-        protected override string PartitionPath(string slotPath, IPartition<TNode> partition)
+    protected override string PartitionPath(string slotPath, IPartition<TNode> partition)
+    {
+        return NamespacePathNames.NodePath(slotPath, partition.Key);
+    }
+
+    protected override void DoShutdown()
+    {
+    }
+
+    public override bool Contains(IPartition<TNode> partition)
+    {
+        ReaderLock();
+        try
         {
-            return NamespacePathNames.NodePath(slotPath, partition.Key);
+            return slotPartitionsMap.TryGetValue(partition.Slot, out var partitions) && partitions.Contains(partition);
+        } finally
+        {
+            ReaderUnlock();
         }
+    }
 
-        protected override void DoShutdown()
+    public override List<IPartition<TNode>> FindPartitions(string nodeId)
+    {
+        ReaderLock();
+        try
         {
+            return slotPartitionsMap.Values
+                .SelectMany(partitions => partitions)
+                .Where(partition => string.Equals(nodeId, partition.NodeKey))
+                .ToList();
+        } finally
+        {
+            ReaderUnlock();
         }
+    }
 
-        public override bool Contains(IPartition<TNode> partition)
+    public override List<ShardingRange<TNode>> FindRanges(string nodeId)
+    {
+        ReaderLock();
+        try
         {
-            ReaderLock();
-            try
+            return slotPartitionsMap.Values
+                .SelectMany(partitions => partitions)
+                .Where(partition => string.Equals(nodeId, partition.NodeKey))
+                .Select(partition => new ShardingRange<TNode>(partition, partition.Slot, MaxSlots))
+                .ToList();
+        } finally
+        {
+            ReaderUnlock();
+        }
+    }
+
+    public override List<ShardingRange<TNode>> GetAllRanges()
+    {
+        ReaderUpgradeableLock();
+        try
+        {
+            var value = ranges;
+            if (value != null)
             {
-                return slotPartitionsMap.TryGetValue(partition.Slot, out var partitions) && partitions.Contains(partition);
-            } finally
-            {
-                ReaderUnlock();
+                return value;
             }
-        }
-
-        public override List<IPartition<TNode>> FindPartitions(string nodeId)
-        {
-            ReaderLock();
+            WriterLock();
             try
             {
-                return slotPartitionsMap.Values
-                    .SelectMany(partitions => partitions)
-                    .Where(partition => string.Equals(nodeId, partition.NodeKey))
-                    .ToList();
-            } finally
-            {
-                ReaderUnlock();
-            }
-        }
-
-        public override List<ShardingRange<TNode>> FindRanges(string nodeId)
-        {
-            ReaderLock();
-            try
-            {
-                return slotPartitionsMap.Values
-                    .SelectMany(partitions => partitions)
-                    .Where(partition => string.Equals(nodeId, partition.NodeKey))
-                    .Select(partition => new ShardingRange<TNode>(partition, partition.Slot, MaxSlots))
-                    .ToList();
-            } finally
-            {
-                ReaderUnlock();
-            }
-        }
-
-        public override List<ShardingRange<TNode>> GetAllRanges()
-        {
-            ReaderUpgradeableLock();
-            try
-            {
-                var value = ranges;
+                value = ranges;
                 if (value != null)
                 {
                     return value;
                 }
-                WriterLock();
-                try
-                {
-                    value = ranges;
-                    if (value != null)
-                    {
-                        return value;
-                    }
-                    return ranges = slotPartitionsMap.Values
-                        .SelectMany(partitions => partitions)
-                        .Select(partition => new ShardingRange<TNode>(partition, partition.Slot, MaxSlots))
-                        .ToList();
-                } finally
-                {
-                    WriterUnlock();
-                }
+                return ranges = slotPartitionsMap.Values
+                    .SelectMany(partitions => partitions)
+                    .Select(partition => new ShardingRange<TNode>(partition, partition.Slot, MaxSlots))
+                    .ToList();
             } finally
             {
-                ReaderUpgradeableUnlock();
+                WriterUnlock();
             }
-
+        } finally
+        {
+            ReaderUpgradeableUnlock();
         }
 
-        public override IPartition<TNode>? PrevPartition(long slot)
-        {
-            return LocateBySlot(slot);
-        }
+    }
 
-        public override IPartition<TNode>? NextPartition(long slot)
-        {
-            return LocateBySlot(slot);
-        }
+    public override IPartition<TNode>? PrevPartition(long slot)
+    {
+        return LocateBySlot(slot);
+    }
 
-        public override List<IPartition<TNode>> GetAllPartitions()
-        {
-            ReaderLock();
-            try
-            {
-                return slotPartitionsMap.Values.SelectMany(p => p).ToList();
-            } finally
-            {
-                ReaderUnlock();
-            }
-        }
+    public override IPartition<TNode>? NextPartition(long slot)
+    {
+        return LocateBySlot(slot);
+    }
 
-        public override IPartition<TNode>? Locate(string key)
+    public override List<IPartition<TNode>> GetAllPartitions()
+    {
+        ReaderLock();
+        try
         {
-            return LocateBySlot(KeyHash(key));
-        }
-
-        public override List<IPartition<TNode>> Locate(string key, int count)
+            return slotPartitionsMap.Values.SelectMany(p => p).ToList();
+        } finally
         {
-            ReaderLock();
-            try
-            {
-                return LocateBySlot(KeyHash(key), count);
-            } finally
-            {
-                ReaderUnlock();
-            }
-        }
-
-        public override int PartitionSize()
-        {
-            ReaderLock();
-            try
-            {
-                return partitionMap.Count;
-            } finally
-            {
-                ReaderUnlock();
-            }
-        }
-
-        private IPartition<TNode>? LocateBySlot(long slot)
-        {
-            ReaderLock();
-            try
-            {
-                var index = slot % MaxSlots;
-                return GetPartitionSet(index)?.First();
-            } finally
-            {
-                ReaderUnlock();
-            }
-        }
-
-        private List<IPartition<TNode>> LocateBySlot(long slot, int count)
-        {
-            ReaderLock();
-            try
-            {
-                var index = slot % MaxSlots;
-                var partitions = GetPartitionSet(index);
-                return partitions == null ? new List<IPartition<TNode>>() : partitions.Take(count).ToList();
-            } finally
-            {
-                ReaderUnlock();
-            }
-        }
-
-        private void ResetRange()
-        {
-            ranges = null;
+            ReaderUnlock();
         }
     }
 
+    public override IPartition<TNode>? Locate(string key)
+    {
+        return LocateBySlot(KeyHash(key));
+    }
+
+    public override List<IPartition<TNode>> Locate(string key, int count)
+    {
+        ReaderLock();
+        try
+        {
+            return LocateBySlot(KeyHash(key), count);
+        } finally
+        {
+            ReaderUnlock();
+        }
+    }
+
+    public override int PartitionSize()
+    {
+        ReaderLock();
+        try
+        {
+            return partitionMap.Count;
+        } finally
+        {
+            ReaderUnlock();
+        }
+    }
+
+    private IPartition<TNode>? LocateBySlot(long slot)
+    {
+        ReaderLock();
+        try
+        {
+            var index = slot % MaxSlots;
+            return GetPartitionSet(index)?.First();
+        } finally
+        {
+            ReaderUnlock();
+        }
+    }
+
+    private List<IPartition<TNode>> LocateBySlot(long slot, int count)
+    {
+        ReaderLock();
+        try
+        {
+            var index = slot % MaxSlots;
+            var partitions = GetPartitionSet(index);
+            return partitions == null ? new List<IPartition<TNode>>() : partitions.Take(count).ToList();
+        } finally
+        {
+            ReaderUnlock();
+        }
+    }
+
+    private void ResetRange()
+    {
+        ranges = null;
+    }
 }

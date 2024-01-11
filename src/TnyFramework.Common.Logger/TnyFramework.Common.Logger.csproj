@@ -19,12 +19,15 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
-    <ItemGroup Condition="'$(TargetFramework)'=='net48'">
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0"/>
     </ItemGroup>
+    <!--    <ItemGroup Condition="'$(TargetFramework)'=='net48'">-->
+    <!--        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.1" />-->
+    <!--    </ItemGroup>-->
 
-    <ItemGroup Condition="'$(TargetFramework)'!='net48'">
-        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
-    </ItemGroup>
+    <!--    <ItemGroup Condition="'$(TargetFramework)'!='net48'">-->
+    <!--        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0"/>-->
+    <!--    </ItemGroup>-->
 
 </Project>

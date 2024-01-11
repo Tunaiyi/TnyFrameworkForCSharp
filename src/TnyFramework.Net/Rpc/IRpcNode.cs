@@ -8,20 +8,17 @@
 
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public interface IRpcNode
 {
+    /// <summary>
+    /// 节点id
+    /// </summary>
+    long NodeId { get; }
 
-    public interface IRpcNode
-    {
-        /// <summary>
-        /// 节点id
-        /// </summary>
-        long NodeId { get; }
-
-        /// <summary>
-        /// 服务类型
-        /// </summary>
-        IContactType ServiceType { get; }
-    }
-
+    /// <summary>
+    /// 服务类型
+    /// </summary>
+    IContactType ServiceType { get; }
 }

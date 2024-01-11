@@ -11,48 +11,45 @@ using System.Collections.Immutable;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public class ContactNodeSet : IRpcInvokeNodeSet, IRpcInvokeNode
 {
+    private readonly IList<IRpcInvokeNode> remoterList;
 
-    public class ContactNodeSet : IRpcInvokeNodeSet, IRpcInvokeNode
+    private ISessionKeeper? keeper;
+
+    public ContactNodeSet(IContactType contactType)
     {
-        private readonly IList<IRpcInvokeNode> remoterList;
-
-        private ISessionKeeper? keeper;
-
-        public ContactNodeSet(IContactType contactType)
-        {
-            this.ServiceType = contactType;
-            remoterList = ImmutableList.Create((IRpcInvokeNode) this);
-        }
-
-        internal void Bind(ISessionKeeper keeper)
-        {
-            this.keeper = keeper;
-        }
-
-        public IList<IRpcInvokeNode> GetOrderInvokeNodes()
-        {
-            return remoterList;
-        }
-
-        public IRpcInvokeNode FindInvokeNode(long nodeId) => this;
-
-        public IRpcAccess? FindInvokeAccess(long nodeId, long accessId) => GetAccess(accessId);
-
-        public long NodeId => 0;
-
-        public IContactType ServiceType { get; }
-
-        public IList<IRpcAccess> GetOrderAccesses() => ImmutableList<IRpcAccess>.Empty;
-
-        public IRpcAccess? GetAccess(long accessId)
-        {
-            var session = keeper?.GetSession(accessId);
-            return session != null ? RpcContactAccess.Of(session) : null;
-        }
-
-        public bool IsActive() => true;
+        this.ServiceType = contactType;
+        remoterList = ImmutableList.Create((IRpcInvokeNode) this);
     }
 
+    internal void Bind(ISessionKeeper keeper)
+    {
+        this.keeper = keeper;
+    }
+
+    public IList<IRpcInvokeNode> GetOrderInvokeNodes()
+    {
+        return remoterList;
+    }
+
+    public IRpcInvokeNode FindInvokeNode(long nodeId) => this;
+
+    public IRpcAccess? FindInvokeAccess(long nodeId, long accessId) => GetAccess(accessId);
+
+    public long NodeId => 0;
+
+    public IContactType ServiceType { get; }
+
+    public IList<IRpcAccess> GetOrderAccesses() => ImmutableList<IRpcAccess>.Empty;
+
+    public IRpcAccess? GetAccess(long accessId)
+    {
+        var session = keeper?.GetSession(accessId);
+        return session != null ? RpcContactAccess.Of(session) : null;
+    }
+
+    public bool IsActive() => true;
 }

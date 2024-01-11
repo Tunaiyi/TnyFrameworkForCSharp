@@ -6,14 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Common.Reflection.FastInvoke.FuncInvoke
+namespace TnyFramework.Common.Reflection.FastInvoke.FuncInvoke;
+
+public abstract class BaseFastFunc<TFunc> : IFastInvoker
 {
+    internal TFunc? Func { get; set; }
 
-    public abstract class BaseFastFunc<TFunc> : IFastInvoker
-    {
-        internal TFunc? Func { get; set; }
-
-        public abstract object Invoke(object invoker, params object[] parameters);
-    }
-
+    public abstract object Invoke(object invoker, params object[] parameters);
 }

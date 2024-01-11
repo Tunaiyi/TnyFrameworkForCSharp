@@ -9,36 +9,33 @@
 using System;
 using Newtonsoft.Json;
 
-namespace TnyFramework.Codec.Newtonsoft.Json
+namespace TnyFramework.Codec.Newtonsoft.Json;
+
+/// <summary>
+/// ProtobufObjectCodec 工厂
+/// </summary>
+public class JsonObjectCodecFactory : ObjectCodecFactory
 {
+    private readonly JsonSerializerSettings? formatting;
 
-    /// <summary>
-    /// ProtobufObjectCodec 工厂
-    /// </summary>
-    public class JsonObjectCodecFactory : ObjectCodecFactory
+    public JsonObjectCodecFactory() : base(JsonMimeType.JSON)
     {
-        private readonly JsonSerializerSettings? formatting;
-
-        public JsonObjectCodecFactory() : base(JsonMimeType.JSON)
-        {
-            formatting = null;
-        }
-
-        public JsonObjectCodecFactory(JsonSerializerSettings formatting) : base(JsonMimeType.JSON)
-        {
-            this.formatting = formatting;
-        }
-
-        protected override IObjectCodec<T> Create<T>()
-        {
-            return new JsonObjectCodec<T>(formatting);
-        }
-
-        protected override IObjectCodec Create(Type type)
-        {
-            var makeGenericType = typeof(JsonObjectCodec<>).MakeGenericType(type);
-            return (IObjectCodec) Activator.CreateInstance(makeGenericType, formatting)!;
-        }
+        formatting = null;
     }
 
+    public JsonObjectCodecFactory(JsonSerializerSettings formatting) : base(JsonMimeType.JSON)
+    {
+        this.formatting = formatting;
+    }
+
+    protected override IObjectCodec<T> Create<T>()
+    {
+        return new JsonObjectCodec<T>(formatting);
+    }
+
+    protected override IObjectCodec Create(Type type)
+    {
+        var makeGenericType = typeof(JsonObjectCodec<>).MakeGenericType(type);
+        return (IObjectCodec) Activator.CreateInstance(makeGenericType, formatting)!;
+    }
 }

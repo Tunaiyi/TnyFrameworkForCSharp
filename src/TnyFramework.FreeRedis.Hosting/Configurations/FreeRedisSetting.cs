@@ -8,14 +8,11 @@
 
 using System.Collections.Generic;
 
-namespace TnyFramework.FreeRedis.Hosting.Configurations
+namespace TnyFramework.FreeRedis.Hosting.Configurations;
+
+public class FreeRedisSetting : FreeRedisParamSetting
 {
+    public string Mime { get; set; } = "json";
 
-    public class FreeRedisSetting : FreeRedisParamSetting
-    {
-        public string Mime { get; set; } = "json";
-
-        public List<FreeRedisConnectionSetting> Connections { get; set; } = new List<FreeRedisConnectionSetting>();
-    }
-
+    public List<FreeRedisConnectionSetting> Connections { get; set; } = new List<FreeRedisConnectionSetting>();
 }

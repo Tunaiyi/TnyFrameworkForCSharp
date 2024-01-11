@@ -8,12 +8,9 @@
 
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Command.Tasks
+namespace TnyFramework.Net.Command.Tasks;
+
+public interface ICommandBoxFactory
 {
-
-    public interface ICommandBoxFactory
-    {
-        CommandBox CreateCommandBox(ICertificate certificate);
-    }
-
+    CommandBox CreateCommandBox(ICertificate certificate);
 }

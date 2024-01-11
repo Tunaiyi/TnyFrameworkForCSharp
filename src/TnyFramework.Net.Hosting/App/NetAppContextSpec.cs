@@ -9,48 +9,45 @@
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Hosting.App
+namespace TnyFramework.Net.Hosting.App;
+
+public class NetAppContextSpec : UnitSpec<NetAppContext, INetUnitContext>, INetAppContextSpec
 {
+    private readonly NetAppContext context = new();
 
-    public class NetAppContextSpec : UnitSpec<NetAppContext, INetUnitContext>, INetAppContextSpec
+    public NetAppContextSpec(string unitName = "") : base(unitName)
     {
-        private readonly NetAppContext context = new();
-
-        public NetAppContextSpec(string unitName = "") : base(unitName)
-        {
-            Default(_ => context);
-        }
-
-        public NetAppContextSpec ServerId(int value)
-        {
-            context.ServerId = value;
-            return this;
-
-        }
-
-        public NetAppContextSpec AppName(string value)
-        {
-            context.Name = value;
-            return this;
-        }
-
-        public NetAppContextSpec AppType(string value)
-        {
-            context.AppType = value;
-            return this;
-        }
-
-        public NetAppContextSpec ScopeType(string value)
-        {
-            context.ScopeType = value;
-            return this;
-        }
-
-        public NetAppContextSpec Locale(string value)
-        {
-            context.Locale = value;
-            return this;
-        }
+        Default(_ => context);
     }
 
+    public NetAppContextSpec ServerId(int value)
+    {
+        context.ServerId = value;
+        return this;
+
+    }
+
+    public NetAppContextSpec AppName(string value)
+    {
+        context.Name = value;
+        return this;
+    }
+
+    public NetAppContextSpec AppType(string value)
+    {
+        context.AppType = value;
+        return this;
+    }
+
+    public NetAppContextSpec ScopeType(string value)
+    {
+        context.ScopeType = value;
+        return this;
+    }
+
+    public NetAppContextSpec Locale(string value)
+    {
+        context.Locale = value;
+        return this;
+    }
 }

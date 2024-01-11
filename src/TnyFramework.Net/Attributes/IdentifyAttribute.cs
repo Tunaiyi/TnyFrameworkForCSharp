@@ -8,19 +8,16 @@
 
 using System;
 
-namespace TnyFramework.Net.Attributes
+namespace TnyFramework.Net.Attributes;
+
+[AttributeUsage(AttributeTargets.Parameter)]
+public class IdentifyAttribute : Attribute
 {
-
-    [AttributeUsage(AttributeTargets.Parameter)]
-    public class IdentifyAttribute : Attribute
+    /// <summary>
+    /// Message 的用户 id
+    /// </summary>
+    /// <param name="require"></param>
+    public IdentifyAttribute(bool require = true)
     {
-        /// <summary>
-        /// Message 的用户 id
-        /// </summary>
-        /// <param name="require"></param>
-        public IdentifyAttribute(bool require = true)
-        {
-        }
     }
-
 }

@@ -8,26 +8,23 @@
 
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public interface IRpcAccess
 {
+    /// <summary>
+    /// 访问点 id
+    /// </summary>
+    long AccessId { get; }
 
-    public interface IRpcAccess
-    {
-        /// <summary>
-        /// 访问点 id
-        /// </summary>
-        long AccessId { get; }
+    /// <summary>
+    /// 是否已上线
+    /// </summary>
+    /// <returns>连接返回true 否则返回false</returns>
+    bool IsActive();
 
-        /// <summary>
-        /// 是否已上线
-        /// </summary>
-        /// <returns>连接返回true 否则返回false</returns>
-        bool IsActive();
-
-        /// <summary>
-        /// Session
-        /// </summary>
-        ISession Session { get; }
-    }
-
+    /// <summary>
+    /// Session
+    /// </summary>
+    ISession Session { get; }
 }

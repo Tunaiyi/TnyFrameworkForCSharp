@@ -6,28 +6,25 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+/// <summary>
+/// 消息结构
+/// </summary>
+public interface IMessageSchema : IProtocol
 {
+    /// <summary>
+    /// 结果码
+    /// </summary>
+    int Code { get; }
 
     /// <summary>
-    /// 消息结构
+    /// 响应消息, -1 为无
     /// </summary>
-    public interface IMessageSchema : IProtocol
-    {
-        /// <summary>
-        /// 结果码
-        /// </summary>
-        int Code { get; }
+    long ToMessage { get; }
 
-        /// <summary>
-        /// 响应消息, -1 为无
-        /// </summary>
-        long ToMessage { get; }
-
-        /// <summary>
-        /// 消息模式
-        /// </summary>
-        MessageMode Mode { get; }
-    }
-
+    /// <summary>
+    /// 消息模式
+    /// </summary>
+    MessageMode Mode { get; }
 }

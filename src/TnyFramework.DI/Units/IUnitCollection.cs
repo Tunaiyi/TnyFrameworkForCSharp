@@ -8,16 +8,13 @@
 
 using System.Collections.Generic;
 
-namespace TnyFramework.DI.Units
+namespace TnyFramework.DI.Units;
+
+public interface IUnitCollection
 {
+}
 
-    public interface IUnitCollection
-    {
-    }
-
-    public interface IUnitCollection<TUnit> : IUnitCollection, IDictionary<string, TUnit>
-    {
-        IDictionary<string, TUnit> UnitMap { get; }
-    }
-
+public interface IUnitCollection<TUnit> : IUnitCollection, IDictionary<string, TUnit>
+{
+    IDictionary<string, TUnit> UnitMap { get; }
 }

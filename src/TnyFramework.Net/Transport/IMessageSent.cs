@@ -9,29 +9,26 @@
 using System.Threading.Tasks;
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public interface IMessageSent
 {
+    //
+    /// <summary>
+    /// 获取响应 Task
+    /// </summary>
+    /// <returns>响应 Task</returns>
+    bool Respond(out Task<IMessage> task);
 
-    public interface IMessageSent
-    {
-        //
-        /// <summary>
-        /// 获取响应 Task
-        /// </summary>
-        /// <returns>响应 Task</returns>
-        bool Respond(out Task<IMessage> task);
+    /// <summary>
+    /// 是否写出，如果未写出返回false
+    /// </summary>
+    /// <returns></returns>
+    bool Written { get; }
 
-        /// <summary>
-        /// 是否写出，如果未写出返回false
-        /// </summary>
-        /// <returns></returns>
-        bool Written { get; }
-
-        // /// <summary>
-        // /// 是否可以等待响应
-        // /// </summary>
-        // /// <returns>是否可以等待响应</returns>
-        // bool IsRespondAwaitable();
-    }
-
+    // /// <summary>
+    // /// 是否可以等待响应
+    // /// </summary>
+    // /// <returns>是否可以等待响应</returns>
+    // bool IsRespondAwaitable();
 }

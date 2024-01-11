@@ -9,15 +9,12 @@
 using System.Buffers;
 using System.IO;
 
-namespace TnyFramework.Common.Binary.Extensions
+namespace TnyFramework.Common.Binary.Extensions;
+
+public static class ReadOnlyByteSequenceExtensions
 {
-
-    public static class ReadOnlyByteSequenceExtensions
+    public static Stream AsSteam(this ReadOnlySequence<byte> sequence)
     {
-        public static Stream AsSteam(this ReadOnlySequence<byte> sequence)
-        {
-            return new ReadOnlySequenceStream(sequence);
-        }
+        return new ReadOnlySequenceStream(sequence);
     }
-
 }

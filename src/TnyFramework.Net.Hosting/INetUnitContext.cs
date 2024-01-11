@@ -15,28 +15,25 @@ using TnyFramework.Net.Hosting.Session;
 using TnyFramework.Net.Plugin;
 using TnyFramework.Net.Rpc;
 
-namespace TnyFramework.Net.Hosting
+namespace TnyFramework.Net.Hosting;
+
+public interface INetUnitContext
 {
+    void Load();
 
-    public interface INetUnitContext
-    {
-        void Load();
+    MessageDispatcherContext LoadMessageDispatcherContext();
 
-        MessageDispatcherContext LoadMessageDispatcherContext();
+    IMessageDispatcher LoadMessageDispatcher();
 
-        IMessageDispatcher LoadMessageDispatcher();
+    ICommandBoxFactory LoadCommandBoxFactory();
 
-        ICommandBoxFactory LoadCommandBoxFactory();
+    ISessionUnitContext SessionUnitContext { get; }
 
-        ISessionUnitContext SessionUnitContext { get; }
+    INetAppContext LoadAppContext();
 
-        INetAppContext LoadAppContext();
+    IRpcInvokeNodeManager LoadRpcRemoteServiceManager();
 
-        IRpcInvokeNodeManager LoadRpcRemoteServiceManager();
+    IList<ICommandPlugin> LoadCommandPlugins();
 
-        IList<ICommandPlugin> LoadCommandPlugins();
-
-        IList<IAuthenticationValidator> LoadAuthenticateValidators();
-    }
-
+    IList<IAuthenticationValidator> LoadAuthenticateValidators();
 }

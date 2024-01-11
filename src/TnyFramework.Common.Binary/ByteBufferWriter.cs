@@ -11,59 +11,56 @@ using System.Buffers;
 using System.Threading;
 using TnyFramework.Common.Pools;
 
-namespace TnyFramework.Common.Binary
+namespace TnyFramework.Common.Binary;
+
+public interface IByteBufferWriter : IBufferWriter<byte>, IDisposable
 {
+    public int Length { get; }
+}
 
-    public interface IByteBufferWriter : IBufferWriter<byte>, IDisposable
+public class ByteBufferWriter : IByteBufferWriter
+{
+    private static readonly AnyPool<ByteBufferWriter> POOL =
+        new DefaultPool<ByteBufferWriter>(new DefaultPooledPolicy<ByteBufferWriter>());
+
+    private IBufferWriter<byte> writer = null!;
+    private volatile int length = 0;
+
+    internal static IByteBufferWriter Wrap(IBufferWriter<byte> writer)
     {
-        public int Length { get; }
+        var ins = POOL.Get();
+        ins.Init(writer);
+        return ins;
     }
 
-    public class ByteBufferWriter : IByteBufferWriter
+    private void Init(IBufferWriter<byte> writer)
     {
-        private static readonly AnyPool<ByteBufferWriter> POOL =
-            new DefaultPool<ByteBufferWriter>(new DefaultPooledPolicy<ByteBufferWriter>());
-
-        private IBufferWriter<byte> writer = null!;
-        private volatile int length = 0;
-
-        internal static IByteBufferWriter Wrap(IBufferWriter<byte> writer)
-        {
-            var ins = POOL.Get();
-            ins.Init(writer);
-            return ins;
-        }
-
-        private void Init(IBufferWriter<byte> writer)
-        {
-            this.writer = writer;
-            length = 0;
-        }
-
-        public int Length => length;
-
-        public void Advance(int count)
-        {
-            writer.Advance(count);
-            Interlocked.Add(ref length, count);
-        }
-
-        public Memory<byte> GetMemory(int sizeHint = 0)
-        {
-            return writer.GetMemory(sizeHint);
-        }
-
-        public Span<byte> GetSpan(int sizeHint = 0)
-        {
-            return writer.GetSpan(sizeHint);
-        }
-
-        public void Dispose()
-        {
-            writer = null!;
-            length = 0;
-            POOL.Return(this);
-        }
+        this.writer = writer;
+        length = 0;
     }
 
+    public int Length => length;
+
+    public void Advance(int count)
+    {
+        writer.Advance(count);
+        Interlocked.Add(ref length, count);
+    }
+
+    public Memory<byte> GetMemory(int sizeHint = 0)
+    {
+        return writer.GetMemory(sizeHint);
+    }
+
+    public Span<byte> GetSpan(int sizeHint = 0)
+    {
+        return writer.GetSpan(sizeHint);
+    }
+
+    public void Dispose()
+    {
+        writer = null!;
+        length = 0;
+        POOL.Return(this);
+    }
 }

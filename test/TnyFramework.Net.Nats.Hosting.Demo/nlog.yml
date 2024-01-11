@@ -1,0 +1,102 @@
+NLog:
+  extensions:
+    - assembly: NLog.Web.AspNetCore
+    - assembly: NLog.Extensions.Logging
+#    - assembly: NLog.Loki
+  variables:
+    globalLevel: Info
+    log_dir_name: '${environment:APP_INSTANCE}'
+    app_name: '${environment:APP_NAME}'
+    server_id: '${environment:SERVER_ID}'
+    zone_id: '${environment:ZONE_ID:default=1}'
+    log_dir: './../../log/${log_dir_name}'
+    archiveDir: '${log_dir}'
+    info_log_file_name: info
+    app_log_file: './../../log/${log_dir_name}.log'
+    info_log_file: '${log_dir}/info.log'
+    error_log_file: '${log_dir}/error.log'
+    message_log_file: '${log_dir}/message.log'
+    loki_host: '${environment:R2_LOKI_HOST:default=r2-loki}'
+    loki_port: '${environment:R2_LOKI_PORT:default=3100}'
+    layout: >-
+      ${level:uppercase=true} ${longdate} [${threadname:whenEmpty=${threadid}}]
+      [${callsite:className=True:methodName=False:includeNamespace=False:includeSourcePath=False:cleanNamesOfAnonymousDelegates=True:cleanNamesOfAsyncContinuations=True:skipFrames=0}(${callsite-linenumber})] ${message} ${exception:format=tostring}
+  targets:
+    async: true
+    toConsole:
+      type: Console
+      layout: '${layout}'
+    toInfo:
+      type: FilteringWrapper
+      condition: level == LogLevel.Debug or LogLevel.Info == level
+      target:
+        type: File
+        fileName: '${info_log_file}'
+        keepFileOpen: true
+        encoding: utf-8
+        archiveNumbering: Date
+        maxArchiveDays: 7
+        archiveEvery: Hour
+        layout: '${layout}'
+    toError:
+      type: FilteringWrapper
+      condition: level >= LogLevel.Warn
+      target:
+        type: File
+        fileName: '${error_log_file}'
+        keepFileOpen: true
+        encoding: utf-8
+        archiveNumbering: Date
+        maxArchiveDays: 7
+        archiveEvery: Hour
+        layout: '${layout}'
+    toApp:
+      type: FilteringWrapper
+      condition: level >= LogLevel.Warn
+      target:
+        type: File
+        fileName: '${app_log_file}'
+        keepFileOpen: true
+        encoding: utf-8
+        archiveNumbering: Date
+        maxArchiveDays: 7
+        archiveEvery: Hour
+        layout: '${layout}'
+    toMessage:
+      type: File
+      fileName: '${message_log_file}'
+      keepFileOpen: true
+      encoding: utf-8
+      archiveNumbering: Date
+      maxArchiveDays: 7
+      archiveEvery: Hour
+      layout: '${layout}'
+#    toLoki:
+#      type: loki
+#      endpoint: 'http://${loki_host}:${loki_port}'
+#      orderWrites: true
+#      batchSize: 100
+#      queueLimit: 100000
+#      taskDelayMilliseconds: 500
+#      retryCount: 3
+#      taskTimeoutSeconds: 30
+#      layout: '${layout}'
+#      labels:
+#        - name: 'game'
+#          layout: 'r2-server'
+#        - name: 'service'
+#          layout: '${app_name}'
+#        - name: 'serverId'
+#          layout: '${server_id}'
+#        - name: 'zoneId'
+#          layout: '${zone_id}'
+#        - name: 'level'
+#          layout: '${level:uppercase=true}'
+  
+  rules:
+    - logger: '*'
+      minLevel: '${globalLevel}'
+      writeTo: 'toConsole,toInfo,toError'
+    - logger: R2
+      minLevel: '${globalLevel}'
+      writeTo: 'toConsole,toInfo,toError'

@@ -9,20 +9,17 @@
 using FreeRedis;
 using TnyFramework.Codec;
 
-namespace TnyFramework.FreeRedis.Hosting
+namespace TnyFramework.FreeRedis.Hosting;
+
+public class RedisObject
 {
+    protected RedisClient client;
 
-    public class RedisObject
+    protected ObjectCodecAdapter codecAdapter;
+
+    public RedisObject(RedisClient client, ObjectCodecAdapter codecAdapter)
     {
-        protected RedisClient client;
-
-        protected ObjectCodecAdapter codecAdapter;
-
-        public RedisObject(RedisClient client, ObjectCodecAdapter codecAdapter)
-        {
-            this.client = client;
-            this.codecAdapter = codecAdapter;
-        }
+        this.client = client;
+        this.codecAdapter = codecAdapter;
     }
-
 }

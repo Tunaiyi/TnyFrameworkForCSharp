@@ -11,30 +11,27 @@ using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public class ServerTunnel<TTransporter> : BaseNetTunnel<INetSession, TTransporter>
+    where TTransporter : IMessageTransporter
 {
-
-    public class ServerTunnel<TTransporter> : BaseNetTunnel<INetSession, TTransporter>
-        where TTransporter : IMessageTransporter
+    public ServerTunnel(long id, TTransporter transporter, INetworkContext context, INetService service)
+        : base(id, transporter, NetAccessMode.Server, context, service)
     {
-        public ServerTunnel(long id, TTransporter transporter, INetworkContext context, INetService service)
-            : base(id, transporter, NetAccessMode.Server, context, service)
-        {
-        }
-
-        protected override void OnDisconnect()
-        {
-            Close();
-        }
-
-        protected override bool OnOpen()
-        {
-            var transporter = Transporter;
-            if (transporter.IsNotNull() && transporter.IsActive())
-                return true;
-            logger.LogWarning("open failed. channel {Transporter} is not active", transporter);
-            return false;
-        }
     }
 
+    protected override void OnDisconnect()
+    {
+        Close();
+    }
+
+    protected override bool OnOpen()
+    {
+        var transporter = Transporter;
+        if (transporter.IsNotNull() && transporter.IsActive())
+            return true;
+        logger.LogWarning("open failed. channel {Transporter} is not active", transporter);
+        return false;
+    }
 }

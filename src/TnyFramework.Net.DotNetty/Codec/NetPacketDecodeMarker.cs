@@ -6,52 +6,49 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.DotNetty.Codec
+namespace TnyFramework.Net.DotNetty.Codec;
+
+public class NetPacketDecodeMarker
 {
+    private byte option = 0;
 
-    public class NetPacketDecodeMarker
+    private int payloadLength = 0;
+
+    private bool mark = false;
+
+    public NetPacketDecodeMarker()
     {
-        private byte option = 0;
 
-        private int payloadLength = 0;
-
-        private bool mark = false;
-
-        public NetPacketDecodeMarker()
-        {
-
-        }
-
-        /// <summary>
-        ///  是否记录
-        /// </summary>
-        public bool Mark => mark;
-
-        /// <summary>
-        /// 选项
-        /// </summary>
-        /// <returns></returns>
-        public byte Option() => option;
-
-        /// <summary>
-        /// 负载长度
-        /// </summary>
-        /// <returns></returns>
-        public int PayloadLength() => payloadLength;
-
-        internal void Record(byte optionValue, int payloadLengthValue)
-        {
-            option = optionValue;
-            payloadLength = payloadLengthValue;
-            mark = true;
-        }
-
-        internal void Reset()
-        {
-            option = 0;
-            payloadLength = 0;
-            mark = false;
-        }
     }
 
+    /// <summary>
+    ///  是否记录
+    /// </summary>
+    public bool Mark => mark;
+
+    /// <summary>
+    /// 选项
+    /// </summary>
+    /// <returns></returns>
+    public byte Option() => option;
+
+    /// <summary>
+    /// 负载长度
+    /// </summary>
+    /// <returns></returns>
+    public int PayloadLength() => payloadLength;
+
+    internal void Record(byte optionValue, int payloadLengthValue)
+    {
+        option = optionValue;
+        payloadLength = payloadLengthValue;
+        mark = true;
+    }
+
+    internal void Reset()
+    {
+        option = 0;
+        payloadLength = 0;
+        mark = false;
+    }
 }

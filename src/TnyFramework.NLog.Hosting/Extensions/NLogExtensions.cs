@@ -17,57 +17,54 @@ using NLog.Extensions.Logging;
 using TnyFramework.Extensions.Configuration;
 using LogFactory = TnyFramework.Common.Logger.LogFactory;
 
-namespace TnyFramework.NLog.Hosting.Extensions
+namespace TnyFramework.NLog.Hosting.Extensions;
+
+public static class NLogExtensions
 {
-
-    public static class NLogExtensions
+    public static IHostBuilder UseNLogForApplication(this IHostBuilder builder, Action<IConfigurationBuilder>? loadFile = null)
     {
-        public static IHostBuilder UseNLogForApplication(this IHostBuilder builder, Action<IConfigurationBuilder>? loadFile = null)
-        {
-            return builder
-                .ConfigureHostConfiguration(configureBuilder => {
-                    loadFile?.Invoke(configureBuilder);
-                    UseNLogForApplication(configureBuilder);
-                    LogFactory.DefaultFactory = new NLogLoggerFactory();
-                })
-                .UseNLog();
-        }
-
-        private static void UseNLogForApplication(IConfigurationBuilder configureBuilder)
-        {
-            var root = configureBuilder.Build();
-            SetupNLog(root);
-            ConfigSettingLayoutRenderer.DefaultConfiguration = root;
-        }
-
-        private static void SetupNLog(IConfiguration configuration, string nlogConfigSection = "NLog", string? basePath = null)
-        {
-            var setupBuilder = LogManager.Setup();
-            if (!string.IsNullOrEmpty(nlogConfigSection))
-            {
-                var section = configuration.GetSection(nlogConfigSection);
-                if ((section.GetChildren().Any() ? 1 : 0) != 0)
-                {
-                    setupBuilder
-                        .LoadConfigurationFromSection(configuration, nlogConfigSection)
-                        .GetCurrentClassLogger();
-                    return;
-                }
-
-            }
-            setupBuilder.SetupExtensions(e => e.RegisterConfigSettings(configuration));
-            var environment = TnyEnvironments.GetEnvironment();
-            if (!string.IsNullOrEmpty(basePath))
-            {
-                if (!string.IsNullOrEmpty(environment))
-                    setupBuilder.LoadConfigurationFromFile(Path.Combine(basePath, "nlog." + environment + ".config"));
-                setupBuilder.LoadConfigurationFromFile(Path.Combine(basePath, "nlog.config"));
-            } else if (!string.IsNullOrEmpty(environment))
-            {
-                setupBuilder.LoadConfigurationFromFile("nlog." + environment + ".config");
-            }
-            setupBuilder.LoadConfigurationFromFile().GetCurrentClassLogger();
-        }
+        return builder
+            .ConfigureHostConfiguration(configureBuilder => {
+                loadFile?.Invoke(configureBuilder);
+                UseNLogForApplication(configureBuilder);
+                LogFactory.DefaultFactory = new NLogLoggerFactory();
+            })
+            .UseNLog();
     }
 
+    private static void UseNLogForApplication(IConfigurationBuilder configureBuilder)
+    {
+        var root = configureBuilder.Build();
+        SetupNLog(root);
+        ConfigSettingLayoutRenderer.DefaultConfiguration = root;
+    }
+
+    private static void SetupNLog(IConfiguration configuration, string nlogConfigSection = "NLog", string? basePath = null)
+    {
+        var setupBuilder = LogManager.Setup();
+        if (!string.IsNullOrEmpty(nlogConfigSection))
+        {
+            var section = configuration.GetSection(nlogConfigSection);
+            if ((section.GetChildren().Any() ? 1 : 0) != 0)
+            {
+                setupBuilder
+                    .LoadConfigurationFromSection(configuration, nlogConfigSection)
+                    .GetCurrentClassLogger();
+                return;
+            }
+
+        }
+        setupBuilder.SetupExtensions(e => e.RegisterConfigSettings(configuration));
+        var environment = TnyEnvironments.GetEnvironment();
+        if (!string.IsNullOrEmpty(basePath))
+        {
+            if (!string.IsNullOrEmpty(environment))
+                setupBuilder.LoadConfigurationFromFile(Path.Combine(basePath, "nlog." + environment + ".config"));
+            setupBuilder.LoadConfigurationFromFile(Path.Combine(basePath, "nlog.config"));
+        } else if (!string.IsNullOrEmpty(environment))
+        {
+            setupBuilder.LoadConfigurationFromFile("nlog." + environment + ".config");
+        }
+        setupBuilder.LoadConfigurationFromFile().GetCurrentClassLogger();
+    }
 }

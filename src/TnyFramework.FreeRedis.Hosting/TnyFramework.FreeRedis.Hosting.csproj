@@ -10,12 +10,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FreeRedis" Version="1.2.11" />
+        <PackageReference Include="FreeRedis" Version="1.2.11"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TnyFramework.Codec\TnyFramework.Codec.csproj" />
-      <ProjectReference Include="..\TnyFramework.DI.Hosting\TnyFramework.DI.Hosting.csproj" />
+        <ProjectReference Include="..\TnyFramework.Codec\TnyFramework.Codec.csproj"/>
+        <ProjectReference Include="..\TnyFramework.DI.Hosting\TnyFramework.DI.Hosting.csproj"/>
     </ItemGroup>
-    
+
 </Project>

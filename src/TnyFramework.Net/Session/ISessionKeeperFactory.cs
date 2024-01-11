@@ -8,12 +8,9 @@
 
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public interface ISessionKeeperFactory
 {
-
-    public interface ISessionKeeperFactory
-    {
-        ISessionKeeper CreateKeeper(IContactType contactType, ISessionKeeperSetting setting);
-    }
-
+    ISessionKeeper CreateKeeper(IContactType contactType, ISessionKeeperSetting setting);
 }

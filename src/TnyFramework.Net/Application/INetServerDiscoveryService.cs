@@ -8,14 +8,11 @@
 
 using System.Threading.Tasks;
 
-namespace TnyFramework.Net.Application
+namespace TnyFramework.Net.Application;
+
+public interface INetServerDiscoveryService
 {
+    Task RegisterInstance(INetApplication netApplication, INetServer server);
 
-    public interface INetServerDiscoveryService
-    {
-        Task RegisterInstance(INetApplication netApplication, INetServer server);
-
-        Task DeregisterInstance(INetServer server);
-    }
-
+    Task DeregisterInstance(INetServer server);
 }

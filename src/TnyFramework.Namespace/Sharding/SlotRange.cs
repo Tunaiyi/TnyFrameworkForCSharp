@@ -6,25 +6,22 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Namespace.Sharding
+namespace TnyFramework.Namespace.Sharding;
+
+public class SlotRange
 {
+    public long Min { get; }
 
-    public class SlotRange
+    public long Max { get; }
+
+    public SlotRange(long min, long max)
     {
-        public long Min { get; }
-
-        public long Max { get; }
-
-        public SlotRange(long min, long max)
-        {
-            Min = min;
-            Max = max;
-        }
-
-        public bool Contains(long value)
-        {
-            return Min <= value && value <= Max;
-        }
+        Min = min;
+        Max = max;
     }
 
+    public bool Contains(long value)
+    {
+        return Min <= value && value <= Max;
+    }
 }

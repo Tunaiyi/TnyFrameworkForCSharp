@@ -9,23 +9,20 @@
 using TnyFramework.Net.Command.Dispatcher;
 using TnyFramework.Net.Command.Tasks;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+/// <summary>
+/// 会话上下文
+/// </summary>
+public interface ISessionContext
 {
+    /// <summary>
+    /// 消息分发器
+    /// </summary>
+    IMessageDispatcher MessageDispatcher { get; }
 
     /// <summary>
-    /// 会话上下文
+    /// 命令任务
     /// </summary>
-    public interface ISessionContext
-    {
-        /// <summary>
-        /// 消息分发器
-        /// </summary>
-        IMessageDispatcher MessageDispatcher { get; }
-
-        /// <summary>
-        /// 命令任务
-        /// </summary>
-        ICommandBoxFactory CommandBoxFactory { get; }
-    }
-
+    ICommandBoxFactory CommandBoxFactory { get; }
 }

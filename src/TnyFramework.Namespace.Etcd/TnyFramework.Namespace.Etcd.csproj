@@ -20,13 +20,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Codec.Newtonsoft\TnyFramework.Codec.Newtonsoft.csproj" />
-        <ProjectReference Include="..\TnyFramework.Coroutines\TnyFramework.Coroutines.csproj" />
-        <ProjectReference Include="..\TnyFramework.Namespace\TnyFramework.Namespace.csproj" />
+        <ProjectReference Include="..\TnyFramework.Codec.Newtonsoft\TnyFramework.Codec.Newtonsoft.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Coroutines\TnyFramework.Coroutines.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Namespace\TnyFramework.Namespace.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="dotnet-etcd" Version="6.0.1" />
+        <PackageReference Include="dotnet-etcd" Version="6.0.1"/>
     </ItemGroup>
 
 </Project>

@@ -9,7 +9,6 @@
 using System;
 using System.Threading;
 using Microsoft.Extensions.Logging;
-using static System.Threading.Volatile;
 
 namespace TnyFramework.Common.Logger
 {
@@ -20,14 +19,14 @@ namespace TnyFramework.Common.Logger
 
         public static ILoggerFactory DefaultFactory {
             get {
-                var current = Read(ref _DEFAULT_FACTORY);
+                var current = Volatile.Read(ref _DEFAULT_FACTORY);
                 if (current != null)
                     return current;
                 current = new NoopLoggerFactory();
                 var old = Interlocked.CompareExchange(ref _DEFAULT_FACTORY, current, null);
                 return old ?? current;
             }
-            set => Write(ref _DEFAULT_FACTORY, value);
+            set => Volatile.Write(ref _DEFAULT_FACTORY, value);
         }
 
         /// <summary>

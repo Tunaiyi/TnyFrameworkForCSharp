@@ -19,14 +19,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="NLog" Version="5.2.7" />
-        <PackageReference Include="NLog.Extensions.Hosting" Version="5.3.7" />
-        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.7" />
+        <PackageReference Include="NLog" Version="5.2.7"/>
+        <PackageReference Include="NLog.Extensions.Hosting" Version="5.3.7"/>
+        <PackageReference Include="NLog.Extensions.Logging" Version="5.3.7"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj" />
-      <ProjectReference Include="..\TnyFramework.Extensions.Configuration\TnyFramework.Extensions.Configuration.csproj" />
+        <ProjectReference Include="..\TnyFramework.Common.Logger\TnyFramework.Common.Logger.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Extensions.Configuration\TnyFramework.Extensions.Configuration.csproj"/>
     </ItemGroup>
 
 </Project>

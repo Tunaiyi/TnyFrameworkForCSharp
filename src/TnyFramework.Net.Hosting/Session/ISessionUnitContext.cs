@@ -10,20 +10,17 @@ using System.Collections.Generic;
 using TnyFramework.Net.Command.Auth;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Hosting.Session
+namespace TnyFramework.Net.Hosting.Session;
+
+public interface ISessionUnitContext
 {
+    ISessionKeeperManager LoadSessionKeeperManager();
 
-    public interface ISessionUnitContext
-    {
-        ISessionKeeperManager LoadSessionKeeperManager();
+    IContactAuthenticator LoadContactAuthenticator();
 
-        IContactAuthenticator LoadContactAuthenticator();
+    ISessionKeeperSetting LoadDefaultSessionKeeperSetting();
 
-        ISessionKeeperSetting LoadDefaultSessionKeeperSetting();
+    IList<ISessionKeeperSetting> LoadCustomSessionKeeperSettings();
 
-        IList<ISessionKeeperSetting> LoadCustomSessionKeeperSettings();
-
-        IDictionary<string, ISessionKeeperFactory> LoadSessionKeeperFactories();
-    }
-
+    IDictionary<string, ISessionKeeperFactory> LoadSessionKeeperFactories();
 }

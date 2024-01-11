@@ -9,12 +9,9 @@
 using System;
 using TnyFramework.Net.Command.Dispatcher;
 
-namespace TnyFramework.Net.Command.Auth
+namespace TnyFramework.Net.Command.Auth;
+
+public interface IContactAuthenticator
 {
-
-    public interface IContactAuthenticator
-    {
-        void Authenticate(MessageDispatcherContext dispatcherContext, IRpcMessageEnterContext rpcMessageContext, Type type);
-    }
-
+    void Authenticate(MessageDispatcherContext dispatcherContext, IRpcMessageEnterContext rpcMessageContext, Type type);
 }

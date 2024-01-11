@@ -6,38 +6,35 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public enum TunnelStatus
 {
+    /// <summary>
+    /// 初始化
+    /// </summary>
+    Init = 1,
 
-    public enum TunnelStatus
+    ///
+    /// 连接
+    ///
+    Open = 2,
+
+    ///
+    /// 挂起
+    ///
+    Suspend = 3,
+
+    ///
+    /// 关闭
+    ///
+    Closed = 4,
+}
+
+public static class TunnelStatusExtents
+{
+    public static int Value(this TunnelStatus status)
     {
-        /// <summary>
-        /// 初始化
-        /// </summary>
-        Init = 1,
-
-        ///
-        /// 连接
-        ///
-        Open = 2,
-
-        ///
-        /// 挂起
-        ///
-        Suspend = 3,
-
-        ///
-        /// 关闭
-        ///
-        Closed = 4,
+        return (int) status;
     }
-
-    public static class TunnelStatusExtents
-    {
-        public static int Value(this TunnelStatus status)
-        {
-            return (int) status;
-        }
-    }
-
 }

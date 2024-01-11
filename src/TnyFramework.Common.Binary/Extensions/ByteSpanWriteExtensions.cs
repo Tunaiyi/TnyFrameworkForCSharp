@@ -8,36 +8,33 @@
 
 using System;
 
-namespace TnyFramework.Common.Binary.Extensions
+namespace TnyFramework.Common.Binary.Extensions;
+
+public static partial class ByteSpanWriteExtensions
 {
-
-    public static partial class ByteSpanWriteExtensions
+    public static Span<byte> WriteByte(this Span<byte> destination, byte value)
     {
-        public static Span<byte> WriteByte(this Span<byte> destination, byte value)
-        {
-            destination[0] = value;
-            return destination.Slice(sizeof(byte));
-        }
-
-        public static Span<byte> WriteByte(this Span<byte> destination, sbyte value)
-        {
-            destination[0] = (byte) value;
-            return destination.Slice(sizeof(sbyte));
-        }
-
-        public static Span<byte> WriteBytes(this Span<byte> destination, byte[] value, int offset, int length)
-        {
-            value.AsSpan(offset, length).CopyTo(destination);
-            return destination;
-        }
-
-        public static Span<byte> WriteBytes(this Span<byte> destination, byte[] value)
-        {
-            value.CopyTo(destination);
-            return destination;
-        }
-
-        private static unsafe int SingleToInt32Bits(float value) => *(int*) &value;
+        destination[0] = value;
+        return destination.Slice(sizeof(byte));
     }
 
+    public static Span<byte> WriteByte(this Span<byte> destination, sbyte value)
+    {
+        destination[0] = (byte) value;
+        return destination.Slice(sizeof(sbyte));
+    }
+
+    public static Span<byte> WriteBytes(this Span<byte> destination, byte[] value, int offset, int length)
+    {
+        value.AsSpan(offset, length).CopyTo(destination);
+        return destination;
+    }
+
+    public static Span<byte> WriteBytes(this Span<byte> destination, byte[] value)
+    {
+        value.CopyTo(destination);
+        return destination;
+    }
+
+    private static unsafe int SingleToInt32Bits(float value) => *(int*) &value;
 }

@@ -6,12 +6,9 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Common.Reflection.FastInvoke
+namespace TnyFramework.Common.Reflection.FastInvoke;
+
+public interface IFastInvoker
 {
-
-    public interface IFastInvoker
-    {
-        object Invoke(object invoker, params object[] parameters);
-    }
-
+    object Invoke(object invoker, params object[] parameters);
 }

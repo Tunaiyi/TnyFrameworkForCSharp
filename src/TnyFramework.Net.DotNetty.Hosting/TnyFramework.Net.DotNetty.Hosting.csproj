@@ -21,7 +21,7 @@
 
 
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Net.Hosting\TnyFramework.Net.Hosting.csproj" />
+        <ProjectReference Include="..\TnyFramework.Net.Hosting\TnyFramework.Net.Hosting.csproj"/>
         <ProjectReference Include="..\TnyFramework.Net.ProtobufNet\TnyFramework.Net.ProtobufNet.csproj"/>
         <ProjectReference Include="..\TnyFramework.Net.DotNetty\TnyFramework.Net.DotNetty.csproj"/>
         <ProjectReference Include="..\TnyFramework.Net.Rpc\TnyFramework.Net.Rpc.csproj"/>

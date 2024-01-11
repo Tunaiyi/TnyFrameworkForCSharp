@@ -9,14 +9,11 @@
 using System;
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Command.Dispatcher.Monitor
+namespace TnyFramework.Net.Command.Dispatcher.Monitor;
+
+public interface IRpcMonitorTransferHandler : IRpcMonitorHandler
 {
+    void OnTransfer(IRpcMessageTransferContext context);
 
-    public interface IRpcMonitorTransferHandler : IRpcMonitorHandler
-    {
-        void OnTransfer(IRpcMessageTransferContext context);
-
-        void OnTransferred(IRpcMessageTransferContext context, IMessageSubject? result, Exception? exception);
-    }
-
+    void OnTransferred(IRpcMessageTransferContext context, IMessageSubject? result, Exception? exception);
 }

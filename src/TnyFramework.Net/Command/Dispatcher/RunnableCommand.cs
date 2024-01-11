@@ -9,28 +9,25 @@
 using System;
 using System.Threading.Tasks;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public class RunnableCommand : Command
 {
+    private readonly Action action;
 
-    public class RunnableCommand : Command
+    public static RunnableCommand Action(Action action)
     {
-        private readonly Action action;
-
-        public static RunnableCommand Action(Action action)
-        {
-            return new RunnableCommand(action);
-        }
-
-        public RunnableCommand(Action action) : base("RunnableCommand")
-        {
-            this.action = action;
-        }
-
-        protected override Task Action()
-        {
-            action.Invoke();
-            return Task.CompletedTask;
-        }
+        return new RunnableCommand(action);
     }
 
+    public RunnableCommand(Action action) : base("RunnableCommand")
+    {
+        this.action = action;
+    }
+
+    protected override Task Action()
+    {
+        action.Invoke();
+        return Task.CompletedTask;
+    }
 }

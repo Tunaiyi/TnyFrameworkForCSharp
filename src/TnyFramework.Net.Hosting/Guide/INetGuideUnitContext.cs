@@ -11,22 +11,19 @@ using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Hosting.Guide
+namespace TnyFramework.Net.Hosting.Guide;
+
+public interface INetGuideUnitContext
 {
+    IMessageFactory LoadMessageFactory();
 
-    public interface INetGuideUnitContext
-    {
-        IMessageFactory LoadMessageFactory();
+    ISessionFactory LoadSessionFactory();
 
-        ISessionFactory LoadSessionFactory();
+    IContactFactory LoadContactFactory();
 
-        IContactFactory LoadContactFactory();
+    INetworkContext LoadNetworkContext();
 
-        INetworkContext LoadNetworkContext();
+    RpcMonitor LoadRpcMonitor();
 
-        RpcMonitor LoadRpcMonitor();
-
-        INetUnitContext UnitContext { get; }
-    }
-
+    INetUnitContext UnitContext { get; }
 }

@@ -8,14 +8,11 @@
 
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public interface IRpcInvokeNodeManager
 {
+    IRpcInvokeNodeSet? LoadInvokeNodeSet(IContactType serviceType);
 
-    public interface IRpcInvokeNodeManager
-    {
-        IRpcInvokeNodeSet? LoadInvokeNodeSet(IContactType serviceType);
-
-        IRpcInvokeNodeSet? FindInvokeNodeSet(IContactType serviceType);
-    }
-
+    IRpcInvokeNodeSet? FindInvokeNodeSet(IContactType serviceType);
 }

@@ -13,28 +13,25 @@ using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.ProtobufNet.Attributes;
 using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+[Codable(ProtobufMimeType.PROTOBUF_TYPE)]
+[TypeProtobuf(MessageHeaderKeys.RPC_TRACING_TYPE_PROTO)]
+[ProtoContract]
+public class RpcTracingHeader : SelfMessageHeader<RpcTracingHeader>
 {
+    [ProtoMember(1, IsPacked = true, OverwriteList = true)]
+    public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
 
-    [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
-    [TypeProtobuf(MessageHeaderKeys.RPC_TRACING_TYPE_PROTO)]
-    [ProtoContract]
-    public class RpcTracingHeader : SelfMessageHeader<RpcTracingHeader>
+    public RpcTracingHeader() : base(MessageHeaderKeys.RPC_ORIGINAL_MESSAGE_ID_HEADER)
     {
-        [ProtoMember(1, IsPacked = true, OverwriteList = true)]
-        public IDictionary<string, string> Attributes { get; set; } = new Dictionary<string, string>();
-
-        public RpcTracingHeader() : base(MessageHeaderKeys.RPC_ORIGINAL_MESSAGE_ID_HEADER)
-        {
-        }
-        // public override string Key => MessageHeaderKeys.RPC_TRACING_TYPE_PROTO_KEY;
-        //
-        // public override bool IsTransitive => true;
-
-        public override string ToString()
-        {
-            return $"{nameof(Attributes)}: [{string.Join(",", Attributes.Select(kv => kv.Key + "=" + kv.Value).ToArray())}]";
-        }
     }
+    // public override string Key => MessageHeaderKeys.RPC_TRACING_TYPE_PROTO_KEY;
+    //
+    // public override bool IsTransitive => true;
 
+    public override string ToString()
+    {
+        return $"{nameof(Attributes)}: [{string.Join(",", Attributes.Select(kv => kv.Key + "=" + kv.Value).ToArray())}]";
+    }
 }

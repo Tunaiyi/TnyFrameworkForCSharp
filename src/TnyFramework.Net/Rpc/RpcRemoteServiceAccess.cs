@@ -10,31 +10,28 @@ using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Extensions;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public class RpcRemoteServiceAccess : IRpcServiceAccess
 {
+    private readonly ISession session;
 
-    public class RpcRemoteServiceAccess : IRpcServiceAccess
+    public ISession Session => session;
+
+    public long AccessId => Session.ContactId;
+
+    public ForwardPoint ForwardPoint { get; }
+
+    public RpcRemoteServiceAccess(ISession session)
     {
-        private readonly ISession session;
-
-        public ISession Session => session;
-
-        public long AccessId => Session.ContactId;
-
-        public ForwardPoint ForwardPoint { get; }
-
-        public RpcRemoteServiceAccess(ISession session)
-        {
-            this.session = session;
-            ForwardPoint = new ForwardPoint(session.GetRpcAccessIdentify());
-        }
-
-        public bool IsActive()
-        {
-            return Session.IsActive();
-        }
-
-        public RpcAccessIdentify Identify => session.GetRpcAccessIdentify();
+        this.session = session;
+        ForwardPoint = new ForwardPoint(session.GetRpcAccessIdentify());
     }
 
+    public bool IsActive()
+    {
+        return Session.IsActive();
+    }
+
+    public RpcAccessIdentify Identify => session.GetRpcAccessIdentify();
 }

@@ -9,15 +9,12 @@
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Hosting.Session
+namespace TnyFramework.Net.Hosting.Session;
+
+public class SessionKeeperSettingSpecs :
+    UnitContainerSpec<ISessionKeeperSetting, ISessionKeeperSettingSpec, SessionKeeperSettingSpec, ISessionUnitContext>
 {
-
-    public class SessionKeeperSettingSpecs :
-        UnitContainerSpec<ISessionKeeperSetting, ISessionKeeperSettingSpec, SessionKeeperSettingSpec, ISessionUnitContext>
+    public SessionKeeperSettingSpecs() : base(SessionKeeperSettingSpec.New)
     {
-        public SessionKeeperSettingSpecs() : base(SessionKeeperSettingSpec.New)
-        {
-        }
     }
-
 }

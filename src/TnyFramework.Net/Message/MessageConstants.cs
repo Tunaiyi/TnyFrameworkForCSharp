@@ -6,17 +6,14 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+public static class MessageConstants
 {
+    // long MESSAGE_MASK_BIT_SIZE = 1;
+    public const long SENDER_MESSAGE_ID_MASK = 1;
 
-    public static class MessageConstants
-    {
-        // long MESSAGE_MASK_BIT_SIZE = 1;
-        public const long SENDER_MESSAGE_ID_MASK = 1;
+    public static readonly ulong MESSAGE_ID_MASK = ulong.MaxValue >> 63;
 
-        public static readonly ulong MESSAGE_ID_MASK = ulong.MaxValue >> 63;
-
-        public const long EMPTY_MESSAGE_ID = 0;
-    }
-
+    public const long EMPTY_MESSAGE_ID = 0;
 }

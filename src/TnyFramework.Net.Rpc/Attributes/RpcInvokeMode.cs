@@ -6,28 +6,25 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Rpc.Attributes
+namespace TnyFramework.Net.Rpc.Attributes;
+
+/// <summary>
+/// 远程调用模式
+/// </summary>
+public enum RpcInvokeMode
 {
+    /// <summary>
+    /// 默认, 根据返回值
+    /// </summary>
+    Default,
 
     /// <summary>
-    /// 远程调用模式
+    /// 同步
     /// </summary>
-    public enum RpcInvokeMode
-    {
-        /// <summary>
-        /// 默认, 根据返回值
-        /// </summary>
-        Default,
+    Sync,
 
-        /// <summary>
-        /// 同步
-        /// </summary>
-        Sync,
-
-        /// <summary>
-        /// 异步
-        /// </summary>
-        Async,
-    }
-
+    /// <summary>
+    /// 异步
+    /// </summary>
+    Async,
 }

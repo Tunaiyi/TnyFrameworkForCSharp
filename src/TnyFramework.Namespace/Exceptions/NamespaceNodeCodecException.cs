@@ -8,24 +8,21 @@
 
 using System;
 
-namespace TnyFramework.Namespace.Exceptions
+namespace TnyFramework.Namespace.Exceptions;
+
+public class NamespaceNodeCodecException : NamespaceNodeException
 {
-
-    public class NamespaceNodeCodecException : NamespaceNodeException
+    public NamespaceNodeCodecException()
     {
-        public NamespaceNodeCodecException()
-        {
-        }
-
-        public NamespaceNodeCodecException(string message) : base(message)
-        {
-        }
-
-        public NamespaceNodeCodecException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-
     }
+
+    public NamespaceNodeCodecException(string message) : base(message)
+    {
+    }
+
+    public NamespaceNodeCodecException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
+
 
 }

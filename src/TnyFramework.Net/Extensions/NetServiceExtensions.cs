@@ -9,20 +9,17 @@
 using TnyFramework.Common.Extensions;
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Extensions
+namespace TnyFramework.Net.Extensions;
+
+public static class NetServiceExtensions
 {
-
-    public static class NetServiceExtensions
+    public static string ServiceName(this IServiceSetting setting)
     {
-        public static string ServiceName(this IServiceSetting setting)
-        {
-            return setting.Service.IsBlank() ? setting.ServeName : setting.Service;
-        }
-
-        public static string DiscoverService(this IServiceSetting setting)
-        {
-            return setting.ServeName.IsBlank() ? setting.Service : setting.ServeName;
-        }
+        return setting.Service.IsBlank() ? setting.ServeName : setting.Service;
     }
 
+    public static string DiscoverService(this IServiceSetting setting)
+    {
+        return setting.ServeName.IsBlank() ? setting.Service : setting.ServeName;
+    }
 }

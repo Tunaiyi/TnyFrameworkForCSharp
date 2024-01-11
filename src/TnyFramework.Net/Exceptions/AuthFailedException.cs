@@ -10,27 +10,24 @@ using System;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Common;
 
-namespace TnyFramework.Net.Exceptions
+namespace TnyFramework.Net.Exceptions;
+
+public class AuthFailedException : NetException
 {
+    private static readonly IResultCode CODE = NetResultCode.AUTH_FAIL_ERROR;
 
-    public class AuthFailedException : NetException
+    public AuthFailedException(string message = "") : base(CODE, message)
     {
-        private static readonly IResultCode CODE = NetResultCode.AUTH_FAIL_ERROR;
-
-        public AuthFailedException(string message = "") : base(CODE, message)
-        {
-        }
-
-        public AuthFailedException(IResultCode? code = null, object? body = null, string message = "") : base(
-            code ?? CODE, body,
-            message)
-        {
-        }
-
-        public AuthFailedException(Exception innerException, IResultCode? code = null, object? body = null,
-            string message = "") : base(innerException, code ?? CODE, body, message)
-        {
-        }
     }
 
+    public AuthFailedException(IResultCode? code = null, object? body = null, string message = "") : base(
+        code ?? CODE, body,
+        message)
+    {
+    }
+
+    public AuthFailedException(Exception innerException, IResultCode? code = null, object? body = null,
+        string message = "") : base(innerException, code ?? CODE, body, message)
+    {
+    }
 }

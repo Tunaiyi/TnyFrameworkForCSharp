@@ -9,40 +9,37 @@
 using ProtoBuf;
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+[ProtoContract]
+public class ForwardContact : IContact
 {
+    private int contactTypeId;
 
-    [ProtoContract]
-    public class ForwardContact : IContact
-    {
-        private int contactTypeId;
+    [ProtoMember(1)]
+    public long ContactId { get; set; }
 
-        [ProtoMember(1)]
-        public long ContactId { get; set; }
-
-        [ProtoMember(2)]
-        public int ContactTypeId {
-            get => contactTypeId;
-            set {
-                contactTypeId = value;
-                ContactType = Application.ContactType.ForId(contactTypeId);
-            }
-        }
-
-        [ProtoIgnore]
-        public IContactType ContactType { get; private set; }
-
-        public ForwardContact()
-        {
-            ContactType = null!;
-        }
-
-        public ForwardContact(IContact contact)
-        {
-            ContactId = contact.ContactId;
-            ContactType = contact.ContactType;
-            contactTypeId = ContactType.Id;
+    [ProtoMember(2)]
+    public int ContactTypeId {
+        get => contactTypeId;
+        set {
+            contactTypeId = value;
+            ContactType = Application.ContactType.ForId(contactTypeId);
         }
     }
 
+    [ProtoIgnore]
+    public IContactType ContactType { get; private set; }
+
+    public ForwardContact()
+    {
+        ContactType = null!;
+    }
+
+    public ForwardContact(IContact contact)
+    {
+        ContactId = contact.ContactId;
+        ContactType = contact.ContactType;
+        contactTypeId = ContactType.Id;
+    }
 }

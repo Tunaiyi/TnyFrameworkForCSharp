@@ -19,16 +19,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\TnyFramework.Codec.ProtobufNet\TnyFramework.Codec.ProtobufNet.csproj" />
-        <ProjectReference Include="..\TnyFramework.Common.EventBus\TnyFramework.Common.EventBus.csproj" />
-        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj" />
-        <ProjectReference Include="..\TnyFramework.Coroutines\TnyFramework.Coroutines.csproj" />
-        <ProjectReference Include="..\TnyFramework.DI\TnyFramework.DI.csproj" />
+        <ProjectReference Include="..\TnyFramework.Codec.ProtobufNet\TnyFramework.Codec.ProtobufNet.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Common.EventBus\TnyFramework.Common.EventBus.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Common\TnyFramework.Common.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Coroutines\TnyFramework.Coroutines.csproj"/>
+        <ProjectReference Include="..\TnyFramework.DI\TnyFramework.DI.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="DotNetty.Buffers" Version="0.7.5" />
-        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <PackageReference Include="DotNetty.Buffers" Version="0.7.5"/>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
     </ItemGroup>
 
 </Project>

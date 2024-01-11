@@ -8,28 +8,25 @@
 
 using System;
 
-namespace TnyFramework.DI.Container
+namespace TnyFramework.DI.Container;
+
+public class SingletonServiceInstance(IServiceFactory factory) : BaseServiceInstance(factory)
 {
+    private volatile object? instance;
 
-    public class SingletonServiceInstance(IServiceFactory factory) : BaseServiceInstance(factory)
+    public override object Get(IServiceProvider provider)
     {
-        private volatile object? instance;
-
-        public override object Get(IServiceProvider provider)
+        if (instance != null)
+        {
+            return instance;
+        }
+        lock (this)
         {
             if (instance != null)
             {
                 return instance;
             }
-            lock (this)
-            {
-                if (instance != null)
-                {
-                    return instance;
-                }
-                return instance = Create(provider);
-            }
+            return instance = Create(provider);
         }
     }
-
 }

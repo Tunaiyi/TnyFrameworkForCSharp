@@ -10,42 +10,39 @@ using System.Threading.Tasks;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public interface IMessageTransporter : IConnection
 {
+    /// <summary>
+    /// 绑定通道通道
+    /// </summary>
+    /// <param name="tunnel">通道</param>
+    void Bind(INetTunnel tunnel);
 
-    public interface IMessageTransporter : IConnection
-    {
-        /// <summary>
-        /// 绑定通道通道
-        /// </summary>
-        /// <param name="tunnel">通道</param>
-        void Bind(INetTunnel tunnel);
+    /// <summary>
+    /// 发送消
+    /// </summary>
+    /// <param name="message">消息</param>
+    /// <param name="waitWritten">是否等待写出</param>
+    /// <returns>写出等待对象</returns>
+    ValueTask Write(IMessage message, bool waitWritten = false);
 
-        /// <summary>
-        /// 发送消
-        /// </summary>
-        /// <param name="message">消息</param>
-        /// <param name="waitWritten">是否等待写出</param>
-        /// <returns>写出等待对象</returns>
-        ValueTask Write(IMessage message, bool waitWritten = false);
+    /// <summary>
+    /// 发送消息
+    /// </summary>
+    /// <param name="maker">消息创建器</param>
+    /// <param name="content">消息上下文</param>
+    /// <param name="waitWritten">是否等待写出</param>
+    /// <returns>写出等待对象</returns>
+    ValueTask Write(IMessageAllocator maker, MessageContent content, bool waitWritten = false);
 
-        /// <summary>
-        /// 发送消息
-        /// </summary>
-        /// <param name="maker">消息创建器</param>
-        /// <param name="content">消息上下文</param>
-        /// <param name="waitWritten">是否等待写出</param>
-        /// <returns>写出等待对象</returns>
-        ValueTask Write(IMessageAllocator maker, MessageContent content, bool waitWritten = false);
-
-        /// <summary>
-        /// 发送消息
-        /// </summary>
-        /// <param name="maker">消息创建器</param>
-        /// <param name="content">消息上下文</param>
-        /// <param name="waitWritten">是否等待写出</param>
-        /// <returns>写出等待对象</returns>
-        ValueTask Write(MessageAllocator maker, MessageContent content, bool waitWritten = false);
-    }
-
+    /// <summary>
+    /// 发送消息
+    /// </summary>
+    /// <param name="maker">消息创建器</param>
+    /// <param name="content">消息上下文</param>
+    /// <param name="waitWritten">是否等待写出</param>
+    /// <returns>写出等待对象</returns>
+    ValueTask Write(MessageAllocator maker, MessageContent content, bool waitWritten = false);
 }

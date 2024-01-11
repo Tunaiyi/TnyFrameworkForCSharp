@@ -11,48 +11,45 @@ using TnyFramework.Net.Command.Dispatcher.Monitor;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public interface IRpcMessageEnterContext : IRpcMessageInvocationContext, IRpcMessageTransferContext, IRpcHandleContext
 {
+    /// <summary>
+    /// 恢复
+    /// </summary>
+    /// <returns></returns>
+    bool Resume();
 
-    public interface IRpcMessageEnterContext : IRpcMessageInvocationContext, IRpcMessageTransferContext, IRpcHandleContext
-    {
-        /// <summary>
-        /// 恢复
-        /// </summary>
-        /// <returns></returns>
-        bool Resume();
+    /// <summary>
+    /// 挂起
+    /// </summary>
+    /// <returns></returns>
+    bool Suspend();
 
-        /// <summary>
-        /// 挂起
-        /// </summary>
-        /// <returns></returns>
-        bool Suspend();
+    /// <summary>
+    /// 运行中
+    /// </summary>
+    /// <returns></returns>
+    bool Running();
 
-        /// <summary>
-        /// 运行中
-        /// </summary>
-        /// <returns></returns>
-        bool Running();
+    /// <summary>
+    /// 消息
+    /// </summary>
+    INetMessage NetMessage { get; }
 
-        /// <summary>
-        /// 消息
-        /// </summary>
-        INetMessage NetMessage { get; }
+    /// <summary>
+    /// @return 获取通道
+    /// </summary>
+    INetTunnel NetTunnel { get; }
 
-        /// <summary>
-        /// @return 获取通道
-        /// </summary>
-        INetTunnel NetTunnel { get; }
+    /// <summary>
+    /// @return rpc监控
+    /// </summary>
+    RpcMonitor RpcMonitor { get; }
 
-        /// <summary>
-        /// @return rpc监控
-        /// </summary>
-        RpcMonitor RpcMonitor { get; }
-
-        /// <summary>
-        /// @return rpc监控
-        /// </summary>
-        INetworkContext NetworkContext { get; }
-    }
-
+    /// <summary>
+    /// @return rpc监控
+    /// </summary>
+    INetworkContext NetworkContext { get; }
 }

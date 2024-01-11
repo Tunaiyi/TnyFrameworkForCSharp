@@ -9,27 +9,24 @@
 using System;
 using System.Collections.Generic;
 
-namespace TnyFramework.Common.Scanner
+namespace TnyFramework.Common.Scanner;
+
+public class TypeSelectedHandler : ITypeSelectedHandler
 {
+    private readonly Action<ICollection<Type>> handler;
 
-    public class TypeSelectedHandler : ITypeSelectedHandler
+    public TypeSelectedHandler(Action<ICollection<Type>> handler)
     {
-        private readonly Action<ICollection<Type>> handler;
-
-        public TypeSelectedHandler(Action<ICollection<Type>> handler)
-        {
-            this.handler = handler;
-        }
-
-        public void Handle(ICollection<Type> types)
-        {
-            handler(types);
-        }
+        this.handler = handler;
     }
 
-    public interface ITypeSelectedHandler
+    public void Handle(ICollection<Type> types)
     {
-        void Handle(ICollection<Type> types);
+        handler(types);
     }
+}
 
+public interface ITypeSelectedHandler
+{
+    void Handle(ICollection<Type> types);
 }

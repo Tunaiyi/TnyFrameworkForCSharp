@@ -12,22 +12,19 @@ using TnyFramework.Net.DotNetty.Hosting.Channel;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Hosting.Guide;
 
-namespace TnyFramework.Net.DotNetty.Hosting.Guide
+namespace TnyFramework.Net.DotNetty.Hosting.Guide;
+
+public interface INettyGuideUnitContext : INetGuideUnitContext
 {
+    IChannelMaker LoadChannelMaker();
 
-    public interface INettyGuideUnitContext : INetGuideUnitContext
-    {
-        IChannelMaker LoadChannelMaker();
+    INettyTunnelFactory LoadTunnelFactory();
 
-        INettyTunnelFactory LoadTunnelFactory();
+    IMessageCodec LoadMessageCodec();
 
-        IMessageCodec LoadMessageCodec();
+    IMessageBodyCodec LoadMessageBodyCodec();
 
-        IMessageBodyCodec LoadMessageBodyCodec();
+    IMessageHeaderCodec LoadMessageHeaderCodec();
 
-        IMessageHeaderCodec LoadMessageHeaderCodec();
-
-        IDataPacketV1ChannelMakerUnitContext ChannelMakerUnitContext { get; }
-    }
-
+    IDataPacketV1ChannelMakerUnitContext ChannelMakerUnitContext { get; }
 }

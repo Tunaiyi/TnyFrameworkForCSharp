@@ -8,41 +8,38 @@
 
 using System;
 
-namespace TnyFramework.Common.Binary.Extensions
+namespace TnyFramework.Common.Binary.Extensions;
+
+public static partial class ByteSpanReadExtensions
 {
-
-    public static partial class ByteSpanReadExtensions
+    public static Span<byte> ReadByte(this Span<byte> destination, out byte value)
     {
-        public static Span<byte> ReadByte(this Span<byte> destination, out byte value)
-        {
-            value = destination[0];
-            return destination.Slice(sizeof(byte));
-        }
-
-        public static Span<byte> ReadByte(this Span<byte> destination, out sbyte value)
-        {
-            value = (sbyte) destination[0];
-            return destination.Slice(sizeof(sbyte));
-        }
-
-        public static Span<byte> ReadBytes(this Span<byte> destination, out byte[] value, int length)
-        {
-            value = new byte[length];
-            destination.CopyTo(value);
-            // value.AsSpan(offset, length).CopyTo(destination);
-            return destination.Slice(length);
-        }
-
-        public static Span<byte> ReadBytes(this Span<byte> destination, out byte[] value)
-        {
-            value = new byte[destination.Length];
-            destination.CopyTo(value);
-            return destination.Slice(destination.Length);
-        }
-
-        private static unsafe int SingleToInt32Bits(float value) => *(int*) &value;
-
-        private static unsafe float Int32BitsToSingle(int value) => *(float*) &value;
+        value = destination[0];
+        return destination.Slice(sizeof(byte));
     }
 
+    public static Span<byte> ReadByte(this Span<byte> destination, out sbyte value)
+    {
+        value = (sbyte) destination[0];
+        return destination.Slice(sizeof(sbyte));
+    }
+
+    public static Span<byte> ReadBytes(this Span<byte> destination, out byte[] value, int length)
+    {
+        value = new byte[length];
+        destination.CopyTo(value);
+        // value.AsSpan(offset, length).CopyTo(destination);
+        return destination.Slice(length);
+    }
+
+    public static Span<byte> ReadBytes(this Span<byte> destination, out byte[] value)
+    {
+        value = new byte[destination.Length];
+        destination.CopyTo(value);
+        return destination.Slice(destination.Length);
+    }
+
+    private static unsafe int SingleToInt32Bits(float value) => *(int*) &value;
+
+    private static unsafe float Int32BitsToSingle(int value) => *(float*) &value;
 }

@@ -10,61 +10,58 @@ using System.Threading.Tasks;
 using TnyFramework.Common.Event;
 using TnyFramework.Namespace.Listener;
 
-namespace TnyFramework.Namespace
+namespace TnyFramework.Namespace;
+
+public interface INameNodesWatcher
 {
+    /// <summary>
+    /// 监控路径
+    /// </summary>
+    string WatchPath { get; }
 
-    public interface INameNodesWatcher
-    {
-        /// <summary>
-        /// 监控路径
-        /// </summary>
-        string WatchPath { get; }
+    /// <summary>
+    /// 是否是模糊匹配
+    /// </summary>
+    /// <returns>是否是模糊匹配</returns>
+    bool IsMatch();
 
-        /// <summary>
-        /// 是否是模糊匹配
-        /// </summary>
-        /// <returns>是否是模糊匹配</returns>
-        bool IsMatch();
+    /// <summary>
+    /// 停止监控
+    /// </summary>
+    Task Unwatch();
 
-        /// <summary>
-        /// 停止监控
-        /// </summary>
-        Task Unwatch();
+    /// <summary>
+    /// 是否是停止监控
+    /// </summary>
+    /// <returns></returns>
+    bool IsUnwatch();
 
-        /// <summary>
-        /// 是否是停止监控
-        /// </summary>
-        /// <returns></returns>
-        bool IsUnwatch();
+    /// <summary>
+    /// 是否是监控
+    /// </summary>
+    /// <returns></returns>
+    bool IsWatch();
 
-        /// <summary>
-        /// 是否是监控
-        /// </summary>
-        /// <returns></returns>
-        bool IsWatch();
+    IEventWatch<OnWatch> WatchEvent { get; }
 
-        IEventWatch<OnWatch> WatchEvent { get; }
+    IEventWatch<OnComplete> CompleteEvent { get; }
 
-        IEventWatch<OnComplete> CompleteEvent { get; }
+    IEventWatch<OnError> ErrorEvent { get; }
+}
 
-        IEventWatch<OnError> ErrorEvent { get; }
-    }
+public interface INameNodesWatcher<TValue> : INameNodesWatcher
+{
+    /// <summary>
+    /// 监控
+    /// </summary>
+    /// <returns>返回 Task</returns>
+    Task<INameNodesWatcher<TValue>> Watch();
 
-    public interface INameNodesWatcher<TValue> : INameNodesWatcher
-    {
-        /// <summary>
-        /// 监控
-        /// </summary>
-        /// <returns>返回 Task</returns>
-        Task<INameNodesWatcher<TValue>> Watch();
+    IEventWatch<OnNodeLoad<TValue>> LoadEvent { get; }
 
-        IEventWatch<OnNodeLoad<TValue>> LoadEvent { get; }
+    IEventWatch<OnNodeCreate<TValue>> CreateEvent { get; }
 
-        IEventWatch<OnNodeCreate<TValue>> CreateEvent { get; }
+    IEventWatch<OnNodeUpdate<TValue>> UpdateEvent { get; }
 
-        IEventWatch<OnNodeUpdate<TValue>> UpdateEvent { get; }
-
-        IEventWatch<OnNodeDelete<TValue>> DeleteEvent { get; }
-    }
-
+    IEventWatch<OnNodeDelete<TValue>> DeleteEvent { get; }
 }

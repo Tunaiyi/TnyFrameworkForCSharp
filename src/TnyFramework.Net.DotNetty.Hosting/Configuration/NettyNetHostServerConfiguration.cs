@@ -11,22 +11,19 @@ using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Hosting.Guide;
 using TnyFramework.Net.Hosting.Configuration;
 
-namespace TnyFramework.Net.DotNetty.Hosting.Configuration
+namespace TnyFramework.Net.DotNetty.Hosting.Configuration;
+
+public class NettyNetHostServerConfiguration(IServiceCollection unitContainer) :
+    NetHostConfiguration<INettyNetHostServerConfiguration, INettyServerGuideUnitContext, INettyServerGuide, INettyServerGuideSpec>(unitContainer),
+    INettyNetHostServerConfiguration
 {
-
-    public class NettyNetHostServerConfiguration(IServiceCollection unitContainer) :
-        NetHostConfiguration<INettyNetHostServerConfiguration, INettyServerGuideUnitContext, INettyServerGuide, INettyServerGuideSpec>(unitContainer),
-        INettyNetHostServerConfiguration
+    public static NettyNetHostServerConfiguration CreateNetServer(IServiceCollection unitContainer)
     {
-        public static NettyNetHostServerConfiguration CreateNetServer(IServiceCollection unitContainer)
-        {
-            return new NettyNetHostServerConfiguration(unitContainer);
-        }
-
-        protected override INettyServerGuideSpec CreateServerGuideSpec(string name)
-        {
-            return new NettyServerGuideSpec(name, NetUnitContext, UnitContainer);
-        }
+        return new NettyNetHostServerConfiguration(unitContainer);
     }
 
+    protected override INettyServerGuideSpec CreateServerGuideSpec(string name)
+    {
+        return new NettyServerGuideSpec(name, NetUnitContext, UnitContainer);
+    }
 }

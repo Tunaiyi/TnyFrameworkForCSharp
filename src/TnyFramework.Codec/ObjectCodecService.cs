@@ -8,80 +8,77 @@
 
 using System;
 
-namespace TnyFramework.Codec
+namespace TnyFramework.Codec;
+
+/// <summary>
+/// 对象编解码服务
+/// </summary>
+public class ObjectCodecService
 {
+    private readonly ObjectCodecAdapter objectCodecAdapter;
 
-    /// <summary>
-    /// 对象编解码服务
-    /// </summary>
-    public class ObjectCodecService
+    public ObjectCodecService(ObjectCodecAdapter objectCodecAdapter)
     {
-        private readonly ObjectCodecAdapter objectCodecAdapter;
-
-        public ObjectCodecService(ObjectCodecAdapter objectCodecAdapter)
-        {
-            this.objectCodecAdapter = objectCodecAdapter;
-        }
-
-        public bool IsSupported(IMimeType type)
-        {
-            return objectCodecAdapter.IsSupported(type);
-        }
-
-        public IObjectCodec<T> Codec<T>(ObjectMimeType<T> objectMimeType)
-        {
-            return objectCodecAdapter.Codec(objectMimeType);
-        }
-
-        public IObjectCodec Codec(Type objectType, IMimeType mimeType)
-        {
-            return objectCodecAdapter.Codec(objectType, mimeType);
-        }
-
-        public IObjectCodec<T> Codec<T>()
-        {
-            return objectCodecAdapter.Codec<T>();
-        }
-
-        public IObjectCodec Codec(Type objectType)
-        {
-            return objectCodecAdapter.Codec(objectType);
-        }
-
-        public IObjectCodec<T> Codec<T>(IMimeType mimeType)
-        {
-            return objectCodecAdapter.Codec<T>(mimeType);
-        }
-
-        public byte[] EncodeToBytes(object value)
-        {
-            return objectCodecAdapter.EncodeToBytes(value);
-        }
-
-        public byte[] EncodeToBytes<T>(ObjectMimeType<T> mimeType, T value)
-        {
-            return objectCodecAdapter.EncodeToBytes(mimeType, value);
-        }
-
-        public byte[] EncodeToBytes(object value, IMimeType mineType)
-        {
-            return objectCodecAdapter.EncodeToBytes(value, mineType);
-        }
-
-        public T DecodeByBytes<T>(byte[] data)
-        {
-            return objectCodecAdapter.DecodeByBytes<T>(data)!;
-        }
-
-        public T DecodeByBytes<T>(ObjectMimeType<T> mimeType, byte[] data)
-        {
-            return objectCodecAdapter.DecodeByBytes(mimeType, data)!;
-        }
-
-        public T DecodeByBytes<T>(IMimeType mimeType, byte[] data)
-        {
-            return objectCodecAdapter.DecodeByBytes<T>(mimeType, data)!;
-        }
+        this.objectCodecAdapter = objectCodecAdapter;
     }
 
+    public bool IsSupported(IMimeType type)
+    {
+        return objectCodecAdapter.IsSupported(type);
+    }
+
+    public IObjectCodec<T> Codec<T>(ObjectMimeType<T> objectMimeType)
+    {
+        return objectCodecAdapter.Codec(objectMimeType);
+    }
+
+    public IObjectCodec Codec(Type objectType, IMimeType mimeType)
+    {
+        return objectCodecAdapter.Codec(objectType, mimeType);
+    }
+
+    public IObjectCodec<T> Codec<T>()
+    {
+        return objectCodecAdapter.Codec<T>();
+    }
+
+    public IObjectCodec Codec(Type objectType)
+    {
+        return objectCodecAdapter.Codec(objectType);
+    }
+
+    public IObjectCodec<T> Codec<T>(IMimeType mimeType)
+    {
+        return objectCodecAdapter.Codec<T>(mimeType);
+    }
+
+    public byte[] EncodeToBytes(object value)
+    {
+        return objectCodecAdapter.EncodeToBytes(value);
+    }
+
+    public byte[] EncodeToBytes<T>(ObjectMimeType<T> mimeType, T value)
+    {
+        return objectCodecAdapter.EncodeToBytes(mimeType, value);
+    }
+
+    public byte[] EncodeToBytes(object value, IMimeType mineType)
+    {
+        return objectCodecAdapter.EncodeToBytes(value, mineType);
+    }
+
+    public T DecodeByBytes<T>(byte[] data)
+    {
+        return objectCodecAdapter.DecodeByBytes<T>(data)!;
+    }
+
+    public T DecodeByBytes<T>(ObjectMimeType<T> mimeType, byte[] data)
+    {
+        return objectCodecAdapter.DecodeByBytes(mimeType, data)!;
+    }
+
+    public T DecodeByBytes<T>(IMimeType mimeType, byte[] data)
+    {
+        return objectCodecAdapter.DecodeByBytes<T>(mimeType, data)!;
+    }
 }

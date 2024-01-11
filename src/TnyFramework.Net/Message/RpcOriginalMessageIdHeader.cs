@@ -11,25 +11,22 @@ using TnyFramework.Codec.Attributes;
 using TnyFramework.Codec.ProtobufNet.Attributes;
 using TnyFramework.Codec.ProtobufNet.TypeProtobuf;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+[Codable(ProtobufMimeType.PROTOBUF_TYPE)]
+[TypeProtobuf(MessageHeaderKeys.RPC_ORIGINAL_MESSAGE_ID_TYPE_PROTO)]
+[ProtoContract]
+public class RpcOriginalMessageIdHeader : ValueMessageHeader<long>
 {
+    [ProtoMember(1)]
+    public long MessageId { get; set; }
 
-    [Codable(ProtobufMimeType.PROTOBUF_TYPE)]
-    [TypeProtobuf(MessageHeaderKeys.RPC_ORIGINAL_MESSAGE_ID_TYPE_PROTO)]
-    [ProtoContract]
-    public class RpcOriginalMessageIdHeader : ValueMessageHeader<long>
+    public RpcOriginalMessageIdHeader() : base(MessageHeaderKeys.RPC_TRACING_HEADER)
     {
-        [ProtoMember(1)]
-        public long MessageId { get; set; }
-
-        public RpcOriginalMessageIdHeader() : base(MessageHeaderKeys.RPC_TRACING_HEADER)
-        {
-        }
-
-        public override long GetValue()
-        {
-            return MessageId;
-        }
     }
 
+    public override long GetValue()
+    {
+        return MessageId;
+    }
 }

@@ -23,20 +23,19 @@ using TnyFramework.Net.Rpc;
 using TnyFramework.Net.Transport;
 using static TnyFramework.Net.DotNetty.Demo.DTO.DTOOutline;
 
-namespace TnyFramework.Net.DotNetty.Demo
-{
+namespace TnyFramework.Net.DotNetty.Demo;
 
-    internal class Program
+internal class Program
+{
+    static Program()
     {
-        static Program()
-        {
             // ConsoleLoggerContext.Init();
         }
 
-        private class TestOnMessage : IOnMessage
+    private class TestOnMessage : IOnMessage
+    {
+        public async Task OnMessage(INetTunnel tunnel, IMessage message)
         {
-            public async Task OnMessage(INetTunnel tunnel, IMessage message)
-            {
                 var LOGGER = LogFactory.Logger<Program>();
                 if (message.ProtocolId != 100_01)
                     return;
@@ -55,16 +54,16 @@ namespace TnyFramework.Net.DotNetty.Demo
                 await sent;
                 LOGGER.LogInformation("sent : Current thread {ThreadId}", Thread.CurrentThread.ManagedThreadId);
             }
-        }
+    }
 
-        public class TestRpcServiceType : RpcServiceType<TestRpcServiceType>
-        {
-            public static readonly RpcServiceType GAME = Of(100, "game-service");
-            public static readonly RpcServiceType GAME_CLIENT = Of(200, "game-client");
-        }
+    public class TestRpcServiceType : RpcServiceType<TestRpcServiceType>
+    {
+        public static readonly RpcServiceType GAME = Of(100, "game-service");
+        public static readonly RpcServiceType GAME_CLIENT = Of(200, "game-client");
+    }
 
-        private static async Task Main(string[] args)
-        {
+    private static async Task Main(string[] args)
+    {
 
             TestRpcServiceType.GetValues();
             NetContactType.GetValues();
@@ -103,6 +102,4 @@ namespace TnyFramework.Net.DotNetty.Demo
 
             // await guide.Close();
         }
-    }
-
 }

@@ -19,79 +19,76 @@ using TnyFramework.Net.Common;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Exceptions;
 
-namespace TnyFramework.Net.Rpc.Remote
+namespace TnyFramework.Net.Rpc.Remote;
+
+public static class RpcInvokerFastInvokers
 {
+    private static readonly MethodInfo RCP_RESULT_CREATE_METHOD = typeof(RpcInvokerFastInvokers).GetMethods()
+        .First(info => info is {Name: "Result", IsGenericMethod: true});
 
-    public static class RpcInvokerFastInvokers
+    /// <summary>
+    /// 请求结果
+    /// </summary>
+    /// <returns>结果</returns>
+    public static IRpcResult<TBody> Result<TBody>(IResultCode code, IMessage body)
     {
-        private static readonly MethodInfo RCP_RESULT_CREATE_METHOD = typeof(RpcInvokerFastInvokers).GetMethods()
-            .First(info => info is {Name: "Result", IsGenericMethod: true});
-
-        /// <summary>
-        /// 请求结果
-        /// </summary>
-        /// <returns>结果</returns>
-        public static IRpcResult<TBody> Result<TBody>(IResultCode code, IMessage body)
-        {
-            return RpcResults.Result<TBody>(code, body);
-        }
-
-        public static IFastInvoker RcpResultCreator(Type resultType)
-        {
-            if (!typeof(IRpcResult).IsAssignableFrom(resultType))
-                throw new IllegalArgumentException($"{resultType} create RcpResultCreator exception");
-            var bodyType = resultType.IsGenericType ? resultType.GenericTypeArguments[0] : typeof(object);
-            var resultCodeMethod = RCP_RESULT_CREATE_METHOD.MakeGenericMethod(bodyType);
-            return FastFuncFactory.Invoker(resultCodeMethod, null!, null!);
-        }
-
-        public static IFastInvoker SourceFactory(Type bodyType)
-        {
-            var type = typeof(RpcCompleteSource<>).MakeGenericType(bodyType);
-            var constructor = type.GetConstructors()[0];
-            return FastFuncFactory.Invoker(constructor);
-        }
+        return RpcResults.Result<TBody>(code, body);
     }
 
-    public interface IRpcCompleteSource
+    public static IFastInvoker RcpResultCreator(Type resultType)
     {
-        void SetException(Exception cause);
-
-        void SetResult(IMessage? message);
-
-        Task Task { get; }
-
+        if (!typeof(IRpcResult).IsAssignableFrom(resultType))
+            throw new IllegalArgumentException($"{resultType} create RcpResultCreator exception");
+        var bodyType = resultType.IsGenericType ? resultType.GenericTypeArguments[0] : typeof(object);
+        var resultCodeMethod = RCP_RESULT_CREATE_METHOD.MakeGenericMethod(bodyType);
+        return FastFuncFactory.Invoker(resultCodeMethod, null!, null!);
     }
 
-    public class RpcCompleteSource<TBody> : IRpcCompleteSource
+    public static IFastInvoker SourceFactory(Type bodyType)
     {
-        private readonly TaskCompletionSource<TBody?> source = new();
+        var type = typeof(RpcCompleteSource<>).MakeGenericType(bodyType);
+        var constructor = type.GetConstructors()[0];
+        return FastFuncFactory.Invoker(constructor);
+    }
+}
 
-        private readonly Func<IMessage, object> messageTo;
+public interface IRpcCompleteSource
+{
+    void SetException(Exception cause);
 
-        public RpcCompleteSource(Func<IMessage, object> messageTo)
-        {
-            this.messageTo = messageTo;
-        }
+    void SetResult(IMessage? message);
 
-        public void SetException(Exception cause)
-        {
-            var exception = (cause.IsNull() ? new RpcInvokeException(NetResultCode.RPC_INVOKE_FAILED) : cause.InnerException) ?? cause;
-            source.SetException(exception);
-        }
+    Task Task { get; }
 
-        public Task Task => source.Task;
+}
 
-        public void SetResult(IMessage? message)
-        {
-            if (message == null)
-            {
-                source.SetResult(default);
-            } else
-            {
-                source.SetResult((TBody) messageTo(message));
-            }
-        }
+public class RpcCompleteSource<TBody> : IRpcCompleteSource
+{
+    private readonly TaskCompletionSource<TBody?> source = new();
+
+    private readonly Func<IMessage, object> messageTo;
+
+    public RpcCompleteSource(Func<IMessage, object> messageTo)
+    {
+        this.messageTo = messageTo;
     }
 
+    public void SetException(Exception cause)
+    {
+        var exception = (cause.IsNull() ? new RpcInvokeException(NetResultCode.RPC_INVOKE_FAILED) : cause.InnerException) ?? cause;
+        source.SetException(exception);
+    }
+
+    public Task Task => source.Task;
+
+    public void SetResult(IMessage? message)
+    {
+        if (message == null)
+        {
+            source.SetResult(default);
+        } else
+        {
+            source.SetResult((TBody) messageTo(message));
+        }
+    }
 }

@@ -16,51 +16,48 @@ using TnyFramework.Net.DotNetty.Hosting.Configuration.Spec;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Hosting.Guide;
 
-namespace TnyFramework.Net.DotNetty.Hosting.Guide
+namespace TnyFramework.Net.DotNetty.Hosting.Guide;
+
+public abstract class NettyGuideSpec<TGuide, TContext, TImplContext, TSpec>
+    : NetGuideSpec<TGuide, TContext, TImplContext, TSpec>, INettyGuideSpec<TGuide, TContext, TSpec>
+    where TGuide : IServerGuide<IServedServerSetting>
+    where TContext : INettyGuideUnitContext
+    where TImplContext : NettyGuideUnitContext<TContext>, TContext
+    where TSpec : INettyGuideSpec<TGuide, TContext, TSpec>
 {
-
-    public abstract class NettyGuideSpec<TGuide, TContext, TImplContext, TSpec>
-        : NetGuideSpec<TGuide, TContext, TImplContext, TSpec>, INettyGuideSpec<TGuide, TContext, TSpec>
-        where TGuide : IServerGuide<IServedServerSetting>
-        where TContext : INettyGuideUnitContext
-        where TImplContext : NettyGuideUnitContext<TContext>, TContext
-        where TSpec : INettyGuideSpec<TGuide, TContext, TSpec>
+    protected NettyGuideSpec(IServiceCollection unitContainer, TImplContext context) : base(unitContainer, context)
     {
-        protected NettyGuideSpec(IServiceCollection unitContainer, TImplContext context) : base(unitContainer, context)
-        {
-        }
-
-        protected abstract override TSpec Self();
-
-        public TSpec TunnelConfigure(Action<IUnitSpec<INettyTunnelFactory, TContext>> action)
-        {
-            action(context.TunnelFactorySpec);
-            return Self();
-        }
-
-        public TSpec MessageBodyCodecConfigure(Action<UnitSpec<IMessageBodyCodec, TContext>> action)
-        {
-            action(context.MessageBodyCodecSpec);
-            return Self();
-        }
-
-        public TSpec MessageHeaderCodecConfigure(Action<UnitSpec<IMessageHeaderCodec, TContext>> action)
-        {
-            action(context.MessageHeaderCodecSpec);
-            return Self();
-        }
-
-        public TSpec MessageCodecConfigure(Action<UnitSpec<IMessageCodec, TContext>> action)
-        {
-            action(context.MessageCodecSpec);
-            return Self();
-        }
-
-        public TSpec ChannelMakerConfigure(Action<UnitSpec<IChannelMaker, INettyGuideUnitContext>> action)
-        {
-            action(context.ChannelMakerSpec);
-            return Self();
-        }
     }
 
+    protected abstract override TSpec Self();
+
+    public TSpec TunnelConfigure(Action<IUnitSpec<INettyTunnelFactory, TContext>> action)
+    {
+        action(context.TunnelFactorySpec);
+        return Self();
+    }
+
+    public TSpec MessageBodyCodecConfigure(Action<UnitSpec<IMessageBodyCodec, TContext>> action)
+    {
+        action(context.MessageBodyCodecSpec);
+        return Self();
+    }
+
+    public TSpec MessageHeaderCodecConfigure(Action<UnitSpec<IMessageHeaderCodec, TContext>> action)
+    {
+        action(context.MessageHeaderCodecSpec);
+        return Self();
+    }
+
+    public TSpec MessageCodecConfigure(Action<UnitSpec<IMessageCodec, TContext>> action)
+    {
+        action(context.MessageCodecSpec);
+        return Self();
+    }
+
+    public TSpec ChannelMakerConfigure(Action<UnitSpec<IChannelMaker, INettyGuideUnitContext>> action)
+    {
+        action(context.ChannelMakerSpec);
+        return Self();
+    }
 }

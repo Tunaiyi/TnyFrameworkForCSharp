@@ -6,14 +6,11 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf
+namespace TnyFramework.Codec.ProtobufNet.TypeProtobuf;
+
+public class TypeProtobufMimeType : MimeType<TypeProtobufMimeType>
 {
+    public const string TYPE_PROTOBUF_TYPE = "type-protobuf";
 
-    public class TypeProtobufMimeType : MimeType<TypeProtobufMimeType>
-    {
-        public const string TYPE_PROTOBUF_TYPE = "type-protobuf";
-
-        public static readonly MimeType TYPE_PROTOBUF = Of(300, TYPE_PROTOBUF_TYPE);
-    }
-
+    public static readonly MimeType TYPE_PROTOBUF = Of(300, TYPE_PROTOBUF_TYPE);
 }

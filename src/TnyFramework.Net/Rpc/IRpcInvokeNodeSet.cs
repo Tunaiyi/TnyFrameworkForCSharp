@@ -8,31 +8,28 @@
 
 using System.Collections.Generic;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public interface IRpcInvokeNodeSet
 {
+    /// <summary>
+    /// 获取有序远程节点列表
+    /// </summary>
+    /// <returns>节点列表</returns>
+    IList<IRpcInvokeNode> GetOrderInvokeNodes();
 
-    public interface IRpcInvokeNodeSet
-    {
-        /// <summary>
-        /// 获取有序远程节点列表
-        /// </summary>
-        /// <returns>节点列表</returns>
-        IList<IRpcInvokeNode> GetOrderInvokeNodes();
+    /// <summary>
+    /// 查找远程节点
+    /// </summary>
+    /// <param name="nodeId">节点 id</param>
+    /// <returns>远程节点</returns>
+    IRpcInvokeNode? FindInvokeNode(long nodeId);
 
-        /// <summary>
-        /// 查找远程节点
-        /// </summary>
-        /// <param name="nodeId">节点 id</param>
-        /// <returns>远程节点</returns>
-        IRpcInvokeNode? FindInvokeNode(long nodeId);
-
-        /// <summary>
-        /// 查找远程接入(连接)
-        /// </summary>
-        /// <param name="nodeId">节点 id</param>
-        /// <param name="accessId">接入点 id</param>
-        /// <returns>远程接入点</returns>
-        IRpcAccess? FindInvokeAccess(long nodeId, long accessId);
-    }
-
+    /// <summary>
+    /// 查找远程接入(连接)
+    /// </summary>
+    /// <param name="nodeId">节点 id</param>
+    /// <param name="accessId">接入点 id</param>
+    /// <returns>远程接入点</returns>
+    IRpcAccess? FindInvokeAccess(long nodeId, long accessId);
 }

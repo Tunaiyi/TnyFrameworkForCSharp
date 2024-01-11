@@ -9,16 +9,13 @@
 using Microsoft.Extensions.Configuration;
 using TnyFramework.Net.DotNetty.Bootstrap;
 
-namespace TnyFramework.Net.DotNetty.Hosting.Options
+namespace TnyFramework.Net.DotNetty.Hosting.Options;
+
+public class NettyAppHostOptions
 {
+    public static readonly string NETTY_ROOT_PATH = ConfigurationPath.Combine("Tny", "Net");
 
-    public class NettyAppHostOptions
-    {
-        public static readonly string NETTY_ROOT_PATH = ConfigurationPath.Combine("Tny", "Net");
+    public NettyServerSetting NetServer { get; set; } = null!;
 
-        public NettyServerSetting NetServer { get; set; } = null!;
-
-        public NettyServerSetting RpcServer { get; set; } = null!;
-    }
-
+    public NettyServerSetting RpcServer { get; set; } = null!;
 }

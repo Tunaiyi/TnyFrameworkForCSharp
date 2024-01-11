@@ -10,22 +10,19 @@ using System;
 using System.Threading.Tasks;
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Transport
+namespace TnyFramework.Net.Transport;
+
+public class TaskResponseSource : TaskCompletionSource<IMessage>
 {
+    public long Timeout { get; }
 
-    public class TaskResponseSource : TaskCompletionSource<IMessage>
+    public bool IsTimeout(long now)
     {
-        public long Timeout { get; }
-
-        public bool IsTimeout(long now)
-        {
-            return now > Timeout;
-        }
-
-        public TaskResponseSource(long timeout)
-        {
-            Timeout = DateTimeOffset.Now.ToUnixTimeMilliseconds() + timeout;
-        }
+        return now > Timeout;
     }
 
+    public TaskResponseSource(long timeout)
+    {
+        Timeout = DateTimeOffset.Now.ToUnixTimeMilliseconds() + timeout;
+    }
 }

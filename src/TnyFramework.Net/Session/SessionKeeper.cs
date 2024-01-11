@@ -17,226 +17,223 @@ using TnyFramework.Net.Message;
 using TnyFramework.Net.Session.Event;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public static class SessionKeeperEvents
 {
+    internal static IEventBus<SessionKeeperAdd> AddSessionEvent { get; } = EventBuses.Create<SessionKeeperAdd>();
 
-    public static class SessionKeeperEvents
+    internal static IEventBus<SessionKeeperRemove> RemoveSessionEvent { get; } = EventBuses.Create<SessionKeeperRemove>();
+
+    /// <summary>
+    /// 激活事件总线, 可监听到所有 SessionKeeper 的事件
+    /// </summary>
+    public static IEventWatch<SessionKeeperAdd> AddSessionEventWatch => AddSessionEvent;
+
+    /// <summary>
+    /// 断线事件总线, 可监听到所有 SessionKeeper 的事件
+    /// </summary>
+    public static IEventWatch<SessionKeeperRemove> RemoveSessionEventWatch => RemoveSessionEvent;
+}
+
+public abstract class SessionKeeper<TSession> : INetSessionKeeper
+    where TSession : ISession
+{
+    private readonly ConcurrentDictionary<object, TSession> sessionMap = new ConcurrentDictionary<object, TSession>();
+
+    private readonly IEventBus<SessionKeeperAdd> addSessionEvent;
+
+    private readonly IEventBus<SessionKeeperRemove> removeSessionEvent;
+
+    public IEventWatch<SessionKeeperAdd> AddSessionEvent => addSessionEvent;
+
+    public IEventWatch<SessionKeeperRemove> RemoveSessionEvent => removeSessionEvent;
+
+    public IContactType ContactType { get; }
+
+    public string ContactGroup => ContactType.Group;
+
+    public int Size => sessionMap.Count;
+
+    public SessionKeeper(IContactType contactType)
     {
-        internal static IEventBus<SessionKeeperAdd> AddSessionEvent { get; } = EventBuses.Create<SessionKeeperAdd>();
-
-        internal static IEventBus<SessionKeeperRemove> RemoveSessionEvent { get; } = EventBuses.Create<SessionKeeperRemove>();
-
-        /// <summary>
-        /// 激活事件总线, 可监听到所有 SessionKeeper 的事件
-        /// </summary>
-        public static IEventWatch<SessionKeeperAdd> AddSessionEventWatch => AddSessionEvent;
-
-        /// <summary>
-        /// 断线事件总线, 可监听到所有 SessionKeeper 的事件
-        /// </summary>
-        public static IEventWatch<SessionKeeperRemove> RemoveSessionEventWatch => RemoveSessionEvent;
+        ContactType = contactType;
+        addSessionEvent = SessionKeeperEvents.AddSessionEvent.ForkChild();
+        removeSessionEvent = SessionKeeperEvents.RemoveSessionEvent.ForkChild();
     }
 
-    public abstract class SessionKeeper<TSession> : INetSessionKeeper
-        where TSession : ISession
+    public virtual void Start()
     {
-        private readonly ConcurrentDictionary<object, TSession> sessionMap = new ConcurrentDictionary<object, TSession>();
+    }
 
-        private readonly IEventBus<SessionKeeperAdd> addSessionEvent;
+    public TSession? GetSession(long identify)
+    {
+        return sessionMap.GetValueOrDefault(identify);
+    }
 
-        private readonly IEventBus<SessionKeeperRemove> removeSessionEvent;
+    ISession? ISessionKeeper.GetSession(long identify)
+    {
+        return sessionMap.GetValueOrDefault(identify);
+    }
 
-        public IEventWatch<SessionKeeperAdd> AddSessionEvent => addSessionEvent;
+    IList<ISession> ISessionKeeper.GetAllSessions()
+    {
+        return sessionMap.Values.Select(e => e as ISession).ToList();
+    }
 
-        public IEventWatch<SessionKeeperRemove> RemoveSessionEvent => removeSessionEvent;
+    public IList<TSession> GetAllSessions()
+    {
+        return ImmutableList.CreateRange(sessionMap.Values);
+    }
 
-        public IContactType ContactType { get; }
-
-        public string ContactGroup => ContactType.Group;
-
-        public int Size => sessionMap.Count;
-
-        public SessionKeeper(IContactType contactType)
+    public void Send2User(long identify, MessageContent content)
+    {
+        if (sessionMap.TryGetValue(identify, out var session))
         {
-            ContactType = contactType;
-            addSessionEvent = SessionKeeperEvents.AddSessionEvent.ForkChild();
-            removeSessionEvent = SessionKeeperEvents.RemoveSessionEvent.ForkChild();
+            session.Send(content);
         }
+    }
 
-        public virtual void Start()
+    public void Send2Users(IEnumerable<long> identifies, MessageContent content)
+    {
+        foreach (var identify in identifies)
         {
+            Send2User(identify, content);
         }
+    }
 
-        public TSession? GetSession(long identify)
+    public void Send2AllOnline(MessageContent content)
+    {
+        foreach (var session in sessionMap.Values)
         {
-            return sessionMap.GetValueOrDefault(identify);
+            session.Send(content);
         }
+    }
 
-        ISession? ISessionKeeper.GetSession(long identify)
+    private TSession? DoClose(long identify)
+    {
+        var session = GetSession(identify);
+        if (session != null)
         {
-            return sessionMap.GetValueOrDefault(identify);
+            session.Close();
         }
+        return session;
+    }
 
-        IList<ISession> ISessionKeeper.GetAllSessions()
+    private TSession? DoOffline(long identify)
+    {
+        var session = GetSession(identify);
+        if (session != null)
         {
-            return sessionMap.Values.Select(e => e as ISession).ToList();
+            session.Offline();
         }
+        return session;
+    }
 
-        public IList<TSession> GetAllSessions()
+    public ISession? Close(long identify) => DoClose(identify);
+
+    public ISession? Offline(long identify) => DoOffline(identify);
+
+    public void OfflineAll()
+    {
+        foreach (var pair in sessionMap)
         {
-            return ImmutableList.CreateRange(sessionMap.Values);
+            pair.Value.Offline();
         }
+    }
 
-        public void Send2User(long identify, MessageContent content)
+    public void CloseAll()
+    {
+        foreach (var pair in sessionMap)
         {
-            if (sessionMap.TryGetValue(identify, out var session))
-            {
-                session.Send(content);
-            }
+            pair.Value.Close();
         }
+    }
 
-        public void Send2Users(IEnumerable<long> identifies, MessageContent content)
-        {
-            foreach (var identify in identifies)
-            {
-                Send2User(identify, content);
-            }
-        }
+    public int OnlineSize => sessionMap.Values.Count(session => session.IsOnline());
 
-        public void Send2AllOnline(MessageContent content)
-        {
-            foreach (var session in sessionMap.Values)
-            {
-                session.Send(content);
-            }
-        }
+    public abstract ISession Online(ICertificate certificate, INetTunnel tunnel);
 
-        private TSession? DoClose(long identify)
-        {
-            var session = GetSession(identify);
-            if (session != null)
-            {
-                session.Close();
-            }
-            return session;
-        }
+    public bool IsOnline(long identify)
+    {
+        var session = GetSession(identify);
+        return session != null && session.IsOnline();
+    }
 
-        private TSession? DoOffline(long identify)
-        {
-            var session = GetSession(identify);
-            if (session != null)
-            {
-                session.Offline();
-            }
-            return session;
-        }
+    protected TSession? FindSession(long identify)
+    {
+        return sessionMap.GetValueOrDefault(identify);
+    }
 
-        public ISession? Close(long identify) => DoClose(identify);
+    protected bool RemoveSession(long identify, ISession removeOne)
+    {
+        if (!sessionMap.TryGetValue(identify, out var session) || !ReferenceEquals(session, removeOne))
+            return false;
+        if (!sessionMap.TryRemove(identify, out session))
+            return false;
+        removeSessionEvent.Notify(this, session);
+        return true;
+    }
 
-        public ISession? Offline(long identify) => DoOffline(identify);
-
-        public void OfflineAll()
-        {
-            foreach (var pair in sessionMap)
-            {
-                pair.Value.Offline();
-            }
-        }
-
-        public void CloseAll()
-        {
-            foreach (var pair in sessionMap)
-            {
-                pair.Value.Close();
-            }
-        }
-
-        public int OnlineSize => sessionMap.Values.Count(session => session.IsOnline());
-
-        public abstract ISession Online(ICertificate certificate, INetTunnel tunnel);
-
-        public bool IsOnline(long identify)
-        {
-            var session = GetSession(identify);
-            return session != null && session.IsOnline();
-        }
-
-        protected TSession? FindSession(long identify)
-        {
-            return sessionMap.GetValueOrDefault(identify);
-        }
-
-        protected bool RemoveSession(long identify, ISession removeOne)
-        {
-            if (!sessionMap.TryGetValue(identify, out var session) || !ReferenceEquals(session, removeOne))
-                return false;
-            if (!sessionMap.TryRemove(identify, out session))
-                return false;
-            removeSessionEvent.Notify(this, session);
-            return true;
-        }
-
-        protected TSession? ReplaceSession(long identify, ISession newOne)
-        {
-            var session = (TSession) newOne;
-            var current = default(TSession);
-            sessionMap.AddOrUpdate(identify, session, (_, exist) => {
-                if (ReferenceEquals(session, exist))
-                    return session;
-                exist.Close();
-                removeSessionEvent.Notify(this, exist);
-                current = exist;
+    protected TSession? ReplaceSession(long identify, ISession newOne)
+    {
+        var session = (TSession) newOne;
+        var current = default(TSession);
+        sessionMap.AddOrUpdate(identify, session, (_, exist) => {
+            if (ReferenceEquals(session, exist))
                 return session;
-            });
-            addSessionEvent.Notify(this, newOne);
-            return current;
-        }
-
-        protected virtual void OnSessionOnline(TSession session)
-        {
-
-        }
-
-        protected virtual void OnSessionOffline(TSession session)
-        {
-
-        }
-
-        protected virtual void OnSessionClose(TSession session)
-        {
-
-        }
-
-        public void NotifySessionOnline(ISession session)
-        {
-            if (!Equals(session.ContactType, ContactType))
-            {
-                return;
-            }
-            OnSessionOnline((TSession) session);
-        }
-
-        public void NotifySessionOffline(ISession session)
-        {
-            if (!Equals(session.ContactType, ContactType))
-            {
-                return;
-            }
-            OnSessionOffline((TSession) session);
-        }
-
-        public void NotifySessionClose(ISession session)
-        {
-            if (!Equals(session.ContactType, ContactType))
-            {
-                return;
-            }
-            var closeOne = (TSession) session;
-            if (RemoveSession(closeOne.Identify, closeOne))
-            {
-                OnSessionClose(closeOne);
-            }
-        }
+            exist.Close();
+            removeSessionEvent.Notify(this, exist);
+            current = exist;
+            return session;
+        });
+        addSessionEvent.Notify(this, newOne);
+        return current;
     }
 
+    protected virtual void OnSessionOnline(TSession session)
+    {
+
+    }
+
+    protected virtual void OnSessionOffline(TSession session)
+    {
+
+    }
+
+    protected virtual void OnSessionClose(TSession session)
+    {
+
+    }
+
+    public void NotifySessionOnline(ISession session)
+    {
+        if (!Equals(session.ContactType, ContactType))
+        {
+            return;
+        }
+        OnSessionOnline((TSession) session);
+    }
+
+    public void NotifySessionOffline(ISession session)
+    {
+        if (!Equals(session.ContactType, ContactType))
+        {
+            return;
+        }
+        OnSessionOffline((TSession) session);
+    }
+
+    public void NotifySessionClose(ISession session)
+    {
+        if (!Equals(session.ContactType, ContactType))
+        {
+            return;
+        }
+        var closeOne = (TSession) session;
+        if (RemoveSession(closeOne.Identify, closeOne))
+        {
+            OnSessionClose(closeOne);
+        }
+    }
 }

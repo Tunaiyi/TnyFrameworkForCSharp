@@ -6,24 +6,21 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+public class TickMessage : AbstractNetMessage
 {
-
-    public class TickMessage : AbstractNetMessage
+    public static TickMessage Ping()
     {
-        public static TickMessage Ping()
-        {
-            return new TickMessage(TickMessageHead.Ping());
-        }
-
-        public static TickMessage Pong()
-        {
-            return new TickMessage(TickMessageHead.Pong());
-        }
-
-        private TickMessage(INetMessageHead head) : base(head)
-        {
-        }
+        return new TickMessage(TickMessageHead.Ping());
     }
 
+    public static TickMessage Pong()
+    {
+        return new TickMessage(TickMessageHead.Pong());
+    }
+
+    private TickMessage(INetMessageHead head) : base(head)
+    {
+    }
 }

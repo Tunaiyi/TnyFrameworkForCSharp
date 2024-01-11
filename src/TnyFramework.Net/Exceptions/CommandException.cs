@@ -10,35 +10,32 @@ using System;
 using TnyFramework.Common.Exceptions;
 using TnyFramework.Common.Result;
 
-namespace TnyFramework.Net.Exceptions
+namespace TnyFramework.Net.Exceptions;
+
+public class CommandException : ResultCodeException
 {
+    public object? Body { get; }
 
-    public class CommandException : ResultCodeException
+
+    public CommandException(IResultCode code, string message = "") : base(code, message)
     {
-        public object? Body { get; }
-
-
-        public CommandException(IResultCode code, string message = "") : base(code, message)
-        {
-            Body = null;
-        }
-
-        public CommandException(IResultCode code, Exception innerException, string message = "") :
-            base(code, innerException, message)
-        {
-            Body = null;
-        }
-
-        public CommandException(IResultCode code, object body, string message = "") : base(code, message)
-        {
-            Body = body;
-        }
-
-        public CommandException(IResultCode code, Exception innerException, object body, string message = "") :
-            base(code, innerException, message)
-        {
-            Body = body;
-        }
+        Body = null;
     }
 
+    public CommandException(IResultCode code, Exception innerException, string message = "") :
+        base(code, innerException, message)
+    {
+        Body = null;
+    }
+
+    public CommandException(IResultCode code, object body, string message = "") : base(code, message)
+    {
+        Body = body;
+    }
+
+    public CommandException(IResultCode code, Exception innerException, object body, string message = "") :
+        base(code, innerException, message)
+    {
+        Body = body;
+    }
 }

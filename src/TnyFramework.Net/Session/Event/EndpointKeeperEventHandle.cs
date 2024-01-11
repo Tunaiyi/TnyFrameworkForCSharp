@@ -6,17 +6,14 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Session.Event
-{
+namespace TnyFramework.Net.Session.Event;
 
-    /// <summary>
-    /// 添加会话
-    /// </summary>
-    public delegate void SessionKeeperAdd(ISessionKeeper keeper, ISession session);
+/// <summary>
+/// 添加会话
+/// </summary>
+public delegate void SessionKeeperAdd(ISessionKeeper keeper, ISession session);
 
-    /// <summary>
-    /// 移除会话
-    /// </summary>
-    public delegate void SessionKeeperRemove(ISessionKeeper keeper, ISession session);
-
-}
+/// <summary>
+/// 移除会话
+/// </summary>
+public delegate void SessionKeeperRemove(ISessionKeeper keeper, ISession session);

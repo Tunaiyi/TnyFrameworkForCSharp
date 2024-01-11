@@ -8,23 +8,20 @@
 
 using System;
 
-namespace TnyFramework.Net.Hosting.Configuration
+namespace TnyFramework.Net.Hosting.Configuration;
+
+public interface ICustomServerConfiguration<in THostConfiguration>
+    where THostConfiguration : INetHostConfiguration<THostConfiguration>
 {
+    void Configure(THostConfiguration configuration);
+}
 
-    public interface ICustomServerConfiguration<in THostConfiguration>
-        where THostConfiguration : INetHostConfiguration<THostConfiguration>
+public class ActionCustomServerConfiguration<THostConfiguration>(Action<THostConfiguration> configurator)
+    : ICustomServerConfiguration<THostConfiguration>
+    where THostConfiguration : INetHostConfiguration<THostConfiguration>
+{
+    public void Configure(THostConfiguration configuration)
     {
-        void Configure(THostConfiguration configuration);
+        configurator.Invoke(configuration);
     }
-
-    public class ActionCustomServerConfiguration<THostConfiguration>(Action<THostConfiguration> configurator)
-        : ICustomServerConfiguration<THostConfiguration>
-        where THostConfiguration : INetHostConfiguration<THostConfiguration>
-    {
-        public void Configure(THostConfiguration configuration)
-        {
-            configurator.Invoke(configuration);
-        }
-    }
-
 }

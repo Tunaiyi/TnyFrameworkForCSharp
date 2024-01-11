@@ -14,22 +14,19 @@ using TnyFramework.Net.DotNetty.Demo.DTO;
 using TnyFramework.Net.Session;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.DotNetty.Demo.Controller
-{
+namespace TnyFramework.Net.DotNetty.Demo.Controller;
 
-    [RpcController]
-    [AuthenticationRequired(ContactType.DEFAULT_USER_TYPE)]
-    public class LoginController : IController
+[RpcController]
+[AuthenticationRequired(ContactType.DEFAULT_USER_TYPE)]
+public class LoginController : IController
+{
+    [RpcRequest(CtrlerIds.LOGIN_4_LOGIN)]
+    [AuthenticationRequired(typeof(DemoAuthenticationValidator), ContactType.DEFAULT_USER_TYPE)]
+    public LoginDTO Login(ITunnel tunnel, ISession session, long sessionId, long userId)
     {
-        [RpcRequest(CtrlerIds.LOGIN_4_LOGIN)]
-        [AuthenticationRequired(typeof(DemoAuthenticationValidator), ContactType.DEFAULT_USER_TYPE)]
-        public LoginDTO Login(ITunnel tunnel, ISession session, long sessionId, long userId)
-        {
             var certificate = session.Certificate;
             //        EXECUTOR_SERVICE.scheduleAtFixedRate(() -> session.send(MessageContexts
             //                .push(ProtocolAide.protocol(CtrlerIDs.LOGIN$PING), "ping tunnel id " + tunnel.getId())), 0, 3, TimeUnit.SECONDS);
             return new LoginDTO(certificate.Id, userId, $"{userId} - {sessionId} 登录成功 at {DateTimeOffset.Now.ToUnixTimeMilliseconds()}");
         }
-    }
-
 }

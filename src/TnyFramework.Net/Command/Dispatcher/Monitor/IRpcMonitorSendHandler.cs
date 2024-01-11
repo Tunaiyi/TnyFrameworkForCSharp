@@ -9,12 +9,9 @@
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Command.Dispatcher.Monitor
+namespace TnyFramework.Net.Command.Dispatcher.Monitor;
+
+public interface IRpcMonitorSendHandler : IRpcMonitorHandler
 {
-
-    public interface IRpcMonitorSendHandler : IRpcMonitorHandler
-    {
-        void OnSend(INetTunnel tunnel, IMessage message);
-    }
-
+    void OnSend(INetTunnel tunnel, IMessage message);
 }

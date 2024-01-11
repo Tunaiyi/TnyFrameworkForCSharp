@@ -6,20 +6,17 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Common.Lifecycle
+namespace TnyFramework.Common.Lifecycle;
+
+public interface IAppPrepareStart : ILifecycleHandler
 {
+    /// <summary>
+    /// 准备开始生命周期对象
+    /// </summary>
+    virtual PrepareStarter GetPrepareStarter() => PrepareStarter.Value(GetType());
 
-    public interface IAppPrepareStart : ILifecycleHandler
-    {
-        /// <summary>
-        /// 准备开始生命周期对象
-        /// </summary>
-        virtual PrepareStarter GetPrepareStarter() => PrepareStarter.Value(GetType());
-
-        /// <summary>
-        /// 准备启动
-        /// </summary>
-        void OnPrepareStart();
-    }
-
+    /// <summary>
+    /// 准备启动
+    /// </summary>
+    void OnPrepareStart();
 }

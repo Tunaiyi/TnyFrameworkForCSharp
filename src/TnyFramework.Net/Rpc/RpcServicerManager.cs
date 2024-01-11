@@ -14,93 +14,90 @@ using TnyFramework.Net.Application;
 using TnyFramework.Net.Rpc.Extensions;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public class RpcServicerManager : IRpcInvokeNodeManager
 {
+    private readonly ConcurrentDictionary<IContactType, RpcServiceSet> serviceSetMap = new();
 
-    public class RpcServicerManager : IRpcInvokeNodeManager
+    private readonly ConcurrentDictionary<IContactType, IRpcInvokeNodeSet?> invokeNodeSetMap = new();
+
+    public RpcServicerManager()
     {
-        private readonly ConcurrentDictionary<IContactType, RpcServiceSet> serviceSetMap = new();
+        SessionKeeperManager.CreateEventBox.Add(OnCreate);
+    }
 
-        private readonly ConcurrentDictionary<IContactType, IRpcInvokeNodeSet?> invokeNodeSetMap = new();
+    public IRpcInvokeNodeSet? LoadInvokeNodeSet(IContactType serviceType)
+    {
+        return DoLoadInvokeNodeSet(serviceType, null);
+    }
 
-        public RpcServicerManager()
+    public IRpcInvokeNodeSet? FindInvokeNodeSet(IContactType serviceType)
+    {
+        return serviceSetMap.GetValueOrDefault(serviceType);
+    }
+
+    private IRpcInvokeNodeSet? DoLoadInvokeNodeSet(IContactType contactType, Action<ContactNodeSet>? createHandler)
+    {
+        if (contactType is RpcServiceType serviceType)
         {
-            SessionKeeperManager.CreateEventBox.Add(OnCreate);
-        }
-
-        public IRpcInvokeNodeSet? LoadInvokeNodeSet(IContactType serviceType)
+            return DoLoadRpcServiceSet(serviceType);
+        } else
         {
-            return DoLoadInvokeNodeSet(serviceType, null);
-        }
-
-        public IRpcInvokeNodeSet? FindInvokeNodeSet(IContactType serviceType)
-        {
-            return serviceSetMap.GetValueOrDefault(serviceType);
-        }
-
-        private IRpcInvokeNodeSet? DoLoadInvokeNodeSet(IContactType contactType, Action<ContactNodeSet>? createHandler)
-        {
-            if (contactType is RpcServiceType serviceType)
-            {
-                return DoLoadRpcServiceSet(serviceType);
-            } else
-            {
-                return DoLoadRpcServiceSet(contactType, createHandler);
-            }
-        }
-
-        private IRpcInvokeNodeSet? DoLoadRpcServiceSet(IContactType contactType, Action<ContactNodeSet>? createHandler)
-        {
-            var nodeSet = invokeNodeSetMap.Get(contactType);
-            if (nodeSet != null)
-            {
-                return nodeSet;
-            }
-            var newSet = new ContactNodeSet(contactType);
-            if (invokeNodeSetMap.PutIfAbsent(contactType, newSet) == null)
-            {
-                createHandler?.Invoke(newSet);
-            }
-            return invokeNodeSetMap.Get(contactType);
-        }
-
-        private RpcServiceSet DoLoadRpcServiceSet(IRpcServiceType serviceType)
-        {
-            RpcServiceSet Creator(IContactType type) => CreateServiceSet(serviceType);
-            return serviceSetMap.GetOrAdd(serviceType, Creator);
-        }
-
-        private static RpcServiceSet CreateServiceSet(IRpcServiceType serviceType) => new(serviceType);
-
-        private void OnCreate(ISessionKeeper keeper)
-        {
-            if (keeper.ContactType is not IRpcServiceType)
-                return;
-            keeper.AddSessionEvent.Add(OnAddSession);
-            keeper.RemoveSessionEvent.Add(OnRemoveSession);
-        }
-
-        private void OnRemoveSession(ISessionKeeper keeper, ISession session)
-        {
-            var rpcIdentify = session.GetRpcAccessIdentify();
-            if (rpcIdentify.IsNull())
-            {
-                return;
-            }
-            var servicer = DoLoadRpcServiceSet(rpcIdentify.ServiceType);
-            servicer.RemoveSession(session);
-        }
-
-        private void OnAddSession(ISessionKeeper keeper, ISession session)
-        {
-            var rpcIdentify = session.GetRpcAccessIdentify();
-            if (rpcIdentify.IsNull())
-            {
-                return;
-            }
-            var servicer = DoLoadRpcServiceSet(rpcIdentify.ServiceType);
-            servicer.AddSession(session);
+            return DoLoadRpcServiceSet(contactType, createHandler);
         }
     }
 
+    private IRpcInvokeNodeSet? DoLoadRpcServiceSet(IContactType contactType, Action<ContactNodeSet>? createHandler)
+    {
+        var nodeSet = invokeNodeSetMap.Get(contactType);
+        if (nodeSet != null)
+        {
+            return nodeSet;
+        }
+        var newSet = new ContactNodeSet(contactType);
+        if (invokeNodeSetMap.PutIfAbsent(contactType, newSet) == null)
+        {
+            createHandler?.Invoke(newSet);
+        }
+        return invokeNodeSetMap.Get(contactType);
+    }
+
+    private RpcServiceSet DoLoadRpcServiceSet(IRpcServiceType serviceType)
+    {
+        RpcServiceSet Creator(IContactType type) => CreateServiceSet(serviceType);
+        return serviceSetMap.GetOrAdd(serviceType, Creator);
+    }
+
+    private static RpcServiceSet CreateServiceSet(IRpcServiceType serviceType) => new(serviceType);
+
+    private void OnCreate(ISessionKeeper keeper)
+    {
+        if (keeper.ContactType is not IRpcServiceType)
+            return;
+        keeper.AddSessionEvent.Add(OnAddSession);
+        keeper.RemoveSessionEvent.Add(OnRemoveSession);
+    }
+
+    private void OnRemoveSession(ISessionKeeper keeper, ISession session)
+    {
+        var rpcIdentify = session.GetRpcAccessIdentify();
+        if (rpcIdentify.IsNull())
+        {
+            return;
+        }
+        var servicer = DoLoadRpcServiceSet(rpcIdentify.ServiceType);
+        servicer.RemoveSession(session);
+    }
+
+    private void OnAddSession(ISessionKeeper keeper, ISession session)
+    {
+        var rpcIdentify = session.GetRpcAccessIdentify();
+        if (rpcIdentify.IsNull())
+        {
+            return;
+        }
+        var servicer = DoLoadRpcServiceSet(rpcIdentify.ServiceType);
+        servicer.AddSession(session);
+    }
 }

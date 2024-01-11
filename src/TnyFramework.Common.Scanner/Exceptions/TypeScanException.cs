@@ -8,22 +8,19 @@
 
 using System;
 
-namespace TnyFramework.Common.Scanner.Exceptions
+namespace TnyFramework.Common.Scanner.Exceptions;
+
+public class TypeScanException : Exception
 {
-
-    public class TypeScanException : Exception
+    public TypeScanException()
     {
-        public TypeScanException()
-        {
-        }
-
-        public TypeScanException(string message) : base(message)
-        {
-        }
-
-        public TypeScanException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
     }
 
+    public TypeScanException(string message) : base(message)
+    {
+    }
+
+    public TypeScanException(string message, Exception innerException) : base(message, innerException)
+    {
+    }
 }

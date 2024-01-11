@@ -8,37 +8,34 @@
 
 using System;
 
-namespace TnyFramework.Net.Command.Dispatcher
-{
+namespace TnyFramework.Net.Command.Dispatcher;
 
-    /// <summary>
-    /// 开始执行
-    /// </summary>
-    /// <param name="command">command </param>
-    public delegate void CommandExecute(RpcHandleCommand command);
+/// <summary>
+/// 开始执行
+/// </summary>
+/// <param name="command">command </param>
+public delegate void CommandExecute(RpcHandleCommand command);
 
-    /// <summary>
-    /// 执行Command任务完成
-    /// </summary>
-    /// <param name="command">command</param>
-    /// <param name="cause">异常</param>
-    public delegate void CommandDone(RpcHandleCommand command, Exception? cause);
+/// <summary>
+/// 执行Command任务完成
+/// </summary>
+/// <param name="command">command</param>
+/// <param name="cause">异常</param>
+public delegate void CommandDone(RpcHandleCommand command, Exception? cause);
 
-    // public interface IMessageCommandListener
-    // {
-    //     /// <summary>
-    //     /// 开始执行
-    //     /// </summary>
-    //     /// <param name="command">command </param>
-    //     void OnExecute(MessageCommand command);
-    //
-    //
-    //     /// <summary>
-    //     /// 执行Command任务完成
-    //     /// </summary>
-    //     /// <param name="command">command</param>
-    //     /// <param name="cause">异常</param>
-    //     void OnDone(MessageCommand command, Exception cause);
-    // }
-
-}
+// public interface IMessageCommandListener
+// {
+//     /// <summary>
+//     /// 开始执行
+//     /// </summary>
+//     /// <param name="command">command </param>
+//     void OnExecute(MessageCommand command);
+//
+//
+//     /// <summary>
+//     /// 执行Command任务完成
+//     /// </summary>
+//     /// <param name="command">command</param>
+//     /// <param name="cause">异常</param>
+//     void OnDone(MessageCommand command, Exception cause);
+// }

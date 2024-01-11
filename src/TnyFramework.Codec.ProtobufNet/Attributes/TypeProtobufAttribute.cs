@@ -8,17 +8,14 @@
 
 using System;
 
-namespace TnyFramework.Codec.ProtobufNet.Attributes
+namespace TnyFramework.Codec.ProtobufNet.Attributes;
+
+public class TypeProtobufAttribute : Attribute
 {
-
-    public class TypeProtobufAttribute : Attribute
+    public TypeProtobufAttribute(int id)
     {
-        public TypeProtobufAttribute(int id)
-        {
-            Id = id;
-        }
-
-        public int Id { get; }
+        Id = id;
     }
 
+    public int Id { get; }
 }

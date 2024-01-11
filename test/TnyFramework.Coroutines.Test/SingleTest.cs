@@ -8,26 +8,23 @@
 
 using System.Collections.Generic;
 
-namespace TnyFramework.Coroutines.Test
+namespace TnyFramework.Coroutines.Test;
+
+public class SingleTest
 {
+    public static readonly List<SingleTest> SINGLE_TESTS = new();
 
-    public class SingleTest
+    private static readonly SingleTest INSTANCE; // 一次
+
+    static SingleTest()
     {
-        public static readonly List<SingleTest> SINGLE_TESTS = new();
-
-        private static readonly SingleTest INSTANCE; // 一次
-
-        static SingleTest()
-        {
             INSTANCE = new();
         }
 
-        SingleTest()
-        {
+    SingleTest()
+    {
             SINGLE_TESTS.Add(this);
         }
 
-        public static SingleTest Instance => INSTANCE;
-    }
-
+    public static SingleTest Instance => INSTANCE;
 }

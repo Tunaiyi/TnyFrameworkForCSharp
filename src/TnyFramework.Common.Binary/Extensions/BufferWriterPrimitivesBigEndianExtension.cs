@@ -8,58 +8,55 @@
 
 using System.Buffers;
 
-namespace TnyFramework.Common.Binary.Extensions
+namespace TnyFramework.Common.Binary.Extensions;
+
+public static partial class BufferWriterPrimitivesExtensions
 {
-
-    public static partial class BufferWriterPrimitivesExtensions
+    public static IBufferWriter<byte> WriteDoubleLittleEndian(this IBufferWriter<byte> writer, double value)
     {
-        public static IBufferWriter<byte> WriteDoubleLittleEndian(this IBufferWriter<byte> writer, double value)
-        {
-            writer.Span<double>().WriteDoubleLittleEndian(value);
-            return writer;
-        }
-
-        public static IBufferWriter<byte> WriteInt16LittleEndian(this IBufferWriter<byte> writer, short value)
-        {
-            writer.Span<short>().WriteInt16LittleEndian(value);
-            return writer;
-        }
-
-        public static IBufferWriter<byte> WriteInt32LittleEndian(this IBufferWriter<byte> writer, int value)
-        {
-            writer.Span<int>().WriteInt32LittleEndian(value);
-            return writer;
-        }
-
-        public static IBufferWriter<byte> WriteInt64LittleEndian(this IBufferWriter<byte> writer, long value)
-        {
-            writer.Span<long>().WriteInt64LittleEndian(value);
-            return writer;
-        }
-
-        public static IBufferWriter<byte> WriteSingleLittleEndian(this IBufferWriter<byte> writer, float value)
-        {
-            writer.Span<float>().WriteSingleLittleEndian(value);
-            return writer;
-        }
-
-        public static IBufferWriter<byte> WriteUInt16LittleEndian(this IBufferWriter<byte> writer, ushort value)
-        {
-            writer.Span<ushort>().WriteUInt16LittleEndian(value);
-            return writer;
-        }
-
-        public static IBufferWriter<byte> WriteUInt32LittleEndian(this IBufferWriter<byte> writer, uint value)
-        {
-            writer.Span<uint>().WriteUInt32LittleEndian(value);
-            return writer;
-        }
-
-        public static IBufferWriter<byte> WriteUInt64LittleEndian(this IBufferWriter<byte> writer, ulong value)
-        {
-            writer.Span<ulong>().WriteUInt64LittleEndian(value);
-            return writer;
-        }
+        writer.Span<double>().WriteDoubleLittleEndian(value);
+        return writer;
     }
 
+    public static IBufferWriter<byte> WriteInt16LittleEndian(this IBufferWriter<byte> writer, short value)
+    {
+        writer.Span<short>().WriteInt16LittleEndian(value);
+        return writer;
+    }
+
+    public static IBufferWriter<byte> WriteInt32LittleEndian(this IBufferWriter<byte> writer, int value)
+    {
+        writer.Span<int>().WriteInt32LittleEndian(value);
+        return writer;
+    }
+
+    public static IBufferWriter<byte> WriteInt64LittleEndian(this IBufferWriter<byte> writer, long value)
+    {
+        writer.Span<long>().WriteInt64LittleEndian(value);
+        return writer;
+    }
+
+    public static IBufferWriter<byte> WriteSingleLittleEndian(this IBufferWriter<byte> writer, float value)
+    {
+        writer.Span<float>().WriteSingleLittleEndian(value);
+        return writer;
+    }
+
+    public static IBufferWriter<byte> WriteUInt16LittleEndian(this IBufferWriter<byte> writer, ushort value)
+    {
+        writer.Span<ushort>().WriteUInt16LittleEndian(value);
+        return writer;
+    }
+
+    public static IBufferWriter<byte> WriteUInt32LittleEndian(this IBufferWriter<byte> writer, uint value)
+    {
+        writer.Span<uint>().WriteUInt32LittleEndian(value);
+        return writer;
+    }
+
+    public static IBufferWriter<byte> WriteUInt64LittleEndian(this IBufferWriter<byte> writer, ulong value)
+    {
+        writer.Span<ulong>().WriteUInt64LittleEndian(value);
+        return writer;
+    }
 }

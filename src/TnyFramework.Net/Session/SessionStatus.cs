@@ -6,30 +6,27 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public enum SessionStatus
 {
+    ///
+    /// 初始化
+    ///
+    Init = 0,
 
-    public enum SessionStatus
-    {
-        ///
-        /// 初始化
-        ///
-        Init = 0,
+    ///
+    /// 在线
+    ///
+    Online = 1,
 
-        ///
-        /// 在线
-        ///
-        Online = 1,
+    ///
+    /// 离线
+    ///
+    Offline = 2,
 
-        ///
-        /// 离线
-        ///
-        Offline = 2,
-
-        ///
-        /// 关闭
-        ///
-        Close = 3,
-    }
-
+    ///
+    /// 关闭
+    ///
+    Close = 3,
 }

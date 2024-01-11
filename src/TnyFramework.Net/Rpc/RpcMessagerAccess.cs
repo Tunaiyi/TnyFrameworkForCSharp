@@ -9,32 +9,29 @@
 using TnyFramework.Common.Attribute;
 using TnyFramework.Net.Session;
 
-namespace TnyFramework.Net.Rpc
+namespace TnyFramework.Net.Rpc;
+
+public class RpcContactAccess : IRpcAccess
 {
+    private static readonly AttrKey<RpcContactAccess> REMOTER_ACCESS = AttrKeys.Key<RpcContactAccess>("REMOTER_ACCESS");
 
-    public class RpcContactAccess : IRpcAccess
+    private readonly ISession session;
+
+    public static RpcContactAccess Of(ISession session)
     {
-        private static readonly AttrKey<RpcContactAccess> REMOTER_ACCESS = AttrKeys.Key<RpcContactAccess>("REMOTER_ACCESS");
-
-        private readonly ISession session;
-
-        public static RpcContactAccess Of(ISession session)
-        {
-            var attributes = session.Attributes;
-            var access = attributes.Get(REMOTER_ACCESS);
-            return access ?? attributes.Load(REMOTER_ACCESS, () => new RpcContactAccess(session));
-        }
-
-        private RpcContactAccess(ISession session)
-        {
-            this.session = session;
-        }
-
-        public long AccessId => session.ContactId;
-
-        public bool IsActive() => session.IsActive();
-
-        public ISession Session => session;
+        var attributes = session.Attributes;
+        var access = attributes.Get(REMOTER_ACCESS);
+        return access ?? attributes.Load(REMOTER_ACCESS, () => new RpcContactAccess(session));
     }
 
+    private RpcContactAccess(ISession session)
+    {
+        this.session = session;
+    }
+
+    public long AccessId => session.ContactId;
+
+    public bool IsActive() => session.IsActive();
+
+    public ISession Session => session;
 }

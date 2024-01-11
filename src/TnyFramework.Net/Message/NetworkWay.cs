@@ -8,25 +8,22 @@
 
 using TnyFramework.Common.Enum;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+public class NetworkWay : BaseEnum<NetworkWay>
 {
+    public static readonly NetworkWay MESSAGE = Of(0, "message");
 
-    public class NetworkWay : BaseEnum<NetworkWay>
+    public static readonly NetworkWay SYSTEM = Of(1, "system");
+
+    public static readonly NetworkWay HEARTBEAT = Of(2, "heartbeat");
+
+    public string Value { get; private set; } = "";
+
+    private static NetworkWay Of(int id, string value)
     {
-        public static readonly NetworkWay MESSAGE = Of(0, "message");
-
-        public static readonly NetworkWay SYSTEM = Of(1, "system");
-
-        public static readonly NetworkWay HEARTBEAT = Of(2, "heartbeat");
-
-        public string Value { get; private set; } = "";
-
-        private static NetworkWay Of(int id, string value)
-        {
-            return E(id, new NetworkWay {
-                Value = value,
-            });
-        }
+        return E(id, new NetworkWay {
+            Value = value,
+        });
     }
-
 }

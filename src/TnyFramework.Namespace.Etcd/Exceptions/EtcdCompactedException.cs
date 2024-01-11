@@ -9,28 +9,25 @@
 using System;
 using Grpc.Core;
 
-namespace TnyFramework.Namespace.Etcd.Exceptions
+namespace TnyFramework.Namespace.Etcd.Exceptions;
+
+public class EtcdCompactedException : EtcdException
 {
+    public long CompactedRevision { get; }
 
-    public class EtcdCompactedException : EtcdException
+    public EtcdCompactedException(StatusCode code, long compactedRevision) : base(code)
     {
-        public long CompactedRevision { get; }
-
-        public EtcdCompactedException(StatusCode code, long compactedRevision) : base(code)
-        {
-            this.CompactedRevision = compactedRevision;
-        }
-
-        public EtcdCompactedException(StatusCode code, string message, long compactedRevision) : base(code, message)
-        {
-            this.CompactedRevision = compactedRevision;
-        }
-
-        public EtcdCompactedException(StatusCode code, string message, Exception innerException, long compactedRevision) : base(code, message,
-            innerException)
-        {
-            this.CompactedRevision = compactedRevision;
-        }
+        this.CompactedRevision = compactedRevision;
     }
 
+    public EtcdCompactedException(StatusCode code, string message, long compactedRevision) : base(code, message)
+    {
+        this.CompactedRevision = compactedRevision;
+    }
+
+    public EtcdCompactedException(StatusCode code, string message, Exception innerException, long compactedRevision) : base(code, message,
+        innerException)
+    {
+        this.CompactedRevision = compactedRevision;
+    }
 }

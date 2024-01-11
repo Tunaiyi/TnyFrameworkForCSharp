@@ -9,31 +9,28 @@
 using TnyFramework.Common.Attribute;
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+public interface IRpcMessageContext
 {
+    /// <summary>
+    /// 获取消息
+    /// </summary>
+    ///
+    /// <return>获取消息</return>
+    IMessageSubject MessageSubject { get; }
 
-    public interface IRpcMessageContext
-    {
-        /// <summary>
-        /// 获取消息
-        /// </summary>
-        ///
-        /// <return>获取消息</return>
-        IMessageSubject MessageSubject { get; }
+    /// <summary>
+    /// 附加属性
+    /// </summary>
+    ///
+    /// <return>附加属性</return>
+    IAttributes Attributes { get; }
 
-        /// <summary>
-        /// 附加属性
-        /// </summary>
-        ///
-        /// <return>附加属性</return>
-        IAttributes Attributes { get; }
-
-        /// <summary>
-        /// 是否有效
-        /// </summary>
-        ///
-        /// <return>空</return>
-        bool Valid { get; }
-    }
-
+    /// <summary>
+    /// 是否有效
+    /// </summary>
+    ///
+    /// <return>空</return>
+    bool Valid { get; }
 }

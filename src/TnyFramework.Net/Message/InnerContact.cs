@@ -8,20 +8,17 @@
 
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.Message
+namespace TnyFramework.Net.Message;
+
+internal class InnerContact : IContact
 {
+    public long ContactId { get; }
 
-    internal class InnerContact : IContact
+    public IContactType ContactType { get; }
+
+    public InnerContact(IContactType contactType, long contactId)
     {
-        public long ContactId { get; }
-
-        public IContactType ContactType { get; }
-
-        public InnerContact(IContactType contactType, long contactId)
-        {
-            ContactType = contactType;
-            ContactId = contactId;
-        }
+        ContactType = contactType;
+        ContactId = contactId;
     }
-
 }

@@ -8,20 +8,17 @@
 
 using TnyFramework.Common.Attribute;
 
-namespace TnyFramework.Net.Application
+namespace TnyFramework.Net.Application;
+
+public class NetAppContext : AttributesContext, INetAppContext
 {
+    public string Name { get; set; } = "";
 
-    public class NetAppContext : AttributesContext, INetAppContext
-    {
-        public string Name { get; set; } = "";
+    public int ServerId { get; set; }
 
-        public int ServerId { get; set; }
+    public string AppType { get; set; } = "default";
 
-        public string AppType { get; set; } = "default";
+    public string ScopeType { get; set; } = "online";
 
-        public string ScopeType { get; set; } = "online";
-
-        public string Locale { get; set; } = "zh-CN";
-    }
-
+    public string Locale { get; set; } = "zh-CN";
 }

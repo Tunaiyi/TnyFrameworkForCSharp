@@ -9,159 +9,156 @@
 using System;
 using System.Text;
 
-namespace TnyFramework.Common.Binary.Extensions
+namespace TnyFramework.Common.Binary.Extensions;
+
+public static partial class VariantExtensions
 {
+    private static readonly Encoding ENCODING = Encoding.UTF8;
+    private const long INT64_MSB = 1L << 63;
+    private const int INT32_MSB = 1 << 31;
 
-    public static partial class VariantExtensions
+    private const ulong MAX_LONG7_BIT = 0xffffffffffffffffL << 7;
+    private const ulong MAX_LONG14_BIT = 0xffffffffffffffffL << 14;
+    private const ulong MAX_LONG21_BIT = 0xffffffffffffffffL << 21;
+    private const ulong MAX_LONG28_BIT = 0xffffffffffffffffL << 28;
+    private const ulong MAX_LONG35_BIT = 0xffffffffffffffffL << 35;
+    private const ulong MAX_LONG42_BIT = 0xffffffffffffffffL << 42;
+    private const ulong MAX_LONG49_BIT = 0xffffffffffffffffL << 49;
+    private const ulong MAX_LONG56_BIT = 0xffffffffffffffffL << 56;
+    private const ulong MAX_LONG63_BIT = 0xffffffffffffffffL << 63;
+
+    private const uint MAX_INT7_BIT = 0xffffffff << 7;
+    private const uint MAX_INT14_BIT = 0xffffffff << 14;
+    private const uint MAX_INT21_BIT = 0xffffffff << 21;
+    private const uint MAX_INT28_BIT = 0xffffffff << 28;
+
+    /// <summary>
+    /// zig压缩
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static int Zig(int value)
     {
-        private static readonly Encoding ENCODING = Encoding.UTF8;
-        private const long INT64_MSB = 1L << 63;
-        private const int INT32_MSB = 1 << 31;
+        return (value << 1) ^ (value >> 31);
+    }
 
-        private const ulong MAX_LONG7_BIT = 0xffffffffffffffffL << 7;
-        private const ulong MAX_LONG14_BIT = 0xffffffffffffffffL << 14;
-        private const ulong MAX_LONG21_BIT = 0xffffffffffffffffL << 21;
-        private const ulong MAX_LONG28_BIT = 0xffffffffffffffffL << 28;
-        private const ulong MAX_LONG35_BIT = 0xffffffffffffffffL << 35;
-        private const ulong MAX_LONG42_BIT = 0xffffffffffffffffL << 42;
-        private const ulong MAX_LONG49_BIT = 0xffffffffffffffffL << 49;
-        private const ulong MAX_LONG56_BIT = 0xffffffffffffffffL << 56;
-        private const ulong MAX_LONG63_BIT = 0xffffffffffffffffL << 63;
+    /// <summary>
+    /// zig压缩
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static long Zig(long value)
+    {
+        return (value << 1) ^ (value >> 63);
+    }
 
-        private const uint MAX_INT7_BIT = 0xffffffff << 7;
-        private const uint MAX_INT14_BIT = 0xffffffff << 14;
-        private const uint MAX_INT21_BIT = 0xffffffff << 21;
-        private const uint MAX_INT28_BIT = 0xffffffff << 28;
+    /// <summary>
+    /// zag解压
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static int Zag(int value)
+    {
+        return (-(value & 0x01)) ^ ((value >> 1) & ~INT32_MSB);
+    }
 
-        /// <summary>
-        /// zig压缩
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static int Zig(int value)
-        {
-            return (value << 1) ^ (value >> 31);
-        }
+    /// <summary>
+    /// zag解压
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static long Zag(long value)
+    {
+        return (-(value & 0x01L)) ^ ((value >> 1) & ~INT64_MSB);
+    }
 
-        /// <summary>
-        /// zig压缩
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static long Zig(long value)
-        {
-            return (value << 1) ^ (value >> 63);
-        }
+    /// <summary>
+    /// 计算VarInt32的长度
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static int ComputeVarInt32Len(int value)
+    {
+        return ComputeVarInt32Len((uint) value);
+    }
 
-        /// <summary>
-        /// zag解压
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static int Zag(int value)
-        {
-            return (-(value & 0x01)) ^ ((value >> 1) & ~INT32_MSB);
-        }
+    public static int ComputeVarInt32Len(uint value)
+    {
+        if ((value & MAX_INT7_BIT) == 0)
+            return 1;
+        if ((value & MAX_INT14_BIT) == 0)
+            return 2;
+        if ((value & MAX_INT21_BIT) == 0)
+            return 3;
+        if ((value & MAX_INT28_BIT) == 0)
+            return 4;
+        return 5;
+    }
 
-        /// <summary>
-        /// zag解压
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static long Zag(long value)
-        {
-            return (-(value & 0x01L)) ^ ((value >> 1) & ~INT64_MSB);
-        }
+    /// <summary>
+    /// 计算VarInt64的长度
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static int ComputeVarInt64Len(long value)
+    {
+        return ComputeVarInt64Len((ulong) value);
+    }
 
-        /// <summary>
-        /// 计算VarInt32的长度
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static int ComputeVarInt32Len(int value)
-        {
-            return ComputeVarInt32Len((uint) value);
-        }
-
-        public static int ComputeVarInt32Len(uint value)
-        {
-            if ((value & MAX_INT7_BIT) == 0)
-                return 1;
-            if ((value & MAX_INT14_BIT) == 0)
-                return 2;
-            if ((value & MAX_INT21_BIT) == 0)
-                return 3;
-            if ((value & MAX_INT28_BIT) == 0)
-                return 4;
+    public static int ComputeVarInt64Len(ulong value)
+    {
+        if ((value & MAX_LONG7_BIT) == 0)
+            return 1;
+        if ((value & MAX_LONG14_BIT) == 0)
+            return 2;
+        if ((value & MAX_LONG21_BIT) == 0)
+            return 3;
+        if ((value & MAX_LONG28_BIT) == 0)
+            return 4;
+        if ((value & MAX_LONG35_BIT) == 0)
             return 5;
-        }
+        if ((value & MAX_LONG42_BIT) == 0)
+            return 6;
+        if ((value & MAX_LONG49_BIT) == 0)
+            return 7;
+        if ((value & MAX_LONG56_BIT) == 0)
+            return 8;
+        if ((value & MAX_LONG63_BIT) == 0)
+            return 9;
+        return 10;
+    }
 
-        /// <summary>
-        /// 计算VarInt64的长度
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static int ComputeVarInt64Len(long value)
+    /// <summary>
+    /// 验证是否有足够空间
+    /// </summary>
+    /// <param name="required"></param>
+    /// <param name="bytes"></param>
+    /// <param name="index"></param>
+    public static void VerifySpace(int required, byte[] bytes, int index)
+    {
+        if (bytes.Length - index < required)
         {
-            return ComputeVarInt64Len((ulong) value);
-        }
-
-        public static int ComputeVarInt64Len(ulong value)
-        {
-            if ((value & MAX_LONG7_BIT) == 0)
-                return 1;
-            if ((value & MAX_LONG14_BIT) == 0)
-                return 2;
-            if ((value & MAX_LONG21_BIT) == 0)
-                return 3;
-            if ((value & MAX_LONG28_BIT) == 0)
-                return 4;
-            if ((value & MAX_LONG35_BIT) == 0)
-                return 5;
-            if ((value & MAX_LONG42_BIT) == 0)
-                return 6;
-            if ((value & MAX_LONG49_BIT) == 0)
-                return 7;
-            if ((value & MAX_LONG56_BIT) == 0)
-                return 8;
-            if ((value & MAX_LONG63_BIT) == 0)
-                return 9;
-            return 10;
-        }
-
-        /// <summary>
-        /// 验证是否有足够空间
-        /// </summary>
-        /// <param name="required"></param>
-        /// <param name="bytes"></param>
-        /// <param name="index"></param>
-        public static void VerifySpace(int required, byte[] bytes, int index)
-        {
-            if (bytes.Length - index < required)
-            {
-                throw new ArgumentOutOfRangeException(nameof(bytes), "没有足够的空间!!");
-            }
-        }
-
-        public static long Double2Long(double value)
-        {
-            return BitConverter.ToInt64(BitConverter.GetBytes(value), 0);
-        }
-
-        public static int Float2Int(float value)
-        {
-            return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
-        }
-
-        public static double Long2Double(long value)
-        {
-            return BitConverter.ToDouble(BitConverter.GetBytes(value), 0);
-        }
-
-        public static float Int2Float(int value)
-        {
-            return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
+            throw new ArgumentOutOfRangeException(nameof(bytes), "没有足够的空间!!");
         }
     }
 
+    public static long Double2Long(double value)
+    {
+        return BitConverter.ToInt64(BitConverter.GetBytes(value), 0);
+    }
+
+    public static int Float2Int(float value)
+    {
+        return BitConverter.ToInt32(BitConverter.GetBytes(value), 0);
+    }
+
+    public static double Long2Double(long value)
+    {
+        return BitConverter.ToDouble(BitConverter.GetBytes(value), 0);
+    }
+
+    public static float Int2Float(int value)
+    {
+        return BitConverter.ToSingle(BitConverter.GetBytes(value), 0);
+    }
 }

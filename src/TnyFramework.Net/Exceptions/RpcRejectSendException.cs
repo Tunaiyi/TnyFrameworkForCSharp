@@ -10,27 +10,24 @@ using System;
 using TnyFramework.Common.Result;
 using TnyFramework.Net.Common;
 
-namespace TnyFramework.Net.Exceptions
+namespace TnyFramework.Net.Exceptions;
+
+public class RpcRejectSendException : RpcException
 {
+    private static readonly IResultCode CODE = NetResultCode.REJECT_TO_SEND_MESSAGE;
 
-    public class RpcRejectSendException : RpcException
+    public RpcRejectSendException(string message = "") : base(CODE, message)
     {
-        private static readonly IResultCode CODE = NetResultCode.REJECT_TO_SEND_MESSAGE;
+    }
 
-        public RpcRejectSendException(string message = "") : base(CODE, message)
-        {
-        }
+    public RpcRejectSendException(IResultCode? code = null, object? body = null, string message = "") :
+        base(code ?? CODE, body, message)
+    {
+    }
 
-        public RpcRejectSendException(IResultCode? code = null, object? body = null, string message = "") :
-            base(code ?? CODE, body, message)
-        {
-        }
-
-        public RpcRejectSendException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
-            : base(innerException, code ?? CODE, body, message)
-        {
-        }
-
+    public RpcRejectSendException(Exception innerException, IResultCode? code = null, object? body = null, string message = "")
+        : base(innerException, code ?? CODE, body, message)
+    {
     }
 
 }

@@ -8,13 +8,10 @@
 
 using TnyFramework.Net.DotNetty.Bootstrap;
 
-namespace TnyFramework.Net.DotNetty.Hosting.Guide
+namespace TnyFramework.Net.DotNetty.Hosting.Guide;
+
+public interface INettyServerGuideUnitContext : INettyGuideUnitContext
 {
-
-    public interface INettyServerGuideUnitContext : INettyGuideUnitContext
-    {
-        INettyServerSetting LoadServerSetting();
-
-    }
+    INettyServerSetting LoadServerSetting();
 
 }

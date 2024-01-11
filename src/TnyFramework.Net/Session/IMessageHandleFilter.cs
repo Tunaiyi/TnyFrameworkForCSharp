@@ -8,23 +8,20 @@
 
 using TnyFramework.Net.Message;
 
-namespace TnyFramework.Net.Session
+namespace TnyFramework.Net.Session;
+
+public delegate MessageHandleStrategy MessageHandleFilter(ISession session, IMessageSubject message);
+
+public class MessageHandleFilters
 {
+    public static readonly MessageHandleFilter ALL_IGNORE_FILTER = (e, m) => MessageHandleStrategy.Ignore;
 
-    public delegate MessageHandleStrategy MessageHandleFilter(ISession session, IMessageSubject message);
+    public static readonly MessageHandleFilter ALL_HANDLE_FILTER = (e, m) => MessageHandleStrategy.Handle;
 
-    public class MessageHandleFilters
-    {
-        public static readonly MessageHandleFilter ALL_IGNORE_FILTER = (e, m) => MessageHandleStrategy.Ignore;
+    public static readonly MessageHandleFilter ALL_THROW_FILTER = (e, m) => MessageHandleStrategy.Throw;
+}
 
-        public static readonly MessageHandleFilter ALL_HANDLE_FILTER = (e, m) => MessageHandleStrategy.Handle;
-
-        public static readonly MessageHandleFilter ALL_THROW_FILTER = (e, m) => MessageHandleStrategy.Throw;
-    }
-
-    public interface IMessageHandleFilter
-    {
-        MessageHandleStrategy Filter(ISession session, IMessageSubject message);
-    }
-
+public interface IMessageHandleFilter
+{
+    MessageHandleStrategy Filter(ISession session, IMessageSubject message);
 }

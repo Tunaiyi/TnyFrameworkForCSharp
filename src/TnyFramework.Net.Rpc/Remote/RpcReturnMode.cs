@@ -16,165 +16,162 @@ using TnyFramework.Common.Scanner.Assemblies;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc.Attributes;
 
-namespace TnyFramework.Net.Rpc.Remote
+namespace TnyFramework.Net.Rpc.Remote;
+
+public class RpcReturnMode : BaseEnum<RpcReturnMode>
 {
-
-    public class RpcReturnMode : BaseEnum<RpcReturnMode>
+    private static IEnumerable<T> Params<T>(params T[] values)
     {
-        private static IEnumerable<T> Params<T>(params T[] values)
-        {
-            return values;
-        }
-
-        private static IEnumerable<Type> EmptyType => ImmutableList<Type>.Empty;
-
-        private static Func<MethodInfo, Type> MethodReturnType { get; } =
-            m => m.ReturnType;
-
-        private static Func<MethodInfo, Type> TaskReturnType { get; } =
-            m => m.ReturnType == typeof(Task) ? typeof(void) : m.ReturnType.GenericTypeArguments[0];
-
-        private static Func<MethodInfo, Type> ResultReturnType { get; } =
-            m => m.ReturnType == typeof(IRpcResult) ? typeof(void) : m.ReturnType.GenericTypeArguments[0];
-
-        /// <summary>
-        /// Task 类型
-        /// </summary>
-        public static readonly RpcReturnMode TASK = Of(1,
-            Params(MessageMode.Request),
-            Params(typeof(Task), typeof(Task<>)),
-            TaskReturnType,
-            RpcInvokeMode.Async);
-
-        /// <summary>
-        /// Task 类型
-        /// </summary>
-        public static readonly RpcReturnMode VALUE_TASK = Of(2,
-            Params(MessageMode.Request),
-            Params(typeof(ValueTask), typeof(ValueTask<>)),
-            TaskReturnType,
-            RpcInvokeMode.Async);
-
-        /// <summary>
-        /// 结果
-        /// </summary>
-        public static readonly RpcReturnMode RESULT = Of(3,
-            Params(MessageMode.Request),
-            Params(typeof(IRpcResult), typeof(IRpcResult<>)),
-            ResultReturnType,
-            RpcInvokeMode.Sync);
-
-        /// <summary>
-        /// void 对象
-        /// </summary>
-        /// <returns></returns>
-        public static readonly RpcReturnMode VOID = Of(4,
-            Params(MessageMode.Request, MessageMode.Push),
-            Params(typeof(void)),
-            MethodReturnType,
-            RpcInvokeMode.Async, RpcInvokeMode.Sync);
-
-        /// <summary>
-        /// 普通对象
-        /// </summary>
-        public static readonly RpcReturnMode OBJECT = Of(5,
-            Params(MessageMode.Request),
-            EmptyType,
-            MethodReturnType,
-            RpcInvokeMode.Sync);
-
-        // public RpcReturnMode()
-        // {
-        //     Invocations = null!;
-        //     Modes = null!;
-        //     ReturnTypes = null!;
-        //     BodyTypeFinder = null!;
-        // }
-
-        public RpcInvokeMode DefaultInvocation { get; private set; }
-
-        public IList<RpcInvokeMode> Invocations { get; private set; } = null!;
-
-        public IList<MessageMode> Modes { get; private set; } = null!;
-
-        public IList<Type> ReturnTypes { get; private set; } = null!;
-
-        public Func<MethodInfo, Type> BodyTypeFinder { get; private set; } = null!;
-
-        private static RpcReturnMode Of(int id,
-            IEnumerable<MessageMode> modes,
-            IEnumerable<Type> returnClasses,
-            Func<MethodInfo, Type> bodyTypeFinder,
-            RpcInvokeMode defaultInvocation,
-            params RpcInvokeMode[] invocations)
-        {
-            var invokeModes = new List<RpcInvokeMode> {defaultInvocation};
-            invokeModes.AddRange(invocations);
-            return E(id, new RpcReturnMode {
-                DefaultInvocation = defaultInvocation,
-                BodyTypeFinder = bodyTypeFinder,
-                Invocations = invokeModes.ToImmutableList(),
-                Modes = modes.ToImmutableList(),
-                ReturnTypes = returnClasses.ToImmutableList()
-            });
-        }
-
-        public static RpcReturnMode TypeOf(Type returnClass)
-        {
-            foreach (var mode in GetValues())
-            {
-                if (mode.IsCanReturn(returnClass))
-                {
-                    return mode;
-                }
-            }
-            return OBJECT;
-        }
-
-        public bool IsCanInvokeBy(MessageMode mode)
-        {
-            return Modes.Contains(mode);
-        }
-
-        public RpcInvokeMode CheckInvocation(RpcInvokeMode invokeMode)
-        {
-            return invokeMode == RpcInvokeMode.Default ? DefaultInvocation : invokeMode;
-        }
-
-        public bool IsAsync()
-        {
-            return Invocations.Contains(RpcInvokeMode.Async);
-        }
-
-        private bool IsCanReturn(Type type)
-        {
-            foreach (var returnType in ReturnTypes)
-            {
-                if (returnType.IsGenericType)
-                {
-                    if (type.IsAssignableFromGeneric(returnType))
-                    {
-                        return true;
-                    }
-                } else
-                {
-                    if (returnType.IsAssignableFrom(type))
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        public Type FindBodyType(MethodInfo method)
-        {
-            return BodyTypeFinder(method);
-        }
-
-        public static implicit operator int(RpcReturnMode type) => type.Id;
-
-        public static explicit operator RpcReturnMode(int type) => ForId(type);
+        return values;
     }
 
+    private static IEnumerable<Type> EmptyType => ImmutableList<Type>.Empty;
+
+    private static Func<MethodInfo, Type> MethodReturnType { get; } =
+        m => m.ReturnType;
+
+    private static Func<MethodInfo, Type> TaskReturnType { get; } =
+        m => m.ReturnType == typeof(Task) ? typeof(void) : m.ReturnType.GenericTypeArguments[0];
+
+    private static Func<MethodInfo, Type> ResultReturnType { get; } =
+        m => m.ReturnType == typeof(IRpcResult) ? typeof(void) : m.ReturnType.GenericTypeArguments[0];
+
+    /// <summary>
+    /// Task 类型
+    /// </summary>
+    public static readonly RpcReturnMode TASK = Of(1,
+        Params(MessageMode.Request),
+        Params(typeof(Task), typeof(Task<>)),
+        TaskReturnType,
+        RpcInvokeMode.Async);
+
+    /// <summary>
+    /// Task 类型
+    /// </summary>
+    public static readonly RpcReturnMode VALUE_TASK = Of(2,
+        Params(MessageMode.Request),
+        Params(typeof(ValueTask), typeof(ValueTask<>)),
+        TaskReturnType,
+        RpcInvokeMode.Async);
+
+    /// <summary>
+    /// 结果
+    /// </summary>
+    public static readonly RpcReturnMode RESULT = Of(3,
+        Params(MessageMode.Request),
+        Params(typeof(IRpcResult), typeof(IRpcResult<>)),
+        ResultReturnType,
+        RpcInvokeMode.Sync);
+
+    /// <summary>
+    /// void 对象
+    /// </summary>
+    /// <returns></returns>
+    public static readonly RpcReturnMode VOID = Of(4,
+        Params(MessageMode.Request, MessageMode.Push),
+        Params(typeof(void)),
+        MethodReturnType,
+        RpcInvokeMode.Async, RpcInvokeMode.Sync);
+
+    /// <summary>
+    /// 普通对象
+    /// </summary>
+    public static readonly RpcReturnMode OBJECT = Of(5,
+        Params(MessageMode.Request),
+        EmptyType,
+        MethodReturnType,
+        RpcInvokeMode.Sync);
+
+    // public RpcReturnMode()
+    // {
+    //     Invocations = null!;
+    //     Modes = null!;
+    //     ReturnTypes = null!;
+    //     BodyTypeFinder = null!;
+    // }
+
+    public RpcInvokeMode DefaultInvocation { get; private set; }
+
+    public IList<RpcInvokeMode> Invocations { get; private set; } = null!;
+
+    public IList<MessageMode> Modes { get; private set; } = null!;
+
+    public IList<Type> ReturnTypes { get; private set; } = null!;
+
+    public Func<MethodInfo, Type> BodyTypeFinder { get; private set; } = null!;
+
+    private static RpcReturnMode Of(int id,
+        IEnumerable<MessageMode> modes,
+        IEnumerable<Type> returnClasses,
+        Func<MethodInfo, Type> bodyTypeFinder,
+        RpcInvokeMode defaultInvocation,
+        params RpcInvokeMode[] invocations)
+    {
+        var invokeModes = new List<RpcInvokeMode> {defaultInvocation};
+        invokeModes.AddRange(invocations);
+        return E(id, new RpcReturnMode {
+            DefaultInvocation = defaultInvocation,
+            BodyTypeFinder = bodyTypeFinder,
+            Invocations = invokeModes.ToImmutableList(),
+            Modes = modes.ToImmutableList(),
+            ReturnTypes = returnClasses.ToImmutableList()
+        });
+    }
+
+    public static RpcReturnMode TypeOf(Type returnClass)
+    {
+        foreach (var mode in GetValues())
+        {
+            if (mode.IsCanReturn(returnClass))
+            {
+                return mode;
+            }
+        }
+        return OBJECT;
+    }
+
+    public bool IsCanInvokeBy(MessageMode mode)
+    {
+        return Modes.Contains(mode);
+    }
+
+    public RpcInvokeMode CheckInvocation(RpcInvokeMode invokeMode)
+    {
+        return invokeMode == RpcInvokeMode.Default ? DefaultInvocation : invokeMode;
+    }
+
+    public bool IsAsync()
+    {
+        return Invocations.Contains(RpcInvokeMode.Async);
+    }
+
+    private bool IsCanReturn(Type type)
+    {
+        foreach (var returnType in ReturnTypes)
+        {
+            if (returnType.IsGenericType)
+            {
+                if (type.IsAssignableFromGeneric(returnType))
+                {
+                    return true;
+                }
+            } else
+            {
+                if (returnType.IsAssignableFrom(type))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Type FindBodyType(MethodInfo method)
+    {
+        return BodyTypeFinder(method);
+    }
+
+    public static implicit operator int(RpcReturnMode type) => type.Id;
+
+    public static explicit operator RpcReturnMode(int type) => ForId(type);
 }

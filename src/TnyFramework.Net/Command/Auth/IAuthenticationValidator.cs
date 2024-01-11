@@ -11,32 +11,29 @@ using System.Collections.Immutable;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Command.Auth
+namespace TnyFramework.Net.Command.Auth;
+
+public interface IAuthenticationValidator
 {
+    ICertificate Validate(ITunnel tunnel, IMessage message);
 
-    public interface IAuthenticationValidator
+    IList<int> AuthProtocolLimit { get; }
+}
+
+public abstract class AuthenticationValidator : IAuthenticationValidator
+{
+    protected AuthenticationValidator()
     {
-        ICertificate Validate(ITunnel tunnel, IMessage message);
-
-        IList<int> AuthProtocolLimit { get; }
+        AuthProtocolLimit = ImmutableList.Create<int>();
     }
 
-    public abstract class AuthenticationValidator : IAuthenticationValidator
+    protected AuthenticationValidator(IList<int>? authProtocolLimit)
     {
-        protected AuthenticationValidator()
-        {
-            AuthProtocolLimit = ImmutableList.Create<int>();
-        }
+        AuthProtocolLimit = authProtocolLimit == null ? ImmutableList.Create<int>() : ImmutableList.CreateRange(authProtocolLimit);
 
-        protected AuthenticationValidator(IList<int>? authProtocolLimit)
-        {
-            AuthProtocolLimit = authProtocolLimit == null ? ImmutableList.Create<int>() : ImmutableList.CreateRange(authProtocolLimit);
-
-        }
-
-        public abstract ICertificate Validate(ITunnel tunnel, IMessage message);
-
-        public IList<int> AuthProtocolLimit { get; }
     }
 
+    public abstract ICertificate Validate(ITunnel tunnel, IMessage message);
+
+    public IList<int> AuthProtocolLimit { get; }
 }

@@ -12,22 +12,19 @@ using System.Reflection;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Rpc.Remote;
 
-namespace TnyFramework.Net.Hosting.Rpc
+namespace TnyFramework.Net.Hosting.Rpc;
+
+public interface IRpcRemoteServiceConfiguration
 {
+    RpcRemoteServiceConfiguration RpcRemoteSettingConfigure(Action<IUnitSpec<RpcRemoteSetting, IRpcRemoteUnitContext>> action);
 
-    public interface IRpcRemoteServiceConfiguration
-    {
-        RpcRemoteServiceConfiguration RpcRemoteSettingConfigure(Action<IUnitSpec<RpcRemoteSetting, IRpcRemoteUnitContext>> action);
+    RpcRemoteServiceConfiguration AddRemoteService<TRpcRemoteService>() where TRpcRemoteService : class;
 
-        RpcRemoteServiceConfiguration AddRemoteService<TRpcRemoteService>() where TRpcRemoteService : class;
+    RpcRemoteServiceConfiguration AddRemoteService(Type type);
 
-        RpcRemoteServiceConfiguration AddRemoteService(Type type);
+    RpcRemoteServiceConfiguration AddRemoteServices();
 
-        RpcRemoteServiceConfiguration AddRemoteServices();
+    RpcRemoteServiceConfiguration AddRemoteServices(IEnumerable<Type> types);
 
-        RpcRemoteServiceConfiguration AddRemoteServices(IEnumerable<Type> types);
-
-        RpcRemoteServiceConfiguration AddRemoteServices(ICollection<Assembly> assemblies);
-    }
-
+    RpcRemoteServiceConfiguration AddRemoteServices(ICollection<Assembly> assemblies);
 }

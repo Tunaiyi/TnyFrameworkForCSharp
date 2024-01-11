@@ -9,24 +9,21 @@
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Rpc;
 
-namespace TnyFramework.Net.Command.Dispatcher
+namespace TnyFramework.Net.Command.Dispatcher;
+
+/// <summary>
+/// 转发器
+/// </summary>
+public interface IRpcForwarder
 {
-
     /// <summary>
-    /// 转发器
+    /// 获取转发 AccessPoint
     /// </summary>
-    public interface IRpcForwarder
-    {
-        /// <summary>
-        /// 获取转发 AccessPoint
-        /// </summary>
-        /// <param name="message">消息</param>
-        /// <param name="from">发送的 Rpc 服务(可选)</param>
-        /// <param name="sender">发送者(可选)</param>
-        /// <param name="to">目标 Rpc 服务</param>
-        /// <param name="receiver">接受者(可选)</param>
-        /// <returns></returns>
-        IRpcForwardAccess Forward(IMessage message, IRpcServicer from, IContact sender, IRpcServicer to, IContact receiver);
-    }
-
+    /// <param name="message">消息</param>
+    /// <param name="from">发送的 Rpc 服务(可选)</param>
+    /// <param name="sender">发送者(可选)</param>
+    /// <param name="to">目标 Rpc 服务</param>
+    /// <param name="receiver">接受者(可选)</param>
+    /// <returns></returns>
+    IRpcForwardAccess Forward(IMessage message, IRpcServicer from, IContact sender, IRpcServicer to, IContact receiver);
 }

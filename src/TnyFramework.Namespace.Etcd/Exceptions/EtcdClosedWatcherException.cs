@@ -9,24 +9,20 @@
 using System;
 using Grpc.Core;
 
-namespace TnyFramework.Namespace.Etcd.Exceptions
+namespace TnyFramework.Namespace.Etcd.Exceptions;
+
+public class EtcdClosedWatcherException : EtcdException
 {
-
-    public class EtcdClosedWatcherException : EtcdException
+    public EtcdClosedWatcherException() : base(StatusCode.Cancelled)
     {
-        public EtcdClosedWatcherException() : base(StatusCode.Cancelled)
-        {
-        }
-
-
-
-        public EtcdClosedWatcherException(string message) : base(StatusCode.Cancelled, message)
-        {
-        }
-
-        public EtcdClosedWatcherException(string message, Exception innerException) : base(StatusCode.Cancelled, message, innerException)
-        {
-        }
     }
 
+
+    public EtcdClosedWatcherException(string message) : base(StatusCode.Cancelled, message)
+    {
+    }
+
+    public EtcdClosedWatcherException(string message, Exception innerException) : base(StatusCode.Cancelled, message, innerException)
+    {
+    }
 }
