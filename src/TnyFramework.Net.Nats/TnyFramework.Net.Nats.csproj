@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
+        <Configurations>Debug;Release;Publish</Configurations>
+        <Platforms>AnyCPU</Platforms>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+
+    <ItemGroup>
+        <PackageReference Include="NATS.Client.Core" Version="2.0.2"/>
+        <PackageReference Include="protobuf-net" Version="3.2.30"/>
+        <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.0"/>
+        <PackageReference Include="Pipelines.Sockets.Unofficial" Version="2.2.8"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\TnyFramework.Net.Rpc\TnyFramework.Net.Rpc.csproj"/>
+        <ProjectReference Include="..\TnyFramework.Net\TnyFramework.Net.csproj"/>
+    </ItemGroup>
+
+
+</Project>
