@@ -7,13 +7,13 @@
 // See the Mulan PSL v2 for more details.
 
 using TnyFramework.Net.Application;
-using TnyFramework.Net.Nats.Options;
 
-namespace TnyFramework.Net.Nats.Transports
+namespace TnyFramework.Net.DotNetty.Guide;
+
+public class NettyServerSetting : ServiceServerSetting, INettyServerSetting
 {
-
-    public interface INatsServerGuide : IServerGuide<INatsServerSetting>
-    {
-    }
-
+    /// <summary>
+    /// 是否使用 libuv
+    /// </summary>
+    public bool Libuv { get; set; } = false;
 }

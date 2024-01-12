@@ -1,5 +1,6 @@
 using System;
 using NATS.Client.Core;
+using TnyFramework.Net.Nats.Guide;
 using TnyFramework.Net.Nats.Options;
 using TnyFramework.Net.Nats.Transports;
 

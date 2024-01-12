@@ -12,7 +12,6 @@
 
     <PropertyGroup>
         <Configurations>Debug;Release;Publish</Configurations>
-        <Platforms>AnyCPU</Platforms>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <TargetFramework>netstandard2.0</TargetFramework>

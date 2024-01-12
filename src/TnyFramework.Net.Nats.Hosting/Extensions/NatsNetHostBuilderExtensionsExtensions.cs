@@ -10,7 +10,7 @@ using TnyFramework.Net.Nats.Hosting.Configuration.spec;
 
 namespace TnyFramework.Net.Nats.Hosting.Extensions;
 
-public static class RpcNatsHostBuilderExtensions
+public static class NatsNetHostBuilderExtensionsExtensions
 {
     public static IHostBuilder ConfigureNatsRpcHost(this IHostBuilder builder)
     {

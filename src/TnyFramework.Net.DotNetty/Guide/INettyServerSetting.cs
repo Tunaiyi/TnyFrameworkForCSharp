@@ -8,8 +8,12 @@
 
 using TnyFramework.Net.Application;
 
-namespace TnyFramework.Net.DotNetty.Bootstrap;
+namespace TnyFramework.Net.DotNetty.Guide;
 
-public interface INettyServerGuide : IServerGuide<INettyServerSetting>
+public interface INettyServerSetting : IServedServerSetting
 {
+    /// <summary>
+    /// 是否是使用 libuv
+    /// </summary>
+    bool Libuv { get; }
 }

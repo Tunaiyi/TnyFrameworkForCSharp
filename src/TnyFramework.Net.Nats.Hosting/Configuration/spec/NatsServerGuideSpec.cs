@@ -5,6 +5,7 @@ using TnyFramework.DI.Extensions;
 using TnyFramework.DI.Units;
 using TnyFramework.Net.Hosting;
 using TnyFramework.Net.Hosting.Guide;
+using TnyFramework.Net.Nats.Guide;
 using TnyFramework.Net.Nats.Options;
 using TnyFramework.Net.Nats.Transports;
 
@@ -19,7 +20,7 @@ public class NatsServerGuideSpec
     {
         WithNamePrefix(name);
         context.SetName(name);
-        Default(c => new NatsServerGuide(
+        Default(c => new NatsGuide(
             c.LoadNatsOpts(),
             c.LoadNatsServerSetting(),
             unitContext.LoadAppContext(),

@@ -15,12 +15,13 @@ using TnyFramework.Common.Logger;
 using TnyFramework.Net.Application;
 using TnyFramework.Net.Extensions;
 using TnyFramework.Net.Nats.Options;
+using TnyFramework.Net.Nats.Transports;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.Nats.Transports
+namespace TnyFramework.Net.Nats.Guide
 {
 
-    public class NatsServerGuide : NetServer<INatsServerSetting>, INatsServerGuide, INatsClientGuide
+    public class NatsGuide : NetServer<INatsServerSetting>, INatsServerGuide, INatsClientGuide
     {
         private const int INIT_STATUS = 0;
         private const int STOP_STATUS = 1;
@@ -39,7 +40,7 @@ namespace TnyFramework.Net.Nats.Transports
 
         private volatile int index;
 
-        public NatsServerGuide(NatsOpts natsOpts, INatsServerSetting setting, INetAppContext appContext,
+        public NatsGuide(NatsOpts natsOpts, INatsServerSetting setting, INetAppContext appContext,
             INetworkContext context, IMessageCodec messageCodec)
         {
             this.messageCodec = messageCodec;

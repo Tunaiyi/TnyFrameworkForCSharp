@@ -93,6 +93,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Net.Nats.Hosti
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Net.Nats.Hosting.Demo", "test\TnyFramework.Net.Nats.Hosting.Demo\TnyFramework.Net.Nats.Hosting.Demo.csproj", "{98D9513E-9CAB-4842-9DCC-DC856C876930}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TnyFramework.Net.Kestrel", "src\TnyFramework.Net.Kestrel\TnyFramework.Net.Kestrel.csproj", "{B0179996-E7CD-4B27-A533-F3CA3F507357}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -358,6 +360,12 @@ Global
 		{98D9513E-9CAB-4842-9DCC-DC856C876930}.Release|Any CPU.Build.0 = Release|Any CPU
 		{98D9513E-9CAB-4842-9DCC-DC856C876930}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
 		{98D9513E-9CAB-4842-9DCC-DC856C876930}.Publish|Any CPU.Build.0 = Debug|Any CPU
+		{B0179996-E7CD-4B27-A533-F3CA3F507357}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0179996-E7CD-4B27-A533-F3CA3F507357}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0179996-E7CD-4B27-A533-F3CA3F507357}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0179996-E7CD-4B27-A533-F3CA3F507357}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0179996-E7CD-4B27-A533-F3CA3F507357}.Publish|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0179996-E7CD-4B27-A533-F3CA3F507357}.Publish|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -409,5 +417,6 @@ Global
 		{FF4C49C2-AA83-4754-94A6-1E3639E6C050} = {A626F27B-46F7-4579-8700-342439C930F0}
 		{29BF0BAC-CED3-4DFD-A72F-F5456D30D8DC} = {A626F27B-46F7-4579-8700-342439C930F0}
 		{98D9513E-9CAB-4842-9DCC-DC856C876930} = {CE345C58-8EB5-4E4F-A8DF-79246B383485}
+		{B0179996-E7CD-4B27-A533-F3CA3F507357} = {A626F27B-46F7-4579-8700-342439C930F0}
 	EndGlobalSection
 EndGlobal

@@ -1,4 +1,5 @@
 using TnyFramework.Net.Hosting.Rpc;
+using TnyFramework.Net.Nats.Guide;
 using TnyFramework.Net.Nats.Hosting.Configuration.spec;
 using TnyFramework.Net.Nats.Options;
 using TnyFramework.Net.Nats.Transports;

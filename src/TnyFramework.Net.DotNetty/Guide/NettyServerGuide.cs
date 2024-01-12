@@ -25,7 +25,7 @@ using TnyFramework.Net.Exceptions;
 using TnyFramework.Net.Extensions;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.DotNetty.Bootstrap;
+namespace TnyFramework.Net.DotNetty.Guide;
 
 public class NettyServerGuide(
     INettyServerSetting setting,

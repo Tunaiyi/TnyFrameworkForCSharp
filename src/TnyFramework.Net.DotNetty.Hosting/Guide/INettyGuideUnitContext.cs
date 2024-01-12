@@ -6,8 +6,8 @@
 // THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
 // See the Mulan PSL v2 for more details.
 
-using TnyFramework.Net.DotNetty.Bootstrap;
 using TnyFramework.Net.DotNetty.Codec;
+using TnyFramework.Net.DotNetty.Guide;
 using TnyFramework.Net.DotNetty.Hosting.Channel;
 using TnyFramework.Net.DotNetty.Transport;
 using TnyFramework.Net.Hosting.Guide;

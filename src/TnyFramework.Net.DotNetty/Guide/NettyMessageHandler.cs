@@ -21,7 +21,7 @@ using TnyFramework.Net.DotNetty.Common;
 using TnyFramework.Net.Message;
 using TnyFramework.Net.Transport;
 
-namespace TnyFramework.Net.DotNetty.Bootstrap;
+namespace TnyFramework.Net.DotNetty.Guide;
 
 public class NettyMessageHandler : ChannelDuplexHandler
 {

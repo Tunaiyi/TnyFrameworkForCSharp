@@ -8,7 +8,7 @@
 
 using DotNetty.Transport.Channels;
 
-namespace TnyFramework.Net.DotNetty.Bootstrap;
+namespace TnyFramework.Net.DotNetty.Guide;
 
 public interface IChannelMaker
 {
